@@ -1,0 +1,17 @@
+#-----------------------------
+# System and temporary files
+#
+.kate-swp
+.DS_Store
+.profile
+Thumbs.db
+
+#-----------------------------
+# Byte-compiled & optimized files
+#
+__pycache__/
+
+#-----------------------------
+# User-specific files
+#
+README-PERSONAL.MD
