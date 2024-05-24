@@ -156,7 +156,7 @@ class PixArtMSBlock(nn.Module):
                                         output_dim = inout_dim
                                         )
 
-    def forward(self, x, y, t6, y_attn_mask=None, **kwargs):
+    def forward(self, x, t6, y, y_attn_mask=None, **kwargs):
         # t6 = [batch_size, 6, inout_dim]
         shift_msa, scale_msa, gate_msa,  \
         shift_mlp, scale_mlp, gate_mlp = \

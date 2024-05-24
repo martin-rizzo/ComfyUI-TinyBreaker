@@ -128,14 +128,16 @@ class T5Tokenizer:
         max_length    : int                   = 120,  # alpha=120 | sigma=300 #
         embedding_dir : Optional[os.PathLike] = None,
         embedding_key : str                   = 't5',
-        embedding_size: int                   = 4096
+        embedding_size: int                   = 4096,
+        legacy        : bool                  = None
     ):
         if tokenizer_dir is None:
             _this_file_dir = os.path.dirname(os.path.realpath(__file__))
-            tokenizer_dir = os.path.join(_this_file_dir, 't5tokenizer')
+            tokenizer_dir = os.path.join(_this_file_dir, 't5data')
 
         # TODO: utilizar T5TokenizerFast (?)
-        tokenizer = HF_T5Tokenizer.from_pretrained(tokenizer_dir)
+        tokenizer = HF_T5Tokenizer.from_pretrained(tokenizer_dir,
+                                                   legacy=legacy)
         return T5Tokenizer(tokenizer,
                            max_length     = max_length,
                            embedding_dir  = embedding_dir,
@@ -156,8 +158,10 @@ class T5Tokenizer:
 
 
     def tokenize_with_weights(self,
-                              text           : Union[str, list],
-                              return_word_ids: bool = False
+                              text            : Union[str, list],
+                              padding         : bool = False,
+                              padding_max_size: int  = 0,
+                              include_word_ids: bool = False,
                               ):
         '''
         Convert a text/prompt into a list of (token, weight, word_id) elements.
@@ -172,11 +176,17 @@ class T5Tokenizer:
         '''
         output_batch = []
         input_batch  = text if isinstance(text,list) else [text]
+        end_item     = (self.end_token, 1., 0) if include_word_ids else (self.end_token, 1.)
+        pad_item     = (self.pad_token, 1., 0) if include_word_ids else (self.pad_token, 1.)
+        if not padding:
+            padding_max_size = 0
 
+        max_number_of_tokens = 0
         for text in input_batch:
             text = comfy_escape_important(text)
             parsed_weights = comfy_token_weights(text, 1.0)
 
+            # recorrer segment por segmento agregando (token, weight)
             tokens = []
             for segment, weight in parsed_weights:
                 segment = comfy_unescape_important(segment).replace('\n',' ')
@@ -191,22 +201,38 @@ class T5Tokenizer:
 
                     # tokenize word
                     word_tokens = self.tokenizer(word, add_special_tokens=False)["input_ids"]
-                    if return_word_ids:
+                    if include_word_ids:
                         tokens.extend([ (token, weight, word_idx+1) for token in word_tokens ])
                     else:
                         tokens.extend([ (token, weight) for token in word_tokens ])
 
-            # expande o limita la cantidad de tokens
-            # para sea exactamente = self.max_length-1 + END_TOKEN
-            tokens_left = self.max_length - 1 - len(tokens)
-            if tokens_left>0:
-                tokens.append( (self.end_token, 1.0, 0) )
-                tokens.extend( [(self.pad_token, 1.0, 0)] * tokens_left )
-            elif tokens_left<0:
-                tokens = tokens[:self.max_length-1]
-                tokens.append( (self.end_token, 1.0, 0) )
+            # agregar el token de final
+            tokens.append( end_item )
+
+            # verificar si es el texto mas largo del batch
+            if len(tokens) > max_number_of_tokens:
+                max_number_of_tokens = len(tokens)
+
+            # agregar padding si el usuario lo solicito
+            if padding:
+                tokens_left = self.max_length - len(tokens)
+                if tokens_left > 0:
+                    tokens.extend( [pad_item] * tokens_left )
 
             output_batch.append( tokens )
+
+        # si se agrego padding o se excedio el limite (max_length)
+        # entonces loopear nuevamente recortando el exceso
+        if padding or max_number_of_tokens>self.max_length:
+            truncate_at = padding_max_size if padding_max_size>0 else max_number_of_tokens
+            if  truncate_at > self.max_length:
+                truncate_at = self.max_length
+            # truncar todos los tensores del batch
+            # y agregar 'end_item' al final de tokens cuando corresponda
+            for i, tokens in enumerate(output_batch):
+                tokens     = tokens[:truncate_at]
+                tokens[-1] = end_item if tokens[-1][0] != self.pad_token else pad_item
+                output_batch[i] = tokens
 
         return output_batch
 
@@ -315,7 +341,10 @@ class T5EncoderModel:
         return z
 
 
-    def encode_with_weights( self, batch_of_tokens_with_weights ):
+    def encode_with_weights(self,
+                            batch_of_tokens_with_weights,
+                            return_attn_mask: bool = False
+                            ):
 
         # separa tokes y pesos
         input_ids     = []
@@ -330,8 +359,8 @@ class T5EncoderModel:
         empty_vector = self.empty_vector
 
         # generar la representacion vectorial del bach de tokens suministrado
-        #   input_ids.shape    = (batch_size, sequence_length)
-        #   output_batch.shape = (batch_size, sequence_length, embedding_size)
+        #   input_ids.shape    = [batch_size, sequence_length]
+        #   output_batch.shape = [batch_size, sequence_length, embedding_size]
         output_batch = self.encode( input_ids = input_ids )
 
         # Aplica los pesos a los context_embeddings
@@ -353,7 +382,8 @@ class T5EncoderModel:
         #
         weighted_batch = []
         for i, context_embeddings in enumerate(output_batch):
-            #  context_embeddings.shape = (sequence_length=120, embedding_size=4096)
+            empty_vector = self.empty_vector[:context_embeddings.shape[0]]
+            #  context_embeddings.shape = [sequence_length=300, embedding_size=4096]
             weights = torch.Tensor( input_weights[i] )
             weighted_embeddings = ( context_embeddings - empty_vector ) * weights.unsqueeze(1) + empty_vector
             weighted_batch.append( weighted_embeddings )
@@ -363,13 +393,23 @@ class T5EncoderModel:
         if len(weighted_batch) == 0:
             return empty_vector.cpu()
 
-        # convierte la lista a vector
-        weighted_batch = torch.stack(weighted_batch, dim=0)
+        if not return_attn_mask:
+            return torch.stack(weighted_batch)
 
-        # TODO: mejorar esto. [[ tal vez usando attention_mask (?) ]]
-        keep_index = sum([sum([1 for y in x if y[0] != 0]) for x in batch_of_tokens_with_weights])
-        print("## keep_index:", keep_index)
-        weighted_batch = weighted_batch[:, :keep_index, :]
+        input_ids_batch = input_ids
+
+        attn_mask_batch = []
+        for input_ids in input_ids_batch:
+            attn_mask = torch.tensor( input_ids )
+            attn_mask = attn_mask > 0
+            attn_mask_batch.append( attn_mask )
+
+        return torch.stack(weighted_batch), torch.stack(attn_mask_batch)
+
+        # # TODO: mejorar esto. [[ tal vez usando attention_mask (?) ]]
+        # keep_index = sum([sum([1 for y in x if y[0] != 0]) for x in batch_of_tokens_with_weights])
+        # weighted_batch = weighted_batch[:, :keep_index, :]
+
         return weighted_batch, "" # first_pooled #
 
 
