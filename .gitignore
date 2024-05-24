@@ -1,7 +1,7 @@
 #-----------------------------
 # System and temporary files
 #
-.kate-swp
+*.kate-swp
 .DS_Store
 .profile
 Thumbs.db
