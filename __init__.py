@@ -34,14 +34,16 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 
 NODE_CLASS_MAPPINGS = {}
 
-from .nodes_base import NODE_CLASS_MAPPINGS as main_nodes
+from .nodes.nodes_base import NODE_CLASS_MAPPINGS as main_nodes
 NODE_CLASS_MAPPINGS.update(main_nodes)
 
-from .nodes_extra import NODE_CLASS_MAPPINGS as extra_nodes
+from .nodes.nodes_extra import NODE_CLASS_MAPPINGS as extra_nodes
 NODE_CLASS_MAPPINGS.update(extra_nodes)
 
-from .nodes_testing import NODE_CLASS_MAPPINGS as testing_nodes
+from .nodes.nodes_testing import NODE_CLASS_MAPPINGS as testing_nodes
 NODE_CLASS_MAPPINGS.update(testing_nodes)
 
 NODE_DISPLAY_NAME_MAPPINGS = {k:v.TITLE for k,v in NODE_CLASS_MAPPINGS.items()}
 __all__ = ['NODE_CLASS_MAPPINGS', 'NODE_DISPLAY_NAME_MAPPINGS']
+
+print(f"Added {len(NODE_CLASS_MAPPINGS)} nodes from \U0001F3A8\033[1;33mPixArt\033[1;35m-node_collection\033[0m")
