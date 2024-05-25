@@ -1,0 +1,413 @@
+{
+  "last_node_id": 80,
+  "last_link_id": 131,
+  "nodes": [
+    {
+      "id": 60,
+      "type": "KSamplerAdvanced",
+      "pos": [
+        360,
+        90
+      ],
+      "size": {
+        "0": 290,
+        "1": 490
+      },
+      "flags": {
+        "pinned": true
+      },
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 131
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 128
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 129
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 95
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            96
+          ],
+          "shape": 3,
+          "slot_index": 0
+        }
+      ],
+      "title": "PixArt Sigma KSampler",
+      "properties": {
+        "Node name for S&R": "KSamplerAdvanced"
+      },
+      "widgets_values": [
+        "enable",
+        1,
+        "fixed",
+        16,
+        4,
+        "euler",
+        "normal",
+        0,
+        10000,
+        "enable"
+      ],
+      "color": "#223",
+      "bgcolor": "#335",
+      "shape": 1
+    },
+    {
+      "id": 79,
+      "type": "LoadPromptEmbedding (PixArt)",
+      "pos": [
+        20,
+        90
+      ],
+      "size": {
+        "0": 330,
+        "1": 80
+      },
+      "flags": {
+        "pinned": true
+      },
+      "order": 0,
+      "mode": 0,
+      "outputs": [
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "links": [
+            128
+          ],
+          "shape": 3,
+          "slot_index": 0
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "links": [
+            129
+          ],
+          "shape": 3,
+          "slot_index": 1
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadPromptEmbedding (PixArt)"
+      },
+      "widgets_values": [
+        "abandoned-arcade.safetensors"
+      ],
+      "color": "#232",
+      "bgcolor": "#353",
+      "shape": 1
+    },
+    {
+      "id": 3,
+      "type": "EmptyLatentImage",
+      "pos": [
+        20,
+        210
+      ],
+      "size": {
+        "0": 330,
+        "1": 110
+      },
+      "flags": {
+        "pinned": true
+      },
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            95
+          ],
+          "shape": 3
+        }
+      ],
+      "title": "Image Size",
+      "properties": {
+        "Node name for S&R": "EmptyLatentImage"
+      },
+      "widgets_values": [
+        944,
+        1408,
+        1
+      ],
+      "color": "#223",
+      "bgcolor": "#335",
+      "shape": 1
+    },
+    {
+      "id": 53,
+      "type": "PreviewImage",
+      "pos": [
+        850,
+        90
+      ],
+      "size": {
+        "0": 250,
+        "1": 430
+      },
+      "flags": {
+        "pinned": true
+      },
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 130
+        }
+      ],
+      "title": "Preview PixArt",
+      "properties": {
+        "Node name for S&R": "PreviewImage"
+      }
+    },
+    {
+      "id": 9,
+      "type": "VAEDecode",
+      "pos": [
+        680,
+        90
+      ],
+      "size": {
+        "0": 140,
+        "1": 50
+      },
+      "flags": {
+        "pinned": true
+      },
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 96
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 11
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            130
+          ],
+          "shape": 3,
+          "slot_index": 0
+        }
+      ],
+      "title": "Preview Decoder",
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      }
+    },
+    {
+      "id": 80,
+      "type": "CheckpointLoader (PixArt)",
+      "pos": [
+        20,
+        360
+      ],
+      "size": {
+        "0": 330,
+        "1": 120
+      },
+      "flags": {
+        "pinned": true
+      },
+      "order": 2,
+      "mode": 0,
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            131
+          ],
+          "shape": 3,
+          "slot_index": 0
+        },
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": null,
+          "shape": 3
+        },
+        {
+          "name": "T5",
+          "type": "T5",
+          "links": null,
+          "shape": 3
+        },
+        {
+          "name": "META",
+          "type": "STRING",
+          "links": null,
+          "shape": 3
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CheckpointLoader (PixArt)"
+      },
+      "widgets_values": [
+        "PixArt-Sigma-1024.safetensors"
+      ]
+    },
+    {
+      "id": 8,
+      "type": "VAELoader",
+      "pos": [
+        20,
+        520
+      ],
+      "size": {
+        "0": 330,
+        "1": 60
+      },
+      "flags": {
+        "pinned": true
+      },
+      "order": 3,
+      "mode": 0,
+      "outputs": [
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [
+            11
+          ],
+          "shape": 3,
+          "slot_index": 0
+        }
+      ],
+      "title": "PixArt Sigma VAE Loader",
+      "properties": {
+        "Node name for S&R": "VAELoader"
+      },
+      "widgets_values": [
+        "pixart_sigma_vae.safetensors"
+      ]
+    }
+  ],
+  "links": [
+    [
+      11,
+      8,
+      0,
+      9,
+      1,
+      "VAE"
+    ],
+    [
+      95,
+      3,
+      0,
+      60,
+      3,
+      "LATENT"
+    ],
+    [
+      96,
+      60,
+      0,
+      9,
+      0,
+      "LATENT"
+    ],
+    [
+      128,
+      79,
+      0,
+      60,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      129,
+      79,
+      1,
+      60,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      130,
+      9,
+      0,
+      53,
+      0,
+      "IMAGE"
+    ],
+    [
+      131,
+      80,
+      0,
+      60,
+      0,
+      "MODEL"
+    ]
+  ],
+  "groups": [
+    {
+      "title": "Load Prompt",
+      "bounding": [
+        11,
+        10,
+        650,
+        579
+      ],
+      "color": "#b58b2a",
+      "font_size": 28
+    },
+    {
+      "title": "Output",
+      "bounding": [
+        841,
+        10,
+        270,
+        538
+      ],
+      "color": "#3f789e",
+      "font_size": 28
+    }
+  ],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 1,
+      "offset": [
+        0,
+        0
+      ]
+    }
+  },
+  "version": 0.4
+}
