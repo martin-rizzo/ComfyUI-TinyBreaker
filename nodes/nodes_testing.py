@@ -32,9 +32,19 @@
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import os
+from .utils import PROMPT_EMBEDS_DIR
+#
+# class safe_open
+# ---------------
+#  Opens a safetensors lazily and returns tensors as asked
+#  Args:
+#    filename (str) : The filename to open
+#    framework (str): The framework you want you tensors in.
+#                     Supported values: `pt`, `tf`, `flax`, `numpy`.
+#    device (str)   : The device on which you want the tensors (default 'cpu')
 from safetensors       import safe_open as open_safetensors
 from safetensors.torch import save_file as save_safetensors
-from .utils            import PROMPT_EMBEDS_DIR
+
 
 #===========================================================================#
 class SavePromptEmbedding:
@@ -108,15 +118,54 @@ class LoadPromptEmbedding:
 
     #-- function --#
     FUNCTION     = 'load'
-    RETURN_TYPES = ('CONDITIONING','CONDITIONING')
-    RETURN_NAMES = ('positive'    ,'negative'    )
+    RETURN_TYPES = ('CONDITIONING','CONDITIONING', 'INT'  , 'INT'   , 'INT' ,  'INT' , 'FLOAT')
+    RETURN_NAMES = ('positive'    ,'negative'    , 'width', 'height', 'seed', 'steps', 'cfg'  )
     def load(self, embed_name):
         positives = []
         negatives = []
+        width     = 944
+        height    = 1408
         embed_path = PROMPT_EMBEDS_DIR.get_full_path(embed_name)
         with open_safetensors(embed_path, framework='pt', device='cpu') as f:
             _keys = f.keys()
 
+            # -- new format -------------------------------------
+
+            # 'prompt.positive' and 'prompt.positive{1..1000}'
+            #   - prompt.positive
+            #   - prompt.positive_attn_mask
+            cond_unit = self.read_cond_unit('prompt.positive', f, _keys)
+            if cond_unit:
+                positives.append(cond_unit)
+            for i in range(1, 1000):
+                cond_unit = self.read_cond_unit(f"prompt.positive{i}", f, _keys)
+                if not cond_unit:
+                    break
+                positives.append(cond_unit)
+
+            # 'prompt.negative' and 'prompt.negative{1..1000}'
+            #   - prompt.negative
+            #   - prompt.negative_attn_mask
+            cond_unit = self.read_cond_unit('prompt.negative', f, _keys)
+            if cond_unit:
+                negatives.append(cond_unit)
+            for i in range(1, 1000):
+                cond_unit = self.read_cond_unit(f"prompt.negative{i}", f, _keys)
+                if not cond_unit:
+                    break
+                negatives.append(cond_unit)
+
+            seed  = int(  self.read_number('parameters.seed' ,   0, f,_keys))
+            steps = int(  self.read_number('parameters.steps',  16, f,_keys))
+            cfg   = float(self.read_number('parameters.cfg'  , 4.0, f,_keys))
+
+            print("## seed:", seed)
+            print("## steps:", steps)
+            print("## cfg:", cfg)
+
+            # -- old format --------------------------------------
+
+            # old format
             for i in range(1000):
                 extra_conds  = {}
                 positive_key = f'positive.{i}'
@@ -137,7 +186,36 @@ class LoadPromptEmbedding:
                     extra_conds['cond_attn_mask'] = f.get_tensor(neg_mask_key)
                 negatives.append( [f.get_tensor(negative_key), extra_conds] )
 
-        return ( positives, negatives )
+        return ( positives, negatives, width, height, seed, steps, cfg )
+
+
+    def read_cond_unit(self, prompt_key:str, safe_open, safe_keys=None):
+        if safe_keys is None:
+            safe_keys = safe_open.keys()
+        if prompt_key not in safe_keys:
+            return None
+
+        attn_mask_key = f"{prompt_key}_attn_mask"
+
+        cond = safe_open.get_tensor(prompt_key)
+        cond = cond.unsqueeze(0)
+        extra_conds = {}
+        if attn_mask_key in safe_keys:
+            extra_conds['cond_attn_mask'] = safe_open.get_tensor(attn_mask_key)
+
+        return [cond, extra_conds]
+
+    def read_number(self, number_key, default_number, safe_open, safe_keys=None):
+        if safe_keys is None:
+            safe_keys = safe_open.keys()
+        if number_key not in safe_keys:
+            return default_number
+        tensor = safe_open.get_tensor(number_key)
+        if tensor.numel() != 1:
+            return default_number
+        return tensor.item()
+
+
 
 
 #===========================================================================#
