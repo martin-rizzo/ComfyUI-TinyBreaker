@@ -99,8 +99,8 @@
         89.57473487117839
       ],
       "size": {
-        "0": 270,
-        "1": 450
+        "0": 280,
+        "1": 460
       },
       "flags": {
         "pinned": true
@@ -168,7 +168,7 @@
         "Node name for S&R": "CheckpointLoader (PixArt)"
       },
       "widgets_values": [
-        "oficial/PixArt-Sigma-1024.safetensors"
+        "PixArt-Sigma-1024.safetensors"
       ]
     },
     {
@@ -503,7 +503,7 @@
   ],
   "groups": [
     {
-      "title": "Load Prompt",
+      "title": "Load Prompt Embedding",
       "bounding": [
         11,
         10,
@@ -514,12 +514,12 @@
       "font_size": 28
     },
     {
-      "title": "Output",
+      "title": "Output Image",
       "bounding": [
         830,
         10,
-        289,
-        548
+        300,
+        550
       ],
       "color": "#3f789e",
       "font_size": 28
@@ -528,10 +528,10 @@
   "config": {},
   "extra": {
     "ds": {
-      "scale": 0.9090909090909091,
+      "scale": 0.6830134553650705,
       "offset": [
-        18.93396541852917,
-        34.92661514197414
+        282.39602115399055,
+        222.58896327436722
       ]
     }
   },
