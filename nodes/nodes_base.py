@@ -102,15 +102,25 @@ class T5TextEncoder:
 
     def encode(self, t5, text):
         t5_pack = t5
-        tokens          = t5_pack.tokenize_with_weights(text,
-                                                        padding=True,
-                                                        padding_max_size=300)
-        cond, attn_mask = t5_pack.encode_with_weights(tokens,
-                                                      return_attn_mask=True
-                                                      )
+        padding = False
 
-        extra_conds = {'cond_attn_mask':attn_mask}
-        #extra_conds = {}
+        if padding:
+            tokens          = t5_pack.tokenize_with_weights(text,
+                                                            padding=True,
+                                                            padding_max_size=300)
+            cond, attn_mask = t5_pack.encode_with_weights(tokens,
+                                                        return_attn_mask=True
+                                                        )
+        else:
+            tokens    = t5_pack.tokenize_with_weights(text, padding=False)
+            cond      = t5_pack.encode_with_weights(tokens)
+            attn_mask = None
+
+
+        if attn_mask is not None:
+            extra_conds = {'cond_attn_mask':attn_mask}
+        else:
+            extra_conds = { }
 
         print("## t5 cond.shape:", cond.shape)
         print("## t5 tokens:", tokens)
