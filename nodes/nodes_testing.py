@@ -77,11 +77,15 @@ class SavePromptEmbedding:
     FUNCTION     = 'save'
     RETURN_TYPES = ()
     def save(self, in_positive, in_negative, in_width, in_height, in_seed, in_steps, in_cfg, filename):
+        # in_positive = [ [cond,{extra_conds}]], ... ]
+        # in_negative = [ [cond,{extra_conds}]], ... ]
 
-        # positive = [ [cond,{extra_conds}]], ... ]
-        # negative = [ [cond,{extra_conds}]], ... ]
-        tensors = { }
+        tensors  = { }
+        metadata = { }
 
+        # 'prompt.positive' and 'prompt.positive{1..1000}'
+        #   - prompt.positive
+        #   - prompt.positive_attn_mask
         multiple = len(in_positive)>1
         for i, cond_unit in enumerate(in_positive):
             prompt_key = f'prompt.positive{i}' if multiple else 'prompt.positive'
@@ -91,6 +95,9 @@ class SavePromptEmbedding:
                 attn_mask_key = f"{prompt_key}_attn_mask"
                 tensors[attn_mask_key] = extra_conds['cond_attn_mask']
 
+        # 'prompt.negative' and 'prompt.negative{1..1000}'
+        #   - prompt.negative
+        #   - prompt.negative_attn_mask
         multiple = len(in_negative)>1
         for i, cond_unit in enumerate(in_negative):
             prompt_key = f'prompt.negative{i}' if multiple else 'prompt.negative'
@@ -100,10 +107,15 @@ class SavePromptEmbedding:
                 attn_mask_key = f"{prompt_key}_attn_mask"
                 tensors[attn_mask_key] = extra_conds['cond_attn_mask']
 
-        tensors['parameters.size']  = torch.tensor([in_height, in_width])
-        tensors['parameters.seed']  = torch.tensor([in_seed])
-        tensors['parameters.steps'] = torch.tensor([in_steps])
-        tensors['parameters.cfg'  ] = torch.tensor([in_cfg])
+        # METADATA 'parameters.*'
+        metadata['parameters.steps'    ] = str(in_steps)
+        metadata['parameters.width'    ] = str(in_width)
+        metadata['parameters.height'   ] = str(in_height)
+        metadata['parameters.cfg'      ] = str(in_cfg)
+        metadata['parameters.seed'     ] = str(in_seed)
+        # METADATA 'pt5tokenizer.*'
+        metadata['pt5tokenizer.mode'   ] = 'bug_120chars'
+        metadata['pt5tokenizer.padding'] = 'false'
 
         # armar el path completo
         _, extension = os.path.splitext(filename)
@@ -113,7 +125,7 @@ class SavePromptEmbedding:
 
         # almacenar como safetensor
         os.makedirs(os.path.dirname(filepath), exist_ok=True)
-        save_safetensors(tensors, filepath)
+        save_safetensors(tensors, filepath, metadata=metadata)
         return { }
 
 
@@ -141,17 +153,18 @@ class LoadPromptEmbedding:
         positives = []
         negatives = []
         embed_path = PROMPT_EMBEDS_DIR.get_full_path(embed_name)
-        with open_safetensors(embed_path, framework='pt', device='cpu') as f:
-            _keys = f.keys()
+        with open_safetensors(embed_path, framework='pt', device='cpu') as st:
+            metadata = st.metadata()
+            _keys    = st.keys()
 
             # 'prompt.positive' and 'prompt.positive{1..1000}'
             #   - prompt.positive
             #   - prompt.positive_attn_mask
-            cond_unit = self.read_cond_unit('prompt.positive', f, _keys)
+            cond_unit = self.read_cond_unit('prompt.positive', st,_keys)
             if cond_unit:
                 positives.append(cond_unit)
             for i in range(1, 1000):
-                cond_unit = self.read_cond_unit(f"prompt.positive{i}", f,_keys)
+                cond_unit = self.read_cond_unit(f"prompt.positive{i}", st,_keys)
                 if not cond_unit:
                     break
                 positives.append(cond_unit)
@@ -159,26 +172,21 @@ class LoadPromptEmbedding:
             # 'prompt.negative' and 'prompt.negative{1..1000}'
             #   - prompt.negative
             #   - prompt.negative_attn_mask
-            cond_unit = self.read_cond_unit('prompt.negative', f, _keys)
+            cond_unit = self.read_cond_unit('prompt.negative', st,_keys)
             if cond_unit:
                 negatives.append(cond_unit)
             for i in range(1, 1000):
-                cond_unit = self.read_cond_unit(f"prompt.negative{i}", f,_keys)
+                cond_unit = self.read_cond_unit(f"prompt.negative{i}", st,_keys)
                 if not cond_unit:
                     break
                 negatives.append(cond_unit)
 
-            # 'parameters.'
-            height = 1408
-            width  =  944
-            seed   = int(  self.read_number('parameters.seed' ,   0, f,_keys))
-            steps  = int(  self.read_number('parameters.steps',  16, f,_keys))
-            cfg    = float(self.read_number('parameters.cfg'  , 4.0, f,_keys))
-            if 'parameters.size' in _keys:
-                size = f.get_tensor('parameters.size')
-                if size.shape == (2,):
-                    height = int(size[0])
-                    width  = int(size[1])
+            # METADATA 'parameters.*'
+            height = int(  metadata.get('parameters.height', '1408'))
+            width  = int(  metadata.get('parameters.width' ,  '944'))
+            seed   = int(  metadata.get('parameters.seed'  ,    '0'))
+            steps  = int(  metadata.get('parameters.steps' ,   '16'))
+            cfg    = float(metadata.get('parameters.cfg'   ,  '4.0'))
 
         return ( positives, negatives, width, height, seed, steps, cfg )
 
@@ -198,18 +206,6 @@ class LoadPromptEmbedding:
             extra_conds['cond_attn_mask'] = safe_open.get_tensor(attn_mask_key)
 
         return [cond, extra_conds]
-
-    def read_number(self, number_key, default_number, safe_open, safe_keys=None):
-        if safe_keys is None:
-            safe_keys = safe_open.keys()
-        if number_key not in safe_keys:
-            return default_number
-        tensor = safe_open.get_tensor(number_key)
-        if tensor.numel() != 1:
-            return default_number
-        return tensor.item()
-
-
 
 
 #===========================================================================#
