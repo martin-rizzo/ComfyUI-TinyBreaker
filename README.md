@@ -15,8 +15,6 @@
 
 **ComfyUI-x-PixArt** is a collection of ComfyUI nodes providing support for 'PixArt-Sigma' model. Currently, it remains beta with limited functionality, but the goal is to provide a full set of nodes, enabling users to experiment with this awesome technology.
 
-# Get Started
-
 ## Installation
 > [!IMPORTANT]
 > Ensure you have the last version of [ComfyUi](https://github.com/comfyanonymous/ComfyUI) installed.

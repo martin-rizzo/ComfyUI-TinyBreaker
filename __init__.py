@@ -31,6 +31,7 @@ License : MIT
     SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
+from .nodes.utils import logger
 
 NODE_CLASS_MAPPINGS = {}
 
@@ -46,4 +47,5 @@ NODE_CLASS_MAPPINGS.update(testing_nodes)
 NODE_DISPLAY_NAME_MAPPINGS = {k:v.TITLE for k,v in NODE_CLASS_MAPPINGS.items()}
 __all__ = ['NODE_CLASS_MAPPINGS', 'NODE_DISPLAY_NAME_MAPPINGS']
 
-print(f"Added {len(NODE_CLASS_MAPPINGS)} nodes from \U0001F3A8\033[1;33mPixArt\033[1;35m-node_collection\033[0m")
+
+logger.info(f"Added {len(NODE_CLASS_MAPPINGS)} nodes")
