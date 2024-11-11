@@ -65,14 +65,12 @@ class Model_pack(comfy.model_patcher.ModelPatcher):
                  load_device,
                  offload_device,
                  size=0,
-                 current_device=None,
                  weight_inplace_update=False
                  ):
         super().__init__(model,
                          load_device=load_device,
                          offload_device=offload_device,
                          size=size,
-                         current_device=current_device,
                          weight_inplace_update=weight_inplace_update
                          )
 
@@ -131,7 +129,6 @@ class Model_pack(comfy.model_patcher.ModelPatcher):
             size = 0,
             load_device           = load_device,
             offload_device        = offload_device,
-            current_device        = initial_load_device,
             weight_inplace_update = weight_inplace_update
             )
 
