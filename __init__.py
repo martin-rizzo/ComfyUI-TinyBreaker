@@ -1,12 +1,12 @@
 """
 File    : __init__.py
-Purpose : This file is used to register the nodes of the ComfyUI-x-PixArt project.
+Purpose : This file is used to register the nodes of the ComfyUI-xPixArt project.
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
 Date    : May 4, 2024
-Repo    : https://github.com/martin-rizzo/ComfyUI-x-PixArt
+Repo    : https://github.com/martin-rizzo/ComfyUI-xPixArt
 License : MIT
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                              ComfyUI-x-PixArt
+                              ComfyUI-xPixArt
     ComfyUI nodes providing experimental support for PixArt-Sigma model
 
     Copyright (c) 2024 Martin Rizzo

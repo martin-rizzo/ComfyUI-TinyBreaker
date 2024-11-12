@@ -3,10 +3,10 @@ File    : pixartsigma.py
 Purpose : Implementation of the PixArt model using PyTorch.
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
 Date    : May 2, 2024
-Repo    : https://github.com/martin-rizzo/ComfyUI-x-PixArt
+Repo    : https://github.com/martin-rizzo/ComfyUI-xPixArt
 License : MIT
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                              ComfyUI-x-PixArt
+                              ComfyUI-xPixArt
     ComfyUI nodes providing experimental support for PixArt-Sigma model
 
     Copyright (c) 2024 Martin Rizzo

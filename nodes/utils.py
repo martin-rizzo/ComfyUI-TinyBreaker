@@ -1,12 +1,12 @@
 """
 File    : utils.py
-Brief   : Utility functions and constants for ComfUI-x-PixArt
+Brief   : Utility functions and constants for ComfUI-xPixArt
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
 Date    : May 15, 2024
-Repo    : https://github.com/martin-rizzo/ComfyUI-x-PixArt
+Repo    : https://github.com/martin-rizzo/ComfyUI-xPixArt
 License : MIT
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                              ComfyUI-x-PixArt
+                              ComfyUI-xPixArt
     ComfyUI nodes providing experimental support for PixArt-Sigma model
 
     Copyright (c) 2024 Martin Rizzo
@@ -207,7 +207,7 @@ class CustomFormatter(logging.Formatter):
 
 
 # Create a logger instance and set the custom formatter.
-logger = logging.getLogger("x-PixArt")
+logger = logging.getLogger("xPixArt")
 logger.propagate = False
 if not logger.handlers:
     handler = logging.StreamHandler(sys.stdout)

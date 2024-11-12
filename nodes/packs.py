@@ -3,10 +3,10 @@ File     : packs.py
 Brief    : Implements the objects transmitted through threads across connected nodes.
 Author   : Martin Rizzo | <martinrizzo@gmail.com>
 Date     : May 10, 2024
-Repo     : https://github.com/martin-rizzo/ComfyUI-x-PixArt
+Repo     : https://github.com/martin-rizzo/ComfyUI-xPixArt
 License  : MIT
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                              ComfyUI-x-PixArt
+                              ComfyUI-xPixArt
     ComfyUI nodes providing experimental support for PixArt-Sigma model
 
     Copyright (c) 2024 Martin Rizzo

@@ -4,10 +4,10 @@ Purpose  : A PixArt-adapted version of 'comfy/model_detection.py' code,
            it offers similar functionality but with a different structure.
 Author   : Martin Rizzo | <martinrizzo@gmail.com>
 Date     : May 12, 2024
-Repo     : https://github.com/martin-rizzo/ComfyUI-x-PixArt
+Repo     : https://github.com/martin-rizzo/ComfyUI-xPixArt
 License  : MIT
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                              ComfyUI-x-PixArt
+                              ComfyUI-xPixArt
     ComfyUI nodes providing experimental support for PixArt-Sigma model
 
     Copyright (c) 2024 Martin Rizzo

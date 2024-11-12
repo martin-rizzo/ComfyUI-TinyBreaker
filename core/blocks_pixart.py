@@ -3,10 +3,10 @@ File    : blocks_pixart.py
 Purpose : Define custom blocks for the PixArt architecture.
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
 Date    : May 9, 2024
-Repo    : https://github.com/martin-rizzo/ComfyUI-x-PixArt
+Repo    : https://github.com/martin-rizzo/ComfyUI-xPixArt
 License : MIT
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                              ComfyUI-x-PixArt
+                              ComfyUI-xPixArt
     ComfyUI nodes providing experimental support for PixArt-Sigma model
 
     Copyright (c) 2024 Martin Rizzo
