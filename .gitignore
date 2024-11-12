@@ -1,17 +1,29 @@
-#-----------------------------
-# System and temporary files
+
+# OS system files
 #
-*.kate-swp
 .DS_Store
 .profile
 Thumbs.db
 
-#-----------------------------
-# Byte-compiled & optimized files
+# Editors' backup and temporary files
+#
+*.bak
+*.tmp
+*.kate-swp
+
+# IDEs and editors
+#
+Xcodeproj/
+.xcuserdata/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Python
 #
 __pycache__/
 
-#-----------------------------
 # User-specific files
 #
 *~.*
+
