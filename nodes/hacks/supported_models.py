@@ -33,7 +33,7 @@ License  : MIT
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import torch
-from comfy import model_base
+from comfy.model_base import BaseModel, ModelType
 from comfy import supported_models_base
 from comfy import latent_formats
 from comfy import conds
@@ -41,20 +41,45 @@ from ...core.pixartsigma import PixArtSigma
 
 
 #============================================================================
-# Clase base similar a la definida en '/comfy/supported_models_base.py'
-# - https://github.com/comfyanonymous/ComfyUI/blob/master/comfy/supported_models_base.py
+# Clases de configuracion similares a las definidas in '/comfy/supported_models.py'
+# - https://github.com/comfyanonymous/ComfyUI/blob/master/comfy/supported_models.py
 
-class BASE(supported_models_base.BASE):
-    unet_extra_config = { }
+class PixArt(supported_models_base.BASE):
+
+    unet_config = {
+        'input_size'      :    -1, #  <---- sera configurado en __init__
+        'pe_interpolation':    -1, #  <---- sera configurado en __init__
+        'context_len'     :   300, #  300 tokens maximo en el prompt
+        'input_dim'       :     4, #    4 channels in latent image
+        'hidden_dim'      :  1152, # 1152 channels usados internamente
+        'context_dim'     :  4096, # 4096 features por cada prompt token
+        'patch_size'      :     2,
+        'num_heads'       :    16,
+        'depth'           :    28,
+        }
+
+    unet_extra_config = {
+        }
+
+    sampling_settings = {
+        'beta_schedule' : 'sqrt_linear',
+        'linear_start'  : 0.0001,
+        'linear_end'    : 0.02,
+        'timesteps'     : 1000,
+        }
+
+    latent_format = latent_formats.SDXL
+    supported_inference_dtypes = [torch.float16, torch.bfloat16, torch.float32]
 
     def __init__(self, image_size):
         super().__init__( self.__class__.unet_config )
         self.unet_config['input_size']       = image_size//8
         self.unet_config['pe_interpolation'] = image_size//512
 
-    def model_type(self, state_dict, prefix=''):
-        return model_base.ModelType.EPS
-
+    def get_model(self, state_dict, prefix='', device=None):
+        out = model_base__PixArt(self, device=device)
+        return out
+    
     def process_unet_state_dict(self, state_dict):
         state_dict, missing_keys = PixArtSigma.get_pixart_state_dict(state_dict)
         if len(missing_keys) > 0:
@@ -65,107 +90,19 @@ class BASE(supported_models_base.BASE):
             print()
         return state_dict
 
-    def get_model(self, state_dict, prefix='', device=None):
-        return PixArt_Model(
-                model_config = self,
-                model_type   = self.model_type(state_dict, prefix),
-                device       = device
-                )
-
-
-#============================================================================
-# Clases de configuracion similares a las definidas in '/comfy/supported_models.py'
-# - https://github.com/comfyanonymous/ComfyUI/blob/master/comfy/supported_models.py
-
-class PixArtSigma_ModelConfig(BASE):
-    target                     = 'PixArtSigma'
-    latent_format              = latent_formats.SDXL
-    supported_inference_dtypes = [torch.float16, torch.float32]
-    unet_config   = {
-            'disable_unet_model_creation': True,
-            'input_size'      :    -1, #  <---- sera configurado en __init__
-            'pe_interpolation':    -1, #  <---- sera configurado en __init__
-            'context_len'     :   300, #  300 tokens maximo en el prompt
-            'input_dim'       :     4, #    4 channels in latent image
-            'hidden_dim'      :  1152, # 1152 channels usados internamente
-            'context_dim'     :  4096, # 4096 features por cada prompt token
-            'patch_size'      :     2,
-            'num_heads'       :    16,
-            'depth'           :    28,
-            }
-    sampling_settings = {
-            'beta_schedule' : 'sqrt_linear',
-            'linear_start'  : 0.0001,
-            'linear_end'    : 0.02,
-            'timesteps'     : 1000,
-            }
-
-    def __init__(self, image_size):
-        super().__init__(image_size)
-
-
-class PixArtAlpha_ModelConfig(BASE):
-    target                     = '???'
-    latent_format              = latent_formats.SD15
-    supported_inference_dtypes = [torch.float16, torch.float32]
-    unet_config   = {
-            'disable_unet_model_creation': True,
-            'input_size'      :    -1, #  <---- sera configurado en __init__
-            'pe_interpolation':    -1, #  <---- sera configurado en __init__
-            'micro_condition' : False, #  <---- sera configurado en __init__
-            'context_len'     :   120, #  120 tokens maximo en el prompt
-            'input_dim'       :     4, #    4 channels in latent image
-            'hidden_dim'      :  1152, # 1152 channels usados internamente
-            'context_dim'     :  4096, # 4096 features por cada prompt token
-            'patch_size'      :     2,
-            'num_heads'       :    16,
-            'depth'           :    28,
-            }
-    sampling_settings = {
-            'beta_schedule' : 'sqrt_linear',
-            'linear_start'  : 0.0001,
-            'linear_end'    : 0.02,
-            'timesteps'     : 1000,
-            }
-
-    def __init__(self, image_size):
-        super().__init__(image_size)
-        self.unet_config['micro_condition'] = (image_size==1024)
-
 
 #===========================================================================#
 # A class similar to the classes defined in '/comfy/model_base.py'
 # - https://github.com/comfyanonymous/ComfyUI/blob/master/comfy/model_base.py
 
-class PixArt_Model(model_base.BaseModel):
+class model_base__PixArt(BaseModel):
 
     def __init__(self,
-                 model_config: BASE,
-                 model_type  : model_base.ModelType,
-                 device      : torch.device
+                 model_config,
+                 model_type  : ModelType    = ModelType.EPS,
+                 device      : torch.device = None
                  ):
-        super().__init__(model_config, model_type, device=device)
-
-
-        ## DEBUG
-        print("## unet_config (DiT)")
-        for prop, value in model_config.unet_config.items():
-            print(f"##    - {prop:<20}: {value}")
-        print("## sampling_settings")
-        for prop, value in model_config.sampling_settings.items():
-            print(f"##    - {prop:<20}: {value}")
-        print()
-
-        unet_config = model_config.unet_config
-
-        if model_config.target == 'PixArtSigma':
-            self.diffusion_model = PixArtSigma(**unet_config,
-                                               device=device,
-                                               frozen=True
-                                               )
-            self.diffusion_model.to( dtype=model_config.unet_config['dtype'] )
-        else:
-            assert False, f"Unkown target model: '{self.model_config.target}'"
+        super().__init__(model_config, model_type, device=device, unet_model=PixArtSigma)
 
 
     def extra_conds(self, **kwargs):

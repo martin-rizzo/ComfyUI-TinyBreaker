@@ -32,12 +32,12 @@ License  : MIT
     SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
-from .supported_models import PixArtSigma_ModelConfig
+from .supported_models import PixArt
 
 
 def model_config_from_dit(state_dict, unet_key_prefix, use_sigma2K_if_no_match=False):
-    model_config = PixArtSigma_ModelConfig(image_size=1024)
+    model_config = PixArt(image_size=1024)
     if model_config is None and use_sigma2K_if_no_match:
-        return PixArtSigma_ModelConfig(image_size=2048)
+        return PixArt(image_size=2048)
     else:
         return model_config
