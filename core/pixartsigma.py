@@ -8,27 +8,6 @@ License : MIT
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                               ComfyUI-xPixArt
     ComfyUI nodes providing experimental support for PixArt-Sigma model
-
-    Copyright (c) 2024 Martin Rizzo
-
-    Permission is hereby granted, free of charge, to any person obtaining
-    a copy of this software and associated documentation files (the
-    "Software"), to deal in the Software without restriction, including
-    without limitation the rights to use, copy, modify, merge, publish,
-    distribute, sublicense, and/or sell copies of the Software, and to
-    permit persons to whom the Software is furnished to do so, subject to
-    the following conditions:
-
-    The above copyright notice and this permission notice shall be
-    included in all copies or substantial portions of the Software.
-
-    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-    EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-    MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-    IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-    CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-    TORT OR OTHERWISE, ARISING FROM,OUT OF OR IN CONNECTION WITH THE
-    SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import torch
@@ -45,10 +24,10 @@ from .blocks_pixart import \
     PixArtFinalLayer
 
 # Tabla de conversion para las keys utilizadas en los archivos .safetensors
-DEPTH_TAG = '|depth|'
-WB_TAG    = '|w,b|'
-KV_TAG    = '|k+v|'
-QKV_TAG   = '|q+k+v|'
+DEPTH_TAG = "|depth|"
+WB_TAG    = "|w,b|"
+KV_TAG    = "|k+v|"
+QKV_TAG   = "|q+k+v|"
 STATE_DICT_TABLE_TEMPLATE = [
         #       PixArt Reference Code keys          |               HF Diffusers keys                    #
         #------------------------------------------------------------------------------------------------#
@@ -99,21 +78,21 @@ def _find_tensor(state_dict: Dict, template_key: str, subkey: str = None):
     if subkey is None:
         return state_dict.get(template_key)
     else:
-        parts = template_key.split('|')
+        parts = template_key.split("|")
         return state_dict.get(parts[0] + subkey + parts[2])
 
 
 def _compute_1d_sinusoidal_pos_embed(embed_dim, positions, dtype=torch.float64):
     """Compute the 1D sinusoidal positional embedding.
     """
-    assert embed_dim % 2 == 0, 'Embedding dimensionality must be even.'
+    assert embed_dim % 2 == 0, "Embedding dimensionality must be even."
     half_embed_dim = embed_dim // 2
 
     frequencies = torch.arange(half_embed_dim, dtype=dtype) / half_embed_dim
     frequencies = 1.0 / (10000 ** frequencies)    # [half_embed_dim]
     positions   = positions.reshape(-1).to(dtype) # [num_positions]
 
-    codes = torch.einsum('p,f->pf', positions, frequencies)        # [num_positions, half_embed_dim]
+    codes = torch.einsum("p,f->pf", positions, frequencies)        # [num_positions, half_embed_dim]
     embed = torch.cat([torch.sin(codes), torch.cos(codes)], dim=1) # [num_positions, embed_dim]
     return embed
 
@@ -126,8 +105,8 @@ class PixArtSigma(nn.Module):
     Diffusion model with a Transformer backbone.
     """
 
-    # tablas inicializadas en el metodo '_init_state_dict_table()'
-    # (sirver para convertir 'state_dict' desde y hacia el formato de diffusers)
+    # tablas inicializadas en el metodo `_init_state_dict_table()`
+    # (sirver para convertir `state_dict` desde y hacia el formato de diffusers)
     STATE_DICT_TABLE = None
     DIFFUSERS_KEYS   = None
     PIXART_KEYS      = None
@@ -144,7 +123,7 @@ class PixArtSigma(nn.Module):
             num_heads        ,#=   16,
             depth            ,#=   28,
             mlp_ratio        =  4.0,
-            device: Union[str, torch.device] = 'cpu',
+            device: Union[str, torch.device] = "cpu",
             #---- unsupported -----#
             drop_path : float  = 0,
             pred_sigma: bool   = True,
@@ -153,11 +132,11 @@ class PixArtSigma(nn.Module):
             **kwargs,
     ):
         super().__init__()
-        assert pe_interpolation in [1, 2, 3], 'unicamente soporta 512px, 1024px y 2048px'
-        assert drop_path == 0, 'el argumento drop_path no está soportado'
-        assert pred_sigma == True, 'el argumento pred_sigma no está soportado'
-        assert qk_norm   == False, 'el argument qk_norm no está soportado'
-        assert kv_compress_config == None, 'el argumento kv_compress_config no está soportado'
+        assert pe_interpolation in [1, 2, 3], "unicamente soporta 512px, 1024px y 2048px"
+        assert drop_path == 0, "el argumento drop_path no está soportado"
+        assert pred_sigma == True, "el argumento pred_sigma no está soportado"
+        assert qk_norm   == False, "el argument qk_norm no está soportado"
+        assert kv_compress_config == None, "el argumento kv_compress_config no está soportado"
 
         self.in_channels      = input_dim
         self.output_dim       = input_dim * 2
@@ -217,9 +196,9 @@ class PixArtSigma(nn.Module):
         mask      = [batch_size, cond_length]
         """
         assert not self.training, \
-            'This PixArtSigma class can only be used for inference, no ha sido probrada en training.'
+            "This PixArtSigma class can only be used for inference, no ha sido probrada en training."
         assert context_mask is None or _is_valid_mask(context_mask, context), \
-            'la context_mask suministrada en forward(..) tiene un formato inadecuado'
+            "la context_mask suministrada en forward(..) tiene un formato inadecuado"
 
         dtype         = self.dtype
         batch_size    = x.shape[0]
@@ -235,7 +214,7 @@ class PixArtSigma(nn.Module):
         timesteps = timesteps.to(dtype)
         context   = context.to(dtype)
 
-        # forzar que 'context' tenga 4 dimensiones, con un formato similar a:
+        # forzar que `context` tenga 4 dimensiones, con un formato similar a:
         #   [batch_size, 1, seq_length, embedding_size]
         if len(context.shape) == 3:
             context = context.unsqueeze(1)
@@ -294,11 +273,11 @@ class PixArtSigma(nn.Module):
             return self.pos_embeddings
 
         embedding_dim = self.hidden_dim
-        assert (embedding_dim % 4) == 0, 'Embedding dimensionality must be multiplo de 4.'
+        assert (embedding_dim % 4) == 0, "Embedding dimensionality must be multiplo de 4."
 
         grid_h = torch.arange(height, dtype=torch.float32) / (height / self.base_size) / self.pe_interpolation
         grid_w = torch.arange( width, dtype=torch.float32) / ( width / self.base_size) / self.pe_interpolation
-        grid_w, grid_h = torch.meshgrid(grid_w, grid_h, indexing='xy')  # [height,width], [height,width]
+        grid_w, grid_h = torch.meshgrid(grid_w, grid_h, indexing="xy")  # [height,width], [height,width]
         grid = torch.stack([grid_w, grid_h], dim=0)                     # [2, height, width]
         grid = grid.unsqueeze(1)                                        # [2, 1, height, width]
 
@@ -323,23 +302,23 @@ class PixArtSigma(nn.Module):
                         model      : str, # [alpha, sigma]
                         image_size : int, # [256, 512, 1024, 2048]
                         ):
-        assert model      in ['alpha', 'sigma']
+        assert model      in ["alpha", "sigma"]
         assert image_size in [256, 512, 1024, 2048]
 
-        max_token_length = {'alpha': 120, 'sigma': 300}
+        max_token_length = {"alpha": 120, "sigma": 300}
         pe_interpolation = {256: 0.5, 512: 1, 1024: 2, 2048: 4}
 
         kwargs = {
-            'input_size'       : image_size // 8,
-            'pe_interpolation' : pe_interpolation[image_size],
-            'model_max_length' : max_token_length[model],
-            'depth'            : 28,
-            'hidden_dim'       : 1152,
-            'patch_size'       : 2,
-            'num_heads'        : 16,
+            "input_size"       : image_size // 8,
+            "pe_interpolation" : pe_interpolation[image_size],
+            "model_max_length" : max_token_length[model],
+            "depth"            : 28,
+            "hidden_dim"       : 1152,
+            "patch_size"       : 2,
+            "num_heads"        : 16,
             }
-        if model == 'alpha' and image_size == 1024:
-            kwargs['micro_condition'] = True
+        if model == "alpha" and image_size == 1024:
+            kwargs["micro_condition"] = True
 
         if image_size >= 512:
             model = PixArtSigma( **kwargs )
@@ -359,7 +338,7 @@ class PixArtSigma(nn.Module):
 
         model = cls.from_predefined(model, image_size)
         tensors = {}
-        with safe_open(safetensors_path, framework='pt', device=device) as f:
+        with safe_open(safetensors_path, framework="pt", device=device) as f:
             for key in f.keys():
                 tensors[key] = f.get_tensor(key)
         state_dict, missing_keys = cls.get_pixart_state_dict( tensors )
@@ -386,7 +365,7 @@ class PixArtSigma(nn.Module):
     def get_pixart_state_dict(cls, state_dict: Dict) -> Dict:
 
         cls._init_state_dict_table()
-        is_pixart_state_dict = ('blocks.0.cross_attn.kv_linear.weight' in state_dict)
+        is_pixart_state_dict = ("blocks.0.cross_attn.kv_linear.weight" in state_dict)
 
         # si state_dict tiene keys en formato del codigo de referencia de pixart
         # entonces no convertir y tomar state_dict como viene
@@ -401,21 +380,21 @@ class PixArtSigma(nn.Module):
             pixart_state_dict = {}
             for pixart_key, diffusers_key in cls.STATE_DICT_TABLE:
 
-                if '|' not in diffusers_key:
+                if "|" not in diffusers_key:
                     _tensor = _find_tensor(state_dict, diffusers_key)
                     if _tensor is not None:
                         pixart_state_dict[pixart_key] = _tensor
 
-                elif '|k+v|' in diffusers_key:
-                    _tensor_k = _find_tensor(state_dict, diffusers_key, 'k')
-                    _tensor_v = _find_tensor(state_dict, diffusers_key, 'v')
+                elif "|k+v|" in diffusers_key:
+                    _tensor_k = _find_tensor(state_dict, diffusers_key, "k")
+                    _tensor_v = _find_tensor(state_dict, diffusers_key, "v")
                     if (_tensor_k is not None) and (_tensor_v is not None):
                         pixart_state_dict[pixart_key] = torch.cat((_tensor_k, _tensor_v))
 
-                elif '|q+k+v|' in diffusers_key:
-                    _tensor_q = _find_tensor(state_dict, diffusers_key, 'q')
-                    _tensor_k = _find_tensor(state_dict, diffusers_key, 'k')
-                    _tensor_v = _find_tensor(state_dict, diffusers_key, 'v')
+                elif "|q+k+v|" in diffusers_key:
+                    _tensor_q = _find_tensor(state_dict, diffusers_key, "q")
+                    _tensor_k = _find_tensor(state_dict, diffusers_key, "k")
+                    _tensor_v = _find_tensor(state_dict, diffusers_key, "v")
                     if (_tensor_q is not None ) and (_tensor_k is not None) and (_tensor_v is not None):
                         pixart_state_dict[pixart_key] = torch.cat((_tensor_q, _tensor_k, _tensor_v))
 
@@ -427,8 +406,8 @@ class PixArtSigma(nn.Module):
         if cls.STATE_DICT_TABLE is not None:
             return
 
-        # generar 'STATE_DICT_TABLE' desde la info del template STATE_DICT_TABLE_TEMPLATE
-        cls.STATE_DICT_TABLE = [ (pkey, dkey) for pkey,dkey in STATE_DICT_TABLE_TEMPLATE if not '|depth|' in pkey ]
+        # generar `STATE_DICT_TABLE` desde la info del template STATE_DICT_TABLE_TEMPLATE
+        cls.STATE_DICT_TABLE = [ (pkey, dkey) for pkey,dkey in STATE_DICT_TABLE_TEMPLATE if not "|depth|" in pkey ]
         for depth in range(28):
             for pixart_key, diffusers_key in STATE_DICT_TABLE_TEMPLATE:
                 if DEPTH_TAG in pixart_key:
@@ -440,25 +419,25 @@ class PixArtSigma(nn.Module):
         for pixart_key, diffusers_key in _sdmap_:
             if WB_TAG in pixart_key:
                 cls.STATE_DICT_TABLE += [
-                    ( pixart_key.replace(WB_TAG,'weight'), diffusers_key.replace(WB_TAG,'weight') ),
-                    ( pixart_key.replace(WB_TAG,'bias'  ), diffusers_key.replace(WB_TAG,'bias')   )
+                    ( pixart_key.replace(WB_TAG,"weight"), diffusers_key.replace(WB_TAG,"weight") ),
+                    ( pixart_key.replace(WB_TAG,"bias"  ), diffusers_key.replace(WB_TAG,"bias")   )
                     ]
             else:
                 cls.STATE_DICT_TABLE.append( (pixart_key, diffusers_key) )
 
-        # generar 'DIFFUSERS_KEYS' con el listado de keys necesarias en el formato DIFFUSERS
+        # generar "DIFFUSERS_KEYS" con el listado de keys necesarias en el formato DIFFUSERS
         cls.DIFFUSERS_KEYS = [ ]
         for _, diffusers_key in cls.STATE_DICT_TABLE:
-            if '|' not in diffusers_key:
+            if "|" not in diffusers_key:
                 cls.DIFFUSERS_KEYS.append(diffusers_key)
             elif KV_TAG in diffusers_key:
-                cls.DIFFUSERS_KEYS.append( diffusers_key.replace(KV_TAG, 'k') )
-                cls.DIFFUSERS_KEYS.append( diffusers_key.replace(KV_TAG, 'v') )
+                cls.DIFFUSERS_KEYS.append( diffusers_key.replace(KV_TAG, "k") )
+                cls.DIFFUSERS_KEYS.append( diffusers_key.replace(KV_TAG, "v") )
             elif QKV_TAG in diffusers_key:
-                cls.DIFFUSERS_KEYS.append( diffusers_key.replace(QKV_TAG, 'q') )
-                cls.DIFFUSERS_KEYS.append( diffusers_key.replace(QKV_TAG, 'k') )
-                cls.DIFFUSERS_KEYS.append( diffusers_key.replace(QKV_TAG, 'v') )
+                cls.DIFFUSERS_KEYS.append( diffusers_key.replace(QKV_TAG, "q") )
+                cls.DIFFUSERS_KEYS.append( diffusers_key.replace(QKV_TAG, "k") )
+                cls.DIFFUSERS_KEYS.append( diffusers_key.replace(QKV_TAG, "v") )
 
-        # generar 'PIXART_KEYS' con el listado de keys necesarias en el formato PIXART
+        # generar "PIXART_KEYS" con el listado de keys necesarias en el formato PIXART
         cls.PIXART_KEYS = [pixart_key for pixart_key, _ in cls.STATE_DICT_TABLE]
 

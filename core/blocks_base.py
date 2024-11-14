@@ -8,27 +8,6 @@ License : MIT
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                               ComfyUI-xPixArt
     ComfyUI nodes providing experimental support for PixArt-Sigma model
-
-    Copyright (c) 2024 Martin Rizzo
-
-    Permission is hereby granted, free of charge, to any person obtaining
-    a copy of this software and associated documentation files (the
-    "Software"), to deal in the Software without restriction, including
-    without limitation the rights to use, copy, modify, merge, publish,
-    distribute, sublicense, and/or sell copies of the Software, and to
-    permit persons to whom the Software is furnished to do so, subject to
-    the following conditions:
-
-    The above copyright notice and this permission notice shall be
-    included in all copies or substantial portions of the Software.
-
-    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-    EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-    MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-    IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-    CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-    TORT OR OTHERWISE, ARISING FROM,OUT OF OR IN CONNECTION WITH THE
-    SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import torch
@@ -47,14 +26,14 @@ class MultilayerPerceptron(nn.Module):
         hidden_dim (int): Number of dimensions in the hidden layer.
         output_dim (int): Number of output dimensions.
         gelu_approximation (str, optional): Approximation method for GELU activation.
-            Options are 'tanh' or 'none'. Defaults to 'tanh'.
+            Options are "tanh" or "none". Defaults to "tanh".
     """
 
     def __init__(self,
                  input_dim         : int,
                  hidden_dim        : int,
                  output_dim        : int,
-                 gelu_approximation: str = 'tanh'
+                 gelu_approximation: str = "tanh"
                  ):
         super().__init__()
         self.fc1 = nn.Linear(input_dim, hidden_dim)
@@ -85,7 +64,7 @@ class MultiHeadSelfAttention(nn.Module):
                  use_fp32 : Optional[bool] = False
                  ):
         super().__init__()
-        assert dim % num_heads == 0, 'Self-Attention dim should be divisible by num_heads'
+        assert dim % num_heads == 0, "Self-Attention dim should be divisible by num_heads"
         self.dim       = dim
         self.num_heads = num_heads
         self.head_dim  = dim // num_heads
@@ -95,7 +74,7 @@ class MultiHeadSelfAttention(nn.Module):
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         batch_size, seq_length, dim = x.shape
-        assert dim == self.dim, f'Self-Attention input dimension ({dim}) must match layer dimension ({self.dim})'
+        assert dim == self.dim, f"Self-Attention input dimension ({dim}) must match layer dimension ({self.dim})"
 
         qkv = self.qkv(x)
         qkv = qkv.reshape(batch_size, seq_length, 3, self.num_heads, self.head_dim)
@@ -131,7 +110,7 @@ class MultiHeadCrossAttention(nn.Module):
                  ):
 
         super().__init__()
-        assert dim % num_heads == 0, 'Cross-Attention dim should be divisible by num_heads'
+        assert dim % num_heads == 0, "Cross-Attention dim should be divisible by num_heads"
         self.dim       = dim
         self.num_heads = num_heads
         self.head_dim  = dim // num_heads
@@ -141,7 +120,7 @@ class MultiHeadCrossAttention(nn.Module):
 
     def forward(self, x, cond, cond_attn_mask=None):
         batch_size, seq_length, dim = x.shape
-        assert dim == self.dim, f'Cross-Attention input dimension ({dim}) must match layer dimension ({self.dim})'
+        assert dim == self.dim, f"Cross-Attention input dimension ({dim}) must match layer dimension ({self.dim})"
 
         # linear projections
         q  = self.q_linear(x)      # (batch_size,  seq_length, d_model)

@@ -23,7 +23,8 @@ Xcodeproj/
 #
 __pycache__/
 
-# User-specific files
+# User-specific files and folders
 #
 *~.*
+*~/
 

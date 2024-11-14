@@ -8,27 +8,6 @@ License : MIT
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                               ComfyUI-xPixArt
     ComfyUI nodes providing experimental support for PixArt-Sigma model
-
-    Copyright (c) 2024 Martin Rizzo
-
-    Permission is hereby granted, free of charge, to any person obtaining
-    a copy of this software and associated documentation files (the
-    "Software"), to deal in the Software without restriction, including
-    without limitation the rights to use, copy, modify, merge, publish,
-    distribute, sublicense, and/or sell copies of the Software, and to
-    permit persons to whom the Software is furnished to do so, subject to
-    the following conditions:
-
-    The above copyright notice and this permission notice shall be
-    included in all copies or substantial portions of the Software.
-
-    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-    EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-    MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-    IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-    CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-    TORT OR OTHERWISE, ARISING FROM,OUT OF OR IN CONNECTION WITH THE
-    SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 
 DOCUMENTATION
@@ -72,25 +51,25 @@ from comfy.sd1_clip import                         \
 #     xxl  |  4.7B   |    11B    |   24   |   4096  | 10240 |  64  |  64
 
 T5PredefinedConfigs={
-    'xxl': {
-            'vocab_size': 32128,
-            'd_model': 4096,
-            'd_kv': 64,
-            'd_ff': 10240,
-            'num_layers': 24,
-            'num_decoder_layers': 24,
-            'num_heads': 64,
-            'relative_attention_num_buckets': 32,
-            'relative_attention_max_distance': 128,
-            'dropout_rate': 0.1,
-            'layer_norm_epsilon': 1e-6,
-            'initializer_factor': 1.0,
-            'feed_forward_proj': "gated-gelu",
-            'is_encoder_decoder': True,
-            'use_cache': True,
-            'pad_token_id': 0,
-            'eos_token_id': 1,
-            #'classifier_dropout': 0.0
+    "xxl": {
+            "vocab_size": 32128,
+            "d_model": 4096,
+            "d_kv": 64,
+            "d_ff": 10240,
+            "num_layers": 24,
+            "num_decoder_layers": 24,
+            "num_heads": 64,
+            "relative_attention_num_buckets": 32,
+            "relative_attention_max_distance": 128,
+            "dropout_rate": 0.1,
+            "layer_norm_epsilon": 1e-6,
+            "initializer_factor": 1.0,
+            "feed_forward_proj": "gated-gelu",
+            "is_encoder_decoder": True,
+            "use_cache": True,
+            "pad_token_id": 0,
+            "eos_token_id": 1,
+            #"classifier_dropout": 0.0
         }
     }
 
@@ -111,13 +90,13 @@ class T5Tokenizer:
 
         # embeddings
         self.embedding_dir  = embedding_dir
-        self.embedding_tag  = 'embedding:'
+        self.embedding_tag  = "embedding:"
         self.embedding_key  = embedding_key
         self.embedding_size = embedding_size
 
         # tokens
-        self.pad_token = self.tokenizer('<pad>', add_special_tokens=False)['input_ids'][0]
-        self.end_token = self.tokenizer('</s>' , add_special_tokens=False)['input_ids'][0]
+        self.pad_token = self.tokenizer("<pad>", add_special_tokens=False)["input_ids"][0]
+        self.end_token = self.tokenizer("</s>" , add_special_tokens=False)["input_ids"][0]
         self.inverse_vocab = { v: k for k, v in self.get_vocab().items() }
 
 
@@ -127,13 +106,13 @@ class T5Tokenizer:
         tokenizer_dir : Optional[os.PathLike] = None,
         max_length    : int                   = 120,  # alpha=120 | sigma=300 #
         embedding_dir : Optional[os.PathLike] = None,
-        embedding_key : str                   = 't5',
+        embedding_key : str                   = "t5",
         embedding_size: int                   = 4096,
         legacy        : bool                  = None
     ):
         if tokenizer_dir is None:
             _this_file_dir = os.path.dirname(os.path.realpath(__file__))
-            tokenizer_dir = os.path.join(_this_file_dir, 't5data')
+            tokenizer_dir = os.path.join(_this_file_dir, "t5data")
 
         # TODO: utilizar T5TokenizerFast (?)
         tokenizer = HF_T5Tokenizer.from_pretrained(tokenizer_dir,
@@ -163,17 +142,17 @@ class T5Tokenizer:
                               padding_max_size: int  = 0,
                               include_word_ids: bool = False,
                               ):
-        '''
+        """
         Convert a text/prompt into a list of (token, weight, word_id) elements.
         The input text can be a string or a list of strings (for batch tokenization).
         In the output (token, weight, word_id):
-         - 'token' can be either integer tokens or pre-computed T5 tensors.
-         - 'weight' is the user-assigned weight.
-         - 'word_id' is an integer indicating the word to which the token belongs,
+         - `token` can be either integer tokens or pre-computed T5 tensors.
+         - `weight` is the user-assigned weight.
+         - `word_id` is an integer indicating the word to which the token belongs,
             where word_id=0 is reserved for non-word tokens.
 
         The returned list has dimensions of (batch_size, max_length).
-        '''
+        """
         output_batch = []
         input_batch  = text if isinstance(text,list) else [text]
         end_item     = (self.end_token, 1., 0) if include_word_ids else (self.end_token, 1.)
@@ -189,7 +168,7 @@ class T5Tokenizer:
             # recorrer segment por segmento agregando (token, weight)
             tokens = []
             for segment, weight in parsed_weights:
-                segment = comfy_unescape_important(segment).replace('\n',' ')
+                segment = comfy_unescape_important(segment).replace("\n"," ")
                 words   = [word for word in segment.split() if word]
                 for word_idx, word in enumerate(words):
 
@@ -228,7 +207,7 @@ class T5Tokenizer:
             if  truncate_at > self.max_length:
                 truncate_at = self.max_length
             # truncar todos los tensores del batch
-            # y agregar 'end_item' al final de tokens cuando corresponda
+            # y agregar `end_item` al final de tokens cuando corresponda
             for i, tokens in enumerate(output_batch):
                 tokens     = tokens[:truncate_at]
                 tokens[-1] = end_item if tokens[-1][0] != self.pad_token else pad_item
@@ -288,14 +267,14 @@ class T5EncoderModel:
     @classmethod
     def from_safetensors(self,
                          safetensors_path: Union[os.PathLike, list],
-                         model_class     : str  = 'xxl',
+                         model_class     : str  = "xxl",
                          max_length      : int  = 120,  # alpha=120 / sigma=300 !!!
                          frozen          : bool = True,
-                         device          : str  = 'cpu'
+                         device          : str  = "cpu"
                          ):
         model_class = model_class.lower()
         model       = None
-        assert model_class == 'xxl', 'xxl es el unico model t5 soportado hasta el momento'
+        assert model_class == "xxl", "xxl es el unico model t5 soportado hasta el momento"
 
         if not isinstance(safetensors_path, list) and \
            not isinstance(safetensors_path, tuple):
@@ -303,13 +282,13 @@ class T5EncoderModel:
 
         config = T5PredefinedConfigs[model_class]
         model_config = HF_T5Config(**config)
-        with torch.device('meta'):
+        with torch.device("meta"):
             model = HF_T5EncoderModel(model_config)
 
         for filepath in safetensors_path:
-            print(f'Loading {filepath}')
+            print(f"Loading {filepath}")
             state_dict = {}
-            with safe_open(filepath, framework='pt', device=device) as f:
+            with safe_open(filepath, framework="pt", device=device) as f:
                 for key in f.keys():
                     # print(f"  - loading tensor {key}")
                     state_dict[key] = f.get_tensor(key)
@@ -336,7 +315,7 @@ class T5EncoderModel:
 
         outputs = self.t5encoder(input_ids=input_ids, attention_mask=attention_mask)
 
-        z = outputs['last_hidden_state']
+        z = outputs["last_hidden_state"]
         z.detach().cpu().float()
         return z
 
@@ -430,7 +409,7 @@ class T5EncoderModel:
     # Copy parameters and buffers from state_dict into the t5encoder
     #  - state_dict: a dict containing parameters and persistent buffers.
     #  - strict: whether to strictly enforce that the keys in state_dict match the keys in t5encoder
-    # Returns: NamedTuple with 'missing_keys' and 'unexpected_keys' fields.
+    # Returns: NamedTuple with "missing_keys" and "unexpected_keys" fields.
     def load_state_dict(self, state_dict, strict=False):
         return self.t5encoder.load_state_dict(state_dict, strict=strict)
 

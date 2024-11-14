@@ -32,20 +32,29 @@ License : MIT
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 from .nodes.utils import logger
+PROJECT_ID="//xPixart"
 
 NODE_CLASS_MAPPINGS = {}
 
-from .nodes.nodes_base import NODE_CLASS_MAPPINGS as main_nodes
-NODE_CLASS_MAPPINGS.update(main_nodes)
+from .nodes.checkpoint_loader import CheckpointLoader
+NODE_CLASS_MAPPINGS[f"CheckpointLoader {PROJECT_ID}"] = CheckpointLoader
 
-from .nodes.nodes_extra import NODE_CLASS_MAPPINGS as extra_nodes
-NODE_CLASS_MAPPINGS.update(extra_nodes)
+from .nodes.placeholder_replacer import PlaceholderReplacer
+NODE_CLASS_MAPPINGS[f"PlaceholderReplacer {PROJECT_ID}"] = PlaceholderReplacer
 
-from .nodes.nodes_testing import NODE_CLASS_MAPPINGS as testing_nodes
-NODE_CLASS_MAPPINGS.update(testing_nodes)
+from .nodes.t5_encoder import T5TextEncoder
+NODE_CLASS_MAPPINGS[f"T5TextEncoder {PROJECT_ID}"] = T5TextEncoder
+
+from .nodes.t5_loader import T5Loader
+NODE_CLASS_MAPPINGS[f"T5Loader {PROJECT_ID}"] = T5Loader
+
+from .nodes.test.load_prompt_embedding import LoadPromptEmbedding
+NODE_CLASS_MAPPINGS[f"LoadPromptEmbedding {PROJECT_ID}"] = LoadPromptEmbedding
+
+from .nodes.test.save_prompt_embedding import SavePromptEmbedding
+NODE_CLASS_MAPPINGS[f"SavePromptEmbeddings {PROJECT_ID}"] = SavePromptEmbedding
+
 
 NODE_DISPLAY_NAME_MAPPINGS = {k:v.TITLE for k,v in NODE_CLASS_MAPPINGS.items()}
-__all__ = ['NODE_CLASS_MAPPINGS', 'NODE_DISPLAY_NAME_MAPPINGS']
 
-
-logger.info(f"Added {len(NODE_CLASS_MAPPINGS)} nodes")
+logger.info(f"Imported {len(NODE_CLASS_MAPPINGS)} nodes")
