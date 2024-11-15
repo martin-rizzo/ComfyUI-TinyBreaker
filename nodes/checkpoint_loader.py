@@ -11,7 +11,7 @@ License : MIT
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 from .packs       import Model_pack
-from .directories import PIXART_CHECKPOINTS_DIR
+from ..utils.directories import PIXART_CHECKPOINTS_DIR
 
 
 class CheckpointLoader:

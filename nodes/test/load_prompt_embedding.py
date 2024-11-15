@@ -19,7 +19,7 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 #                      Supported values: "pt", "tf", "flax", "numpy".
 #     device    (str): The device on which you want the tensors (default "cpu")
 from safetensors import safe_open
-from ..directories import PROMPT_EMBEDS_DIR
+from ...utils.directories import PROMPT_EMBEDS_DIR
 
 
 class LoadPromptEmbedding:

@@ -12,7 +12,7 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import torch
 from .packs       import T5_pack
-from .directories import T5_CHECKPOINTS_DIR
+from ..utils.directories import T5_CHECKPOINTS_DIR
 
 class T5Loader:
     TITLE       = "xPixArt | T5 Loader"
