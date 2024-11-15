@@ -1,6 +1,6 @@
 {
-  "last_node_id": 18,
-  "last_link_id": 18,
+  "last_node_id": 20,
+  "last_link_id": 19,
   "nodes": [
     {
       "id": 2,
@@ -200,7 +200,7 @@
         {
           "name": "latent_image",
           "type": "LATENT",
-          "link": 9
+          "link": 19
         },
         {
           "name": "noise_seed",
@@ -239,7 +239,7 @@
       },
       "widgets_values": [
         true,
-        2,
+        1,
         "fixed",
         3.2
       ]
@@ -269,41 +269,6 @@
       "properties": {},
       "widgets_values": [
         "xPixArt/%date:yyyy_MM_dd%/xPixArt"
-      ]
-    },
-    {
-      "id": 11,
-      "type": "EmptyLatentImage",
-      "pos": {
-        "0": 542,
-        "1": 95
-      },
-      "size": {
-        "0": 293.1933898925781,
-        "1": 107.17134857177734
-      },
-      "flags": {},
-      "order": 3,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "LATENT",
-          "type": "LATENT",
-          "links": [
-            9
-          ],
-          "slot_index": 0
-        }
-      ],
-      "title": "Image Size",
-      "properties": {
-        "Node name for S&R": "EmptyLatentImage"
-      },
-      "widgets_values": [
-        1536,
-        1024,
-        1
       ]
     },
     {
@@ -357,7 +322,7 @@
         "1": 82
       },
       "flags": {},
-      "order": 4,
+      "order": 3,
       "mode": 0,
       "inputs": [],
       "outputs": [
@@ -433,7 +398,7 @@
         "1": 60
       },
       "flags": {},
-      "order": 5,
+      "order": 4,
       "mode": 0,
       "inputs": [],
       "outputs": [
@@ -451,43 +416,6 @@
       },
       "widgets_values": [
         "uni_pc"
-      ]
-    },
-    {
-      "id": 16,
-      "type": "PrimitiveNode",
-      "pos": {
-        "0": 546,
-        "1": 245
-      },
-      "size": {
-        "0": 277,
-        "1": 82
-      },
-      "flags": {},
-      "order": 6,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "INT",
-          "type": "INT",
-          "links": [
-            15
-          ],
-          "slot_index": 0,
-          "widget": {
-            "name": "noise_seed"
-          }
-        }
-      ],
-      "title": "Seed",
-      "properties": {
-        "Run widget replace on values": false
-      },
-      "widgets_values": [
-        2,
-        "fixed"
       ]
     },
     {
@@ -529,6 +457,77 @@
         "simple",
         11,
         0.88
+      ]
+    },
+    {
+      "id": 16,
+      "type": "PrimitiveNode",
+      "pos": {
+        "0": 546,
+        "1": 245
+      },
+      "size": {
+        "0": 277,
+        "1": 82
+      },
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "INT",
+          "type": "INT",
+          "links": [
+            15
+          ],
+          "slot_index": 0,
+          "widget": {
+            "name": "noise_seed"
+          }
+        }
+      ],
+      "title": "Seed",
+      "properties": {
+        "Run widget replace on values": false
+      },
+      "widgets_values": [
+        1,
+        "fixed"
+      ]
+    },
+    {
+      "id": 20,
+      "type": "EmptyLatentImage //xPixart",
+      "pos": {
+        "0": 518,
+        "1": 78
+      },
+      "size": {
+        "0": 311,
+        "1": 130
+      },
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            19
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "EmptyLatentImage //xPixart"
+      },
+      "widgets_values": [
+        false,
+        "3:2 photo",
+        1.22,
+        1
       ]
     }
   ],
@@ -580,14 +579,6 @@
       5,
       3,
       "SAMPLER"
-    ],
-    [
-      9,
-      11,
-      0,
-      5,
-      5,
-      "LATENT"
     ],
     [
       10,
@@ -644,6 +635,14 @@
       18,
       0,
       "IMAGE"
+    ],
+    [
+      19,
+      20,
+      0,
+      5,
+      5,
+      "LATENT"
     ]
   ],
   "groups": [
@@ -701,8 +700,8 @@
     "ds": {
       "scale": 1,
       "offset": [
-        0,
-        0
+        40,
+        24
       ]
     }
   },

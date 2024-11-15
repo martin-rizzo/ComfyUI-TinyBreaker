@@ -31,13 +31,16 @@ License : MIT
     SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
-from .nodes.utils import logger
+from .utils.system import logger
 PROJECT_ID="//xPixart"
 
 NODE_CLASS_MAPPINGS = {}
 
 from .nodes.checkpoint_loader import CheckpointLoader
 NODE_CLASS_MAPPINGS[f"CheckpointLoader {PROJECT_ID}"] = CheckpointLoader
+
+from .nodes.empty_latent_image import EmptyLatentImage
+NODE_CLASS_MAPPINGS[f"EmptyLatentImage {PROJECT_ID}"] = EmptyLatentImage
 
 from .nodes.placeholder_replacer import PlaceholderReplacer
 NODE_CLASS_MAPPINGS[f"PlaceholderReplacer {PROJECT_ID}"] = PlaceholderReplacer
