@@ -12,6 +12,7 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import torch
 import comfy
+from   ..utils.system import logger
 MAX_RESOLUTION=16384
 LATENT_SCALE_FACTOR=8
 
@@ -78,8 +79,8 @@ class EmptyLatentImage:
         if latent_height % 2 != 0:
             latent_height += 1
 
-        print("## width :", latent_width  * LATENT_SCALE_FACTOR)
-        print("## height:", latent_height * LATENT_SCALE_FACTOR)
+        image_width, image_height = latent_width * LATENT_SCALE_FACTOR, latent_height * LATENT_SCALE_FACTOR
+        logger.debug(f"Empty latent dimensions: {latent_width}x{latent_height} ({image_width}x{image_height})")
 
         # create a batch of empty latent images
         latents = torch.zeros([batch_size, 4, latent_height, latent_width],

@@ -1,6 +1,6 @@
 """
-File     : packs.py
-Purpose  : Implements the objects transmitted through threads across connected nodes.
+File     : comfy_objs.py
+Purpose  : The objects transmitted across connected nodes in ComfyUI.
 Author   : Martin Rizzo | <martinrizzo@gmail.com>
 Date     : May 10, 2024
 Repo     : https://github.com/martin-rizzo/ComfyUI-xPixArt
@@ -21,12 +21,10 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 import os
 import comfy.utils
 import comfy.model_patcher
-from typing                 import Union
-from safetensors            import safe_open
-from comfy                  import model_management
-from ..utils.safetensors    import load_safetensors_header, estimate_model_params
-from .hacks.model_detection import model_config_from_dit
-from ..core.t5              import T5Tokenizer, T5EncoderModel
+from   typing          import Union
+from   comfy           import model_management
+from   .comfy_bridge   import create_model_from_safetensors
+from   .core.t5        import T5Tokenizer, T5EncoderModel
 
 
 #===========================================================================#
@@ -63,43 +61,13 @@ class Model_pack(comfy.model_patcher.ModelPatcher):
                          dtype=None
                          ):
 
-        header       = load_safetensors_header(safetensors_path)
-        model_config = model_config_from_dit(header, prefix)
 
-        # obtener informacion relacionada al modelo a cargar
-        parameters          = estimate_model_params(safetensors_path, prefix)
-        dit_dtype           = model_management.unet_dtype(model_params=parameters, supported_dtypes=model_config.supported_inference_dtypes)
-        initial_load_device = model_management.unet_inital_load_device(parameters, dit_dtype)
-        load_device         = model_management.get_torch_device()
-        offload_device      = model_management.unet_offload_device()
-        manual_cast_dtype   = model_management.unet_manual_cast(dit_dtype, load_device, model_config.supported_inference_dtypes)
-
-        # preconfigurar los dtype del modelo
-        model_config.set_inference_dtype(dit_dtype, manual_cast_dtype)
-
-        ## DEBUG
-        print()
-        print("##", os.path.basename(safetensors_path).split(".")[0])
-        print("##    - parameters          :", parameters         )
-        print("##    - dit_dtype           :", dit_dtype          )
-        print("##    - initial_load_device :", initial_load_device)
-        print("##    - load_device         :", load_device        )
-        print("##    - offload_device      :", offload_device     )
-        print()
-
-        # obtener los parametros desde el archivo safetensors
-        state_dict = {}
-        safe_device = initial_load_device if isinstance(initial_load_device,str) else initial_load_device.type
-        with safe_open(safetensors_path, framework="pt", device=safe_device) as f:
-            for key in f.keys():
-                state_dict[key] = f.get_tensor(key)
-
-        # crear el model
-        model = model_config.get_model(state_dict, prefix="", device=initial_load_device)
-
-        # cargar los parametros dentro del model
-        model.load_model_weights(state_dict, prefix)
-        model.diffusion_model.to(dit_dtype)
+        load_device    = model_management.get_torch_device()
+        offload_device = model_management.unet_offload_device()
+        model = create_model_from_safetensors(safetensors_path,
+                                              prefix         = prefix,
+                                              load_device    = load_device,
+                                              offload_device = offload_device)
         model.diffusion_model.freeze()
 
         # envolver al modelo en el nuevo objeto (derivado de ModelPatcher)

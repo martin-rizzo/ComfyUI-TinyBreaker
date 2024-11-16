@@ -1,6 +1,6 @@
 """
 File    : checkpoint_loader.py
-Purpose : Load PixArt checkpoints for use in ComfyUI.
+Purpose : Node to load PixArt checkpoints to use in ComfyUI.
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
 Date    : May 14, 2024
 Repo    : https://github.com/martin-rizzo/ComfyUI-xPixArt
@@ -10,7 +10,7 @@ License : MIT
     ComfyUI nodes providing experimental support for PixArt-Sigma model
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
-from .packs       import Model_pack
+from ..comfy_objs        import Model_pack
 from ..utils.directories import PIXART_CHECKPOINTS_DIR
 
 

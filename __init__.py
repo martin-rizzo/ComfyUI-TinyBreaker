@@ -69,5 +69,4 @@ comfy_import_node(LoadPromptEmbedding)
 from .nodes.test.save_prompt_embedding import SavePromptEmbedding
 comfy_import_node(SavePromptEmbedding)
 
-
 logger.info(f"Imported {len(NODE_CLASS_MAPPINGS)} nodes")
