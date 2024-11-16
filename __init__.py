@@ -32,32 +32,42 @@ License : MIT
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 from .utils.system import logger
-PROJECT_ID="//xPixart"
 
-NODE_CLASS_MAPPINGS = {}
+PROJECT_ID                 ="//xPixart"
+NODE_CLASS_MAPPINGS        = {}
+NODE_DISPLAY_NAME_MAPPINGS = {}
+
+def comfy_import_node(cls):
+    global NODE_CLASS_MAPPINGS
+    global NODE_DISPLAY_NAME_MAPPINGS
+    if cls.__name__ in NODE_CLASS_MAPPINGS:
+        logger.warning(f"Node class {cls.__name__} already exists, skipping import.")
+        return
+    comfy_class_name = f"{cls.__name__} {PROJECT_ID}"
+    NODE_CLASS_MAPPINGS[comfy_class_name]        = cls
+    NODE_DISPLAY_NAME_MAPPINGS[comfy_class_name] = cls.TITLE
+
 
 from .nodes.checkpoint_loader import CheckpointLoader
-NODE_CLASS_MAPPINGS[f"CheckpointLoader {PROJECT_ID}"] = CheckpointLoader
+comfy_import_node(CheckpointLoader)
 
 from .nodes.empty_latent_image import EmptyLatentImage
-NODE_CLASS_MAPPINGS[f"EmptyLatentImage {PROJECT_ID}"] = EmptyLatentImage
+comfy_import_node(EmptyLatentImage)
 
 from .nodes.placeholder_replacer import PlaceholderReplacer
-NODE_CLASS_MAPPINGS[f"PlaceholderReplacer {PROJECT_ID}"] = PlaceholderReplacer
+comfy_import_node(PlaceholderReplacer)
 
 from .nodes.t5_encoder import T5TextEncoder
-NODE_CLASS_MAPPINGS[f"T5TextEncoder {PROJECT_ID}"] = T5TextEncoder
+comfy_import_node(T5TextEncoder)
 
 from .nodes.t5_loader import T5Loader
-NODE_CLASS_MAPPINGS[f"T5Loader {PROJECT_ID}"] = T5Loader
+comfy_import_node(T5Loader)
 
 from .nodes.test.load_prompt_embedding import LoadPromptEmbedding
-NODE_CLASS_MAPPINGS[f"LoadPromptEmbedding {PROJECT_ID}"] = LoadPromptEmbedding
+comfy_import_node(LoadPromptEmbedding)
 
 from .nodes.test.save_prompt_embedding import SavePromptEmbedding
-NODE_CLASS_MAPPINGS[f"SavePromptEmbeddings {PROJECT_ID}"] = SavePromptEmbedding
+comfy_import_node(SavePromptEmbedding)
 
-
-NODE_DISPLAY_NAME_MAPPINGS = {k:v.TITLE for k,v in NODE_CLASS_MAPPINGS.items()}
 
 logger.info(f"Imported {len(NODE_CLASS_MAPPINGS)} nodes")
