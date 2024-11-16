@@ -24,7 +24,7 @@ import comfy.model_patcher
 from typing                 import Union
 from safetensors            import safe_open
 from comfy                  import model_management
-from .utils                 import load_safetensors_header, estimate_model_params
+from ..utils.safetensors    import load_safetensors_header, estimate_model_params
 from .hacks.model_detection import model_config_from_dit
 from ..core.t5              import T5Tokenizer, T5EncoderModel
 
