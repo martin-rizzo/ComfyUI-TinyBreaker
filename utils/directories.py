@@ -29,73 +29,78 @@ import os
 import folder_paths
 
 #---------------------------- CUSTOM DIRECTORY -----------------------------#
-class CustomDirectory:
+class Directory:
     """
     A base class to manage directories for storing and accessing files and models.
     This class will be subclassed to create specific directories for different types of models.
     """
 
     def __init__(self,
-                 folder_name         : str,
-                 parent_dir          : str,
-                 supported_extensions: list,
+                 folder_name : str,
+                 custom      : bool = True,
+                 read_only   : bool = False,
+                 parent_dir  : str  = None,
+                 supported_extensions: list = None,
                  ):
         """Initializes a custom directory for reading model files.
         Args:
-            folder_name (str): The name of the directory.
-            parent_dir  (str): The parent directory where the custom directory will be located. 
+            folder_name    (str): The name of the directory.
+            custom        (bool): If True, the directory is a custom directory of this project.            
+            read_only     (bool): If True, the directory is read-only and no files can be written to it.
+            parent_dir     (str): The parent directory where the directory will be located if `create_folder` is True. 
             supported_extensions (list): A list of file extensions that are considered valid.
         """
-        self._initialized          = False
-        self._folder_name          = folder_name
+        self._initialized = False
+        self._folder_name = folder_name
+        self._custom      = custom
+        self._read_only   = read_only
+        self._parent_dir  = parent_dir
         self._supported_extensions = supported_extensions
-        self._parent_dir           = parent_dir
 
 
     @property
     def folder_name(self):
         """Returns the name of the directory."""
-        if self._initialized:
-            return self._folder_name
-        
-        parent_dir = self._parent_dir or folder_paths.models_dir
-        full_path  = os.path.join(parent_dir, self._folder_name)
-        folder_paths.folder_names_and_paths[self._folder_name] = (
-            [full_path],
-            set(self._supported_extensions)
-            )
-        os.makedirs(full_path, exist_ok=True)
+        if self._custom and not self._initialized:
+            # create and initialize the custom directory
+            parent_dir           = self._parent_dir or folder_paths.models_dir
+            supported_extensions = self._supported_extensions or [".safetensors"]
+            full_path  = os.path.join(parent_dir, self._folder_name)
+            folder_paths.folder_names_and_paths[self._folder_name] = (
+                [full_path],
+                set(supported_extensions)
+                )
+            os.makedirs(full_path, exist_ok=True)
+
         self._initialized = True
         return self._folder_name
-
+        
 
     def get_filename_list(self):
         """Returns a list of filenames in the directory."""
         return folder_paths.get_filename_list(self.folder_name)
 
 
-    def get_full_path(self,
-                      filename : str,
-                      for_save : bool = False,
-                      overwrite: bool = False
-                      ) -> str:
-        """Returns the full path to the specified file name.
-        
-        If `for_save` is True and the file already exists,
-        a new unique name will be generated unless `overwrite` is True.
-        
+    def get_full_path(self, filename: str) -> str:
+        """Returns the full path to a file in the directory, returning None if the file is not found."""
+        return folder_paths.get_full_path(self.folder_name, filename)
+
+
+    def get_full_path_or_raise(self, filename: str) -> str:
+        """Returns the full path to a file in the directory, raising an error if the file does not exist."""
+        return folder_paths.get_full_path_or_raise(self.folder_name, filename)
+
+
+    def get_full_path_for_save(self, filename: str, overwrite: bool = False) -> str:
+        """Returns the full path to save a file, ensuring it is unique if necessary.
         Args:
             filename (str): The name of the file.
-            for_save  (bool, optional): Whether this is being used for saving a new file. Defaults to False.
-            overwrite (bool, optional): Whether to overwrite an existing file if it exists. Defaults to False.
+            overwrite (bool, optional): If True, no unique name will be generated if the file already exists. Defaults to False.
         """
-        # if it"s a read file for loading (e.g., .safetensors)
-        # then use the normal ComfyUI method
-        if not for_save:
-            return folder_paths.get_full_path(self.folder_name, filename)
+        assert not self._read_only, "Internal error: The directory was configured as read-only but a write operation was attempted."
 
-        # on the other hand, if the file is for saving
-        # then be careful not to overwrite any pre-existing file
+        # be careful not to overwrite any pre-existing file
+        # by appending a number to the filename if necessary
         counter = 1
         folder_path = folder_paths.get_folder_paths(self.folder_name)[0]
         name, ext   = os.path.splitext(filename)
@@ -106,32 +111,52 @@ class CustomDirectory:
         return file_path
 
 
-#----------------------------- MODEL DIRECTORY -----------------------------#
-class ModelDirectory(CustomDirectory):
+#----------------------- STANDARD COMFYUI DIRECTORY ------------------------#
+
+class PredefinedDirectory(Directory):
+
+    def __init__(self,
+                 folder_name: str
+                 ):
+        super().__init__(folder_name,
+                         custom     = False,
+                         read_only  = True,
+                         )
+
+
+#-------------------------- CUSTOM MODEL DIRECTORY --------------------------#
+class CustomModelDirectory(Directory):
 
     def __init__(self,
                 folder_name         : str,
-                supported_extensions: list = [".safetensors"]):
-        super().__init__(folder_name, 
+                supported_extensions: list = [".safetensors"]
+                ):
+        super().__init__(folder_name,
+                         custom     = True,
+                         read_only  = True,
                          parent_dir = folder_paths.models_dir,
                          supported_extensions = supported_extensions
                          )
 
 
-#---------------------------- OUTPUT DIRECTORY -----------------------------#
-class OutputDirectory(CustomDirectory):
+#------------------------- CUSTOM OUTPUT DIRECTORY -------------------------#
+class CustomOutputDirectory(Directory):
 
     def __init__(self,
                 folder_name         : str,
-                supported_extensions: list = [".safetensors"]):
+                supported_extensions: list = [".safetensors"]
+                ):
         super().__init__(folder_name,
-                         parent_dir=folder_paths.get_output_directory(),
-                         supported_extensions=supported_extensions
+                         custom     = True,
+                         read_only  = False,
+                         parent_dir = folder_paths.get_output_directory(),
+                         supported_extensions = supported_extensions
                          )
 
 
-PIXART_CHECKPOINTS_DIR = ModelDirectory("pixart")
-PIXART_LORAS_DIR       = ModelDirectory("pixart_loras")
-T5_CHECKPOINTS_DIR     = ModelDirectory("t5")
-PROMPT_EMBEDS_DIR      = OutputDirectory("prompt_embeds")
+VAE_DIR                = PredefinedDirectory("vae")
+PIXART_CHECKPOINTS_DIR = CustomModelDirectory("pixart")
+PIXART_LORAS_DIR       = CustomModelDirectory("pixart_loras")
+T5_CHECKPOINTS_DIR     = CustomModelDirectory("t5")
+PROMPT_EMBEDS_DIR      = CustomOutputDirectory("prompt_embeds")
 
