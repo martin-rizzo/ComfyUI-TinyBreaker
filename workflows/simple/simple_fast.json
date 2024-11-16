@@ -1,6 +1,6 @@
 {
-  "last_node_id": 20,
-  "last_link_id": 19,
+  "last_node_id": 21,
+  "last_link_id": 21,
   "nodes": [
     {
       "id": 2,
@@ -130,8 +130,8 @@
           "name": "MODEL",
           "type": "MODEL",
           "links": [
-            13,
-            14
+            14,
+            21
           ]
         },
         {
@@ -155,93 +155,6 @@
       },
       "widgets_values": [
         "PixArt-Sigma-1024.safetensors"
-      ]
-    },
-    {
-      "id": 5,
-      "type": "SamplerCustom",
-      "pos": {
-        "0": 538,
-        "1": 587
-      },
-      "size": {
-        "0": 283,
-        "1": 230
-      },
-      "flags": {},
-      "order": 10,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "model",
-          "type": "MODEL",
-          "link": 14
-        },
-        {
-          "name": "positive",
-          "type": "CONDITIONING",
-          "link": 1
-        },
-        {
-          "name": "negative",
-          "type": "CONDITIONING",
-          "link": 2
-        },
-        {
-          "name": "sampler",
-          "type": "SAMPLER",
-          "link": 8
-        },
-        {
-          "name": "sigmas",
-          "type": "SIGMAS",
-          "link": 5
-        },
-        {
-          "name": "latent_image",
-          "type": "LATENT",
-          "link": 19
-        },
-        {
-          "name": "noise_seed",
-          "type": "INT",
-          "link": 15,
-          "widget": {
-            "name": "noise_seed"
-          }
-        },
-        {
-          "name": "cfg",
-          "type": "FLOAT",
-          "link": 16,
-          "widget": {
-            "name": "cfg"
-          }
-        }
-      ],
-      "outputs": [
-        {
-          "name": "output",
-          "type": "LATENT",
-          "links": [
-            10
-          ],
-          "slot_index": 0
-        },
-        {
-          "name": "denoised_output",
-          "type": "LATENT",
-          "links": null
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "SamplerCustom"
-      },
-      "widgets_values": [
-        true,
-        1,
-        "fixed",
-        3.2
       ]
     },
     {
@@ -387,79 +300,6 @@
       ]
     },
     {
-      "id": 10,
-      "type": "KSamplerSelect",
-      "pos": {
-        "0": 190,
-        "1": 620
-      },
-      "size": {
-        "0": 320,
-        "1": 60
-      },
-      "flags": {},
-      "order": 4,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "SAMPLER",
-          "type": "SAMPLER",
-          "links": [
-            8
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "KSamplerSelect"
-      },
-      "widgets_values": [
-        "uni_pc"
-      ]
-    },
-    {
-      "id": 8,
-      "type": "BasicScheduler",
-      "pos": {
-        "0": 200,
-        "1": 730
-      },
-      "size": {
-        "0": 320,
-        "1": 110
-      },
-      "flags": {},
-      "order": 9,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "model",
-          "type": "MODEL",
-          "link": 13
-        }
-      ],
-      "outputs": [
-        {
-          "name": "SIGMAS",
-          "type": "SIGMAS",
-          "links": [
-            5
-          ],
-          "slot_index": 0
-        }
-      ],
-      "title": "PixArt Scheduler",
-      "properties": {
-        "Node name for S&R": "BasicScheduler"
-      },
-      "widgets_values": [
-        "simple",
-        11,
-        0.88
-      ]
-    },
-    {
       "id": 16,
       "type": "PrimitiveNode",
       "pos": {
@@ -471,7 +311,7 @@
         "1": 82
       },
       "flags": {},
-      "order": 5,
+      "order": 4,
       "mode": 0,
       "inputs": [],
       "outputs": [
@@ -508,7 +348,7 @@
         "1": 130
       },
       "flags": {},
-      "order": 6,
+      "order": 5,
       "mode": 0,
       "inputs": [],
       "outputs": [
@@ -528,6 +368,164 @@
         "3:2 photo",
         1.22,
         1
+      ]
+    },
+    {
+      "id": 21,
+      "type": "BasicScheduler",
+      "pos": {
+        "0": 189,
+        "1": 728
+      },
+      "size": {
+        "0": 315,
+        "1": 106
+      },
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 21
+        }
+      ],
+      "outputs": [
+        {
+          "name": "SIGMAS",
+          "type": "SIGMAS",
+          "links": [
+            20
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "BasicScheduler"
+      },
+      "widgets_values": [
+        "simple",
+        11,
+        0.88
+      ]
+    },
+    {
+      "id": 10,
+      "type": "KSamplerSelect",
+      "pos": {
+        "0": 190,
+        "1": 620
+      },
+      "size": {
+        "0": 320,
+        "1": 60
+      },
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "SAMPLER",
+          "type": "SAMPLER",
+          "links": [
+            8
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "KSamplerSelect"
+      },
+      "widgets_values": [
+        "uni_pc"
+      ]
+    },
+    {
+      "id": 5,
+      "type": "SamplerCustom",
+      "pos": {
+        "0": 535,
+        "1": 612
+      },
+      "size": {
+        "0": 283,
+        "1": 230
+      },
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 14
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 1
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 2
+        },
+        {
+          "name": "sampler",
+          "type": "SAMPLER",
+          "link": 8
+        },
+        {
+          "name": "sigmas",
+          "type": "SIGMAS",
+          "link": 20
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 19
+        },
+        {
+          "name": "noise_seed",
+          "type": "INT",
+          "link": 15,
+          "widget": {
+            "name": "noise_seed"
+          }
+        },
+        {
+          "name": "cfg",
+          "type": "FLOAT",
+          "link": 16,
+          "widget": {
+            "name": "cfg"
+          }
+        }
+      ],
+      "outputs": [
+        {
+          "name": "output",
+          "type": "LATENT",
+          "links": [
+            10
+          ],
+          "slot_index": 0
+        },
+        {
+          "name": "denoised_output",
+          "type": "LATENT",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "SamplerCustom"
+      },
+      "widgets_values": [
+        true,
+        1,
+        "fixed",
+        3.2
       ]
     }
   ],
@@ -565,14 +563,6 @@
       "CLIP"
     ],
     [
-      5,
-      8,
-      0,
-      5,
-      4,
-      "SIGMAS"
-    ],
-    [
       8,
       10,
       0,
@@ -595,14 +585,6 @@
       12,
       1,
       "VAE"
-    ],
-    [
-      13,
-      14,
-      0,
-      8,
-      0,
-      "MODEL"
     ],
     [
       14,
@@ -643,6 +625,22 @@
       5,
       5,
       "LATENT"
+    ],
+    [
+      20,
+      21,
+      0,
+      5,
+      4,
+      "SIGMAS"
+    ],
+    [
+      21,
+      14,
+      0,
+      21,
+      0,
+      "MODEL"
     ]
   ],
   "groups": [
@@ -683,7 +681,7 @@
       "flags": {}
     },
     {
-      "title": "simple fast sampler",
+      "title": "simple fast configuration",
       "bounding": [
         151,
         535,
@@ -700,8 +698,8 @@
     "ds": {
       "scale": 1,
       "offset": [
-        40,
-        24
+        0,
+        0
       ]
     }
   },
