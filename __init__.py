@@ -51,6 +51,9 @@ def comfy_import_node(cls):
 from .nodes.checkpoint_loader import CheckpointLoader
 comfy_import_node(CheckpointLoader)
 
+from .nodes.vae_loader import VAELoader
+comfy_import_node(VAELoader)
+
 from .nodes.empty_latent_image import EmptyLatentImage
 comfy_import_node(EmptyLatentImage)
 
