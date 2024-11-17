@@ -10,10 +10,12 @@ License : MIT
     ComfyUI nodes providing experimental support for PixArt-Sigma model
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
+import os
 import torch
 from ..utils.directories import VAE_DIR
 from comfy.utils import load_torch_file
 from comfy.sd    import VAE
+
 
 class VAELoader:
     TITLE       = "xPixArt | VAE Loader"
@@ -34,13 +36,14 @@ class VAELoader:
     RETURN_TYPES = ("VAE",)
 
     def load_vae(self, vae_name):
-        #TODO: scale factor?
 
-        vae_path = VAE_DIR.get_full_path_or_raise(vae_name)
-
+        # load VAE model state dictionary from file
+        vae_path   = VAE_DIR.get_full_path_or_raise(vae_name)
         state_dict = load_torch_file(vae_path)
+
+        # fix `Tiny AutoEncoder` state dictionary if necessary
         if self.is_taesd(state_dict):
-            state_dict = self.fix_taesd_state_dict(state_dict)
+            state_dict = self.fix_taesd_state_dict(state_dict, filename=os.path.basename(vae_path))
 
         vae = VAE(sd=state_dict)
         return (vae,)
@@ -80,7 +83,7 @@ class VAELoader:
 
 
     @staticmethod
-    def fix_taesd_state_dict(tae_tensors: dict) -> dict:
+    def fix_taesd_state_dict(tae_tensors: dict, filename: str) -> dict:
         """
         Adjust the state dictionary to match the expected format for a Tiny AutoEncoder (TAESD) model.
         """
@@ -128,9 +131,21 @@ class VAELoader:
             # assign the tensor to its new name
             state_dict[f"{prefix}{layer_number}{key}"] = tensor
 
+        # add vae_scale and vae_shift if they are missing
+        if "vae_scale" not in state_dict and "vae_shift" not in state_dict:
+            lower_case_filename = filename.lower()
+            if "sdxl" in lower_case_filename:
+                state_dict["vae_scale"] = torch.tensor(0.13025)
+                state_dict["vae_shift"] = torch.tensor(0.0)
+            elif "sd3" in lower_case_filename:
+                state_dict["vae_scale"] = torch.tensor(1.5305)
+                state_dict["vae_shift"] = torch.tensor(0.0609)
+            elif "f1" in lower_case_filename or "flux" in lower_case_filename:
+                state_dict["vae_scale"] = torch.tensor(0.3611)
+                state_dict["vae_shift"] = torch.tensor(0.1159)
+            else:
+                state_dict["vae_scale"] = torch.tensor(0.18215)
+                state_dict["vae_shift"] = torch.tensor(0.0)
 
-        # sdxl tae scale/shift
-        state_dict["vae_scale"] = torch.tensor(0.13025)
-        state_dict["vae_shift"] = torch.tensor(0.0)
         return state_dict
 
