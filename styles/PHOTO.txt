@@ -1,0 +1,7 @@
+# File: PHOTO.txt
+# Realistic images with photographic details.
+PROMPT  : "An iPhone photo{. prompt}"
+NEGATIVE: "macrophoto, bokeh, out of focus"
+REFINER : ""
+# refiner deis steps 6-11
+

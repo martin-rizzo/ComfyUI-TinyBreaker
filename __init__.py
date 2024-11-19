@@ -47,12 +47,21 @@ def comfy_import_node(cls):
     NODE_CLASS_MAPPINGS[comfy_class_name]        = cls
     NODE_DISPLAY_NAME_MAPPINGS[comfy_class_name] = cls.TITLE
 
+# Loader Nodes
 
 from .nodes.checkpoint_loader import CheckpointLoader
 comfy_import_node(CheckpointLoader)
 
 from .nodes.vae_loader import VAELoader
 comfy_import_node(VAELoader)
+
+from .nodes.t5_loader import T5Loader
+comfy_import_node(T5Loader)
+
+# Operator Nodes
+
+from .nodes.text_and_style_encoder import TextAndStyleEncoder
+comfy_import_node(TextAndStyleEncoder)
 
 from .nodes.empty_latent_image import EmptyLatentImage
 comfy_import_node(EmptyLatentImage)
@@ -63,13 +72,13 @@ comfy_import_node(PlaceholderReplacer)
 from .nodes.t5_encoder import T5TextEncoder
 comfy_import_node(T5TextEncoder)
 
-from .nodes.t5_loader import T5Loader
-comfy_import_node(T5Loader)
+# Development Nodes
 
 from .nodes.test.load_prompt_embedding import LoadPromptEmbedding
 comfy_import_node(LoadPromptEmbedding)
 
 from .nodes.test.save_prompt_embedding import SavePromptEmbedding
 comfy_import_node(SavePromptEmbedding)
+
 
 logger.info(f"Imported {len(NODE_CLASS_MAPPINGS)} nodes")

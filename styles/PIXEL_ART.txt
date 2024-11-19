@@ -1,0 +1,7 @@
+# File: PIXEL_ART.txt
+# Pixel art style with retro aesthetics and vibrant, blocky details.
+PROMPT  : "A pixel-art image{. prompt}. low-res, blocky, pixel art style, 8-bit graphics"
+NEGATIVE: "blurry, noisy, highly detailed, ultra textured, photo, realistic, macrophoto{, prompt}"
+REFINER : "pixel-art, low-res, blocky{, prompt}"
+# refiner deis steps 6-8
+
