@@ -28,11 +28,24 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 import os
 import folder_paths
 
-#---------------------------- CUSTOM DIRECTORY -----------------------------#
-class Directory:
+
+#---------------------------- PROJECT DIRECTORY ----------------------------#
+class ProjectDirectory:
+
+    def __init__(self,
+                 folder_name : str
+                 ):
+        this_file_dir = os.path.dirname(__file__)
+        project_dir   = os.path.dirname(this_file_dir)
+        self.folder_name = folder_name
+        self.paths       = (os.path.join(project_dir, folder_name), )
+
+
+#----------------------------- COMFY DIRECTORY -----------------------------#
+class ComfyDirectory:
     """
-    A base class to manage directories for storing and accessing files and models.
-    This class will be subclassed to create specific directories for different types of models.
+    A base class to manage ComfyUI directories for storing and accessing files and models.
+    This class will be subclassed to create specific directories for different purposes.
     """
 
     def __init__(self,
@@ -42,11 +55,12 @@ class Directory:
                  parent_dir  : str  = None,
                  supported_extensions: list = None,
                  ):
-        """Initializes a custom directory for reading model files.
+        """Initializes a comfy directory.
         Args:
             folder_name    (str): The name of the directory.
-            custom        (bool): If True, the directory is a custom directory of this project.            
-            read_only     (bool): If True, the directory is read-only and no files can be written to it.
+            custom        (bool): If True, the directory is a custom directory created for this project.
+                                  If False, the directory is a standard directory provided by ComfyUI. 
+            read_only     (bool): If True, the directory would be considered read-only.
             parent_dir     (str): The parent directory where the directory will be located if `create_folder` is True. 
             supported_extensions (list): A list of file extensions that are considered valid.
         """
@@ -74,7 +88,13 @@ class Directory:
 
         self._initialized = True
         return self._folder_name
-        
+
+
+    @property
+    def paths(self):
+        """Returns the list of paths associated with this directory."""
+        return folder_paths.get_folder_paths(self.folder_name)
+    
 
     def get_filename_list(self):
         """Returns a list of filenames in the directory."""
@@ -111,52 +131,48 @@ class Directory:
         return file_path
 
 
-#----------------------- STANDARD COMFYUI DIRECTORY ------------------------#
-
-class PredefinedDirectory(Directory):
-
-    def __init__(self,
-                 folder_name: str
-                 ):
-        super().__init__(folder_name,
-                         custom     = False,
-                         read_only  = True,
-                         )
-
-
-#-------------------------- CUSTOM MODEL DIRECTORY --------------------------#
-class CustomModelDirectory(Directory):
+#-------------------------- COMFY MODEL DIRECTORY --------------------------#
+class ComfyModelDirectory(ComfyDirectory):
 
     def __init__(self,
-                folder_name         : str,
+                folder_name : str,
+                custom      : bool = False,
                 supported_extensions: list = [".safetensors"]
                 ):
         super().__init__(folder_name,
-                         custom     = True,
+                         custom     = custom,
                          read_only  = True,
                          parent_dir = folder_paths.models_dir,
                          supported_extensions = supported_extensions
                          )
 
 
-#------------------------- CUSTOM OUTPUT DIRECTORY -------------------------#
-class CustomOutputDirectory(Directory):
+#------------------------- COMFY OUTPUT DIRECTORY --------------------------#
+class ComfyOutputDirectory(ComfyDirectory):
 
     def __init__(self,
-                folder_name         : str,
+                folder_name : str,
+                custom      : bool = False,
                 supported_extensions: list = [".safetensors"]
                 ):
         super().__init__(folder_name,
-                         custom     = True,
+                         custom     = custom,
                          read_only  = False,
                          parent_dir = folder_paths.get_output_directory(),
                          supported_extensions = supported_extensions
                          )
 
 
-VAE_DIR                = PredefinedDirectory("vae")
-PIXART_CHECKPOINTS_DIR = CustomModelDirectory("pixart")
-PIXART_LORAS_DIR       = CustomModelDirectory("pixart_loras")
-T5_CHECKPOINTS_DIR     = CustomModelDirectory("t5")
-PROMPT_EMBEDS_DIR      = CustomOutputDirectory("prompt_embeds")
+#----------------------- PROJECT DIRECTORY STRUCTURE -----------------------#
+
+# get the directory of this file
+_this_file_dir = os.path.dirname(os.path.realpath(__file__))
+
+# these directories are used by the xPixArt custom nodes
+STYLES_DIR             = ProjectDirectory("styles")
+VAE_DIR                = ComfyModelDirectory("vae")
+T5_CHECKPOINTS_DIR     = ComfyModelDirectory("t5", custom=True)
+PIXART_CHECKPOINTS_DIR = ComfyModelDirectory("pixart", custom=True)
+PIXART_LORAS_DIR       = ComfyModelDirectory("pixart_loras", custom=True)
+PROMPT_EMBEDS_DIR      = ComfyOutputDirectory("prompt_embeds", custom=True)
 
