@@ -12,9 +12,9 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import os
 import torch
-from ..utils.directories import VAE_DIR
-from comfy.utils import load_torch_file
-from comfy.sd    import VAE
+from .utils.directories import VAE_DIR
+from comfy.utils        import load_torch_file
+from comfy.sd           import VAE
 
 
 class VAELoader:

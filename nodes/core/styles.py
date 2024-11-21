@@ -1,5 +1,5 @@
 """
-File    : custom_style.py
+File    : style.py
 Purpose : Provides functionality to define and apply custom styles to prompts.
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
 Date    : Nov 18, 2024

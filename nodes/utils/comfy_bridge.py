@@ -12,15 +12,15 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import os
 import torch
-from safetensors        import safe_open
-from comfy.model_base   import BaseModel, ModelType
-from comfy              import supported_models_base
-from comfy              import model_management
-from comfy              import latent_formats
-from comfy              import conds
-from .core.pixartsigma  import PixArtSigma
-from .utils.safetensors import load_safetensors_header, estimate_model_params
-from .utils.system      import logger
+from safetensors          import safe_open
+from comfy.model_base     import BaseModel, ModelType
+from comfy                import supported_models_base
+from comfy                import model_management
+from comfy                import latent_formats
+from comfy                import conds
+from ..core.pixartsigma   import PixArtSigma
+from ..utils.safetensors  import load_safetensors_header, estimate_model_params
+from ..utils.system       import logger
 
 
 #============================================================================

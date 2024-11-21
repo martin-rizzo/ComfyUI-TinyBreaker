@@ -18,8 +18,8 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 #     framework (str): The framework you want the tensors in.
 #                      Supported values: "pt", "tf", "flax", "numpy".
 #     device    (str): The device on which you want the tensors (default "cpu")
-from safetensors import safe_open
-from ...utils.directories import PROMPT_EMBEDS_DIR
+from safetensors        import safe_open
+from .utils.directories import PROMPT_EMBEDS_DIR
 
 
 class LoadPromptEmbedding:

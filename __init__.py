@@ -31,7 +31,7 @@ License : MIT
     SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
-from .utils.system import logger
+from .nodes.utils.system import logger
 
 PROJECT_ID                 ="//xPixart"
 NODE_CLASS_MAPPINGS        = {}
@@ -60,8 +60,8 @@ comfy_import_node(T5Loader)
 
 # Operator Nodes
 
-from .nodes.text_and_style_encoder import TextAndStyleEncoder
-comfy_import_node(TextAndStyleEncoder)
+from .nodes.text_encoder import TextEncoder
+comfy_import_node(TextEncoder)
 
 from .nodes.empty_latent_image import EmptyLatentImage
 comfy_import_node(EmptyLatentImage)
@@ -74,10 +74,10 @@ comfy_import_node(T5TextEncoder)
 
 # Development Nodes
 
-from .nodes.test.load_prompt_embedding import LoadPromptEmbedding
+from .nodes.load_prompt_embedding import LoadPromptEmbedding
 comfy_import_node(LoadPromptEmbedding)
 
-from .nodes.test.save_prompt_embedding import SavePromptEmbedding
+from .nodes.save_prompt_embedding import SavePromptEmbedding
 comfy_import_node(SavePromptEmbedding)
 
 

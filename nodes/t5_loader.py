@@ -11,8 +11,8 @@ License : MIT
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import torch
-from ..comfy_objs        import T5_pack
-from ..utils.directories import T5_CHECKPOINTS_DIR
+from .utils.comfy_objs  import T5_pack
+from .utils.directories import T5_CHECKPOINTS_DIR
 
 class T5Loader:
     TITLE       = "xPixArt | T5 Loader"

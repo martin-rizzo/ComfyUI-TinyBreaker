@@ -12,7 +12,7 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import torch
 import comfy
-from   ..utils.system import logger
+from   .utils.system import logger
 MAX_RESOLUTION=16384
 LATENT_SCALE_FACTOR=8
 

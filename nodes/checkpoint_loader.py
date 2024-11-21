@@ -10,8 +10,8 @@ License : MIT
     ComfyUI nodes providing experimental support for PixArt-Sigma model
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
-from ..comfy_objs        import Model_pack
-from ..utils.directories import PIXART_CHECKPOINTS_DIR
+from .utils.comfy_objs  import Model_pack
+from .utils.directories import PIXART_CHECKPOINTS_DIR
 
 
 class CheckpointLoader:

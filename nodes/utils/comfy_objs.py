@@ -24,7 +24,7 @@ import comfy.model_patcher
 from   typing          import Union
 from   comfy           import model_management
 from   .comfy_bridge   import create_model_from_safetensors
-from   .core.t5        import T5Tokenizer, T5EncoderModel
+from   ..core.t5       import T5Tokenizer, T5EncoderModel
 
 
 #===========================================================================#

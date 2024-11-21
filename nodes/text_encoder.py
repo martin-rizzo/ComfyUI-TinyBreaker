@@ -1,5 +1,5 @@
 """
-File    : text_and_style_encoder.py
+File    : text_encoder.py
 Purpose : Node to encode prompts applying preconfigured styles.
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
 Date    : Nov 18, 2024
@@ -10,12 +10,13 @@ License : MIT
     ComfyUI nodes providing experimental support for PixArt-Sigma model
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
-from ..utils.directories     import STYLES_DIR
-from ..core.style_collection import StyleCollection
+from .utils.directories import STYLES_DIR
+from .utils.system      import logger
+from .core.styles       import StyleCollection
 
 
-class TextAndStyleEncoder:
-    TITLE       = "xPixArt | Text and Style Encoder"
+class TextEncoder:
+    TITLE       = "xPixArt | Text Encoder"
     CATEGORY    = "xPixArt"
     DESCRIPTION = "Generate text embeddings modified by the selected image style."
 
@@ -28,38 +29,54 @@ class TextAndStyleEncoder:
                #"style_strength" : ("FLOAT", { "default": 1.0, "min": 0.0, "max": 2.0 }),
                 "prompt"         : ("STRING", {"multiline": True, "dynamicPrompts": True, "tooltip": "The positive prompt to be encoded."}), 
                 "negative_prompt": ("STRING", {"multiline": True, "dynamicPrompts": True, "tooltip": "The negative prompt to be encoded."}), 
-                "clip"           : ("CLIP"  , {"tooltip": "The T5 model used for encoding the text."}),
-                }
-            }
+                "refiner_focus"  : ("STRING", {"multiline": True, "dynamicPrompts": True, "tooltip": "The extra text to add to the refiner prompt."}),
+                "t5"             : ("CLIP"  , {"tooltip": "The T5 model used for encoding the text."}),
+                "refiner_clip"   : ("CLIP"  , {"tooltip": "The CLIP model used for encoding the refiner prompt."}),
+            },
+        }
 
     #-- FUNCTION --------------------------------#
     FUNCTION = "encode"
-    RETURN_TYPES = ("CONDITIONING", "CONDITIONING", "STRING"     )
-    RETURN_NAMES = ("positive"    , "negative"    , "prompt_text")
+    RETURN_TYPES = ("CONDITIONING", "CONDITIONING", "CONDITIONING"    )
+    RETURN_NAMES = ("positive"    , "negative"    , "refiner_positive")
 
     @classmethod
-    def encode(cls, style_name, prompt, negative_prompt, clip):
+    def encode(cls, style_name, prompt, negative_prompt, refiner_focus, t5, refiner_clip):
+        
+        style          = cls.get_style(style_name)
         style_strength = 1.0
-        refiner_text   = prompt
         negative       = negative_prompt
+        refiner        = cls.generate_refiner_prompt(prompt, refiner_focus)
 
-        style = cls.get_style(style_name)
         if not style:
             raise ValueError(f"Unknown style type '{style_name}'")
 
-        prompt_cond   = cls.make_conditioning(prompt  , clip, style, style_strength, type="prompt"  )
-        negative_cond = cls.make_conditioning(negative, clip, style, style_strength, type="negative")
-        refiner_text  = style.apply_to_text(refiner_text, type="refiner")
-        print(f"##>> refiner: {refiner_text}")
-        print("-----------")
-
-        return ([prompt_cond], [negative_cond], refiner_text)
+        prompt_cond   = cls.make_conditioning(prompt  , t5          , style, style_strength, type="prompt"  )
+        negative_cond = cls.make_conditioning(negative, t5          , style, style_strength, type="negative")
+        refiner_cond  = cls.make_conditioning(refiner , refiner_clip, style, style_strength, type="refiner" )
+        return ([prompt_cond], [negative_cond], [refiner_cond])
 
 
 
     #-[ internal functions ]---------------------#
 
     styles = {"None": None}
+
+    @classmethod
+    def generate_refiner_prompt(cls, refiner_focus, prompt):
+        """Generate a refiner prompt based on the given focus and original prompt."""
+
+        if not refiner_focus:
+            return prompt.stip()
+        
+        elif "no-prompt" in refiner_focus:
+            return refiner_focus.replace("no-prompt", "").stip()
+        
+        else:
+            prompt        = prompt.strip()
+            refiner_focus = refiner_focus.strip()
+            return f"{refiner_focus}, {prompt}" if prompt else refiner_focus
+        
 
     @classmethod
     def get_style(cls, style_name):
@@ -94,11 +111,8 @@ class TextAndStyleEncoder:
 
         # apply style to text before encoding
         if style and style_strength > 0.0:
-            text = style.apply_to_text(text, 
-                                       type=type)
-            print(f"##>> {type}: {text}")
-            print("-----------")
-
+            text = style.apply_to_text(text, type=type)
+            logger.debug(f"styled {type} = '{text}'")
 
         tokens = clip.tokenize(text)
         output = clip.encode_from_tokens(tokens, return_pooled=True, return_dict=True)

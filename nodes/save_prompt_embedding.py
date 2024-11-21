@@ -12,7 +12,7 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import os
 from safetensors.torch import save_file as save_safetensors
-from ...utils.directories     import PROMPT_EMBEDS_DIR
+from .utils.directories     import PROMPT_EMBEDS_DIR
 MAX_RESOLUTION=16384
 
 

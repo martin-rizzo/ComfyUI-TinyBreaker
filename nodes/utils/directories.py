@@ -35,10 +35,11 @@ class ProjectDirectory:
     def __init__(self,
                  folder_name : str
                  ):
-        this_file_dir = os.path.dirname(__file__)
-        project_dir   = os.path.dirname(this_file_dir)
+        _utils_dir   = os.path.dirname(__file__)
+        _nodes_dir   = os.path.dirname(_utils_dir)
+        _project_dir = os.path.dirname(_nodes_dir)
         self.folder_name = folder_name
-        self.paths       = (os.path.join(project_dir, folder_name), )
+        self.paths       = (os.path.join(_project_dir, folder_name), )
 
 
 #----------------------------- COMFY DIRECTORY -----------------------------#
