@@ -11,7 +11,7 @@ License : MIT
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import torch
-from .utils.comfy_objs  import T5_pack
+from .xcomfy.objects    import T5_pack
 from .utils.directories import T5_CHECKPOINTS_DIR
 
 class T5Loader:

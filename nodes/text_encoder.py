@@ -46,7 +46,7 @@ class TextEncoder:
         style          = cls.get_style(style_name)
         style_strength = 1.0
         negative       = negative_prompt
-        refiner        = cls.generate_refiner_prompt(prompt, refiner_focus)
+        refiner        = cls.generate_refiner_prompt(refiner_focus, prompt)
 
         if not style:
             raise ValueError(f"Unknown style type '{style_name}'")
@@ -67,10 +67,10 @@ class TextEncoder:
         """Generate a refiner prompt based on the given focus and original prompt."""
 
         if not refiner_focus:
-            return prompt.stip()
+            return prompt.strip()
         
         elif "no-prompt" in refiner_focus:
-            return refiner_focus.replace("no-prompt", "").stip()
+            return refiner_focus.replace("no-prompt", "").strip()
         
         else:
             prompt        = prompt.strip()

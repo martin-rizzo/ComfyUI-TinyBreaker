@@ -13,8 +13,8 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 import os
 import torch
 from .utils.directories import VAE_DIR
+from .xcomfy.objects    import VAE
 from comfy.utils        import load_torch_file
-from comfy.sd           import VAE
 
 
 class VAELoader:
@@ -45,9 +45,8 @@ class VAELoader:
         if self.is_taesd(state_dict):
             state_dict = self.fix_taesd_state_dict(state_dict, filename=os.path.basename(vae_path))
 
-        vae = VAE(sd=state_dict)
+        vae = VAE.from_state_dict(state_dict)
         return (vae,)
-
 
 
     @staticmethod

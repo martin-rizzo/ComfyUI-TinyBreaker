@@ -1,6 +1,6 @@
 """
-File     : comfy_objs.py
-Purpose  : The objects transmitted across connected nodes in ComfyUI.
+File     : xconfy/objects.py
+Purpose  : The ComfyUI objects transmitted across connected nodes.
 Author   : Martin Rizzo | <martinrizzo@gmail.com>
 Date     : May 10, 2024
 Repo     : https://github.com/martin-rizzo/ComfyUI-xPixArt
@@ -19,12 +19,15 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 
 """
 import os
+import torch
+import comfy.sd
 import comfy.utils
 import comfy.model_patcher
-from   typing          import Union
-from   comfy           import model_management
-from   .comfy_bridge   import create_model_from_safetensors
-from   ..core.t5       import T5Tokenizer, T5EncoderModel
+from   typing         import Union
+from   comfy          import model_management
+from   .bridge        import create_model_from_safetensors
+from   ..core.t5      import T5Tokenizer, T5EncoderModel
+from   ..utils.system import logger
 
 
 #===========================================================================#
@@ -81,16 +84,103 @@ class Model_pack(comfy.model_patcher.ModelPatcher):
 
 
 #===========================================================================#
-class VAE_pack:
-    # el objeto que es transmitido por los hilos "VAE -> vae"
-    # debe ser compatible con:
-    #  - class VAE
-    #    [https://github.com/comfyanonymous/ComfyUI/blob/master/comfy/sd.py]
-    #
-    def __init__(self):
-        self.placeholder = "VAEPacket"
+class VAE(comfy.sd.VAE):
+    """
+    A class representing a Variational Autoencoder (VAE).
+
+    This class provides a bridge to the `VAE` class definided in comfy.sd module.
+    [https://github.com/comfyanonymous/ComfyUI/blob/master/comfy/sd.py]
+    """
+
+    @classmethod
+    def from_state_dict(cls,
+                        state_dict: dict,
+                        prefix    : str         = "",
+                        device    : str         = None,
+                        config    : dict        = None,
+                        dtype     : torch.dtype = None
+                        ) -> "VAE":
+        """
+        Creates an instance of VAE from a given state dictionary.
+        Args:
+            state_dict   (dict): A dictionary containing the state of the VAE model.
+            prefix       (str) : A string indicating a prefix to filter the keys in the state_dict. Defaults to "".
+            device       (str) : The device on which the VAE should be loaded. Defaults to None.
+            config       (dict): A dictionary containing configuration parameters for the VAE. Defaults to None.
+            dtype (torch.dtype): The data type of the tensors in the VAE model. Defaults to None.
+        """
+        if not prefix:
+            return cls(sd=state_dict, device=device, config=config, dtype=dtype)
+        
+        # ensure that prefix always ends with a dot '.'
+        if not prefix.endswith('.'):
+            prefix += '.'
+        
+        # if a prefix is provided, then only the corresponding part needs to be loaded
+        sd = {k[len(prefix):]: v for k, v in state_dict.items() if k.startswith(prefix)}
+        return cls(sd=sd, device=device, config=config, dtype=dtype)
 
 
+#===========================================================================#
+class Transcoder:
+
+    def __init__(self, model=None, decoder=None, encoder=None):
+        self.model   = model
+        self.decoder = decoder
+        self.encoder = encoder
+
+
+    def __call__(self, samples):
+        """
+        Transcode the input samples using the provided model or decoder/encoder.
+        """
+        return self.transcode(samples)
+
+
+    def transcode(self, samples):
+        """
+        Transcode the input samples using the provided model or decoder/encoder.
+        """
+        if self.model is None and (self.encoder is None or self.decoder is None):
+            logger.debug("No transcoder model or encoder/decoder provided, input samples will not be transcoded.")
+            return samples
+
+        # using a transcoder model if available (preferable method)
+        if self.model is not None:
+            return self.model(samples)
+
+        # fallback to using the encoder and decoder
+        images = self.decoder.decode(samples)
+        print("##>> images.shape:", images.shape)
+
+        # combine batches if there are 5 dimensions in the images tensor
+        #   before: (num_batches, batch_size, height, width, channels)
+        #   after : (total_batch_size, height, width, channels)
+        if len(images.shape) == 5:
+            images = images.reshape(-1, images.shape[-3], images.shape[-2], images.shape[-1])
+
+        # remove alpha channels if there are more than 3 channels per pixel
+        if images.shape[-1] > 3:
+            images = images[:,:,:,:3]
+
+        samples = self.encoder.encode(images)
+        print("##>> samples.shape:", samples.shape)
+        return samples
+
+
+
+    @classmethod
+    def from_decoder_encoder(cls,
+                             decoder: VAE,
+                             encoder: VAE
+                            ) -> "Transcoder":
+        """
+        Creates an instance of Transcoder from a given decoder and encoder.
+        Args:
+            decoder (VAE): The VAE model used for decoding.
+            encoder (VAE): The VAE model used for encoding.
+        """
+        return cls(decoder=decoder, encoder=encoder)
 
 
 #===========================================================================#

@@ -60,8 +60,14 @@ comfy_import_node(T5Loader)
 
 # Operator Nodes
 
+from .nodes.t5_encoder import T5TextEncoder
+comfy_import_node(T5TextEncoder)
+
 from .nodes.text_encoder import TextEncoder
 comfy_import_node(TextEncoder)
+
+from .nodes.vae_transcoder import VAETranscoder
+comfy_import_node(VAETranscoder)
 
 from .nodes.empty_latent_image import EmptyLatentImage
 comfy_import_node(EmptyLatentImage)
@@ -69,8 +75,6 @@ comfy_import_node(EmptyLatentImage)
 from .nodes.placeholder_replacer import PlaceholderReplacer
 comfy_import_node(PlaceholderReplacer)
 
-from .nodes.t5_encoder import T5TextEncoder
-comfy_import_node(T5TextEncoder)
 
 # Development Nodes
 
