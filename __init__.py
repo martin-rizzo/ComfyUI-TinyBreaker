@@ -47,6 +47,7 @@ def comfy_import_node(cls):
     NODE_CLASS_MAPPINGS[comfy_class_name]        = cls
     NODE_DISPLAY_NAME_MAPPINGS[comfy_class_name] = cls.TITLE
 
+
 # Loader Nodes
 
 from .nodes.load_checkpoint import LoadCheckpoint
@@ -55,16 +56,11 @@ comfy_import_node(LoadCheckpoint)
 from .nodes.load_any_vae import LoadAnyVAE
 comfy_import_node(LoadAnyVAE)
 
-from .nodes.t5_loader import T5Loader
-comfy_import_node(T5Loader)
 
 # Operator Nodes
 
-from .nodes.t5_encoder import T5TextEncoder
-comfy_import_node(T5TextEncoder)
-
-from .nodes.text_encoder import TextEncoder
-comfy_import_node(TextEncoder)
+from .nodes.encode_prompts import EncodePrompts
+comfy_import_node(EncodePrompts)
 
 from .nodes.vae_transcode import VAETranscode
 comfy_import_node(VAETranscode)

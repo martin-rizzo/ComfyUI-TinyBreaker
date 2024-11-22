@@ -1,44 +1,7 @@
 {
-  "last_node_id": 65,
-  "last_link_id": 150,
+  "last_node_id": 66,
+  "last_link_id": 156,
   "nodes": [
-    {
-      "id": 16,
-      "type": "PrimitiveNode",
-      "pos": [
-        610,
-        260
-      ],
-      "size": [
-        260,
-        82
-      ],
-      "flags": {},
-      "order": 0,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "INT",
-          "type": "INT",
-          "links": [
-            109
-          ],
-          "slot_index": 0,
-          "widget": {
-            "name": "noise_seed"
-          }
-        }
-      ],
-      "title": "Seed",
-      "properties": {
-        "Run widget replace on values": false
-      },
-      "widgets_values": [
-        2,
-        "fixed"
-      ]
-    },
     {
       "id": 17,
       "type": "PrimitiveNode",
@@ -51,7 +14,7 @@
         82
       ],
       "flags": {},
-      "order": 1,
+      "order": 0,
       "mode": 0,
       "inputs": [],
       "outputs": [
@@ -88,7 +51,7 @@
         130
       ],
       "flags": {},
-      "order": 2,
+      "order": 1,
       "mode": 0,
       "inputs": [],
       "outputs": [
@@ -171,7 +134,7 @@
         {
           "name": "positive",
           "type": "CONDITIONING",
-          "link": 120
+          "link": 156
         },
         {
           "name": "negative",
@@ -233,12 +196,12 @@
         {
           "name": "positive",
           "type": "CONDITIONING",
-          "link": 118
+          "link": 154
         },
         {
           "name": "negative",
           "type": "CONDITIONING",
-          "link": 119
+          "link": 155
         },
         {
           "name": "latent_image",
@@ -478,90 +441,6 @@
       ]
     },
     {
-      "id": 55,
-      "type": "TextEncoder //xPixart",
-      "pos": [
-        20,
-        90
-      ],
-      "size": [
-        570,
-        390
-      ],
-      "flags": {},
-      "order": 12,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "t5",
-          "type": "CLIP",
-          "link": 116
-        },
-        {
-          "name": "refiner_clip",
-          "type": "CLIP",
-          "link": 117
-        }
-      ],
-      "outputs": [
-        {
-          "name": "positive",
-          "type": "CONDITIONING",
-          "links": [
-            118
-          ]
-        },
-        {
-          "name": "negative",
-          "type": "CONDITIONING",
-          "links": [
-            119
-          ]
-        },
-        {
-          "name": "refiner_positive",
-          "type": "CONDITIONING",
-          "links": [
-            120
-          ],
-          "slot_index": 2
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "TextEncoder //xPixart"
-      },
-      "widgets_values": [
-        "PHOTO",
-        "A cute squirrel is riding a motorcycle in a forest. The squirrel is wearing a black leather jacket, a black helmet with a pair of goggles and a white stripe, and it is holding the handlebars of the motorcycle with its paws. The motorcycle is yellow with black accents and has a large headlight. The squirrel is looking at the camera and smiling. The forest background is blurred and out of focus, with trees and leaves in the background. The ground is covered in brown leaves and dirt. The squirrel's fur is brown and white, and its tail is bushy. The motorcycle is moving forward on a dirt path. There are big pine cones on the ground near the motorcycle. The image is lit by the sun, and the colors are bright and vibrant.",
-        "",
-        ""
-      ]
-    },
-    {
-      "id": 62,
-      "type": "Note",
-      "pos": [
-        -204.93861389160156,
-        -308.3001708984375
-      ],
-      "size": [
-        550,
-        220
-      ],
-      "flags": {},
-      "order": 3,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [],
-      "title": "Prompt",
-      "properties": {},
-      "widgets_values": [
-        "A cute squirrel is riding a motorcycle in a forest. The squirrel is wearing a black leather jacket, a black helmet with a pair of goggles and a white stripe, and it is holding the handlebars of the motorcycle with its paws. The motorcycle is yellow with black accents and has a large headlight. The squirrel is looking at the camera and smiling. The forest background is blurred and out of focus, with trees and leaves in the background. The ground is covered in brown leaves and dirt. The squirrel's fur is brown and white, and its tail is bushy. The motorcycle is moving forward on a dirt path. There are big pine cones on the ground near the motorcycle. The image is lit by the sun, and the colors are bright and vibrant."
-      ],
-      "color": "#222",
-      "bgcolor": "#000"
-    },
-    {
       "id": 56,
       "type": "Reroute",
       "pos": [
@@ -676,7 +555,7 @@
         60
       ],
       "flags": {},
-      "order": 4,
+      "order": 2,
       "mode": 0,
       "inputs": [],
       "outputs": [
@@ -707,7 +586,7 @@
         100
       ],
       "flags": {},
-      "order": 5,
+      "order": 3,
       "mode": 0,
       "inputs": [],
       "outputs": [
@@ -724,7 +603,7 @@
           "type": "CLIP",
           "links": [
             47,
-            117
+            153
           ],
           "slot_index": 1
         },
@@ -756,7 +635,7 @@
         60
       ],
       "flags": {},
-      "order": 6,
+      "order": 4,
       "mode": 0,
       "inputs": [],
       "outputs": [
@@ -788,7 +667,7 @@
         82
       ],
       "flags": {},
-      "order": 7,
+      "order": 5,
       "mode": 0,
       "inputs": [],
       "outputs": [
@@ -796,7 +675,7 @@
           "name": "CLIP",
           "type": "CLIP",
           "links": [
-            116
+            152
           ],
           "slot_index": 0
         }
@@ -822,7 +701,7 @@
         120
       ],
       "flags": {},
-      "order": 8,
+      "order": 6,
       "mode": 0,
       "inputs": [],
       "outputs": [
@@ -854,6 +733,126 @@
       },
       "widgets_values": [
         "PixArt-Sigma-1024.safetensors"
+      ]
+    },
+    {
+      "id": 62,
+      "type": "Note",
+      "pos": [
+        -204.93861389160156,
+        -308.3001708984375
+      ],
+      "size": [
+        550,
+        220
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "title": "Prompt",
+      "properties": {},
+      "widgets_values": [
+        "A cute squirrel is riding a motorcycle in a forest. The squirrel is wearing a black leather jacket, a black helmet with a pair of goggles and a white stripe, and it is holding the handlebars of the motorcycle with its paws. The motorcycle is yellow with black accents and has a large headlight. The squirrel is looking at the camera and smiling. The forest background is blurred and out of focus, with trees and leaves in the background. The ground is covered in brown leaves and dirt. The squirrel's fur is brown and white, and its tail is bushy. The motorcycle is moving forward on a dirt path. There are big pine cones on the ground near the motorcycle. The image is lit by the sun, and the colors are bright and vibrant."
+      ],
+      "color": "#222",
+      "bgcolor": "#000"
+    },
+    {
+      "id": 66,
+      "type": "EncodePrompts //xPixart",
+      "pos": [
+        30,
+        90
+      ],
+      "size": [
+        560,
+        390
+      ],
+      "flags": {},
+      "order": 12,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "t5",
+          "type": "CLIP",
+          "link": 152
+        },
+        {
+          "name": "refiner_clip",
+          "type": "CLIP",
+          "link": 153
+        }
+      ],
+      "outputs": [
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "links": [
+            154
+          ]
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "links": [
+            155
+          ]
+        },
+        {
+          "name": "refiner_positive",
+          "type": "CONDITIONING",
+          "links": [
+            156
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "EncodePrompts //xPixart"
+      },
+      "widgets_values": [
+        "PHOTO",
+        "A cute squirrel is riding a motorcycle in a forest. The squirrel is wearing a black leather jacket, a black helmet with a pair of goggles and a white stripe, and it is holding the handlebars of the motorcycle with its paws. The motorcycle is yellow with black accents and has a large headlight. The squirrel is looking at the camera and smiling. The forest background is blurred and out of focus, with trees and leaves in the background. The ground is covered in brown leaves and dirt. The squirrel's fur is brown and white, and its tail is bushy. The motorcycle is moving forward on a dirt path. There are big pine cones on the ground near the motorcycle. The image is lit by the sun, and the colors are bright and vibrant.",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": 16,
+      "type": "PrimitiveNode",
+      "pos": [
+        610,
+        260
+      ],
+      "size": [
+        260,
+        82
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "INT",
+          "type": "INT",
+          "links": [
+            109
+          ],
+          "slot_index": 0,
+          "widget": {
+            "name": "noise_seed"
+          }
+        }
+      ],
+      "title": "Seed",
+      "properties": {
+        "Run widget replace on values": false
+      },
+      "widgets_values": [
+        2,
+        "fixed"
       ]
     }
   ],
@@ -913,46 +912,6 @@
       53,
       5,
       "FLOAT"
-    ],
-    [
-      116,
-      3,
-      0,
-      55,
-      0,
-      "CLIP"
-    ],
-    [
-      117,
-      24,
-      1,
-      55,
-      1,
-      "CLIP"
-    ],
-    [
-      118,
-      55,
-      0,
-      53,
-      1,
-      "CONDITIONING"
-    ],
-    [
-      119,
-      55,
-      1,
-      53,
-      2,
-      "CONDITIONING"
-    ],
-    [
-      120,
-      55,
-      2,
-      51,
-      1,
-      "CONDITIONING"
     ],
     [
       121,
@@ -1049,6 +1008,46 @@
       53,
       0,
       "MODEL"
+    ],
+    [
+      152,
+      3,
+      0,
+      66,
+      0,
+      "CLIP"
+    ],
+    [
+      153,
+      24,
+      1,
+      66,
+      1,
+      "CLIP"
+    ],
+    [
+      154,
+      66,
+      0,
+      53,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      155,
+      66,
+      1,
+      53,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      156,
+      66,
+      2,
+      51,
+      1,
+      "CONDITIONING"
     ]
   ],
   "groups": [
@@ -1121,10 +1120,10 @@
   "config": {},
   "extra": {
     "ds": {
-      "scale": 0.7986221257502558,
+      "scale": 0.7986221257502562,
       "offset": [
-        221.30042015215344,
-        12.748235777134216
+        165.29855380587526,
+        1.0730891431652865
       ]
     }
   },

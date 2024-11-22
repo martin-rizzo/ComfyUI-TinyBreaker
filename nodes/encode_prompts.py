@@ -1,6 +1,6 @@
 """
-File    : text_encoder.py
-Purpose : Node to encode prompts applying preconfigured styles.
+File    : encode_prompts.py
+Purpose : Node to encode positive, negative and refiner prompts applying preconfigured styles.
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
 Date    : Nov 18, 2024
 Repo    : https://github.com/martin-rizzo/ComfyUI-xPixArt
@@ -15,10 +15,10 @@ from .utils.system      import logger
 from .core.styles       import StyleCollection
 
 
-class TextEncoder:
-    TITLE       = "xPixArt | Text Encoder"
+class EncodePrompts:
+    TITLE       = "xPixArt | Encode Prompts"
     CATEGORY    = "xPixArt"
-    DESCRIPTION = "Generate text embeddings modified by the selected image style."
+    DESCRIPTION = "Generate text embeddings from positive, negative and refiner prompts applying preconfigured styles."
 
     #-- PARAMETERS -----------------------------#
     @classmethod
