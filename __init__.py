@@ -48,13 +48,16 @@ def comfy_import_node(cls):
     NODE_DISPLAY_NAME_MAPPINGS[comfy_class_name] = cls.TITLE
 
 
-# Loader Nodes
+# Loader/Builder Nodes
 
 from .nodes.load_checkpoint import LoadCheckpoint
 comfy_import_node(LoadCheckpoint)
 
 from .nodes.load_any_vae import LoadAnyVAE
 comfy_import_node(LoadAnyVAE)
+
+from .nodes.build_custom_transcoder import BuildCustomTranscoder
+comfy_import_node(BuildCustomTranscoder)
 
 
 # Operator Nodes
