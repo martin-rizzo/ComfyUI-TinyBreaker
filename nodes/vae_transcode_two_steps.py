@@ -1,5 +1,5 @@
 """
-File    : transcoder_two_steps.py
+File    : vae_transcode_two_steps.py
 Purpose : Node for transcoding between different latent spaces in two steps (decoding+encoding)
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
 Date    : Nov 21, 2024
@@ -10,12 +10,10 @@ License : MIT
 from .xcomfy.objects import VAE, Transcoder
 
 
-class TranscoderTwoSteps:
-    TITLE       = "xPixArt | Transcoder Two Steps"
+class VAETranscodeTwoSteps:
+    TITLE       = "xPixArt | VAE Transcode in Two Steps"
     CATEGORY    = "xPixArt"
     DESCRIPTION = "Transcode a latent image from one latent space to another in two steps (decoding+encoding)."
-    
-    
     
     #-- PARAMETERS -----------------------------#
     @classmethod

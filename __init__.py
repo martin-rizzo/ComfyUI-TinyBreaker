@@ -49,11 +49,11 @@ def comfy_import_node(cls):
 
 # Loader Nodes
 
-from .nodes.checkpoint_loader import CheckpointLoader
-comfy_import_node(CheckpointLoader)
+from .nodes.load_checkpoint import LoadCheckpoint
+comfy_import_node(LoadCheckpoint)
 
-from .nodes.vae_loader import VAELoader
-comfy_import_node(VAELoader)
+from .nodes.load_any_vae import LoadAnyVAE
+comfy_import_node(LoadAnyVAE)
 
 from .nodes.t5_loader import T5Loader
 comfy_import_node(T5Loader)
@@ -66,11 +66,11 @@ comfy_import_node(T5TextEncoder)
 from .nodes.text_encoder import TextEncoder
 comfy_import_node(TextEncoder)
 
-from .nodes.vae_transcoder import VAETranscoder
-comfy_import_node(VAETranscoder)
+from .nodes.vae_transcode import VAETranscode
+comfy_import_node(VAETranscode)
 
-from .nodes.transcoder_two_steps import TranscoderTwoSteps
-comfy_import_node(TranscoderTwoSteps)
+from .nodes.vae_transcode_two_steps import VAETranscodeTwoSteps
+comfy_import_node(VAETranscodeTwoSteps)
 
 from .nodes.empty_latent_image import EmptyLatentImage
 comfy_import_node(EmptyLatentImage)

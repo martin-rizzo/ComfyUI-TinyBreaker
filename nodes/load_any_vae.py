@@ -1,5 +1,5 @@
 """
-File    : vae_loader.py
+File    : load_any_vae.py
 Purpose : Node to load any VAE model including `Tiny AutoEncoder` (TAESD) variants.
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
 Date    : Nov 16, 2024
@@ -17,8 +17,8 @@ from .xcomfy.objects    import VAE
 from comfy.utils        import load_torch_file
 
 
-class VAELoader:
-    TITLE       = "xPixArt | VAE Loader"
+class LoadAnyVAE:
+    TITLE       = "xPixArt | Load Any VAE"
     CATEGORY    = "xPixArt"
     DESCRIPTION = "Load VAE models including `Tiny AutoEncoder` (TAESD) variants."
 
@@ -32,10 +32,10 @@ class VAELoader:
             }
 
     #-- FUNCTION --------------------------------#
-    FUNCTION = "load_vae"
+    FUNCTION = "load_any_vae"
     RETURN_TYPES = ("VAE",)
 
-    def load_vae(self, vae_name):
+    def load_any_vae(self, vae_name):
 
         # load VAE model state dictionary from file
         vae_path   = VAE_DIR.get_full_path_or_raise(vae_name)
@@ -48,6 +48,9 @@ class VAELoader:
         vae = VAE.from_state_dict(state_dict)
         return (vae,)
 
+
+
+    #-< internal functions >---------------------#
 
     @staticmethod
     def is_taesd(state_dict: dict) -> bool:

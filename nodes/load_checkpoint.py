@@ -1,6 +1,6 @@
 """
-File    : checkpoint_loader.py
-Purpose : Node to load PixArt checkpoints to use in ComfyUI.
+File    : load_checkpoint.py
+Purpose : Node to load PixArt checkpoints.
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
 Date    : May 14, 2024
 Repo    : https://github.com/martin-rizzo/ComfyUI-xPixArt
@@ -14,8 +14,8 @@ from .xcomfy.objects    import Model_pack
 from .utils.directories import PIXART_CHECKPOINTS_DIR
 
 
-class CheckpointLoader:
-    TITLE       = "xPixArt | Checkpoint Loader"
+class LoadCheckpoint:
+    TITLE       = "xPixArt | Load Checkpoint"
     CATEGORY    = "xPixArt"
     DESCRIPTION = "Load PixArt checkpoints."
 
@@ -24,7 +24,7 @@ class CheckpointLoader:
     def INPUT_TYPES(s):
         return {
             "required": {
-                "ckpt_name": (PIXART_CHECKPOINTS_DIR.get_filename_list(), ),
+                "ckpt_name": (PIXART_CHECKPOINTS_DIR.get_filename_list(), {"tooltip": "The PixArt checkpoint to load."}),
                 }
             }
     
