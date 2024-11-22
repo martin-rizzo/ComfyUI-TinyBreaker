@@ -1,6 +1,6 @@
 {
-  "last_node_id": 57,
-  "last_link_id": 127,
+  "last_node_id": 58,
+  "last_link_id": 132,
   "nodes": [
     {
       "id": 14,
@@ -68,7 +68,7 @@
           "name": "VAE",
           "type": "VAE",
           "links": [
-            28
+            129
           ],
           "slot_index": 0
         }
@@ -237,8 +237,8 @@
           "name": "VAE",
           "type": "VAE",
           "links": [
-            30,
-            115
+            115,
+            130
           ],
           "slot_index": 0
         }
@@ -334,89 +334,6 @@
       ]
     },
     {
-      "id": 12,
-      "type": "VAEDecode",
-      "pos": [
-        750,
-        610
-      ],
-      "size": [
-        210,
-        46
-      ],
-      "flags": {},
-      "order": 17,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "samples",
-          "type": "LATENT",
-          "link": 104
-        },
-        {
-          "name": "vae",
-          "type": "VAE",
-          "link": 28
-        }
-      ],
-      "outputs": [
-        {
-          "name": "IMAGE",
-          "type": "IMAGE",
-          "links": [
-            29
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "VAEDecode"
-      },
-      "widgets_values": []
-    },
-    {
-      "id": 26,
-      "type": "VAEEncode",
-      "pos": [
-        750,
-        700
-      ],
-      "size": [
-        210,
-        46
-      ],
-      "flags": {},
-      "order": 18,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "pixels",
-          "type": "IMAGE",
-          "link": 29
-        },
-        {
-          "name": "vae",
-          "type": "VAE",
-          "link": 30
-        }
-      ],
-      "outputs": [
-        {
-          "name": "LATENT",
-          "type": "LATENT",
-          "links": [
-            52,
-            100
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "VAEEncode"
-      },
-      "widgets_values": []
-    },
-    {
       "id": 34,
       "type": "CLIPTextEncode",
       "pos": [
@@ -502,7 +419,7 @@
         690
       ],
       "flags": {},
-      "order": 23,
+      "order": 22,
       "mode": 0,
       "inputs": [
         {
@@ -529,7 +446,7 @@
         50
       ],
       "flags": {},
-      "order": 22,
+      "order": 21,
       "mode": 0,
       "inputs": [
         {
@@ -762,68 +679,6 @@
       ]
     },
     {
-      "id": 51,
-      "type": "KSamplerAdvanced",
-      "pos": [
-        770,
-        830
-      ],
-      "size": [
-        315,
-        334
-      ],
-      "flags": {},
-      "order": 20,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "model",
-          "type": "MODEL",
-          "link": 97
-        },
-        {
-          "name": "positive",
-          "type": "CONDITIONING",
-          "link": 120
-        },
-        {
-          "name": "negative",
-          "type": "CONDITIONING",
-          "link": 122
-        },
-        {
-          "name": "latent_image",
-          "type": "LATENT",
-          "link": 100
-        }
-      ],
-      "outputs": [
-        {
-          "name": "LATENT",
-          "type": "LATENT",
-          "links": [
-            96
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "KSamplerAdvanced"
-      },
-      "widgets_values": [
-        "enable",
-        0,
-        "fixed",
-        11,
-        2,
-        "dpm_2_ancestral",
-        "ddim_uniform",
-        7,
-        1000,
-        "disable"
-      ]
-    },
-    {
       "id": 52,
       "type": "Reroute",
       "pos": [
@@ -835,7 +690,7 @@
         26
       ],
       "flags": {},
-      "order": 21,
+      "order": 20,
       "mode": 0,
       "inputs": [
         {
@@ -915,7 +770,7 @@
           "name": "LATENT",
           "type": "LATENT",
           "links": [
-            104
+            128
           ]
         }
       ],
@@ -947,13 +802,13 @@
         26
       ],
       "flags": {},
-      "order": 19,
+      "order": 18,
       "mode": 0,
       "inputs": [
         {
           "name": "",
           "type": "*",
-          "link": 52
+          "link": 131
         }
       ],
       "outputs": [
@@ -968,33 +823,122 @@
         "showOutputText": false,
         "horizontal": false
       }
+    },
+    {
+      "id": 51,
+      "type": "KSamplerAdvanced",
+      "pos": [
+        820,
+        800
+      ],
+      "size": [
+        315,
+        334
+      ],
+      "flags": {},
+      "order": 19,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 97
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 120
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 122
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 132
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            96
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "KSamplerAdvanced"
+      },
+      "widgets_values": [
+        "enable",
+        0,
+        "fixed",
+        11,
+        2,
+        "dpm_2_ancestral",
+        "ddim_uniform",
+        7,
+        1000,
+        "disable"
+      ]
+    },
+    {
+      "id": 58,
+      "type": "TranscoderTwoSteps //xPixart",
+      "pos": [
+        730,
+        610
+      ],
+      "size": [
+        378,
+        122
+      ],
+      "flags": {},
+      "order": 17,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 128
+        },
+        {
+          "name": "decoder",
+          "type": "VAE",
+          "link": 129,
+          "shape": 7
+        },
+        {
+          "name": "encoder",
+          "type": "VAE",
+          "link": 130,
+          "shape": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            131,
+            132
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "TranscoderTwoSteps //xPixart"
+      },
+      "widgets_values": [
+        "Blur",
+        0.5
+      ]
     }
   ],
   "links": [
-    [
-      28,
-      22,
-      0,
-      12,
-      1,
-      "VAE"
-    ],
-    [
-      29,
-      12,
-      0,
-      26,
-      0,
-      "IMAGE"
-    ],
-    [
-      30,
-      25,
-      0,
-      26,
-      1,
-      "VAE"
-    ],
     [
       31,
       27,
@@ -1012,14 +956,6 @@
       "CLIP"
     ],
     [
-      52,
-      26,
-      0,
-      36,
-      0,
-      "*"
-    ],
-    [
       96,
       51,
       0,
@@ -1034,22 +970,6 @@
       51,
       0,
       "MODEL"
-    ],
-    [
-      100,
-      26,
-      0,
-      51,
-      3,
-      "LATENT"
-    ],
-    [
-      104,
-      53,
-      0,
-      12,
-      0,
-      "LATENT"
     ],
     [
       105,
@@ -1170,6 +1090,46 @@
       27,
       0,
       "LATENT"
+    ],
+    [
+      128,
+      53,
+      0,
+      58,
+      0,
+      "LATENT"
+    ],
+    [
+      129,
+      22,
+      0,
+      58,
+      1,
+      "VAE"
+    ],
+    [
+      130,
+      25,
+      0,
+      58,
+      2,
+      "VAE"
+    ],
+    [
+      131,
+      58,
+      0,
+      36,
+      0,
+      "*"
+    ],
+    [
+      132,
+      58,
+      0,
+      51,
+      3,
+      "LATENT"
     ]
   ],
   "groups": [
@@ -1192,8 +1152,8 @@
       "bounding": [
         400,
         530,
-        711.5308227539062,
-        656.946533203125
+        752.3980102539062,
+        627.4478759765625
       ],
       "color": "#3f789e",
       "font_size": 24,
@@ -1242,10 +1202,10 @@
   "config": {},
   "extra": {
     "ds": {
-      "scale": 0.7986221257502528,
+      "scale": 0.7260201143184121,
       "offset": [
-        176.612751039772,
-        -5.764809725135241
+        52.9673049202771,
+        171.5054890349205
       ]
     }
   },

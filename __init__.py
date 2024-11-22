@@ -69,6 +69,9 @@ comfy_import_node(TextEncoder)
 from .nodes.vae_transcoder import VAETranscoder
 comfy_import_node(VAETranscoder)
 
+from .nodes.transcoder_two_steps import TranscoderTwoSteps
+comfy_import_node(TranscoderTwoSteps)
+
 from .nodes.empty_latent_image import EmptyLatentImage
 comfy_import_node(EmptyLatentImage)
 
