@@ -11,21 +11,46 @@ import torch
 import comfy.sample
 import latent_preview
 
+
+QUALITY_LEVEL = [
+    "fast",
+    "quality"
+]
+
 SAMPLER_CONFIG = {
-    "steps"       : 12,
-    "sampler_name": "uni_pc",
-    "scheduler"   : "simple",
-    "start_step"  : 2,
-    "last_step"   : 1000,
+    "fast": {
+        "steps"       : 12,
+        "sampler_name": "uni_pc",
+        "scheduler"   : "simple",
+        "start_step"  : 2,
+        "last_step"   : 1000,
+    },
+    "quality": {
+        "steps"       : 29,
+        "sampler_name": "dpmpp_2m",
+        "scheduler"   : "karras",
+        "start_step"  : 7,
+        "last_step"   : 1000,
+    }
 }
 
 REFINER_CONFIG = {
-    "steps"       : 11,
-    "cfg"         : 2.0,
-    "sampler_name": "deis",
-    "scheduler"   : "ddim_uniform",
-    "start_step"  : 6,
-    "last_step"   : 1000
+    "fast": {
+        "steps"       : 11,
+        "cfg"         : 2.0,
+        "sampler_name": "deis",
+        "scheduler"   : "ddim_uniform",
+        "start_step"  : 6,
+        "last_step"   : 1000
+    },
+    "quality": {
+        "steps"       : 11,
+        "cfg"         : 2.0,
+        "sampler_name": "dpm_2_ancestral",
+        "scheduler"   : "ddim_uniform",
+        "start_step"  : 7,
+        "last_step"   : 1000
+    }
 }
 
 
@@ -83,6 +108,8 @@ class PrefixedDoubleStageSampler:
                 "latent_image": ("LATENT"      , ),
                 "noise_seed"  : ("INT"         , {"default": 0  , "min": 0  , "max": 0xffffffffffffffff}),
                 "cfg"         : ("FLOAT"       , {"default": 8.0, "min": 0.0, "max": 100.0, "step":0.1, "round": 0.01}),
+                "sampler"     : (QUALITY_LEVEL , {"default": QUALITY_LEVEL[0]}),
+                "refiner"     : (QUALITY_LEVEL , {"default": QUALITY_LEVEL[0]}),
             },
             "optional": {
                 "transcoder"       : ("TRANSCODER"  , {"tooltip": "The transcoder to use for the processing."}),
@@ -103,6 +130,8 @@ class PrefixedDoubleStageSampler:
                latent_image,
                noise_seed,
                cfg,
+               sampler,
+               refiner,
                transcoder=None,
                refiner_model=None,
                refiner_positive=None,
@@ -115,7 +144,7 @@ class PrefixedDoubleStageSampler:
         denoise            = 1.0
 
         # first step: sampler
-        kwargs = SAMPLER_CONFIG.copy()
+        kwargs = SAMPLER_CONFIG[sampler].copy()
         kwargs["model"        ] = model
         kwargs["seed"         ] = noise_seed
     #   kwargs["steps"        ] = K!
@@ -142,7 +171,7 @@ class PrefixedDoubleStageSampler:
             return (samples )
 
         # second step: refiner
-        kwargs = REFINER_CONFIG.copy()
+        kwargs = REFINER_CONFIG[refiner].copy()
         kwargs["model"        ] = refiner_model
         kwargs["seed"         ] = refiner_variation
     #   kwargs["steps"        ] = K!

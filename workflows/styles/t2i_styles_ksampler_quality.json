@@ -1,17 +1,17 @@
 {
-  "last_node_id": 58,
-  "last_link_id": 132,
+  "last_node_id": 70,
+  "last_link_id": 165,
   "nodes": [
     {
-      "id": 14,
-      "type": "CheckpointLoader //xPixart",
+      "id": 17,
+      "type": "PrimitiveNode",
       "pos": [
-        -880,
-        10
+        610,
+        380
       ],
       "size": [
-        340.20001220703125,
-        118
+        260,
+        82
       ],
       "flags": {},
       "order": 0,
@@ -19,284 +19,24 @@
       "inputs": [],
       "outputs": [
         {
-          "name": "MODEL",
-          "type": "MODEL",
+          "name": "FLOAT",
+          "type": "FLOAT",
           "links": [
-            105
-          ]
-        },
-        {
-          "name": "VAE",
-          "type": "VAE",
-          "links": null
-        },
-        {
-          "name": "T5",
-          "type": "T5",
-          "links": null
-        },
-        {
-          "name": "META",
-          "type": "STRING",
-          "links": null
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "CheckpointLoader //xPixart"
-      },
-      "widgets_values": [
-        "PixArt-Sigma-1024.safetensors"
-      ]
-    },
-    {
-      "id": 22,
-      "type": "VAELoader //xPixart",
-      "pos": [
-        -880,
-        170
-      ],
-      "size": [
-        340,
-        80
-      ],
-      "flags": {},
-      "order": 1,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "VAE",
-          "type": "VAE",
-          "links": [
-            129
+            110
           ],
-          "slot_index": 0
+          "slot_index": 0,
+          "widget": {
+            "name": "cfg"
+          }
         }
       ],
+      "title": "CFG",
       "properties": {
-        "Node name for S&R": "VAELoader //xPixart"
+        "Run widget replace on values": false
       },
       "widgets_values": [
-        "tiny_ae_sdxl.safetensors"
-      ]
-    },
-    {
-      "id": 7,
-      "type": "CLIPTextEncode",
-      "pos": [
-        -957,
-        -393
-      ],
-      "size": [
-        470,
-        90
-      ],
-      "flags": {},
-      "order": 2,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "clip",
-          "type": "CLIP",
-          "link": null
-        }
-      ],
-      "outputs": [
-        {
-          "name": "CONDITIONING",
-          "type": "CONDITIONING",
-          "links": [],
-          "slot_index": 0
-        }
-      ],
-      "title": "Negative prompt",
-      "properties": {
-        "Node name for S&R": "CLIPTextEncode"
-      },
-      "widgets_values": [
-        "macrophoto, bokeh, out of focus"
-      ]
-    },
-    {
-      "id": 31,
-      "type": "CLIPTextEncode",
-      "pos": [
-        -929,
-        -663
-      ],
-      "size": [
-        394.54388427734375,
-        220.1891632080078
-      ],
-      "flags": {},
-      "order": 3,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "clip",
-          "type": "CLIP",
-          "link": null
-        }
-      ],
-      "outputs": [
-        {
-          "name": "CONDITIONING",
-          "type": "CONDITIONING",
-          "links": [],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "CLIPTextEncode"
-      },
-      "widgets_values": [
-        "An iPhone raw photo. A colossal, Cthulhu-like statue carved into the side of a Martian mountain. The statue's immense form dominates the landscape, with a gaping maw and tentacles sculpted in intricate detail. At the base of the statue, a massive, arched doorway leads into the mountain's interior. A giant, metallic gate, seemingly constructed from alien materials, stands open in front of the entrance. In the foreground, the rear view of a lone figure in a space suit is visible, standing dwarfed by the sheer scale of the statue and the desolate Martian landscape. Bokeh, professional photography."
-      ]
-    },
-    {
-      "id": 35,
-      "type": "VAELoader",
-      "pos": [
-        390,
-        -200
-      ],
-      "size": [
-        315,
-        58
-      ],
-      "flags": {},
-      "order": 4,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "VAE",
-          "type": "VAE",
-          "links": [],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "VAELoader"
-      },
-      "widgets_values": [
-        "others/vae-ft-mse-840000-ema-pruned.safetensors"
-      ]
-    },
-    {
-      "id": 3,
-      "type": "CLIPLoader",
-      "pos": [
-        -850,
-        720
-      ],
-      "size": [
-        340,
-        82
-      ],
-      "flags": {},
-      "order": 5,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "CLIP",
-          "type": "CLIP",
-          "links": [
-            116
-          ],
-          "slot_index": 0
-        }
-      ],
-      "title": "Load T5",
-      "properties": {
-        "Node name for S&R": "CLIPLoader"
-      },
-      "widgets_values": [
-        "t5_xxl_encoder-FP8.safetensors",
-        "sd3"
-      ]
-    },
-    {
-      "id": 25,
-      "type": "VAELoader //xPixart",
-      "pos": [
-        -856,
-        508
-      ],
-      "size": [
-        315,
-        58
-      ],
-      "flags": {},
-      "order": 6,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "VAE",
-          "type": "VAE",
-          "links": [
-            115,
-            130
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "VAELoader //xPixart"
-      },
-      "widgets_values": [
-        "tiny_ae_sd.safetensors"
-      ]
-    },
-    {
-      "id": 24,
-      "type": "CheckpointLoaderSimple",
-      "pos": [
-        -860,
-        370
-      ],
-      "size": [
-        315,
-        98
-      ],
-      "flags": {},
-      "order": 7,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "MODEL",
-          "type": "MODEL",
-          "links": [
-            97
-          ],
-          "slot_index": 0
-        },
-        {
-          "name": "CLIP",
-          "type": "CLIP",
-          "links": [
-            47,
-            117
-          ],
-          "slot_index": 1
-        },
-        {
-          "name": "VAE",
-          "type": "VAE",
-          "links": [
-            121
-          ],
-          "slot_index": 2
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "CheckpointLoaderSimple"
-      },
-      "widgets_values": [
-        "photon_refiner-FP16.safetensors"
+        3.5,
+        "fixed"
       ]
     },
     {
@@ -311,7 +51,7 @@
         130
       ],
       "flags": {},
-      "order": 8,
+      "order": 1,
       "mode": 0,
       "inputs": [],
       "outputs": [
@@ -334,18 +74,664 @@
       ]
     },
     {
+      "id": 57,
+      "type": "Reroute",
+      "pos": [
+        380,
+        980
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 14,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 123
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "CONDITIONING",
+          "links": [
+            122
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 27,
+      "type": "VAEDecode",
+      "pos": [
+        1650,
+        150
+      ],
+      "size": [
+        140,
+        50
+      ],
+      "flags": {},
+      "order": 21,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 139
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 165
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            31
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 18,
+      "type": "SaveImage",
+      "pos": [
+        1830,
+        150
+      ],
+      "size": [
+        670,
+        690
+      ],
+      "flags": {},
+      "order": 22,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 31
+        }
+      ],
+      "outputs": [],
+      "properties": {},
+      "widgets_values": [
+        "xPixArt/%date:yyyy_MM_dd%/xPixArt"
+      ]
+    },
+    {
+      "id": 56,
+      "type": "Reroute",
+      "pos": [
+        1440,
+        170
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 121
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "VAE",
+          "links": [
+            165
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 36,
+      "type": "Reroute",
+      "pos": [
+        1440,
+        590
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 19,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 162
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "LATENT",
+          "links": [],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 52,
+      "type": "Reroute",
+      "pos": [
+        1440,
+        630
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 20,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 96
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "LATENT",
+          "links": [
+            139
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 24,
+      "type": "CheckpointLoaderSimple",
+      "pos": [
+        -880,
+        370
+      ],
+      "size": [
+        340,
+        100
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            97
+          ],
+          "slot_index": 0
+        },
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": [
+            47,
+            153
+          ],
+          "slot_index": 1
+        },
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [
+            121
+          ],
+          "slot_index": 2
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CheckpointLoaderSimple"
+      },
+      "widgets_values": [
+        "photon_refiner-FP16.safetensors"
+      ]
+    },
+    {
+      "id": 3,
+      "type": "CLIPLoader",
+      "pos": [
+        -880,
+        710
+      ],
+      "size": [
+        340,
+        82
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": [
+            152
+          ],
+          "slot_index": 0
+        }
+      ],
+      "title": "Load T5",
+      "properties": {
+        "Node name for S&R": "CLIPLoader"
+      },
+      "widgets_values": [
+        "t5_xxl_encoder-FP8.safetensors",
+        "sd3"
+      ]
+    },
+    {
+      "id": 65,
+      "type": "LoadCheckpoint //xPixart",
+      "pos": [
+        -880,
+        20
+      ],
+      "size": [
+        340,
+        120
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            150
+          ]
+        },
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": null
+        },
+        {
+          "name": "T5",
+          "type": "T5",
+          "links": null
+        },
+        {
+          "name": "META",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadCheckpoint //xPixart"
+      },
+      "widgets_values": [
+        "PixArt-Sigma-1024.safetensors"
+      ]
+    },
+    {
+      "id": 62,
+      "type": "Note",
+      "pos": [
+        -204.93861389160156,
+        -308.3001708984375
+      ],
+      "size": [
+        550,
+        220
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "title": "Prompt",
+      "properties": {},
+      "widgets_values": [
+        "A cute squirrel is riding a motorcycle in a forest. The squirrel is wearing a black leather jacket, a black helmet with a pair of goggles and a white stripe, and it is holding the handlebars of the motorcycle with its paws. The motorcycle is yellow with black accents and has a large headlight. The squirrel is looking at the camera and smiling. The forest background is blurred and out of focus, with trees and leaves in the background. The ground is covered in brown leaves and dirt. The squirrel's fur is brown and white, and its tail is bushy. The motorcycle is moving forward on a dirt path. There are big pine cones on the ground near the motorcycle. The image is lit by the sun, and the colors are bright and vibrant."
+      ],
+      "color": "#222",
+      "bgcolor": "#000"
+    },
+    {
+      "id": 66,
+      "type": "EncodePrompts //xPixart",
+      "pos": [
+        30,
+        90
+      ],
+      "size": [
+        560,
+        390
+      ],
+      "flags": {},
+      "order": 11,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "t5",
+          "type": "CLIP",
+          "link": 152
+        },
+        {
+          "name": "refiner_clip",
+          "type": "CLIP",
+          "link": 153
+        }
+      ],
+      "outputs": [
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "links": [
+            154
+          ]
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "links": [
+            155
+          ]
+        },
+        {
+          "name": "refiner_positive",
+          "type": "CONDITIONING",
+          "links": [
+            156
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "EncodePrompts //xPixart"
+      },
+      "widgets_values": [
+        "PHOTO",
+        "A cute squirrel is riding a motorcycle in a forest. The squirrel is wearing a black leather jacket, a black helmet with a pair of goggles and a white stripe, and it is holding the handlebars of the motorcycle with its paws. The motorcycle is yellow with black accents and has a large headlight. The squirrel is looking at the camera and smiling. The forest background is blurred and out of focus, with trees and leaves in the background. The ground is covered in brown leaves and dirt. The squirrel's fur is brown and white, and its tail is bushy. The motorcycle is moving forward on a dirt path. There are big pine cones on the ground near the motorcycle. The image is lit by the sun, and the colors are bright and vibrant.",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": 16,
+      "type": "PrimitiveNode",
+      "pos": [
+        610,
+        260
+      ],
+      "size": [
+        260,
+        82
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "INT",
+          "type": "INT",
+          "links": [
+            109
+          ],
+          "slot_index": 0,
+          "widget": {
+            "name": "noise_seed"
+          }
+        }
+      ],
+      "title": "Seed",
+      "properties": {
+        "Run widget replace on values": false
+      },
+      "widgets_values": [
+        2,
+        "fixed"
+      ]
+    },
+    {
+      "id": 63,
+      "type": "LoadAnyVAE //xPixart",
+      "pos": [
+        -880,
+        190
+      ],
+      "size": [
+        340,
+        60
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [
+            160
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadAnyVAE //xPixart"
+      },
+      "widgets_values": [
+        "tiny_ae_sdxl.safetensors"
+      ]
+    },
+    {
+      "id": 64,
+      "type": "LoadAnyVAE //xPixart",
+      "pos": [
+        -880,
+        510
+      ],
+      "size": [
+        340,
+        60
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [
+            148,
+            161
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadAnyVAE //xPixart"
+      },
+      "widgets_values": [
+        "tiny_ae_sd.safetensors"
+      ]
+    },
+    {
+      "id": 70,
+      "type": "Reroute",
+      "pos": [
+        380,
+        940
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 16,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 164
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "TRANSCODER",
+          "links": [
+            163
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 69,
+      "type": "VAETranscode //xPixart",
+      "pos": [
+        750,
+        900
+      ],
+      "size": [
+        289.79998779296875,
+        46
+      ],
+      "flags": {},
+      "order": 17,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 158
+        },
+        {
+          "name": "transcoder",
+          "type": "TRANSCODER",
+          "link": 163,
+          "shape": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            159,
+            162
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAETranscode //xPixart"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 68,
+      "type": "BuildCustomTranscoder //xPixart",
+      "pos": [
+        -90,
+        690
+      ],
+      "size": [
+        314.29132080078125,
+        102
+      ],
+      "flags": {},
+      "order": 13,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "decoder",
+          "type": "VAE",
+          "link": 160
+        },
+        {
+          "name": "encoder",
+          "type": "VAE",
+          "link": 161
+        }
+      ],
+      "outputs": [
+        {
+          "name": "TRANSCODER",
+          "type": "TRANSCODER",
+          "links": [
+            164
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "BuildCustomTranscoder //xPixart"
+      },
+      "widgets_values": [
+        "Blur",
+        0.5
+      ]
+    },
+    {
       "id": 34,
       "type": "CLIPTextEncode",
       "pos": [
-        -223,
-        854
+        -130,
+        920
       ],
       "size": [
         350,
         80
       ],
       "flags": {},
-      "order": 12,
+      "order": 9,
       "mode": 0,
       "inputs": [
         {
@@ -372,348 +758,6 @@
       ]
     },
     {
-      "id": 57,
-      "type": "Reroute",
-      "pos": [
-        380,
-        940
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {},
-      "order": 15,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 123
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "CONDITIONING",
-          "links": [
-            122
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
-    },
-    {
-      "id": 18,
-      "type": "SaveImage",
-      "pos": [
-        1530,
-        150
-      ],
-      "size": [
-        670,
-        690
-      ],
-      "flags": {},
-      "order": 22,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "images",
-          "type": "IMAGE",
-          "link": 31
-        }
-      ],
-      "outputs": [],
-      "properties": {},
-      "widgets_values": [
-        "xPixArt/%date:yyyy_MM_dd%/xPixArt"
-      ]
-    },
-    {
-      "id": 27,
-      "type": "VAEDecode",
-      "pos": [
-        1360,
-        150
-      ],
-      "size": [
-        140,
-        50
-      ],
-      "flags": {},
-      "order": 21,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "samples",
-          "type": "LATENT",
-          "link": 127
-        },
-        {
-          "name": "vae",
-          "type": "VAE",
-          "link": 125
-        }
-      ],
-      "outputs": [
-        {
-          "name": "IMAGE",
-          "type": "IMAGE",
-          "links": [
-            31
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "VAEDecode"
-      },
-      "widgets_values": []
-    },
-    {
-      "id": 54,
-      "type": "Reroute",
-      "pos": [
-        1180,
-        130
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {},
-      "order": 11,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 115
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "VAE",
-          "links": [
-            125
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
-    },
-    {
-      "id": 56,
-      "type": "Reroute",
-      "pos": [
-        1180,
-        170
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {},
-      "order": 14,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 121
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "VAE",
-          "links": []
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
-    },
-    {
-      "id": 55,
-      "type": "TextEncoder //xPixart",
-      "pos": [
-        20,
-        90
-      ],
-      "size": [
-        570,
-        390
-      ],
-      "flags": {},
-      "order": 13,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "t5",
-          "type": "CLIP",
-          "link": 116
-        },
-        {
-          "name": "refiner_clip",
-          "type": "CLIP",
-          "link": 117
-        }
-      ],
-      "outputs": [
-        {
-          "name": "positive",
-          "type": "CONDITIONING",
-          "links": [
-            118
-          ]
-        },
-        {
-          "name": "negative",
-          "type": "CONDITIONING",
-          "links": [
-            119
-          ]
-        },
-        {
-          "name": "refiner_positive",
-          "type": "CONDITIONING",
-          "links": [
-            120
-          ],
-          "slot_index": 2
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "TextEncoder //xPixart"
-      },
-      "widgets_values": [
-        "PHOTO",
-        "A cute squirrel is riding a motorcycle in a forest. The squirrel is wearing a black leather jacket, a black helmet with a pair of goggles and a white stripe, and it is holding the handlebars of the motorcycle with its paws. The motorcycle is yellow with black accents and has a large headlight. The squirrel is looking at the camera and smiling. The forest background is blurred and out of focus, with trees and leaves in the background. The ground is covered in brown leaves and dirt. The squirrel's fur is brown and white, and its tail is bushy. The motorcycle is moving forward on a dirt path. There are big pine cones on the ground near the motorcycle. The image is lit by the sun, and the colors are bright and vibrant.",
-        "",
-        ""
-      ]
-    },
-    {
-      "id": 16,
-      "type": "PrimitiveNode",
-      "pos": [
-        610,
-        260
-      ],
-      "size": [
-        260,
-        82
-      ],
-      "flags": {},
-      "order": 9,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "INT",
-          "type": "INT",
-          "links": [
-            109
-          ],
-          "slot_index": 0,
-          "widget": {
-            "name": "noise_seed"
-          }
-        }
-      ],
-      "title": "Seed",
-      "properties": {
-        "Run widget replace on values": false
-      },
-      "widgets_values": [
-        2,
-        "fixed"
-      ]
-    },
-    {
-      "id": 17,
-      "type": "PrimitiveNode",
-      "pos": [
-        610,
-        380
-      ],
-      "size": [
-        260,
-        82
-      ],
-      "flags": {},
-      "order": 10,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "FLOAT",
-          "type": "FLOAT",
-          "links": [
-            110
-          ],
-          "slot_index": 0,
-          "widget": {
-            "name": "cfg"
-          }
-        }
-      ],
-      "title": "CFG",
-      "properties": {
-        "Run widget replace on values": false
-      },
-      "widgets_values": [
-        3.5,
-        "fixed"
-      ]
-    },
-    {
-      "id": 52,
-      "type": "Reroute",
-      "pos": [
-        1180,
-        740
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {},
-      "order": 20,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 96
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "LATENT",
-          "links": [
-            127
-          ]
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
-    },
-    {
       "id": 53,
       "type": "KSamplerAdvanced",
       "pos": [
@@ -725,23 +769,23 @@
         302
       ],
       "flags": {},
-      "order": 16,
+      "order": 15,
       "mode": 0,
       "inputs": [
         {
           "name": "model",
           "type": "MODEL",
-          "link": 105
+          "link": 150
         },
         {
           "name": "positive",
           "type": "CONDITIONING",
-          "link": 118
+          "link": 154
         },
         {
           "name": "negative",
           "type": "CONDITIONING",
-          "link": 119
+          "link": 155
         },
         {
           "name": "latent_image",
@@ -770,7 +814,7 @@
           "name": "LATENT",
           "type": "LATENT",
           "links": [
-            128
+            158
           ]
         }
       ],
@@ -791,52 +835,18 @@
       ]
     },
     {
-      "id": 36,
-      "type": "Reroute",
-      "pos": [
-        1180,
-        700
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {},
-      "order": 18,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 131
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "LATENT",
-          "links": [],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
-    },
-    {
       "id": 51,
       "type": "KSamplerAdvanced",
       "pos": [
-        820,
-        800
+        1071.83349609375,
+        679.166748046875
       ],
       "size": [
         315,
         334
       ],
       "flags": {},
-      "order": 19,
+      "order": 18,
       "mode": 0,
       "inputs": [
         {
@@ -847,7 +857,7 @@
         {
           "name": "positive",
           "type": "CONDITIONING",
-          "link": 120
+          "link": 156
         },
         {
           "name": "negative",
@@ -857,7 +867,7 @@
         {
           "name": "latent_image",
           "type": "LATENT",
-          "link": 132
+          "link": 159
         }
       ],
       "outputs": [
@@ -887,55 +897,38 @@
       ]
     },
     {
-      "id": 58,
-      "type": "TranscoderTwoSteps //xPixart",
+      "id": 54,
+      "type": "Reroute",
       "pos": [
-        730,
-        610
+        1440,
+        130
       ],
       "size": [
-        378,
-        122
+        75,
+        26
       ],
       "flags": {},
-      "order": 17,
+      "order": 12,
       "mode": 0,
       "inputs": [
         {
-          "name": "samples",
-          "type": "LATENT",
-          "link": 128
-        },
-        {
-          "name": "decoder",
-          "type": "VAE",
-          "link": 129,
-          "shape": 7
-        },
-        {
-          "name": "encoder",
-          "type": "VAE",
-          "link": 130,
-          "shape": 7
+          "name": "",
+          "type": "*",
+          "link": 148
         }
       ],
       "outputs": [
         {
-          "name": "LATENT",
-          "type": "LATENT",
-          "links": [
-            131,
-            132
-          ]
+          "name": "",
+          "type": "VAE",
+          "links": [],
+          "slot_index": 0
         }
       ],
       "properties": {
-        "Node name for S&R": "TranscoderTwoSteps //xPixart"
-      },
-      "widgets_values": [
-        "Blur",
-        0.5
-      ]
+        "showOutputText": false,
+        "horizontal": false
+      }
     }
   ],
   "links": [
@@ -972,14 +965,6 @@
       "MODEL"
     ],
     [
-      105,
-      14,
-      0,
-      53,
-      0,
-      "MODEL"
-    ],
-    [
       108,
       20,
       0,
@@ -1002,54 +987,6 @@
       53,
       5,
       "FLOAT"
-    ],
-    [
-      115,
-      25,
-      0,
-      54,
-      0,
-      "*"
-    ],
-    [
-      116,
-      3,
-      0,
-      55,
-      0,
-      "CLIP"
-    ],
-    [
-      117,
-      24,
-      1,
-      55,
-      1,
-      "CLIP"
-    ],
-    [
-      118,
-      55,
-      0,
-      53,
-      1,
-      "CONDITIONING"
-    ],
-    [
-      119,
-      55,
-      1,
-      53,
-      2,
-      "CONDITIONING"
-    ],
-    [
-      120,
-      55,
-      2,
-      51,
-      1,
-      "CONDITIONING"
     ],
     [
       121,
@@ -1076,15 +1013,7 @@
       "*"
     ],
     [
-      125,
-      54,
-      0,
-      27,
-      1,
-      "VAE"
-    ],
-    [
-      127,
+      139,
       52,
       0,
       27,
@@ -1092,44 +1021,124 @@
       "LATENT"
     ],
     [
-      128,
+      148,
+      64,
+      0,
+      54,
+      0,
+      "*"
+    ],
+    [
+      150,
+      65,
+      0,
       53,
       0,
-      58,
+      "MODEL"
+    ],
+    [
+      152,
+      3,
+      0,
+      66,
+      0,
+      "CLIP"
+    ],
+    [
+      153,
+      24,
+      1,
+      66,
+      1,
+      "CLIP"
+    ],
+    [
+      154,
+      66,
+      0,
+      53,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      155,
+      66,
+      1,
+      53,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      156,
+      66,
+      2,
+      51,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      158,
+      53,
+      0,
+      69,
       0,
       "LATENT"
     ],
     [
-      129,
-      22,
+      159,
+      69,
       0,
-      58,
+      51,
+      3,
+      "LATENT"
+    ],
+    [
+      160,
+      63,
+      0,
+      68,
+      0,
+      "VAE"
+    ],
+    [
+      161,
+      64,
+      0,
+      68,
       1,
       "VAE"
     ],
     [
-      130,
-      25,
-      0,
-      58,
-      2,
-      "VAE"
-    ],
-    [
-      131,
-      58,
+      162,
+      69,
       0,
       36,
       0,
       "*"
     ],
     [
-      132,
-      58,
+      163,
+      70,
       0,
-      51,
-      3,
-      "LATENT"
+      69,
+      1,
+      "TRANSCODER"
+    ],
+    [
+      164,
+      68,
+      0,
+      70,
+      0,
+      "*"
+    ],
+    [
+      165,
+      56,
+      0,
+      27,
+      1,
+      "VAE"
     ]
   ],
   "groups": [
@@ -1152,8 +1161,8 @@
       "bounding": [
         400,
         530,
-        752.3980102539062,
-        627.4478759765625
+        1091.0087890625,
+        495.67181396484375
       ],
       "color": "#3f789e",
       "font_size": 24,
@@ -1161,7 +1170,7 @@
     },
     {
       "id": 3,
-      "title": "Control Panel | t2i_styles_ksampler_quality",
+      "title": "Control Panel | t2i_styles_ksampler_fast",
       "bounding": [
         10,
         10,
@@ -1191,8 +1200,8 @@
       "bounding": [
         -900,
         620,
-        413,
-        247
+        381.0180969238281,
+        216.09417724609375
       ],
       "color": "#3f789e",
       "font_size": 24,
@@ -1202,10 +1211,10 @@
   "config": {},
   "extra": {
     "ds": {
-      "scale": 0.7260201143184121,
+      "scale": 0.7513148009015782,
       "offset": [
-        52.9673049202771,
-        171.5054890349205
+        32.119677467386175,
+        21.922552007638988
       ]
     }
   },
