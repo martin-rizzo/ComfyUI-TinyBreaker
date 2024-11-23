@@ -16,7 +16,6 @@ ENHANCER_OPS = [
     #"Color Balance",
 ]
     
-
 class BuildCustomTranscoder:
     TITLE       = "xPixArt | Build Custom Transcoder"
     CATEGORY    = "xPixArt"
@@ -27,8 +26,8 @@ class BuildCustomTranscoder:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "decoder"       : ("VAE"   , {"tooltip": "A VAE model used for decoding in the first step."}),
-                "encoder"       : ("VAE"   , {"tooltip": "A VAE model used for encoding in the second step."}),
+                "decoder"       : ("VAE"       , {"tooltip": "A VAE model used for decoding in the first step."}),
+                "encoder"       : ("VAE"       , {"tooltip": "A VAE model used for encoding in the second step."}),
                 "enhancer_op"   : (ENHANCER_OPS, {"default": "None"}, {"tooltip": "The operation to apply after decode but before encode."}),
                 "enhancer_level": ("FLOAT"     , {"default": 0.5, "min": 0.0, "max": 5.0, "step": 0.1}, {"tooltip": "The strength of the enhancer operation"}),
             },

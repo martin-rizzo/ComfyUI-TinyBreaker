@@ -77,6 +77,9 @@ comfy_import_node(EmptyLatentImage)
 from .nodes.placeholder_replacer import PlaceholderReplacer
 comfy_import_node(PlaceholderReplacer)
 
+from .nodes.prefixed_double_stage_sampler import PrefixedDoubleStageSampler
+comfy_import_node(PrefixedDoubleStageSampler)
+
 
 # Development Nodes
 
