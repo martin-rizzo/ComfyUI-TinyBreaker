@@ -11,11 +11,14 @@ License : MIT
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import os
+import sys
 import json
 import struct
 import argparse
+import numpy as np
 from safetensors       import safe_open
 from safetensors.numpy import save_file
+VALID_MODEL_CLASSES = ("sd", "sdxl", "sd3", "f1")
 
 #---------------------------- COLORED MESSAGES -----------------------------#
 
@@ -42,7 +45,8 @@ def warning(message: str, *info_messages: str) -> None:
 
 def error(message: str, *info_messages: str) -> None:
     """Displays and logs an error message to the standard error stream."""
-    print(f"{CYAN}[{RED}ERROR{CYAN}]{RED} {message}{DEFAULT_COLOR}", file=sys.stderr)
+    print()
+    print(f"{CYAN}[{RED}ERROR{CYAN}]{RED} {DEFAULT_COLOR}{message}", file=sys.stderr)
     for info_message in info_messages:
         print(f"          {RED}{info_message}{DEFAULT_COLOR}", file=sys.stderr)
     print()
@@ -157,6 +161,25 @@ def find_unique_path(path: str) -> str:
         number += 1
 
 
+def is_terminal_output():
+    """
+    Return True ifthe standard output is connected to a terminal.
+    """
+    return sys.stdout.isatty()
+
+
+def get_dtype_name(dtype: np.dtype, prefix: str = "") -> str:
+    """
+    Convert a numpy dtype to a string name used in file names.
+    """
+    if dtype == np.float16:
+        return f"{prefix}fp16"
+    elif dtype == np.float32:
+        return f"{prefix}fp32"
+    else:
+        return ""
+
+
 #----------------------------- IDENTIFICATION ------------------------------#
 
 def is_taesd(state_dict: dict) -> bool:
@@ -253,6 +276,8 @@ def find_taesd_with_role(input_files: list[str], role: str) -> tuple[str, str]:
 
 def build_tiny_vae(encoder_path_and_prefix: tuple[str, str],
                    decoder_path_and_prefix: tuple[str, str],
+                   model_class            : str,
+                   dtype                  : np.dtype = None
                    ) -> dict:
     """
     Build a Tiny VAE model using the provided encoder and decoder paths.
@@ -264,7 +289,8 @@ def build_tiny_vae(encoder_path_and_prefix: tuple[str, str],
     Returns:
         dict: The Tiny VAE model parameters.
     """
-
+    assert model_class in VALID_MODEL_CLASSES, f"Invalid model class {model_class}"
+    
     encoder_tensors = load_tensors(path   = encoder_path_and_prefix[0],
                                    prefix = encoder_path_and_prefix[1],
                                    target_prefix = "taesd_encoder")
@@ -278,7 +304,34 @@ def build_tiny_vae(encoder_path_and_prefix: tuple[str, str],
     
     # combine the encoder and decoder parameters into a single dictionary
     tiny_vae_params = {**encoder_tensors, **decoder_tensors}
+
+    # add vae_scale and vae_shift if they are missing
+    if "vae_scale" not in tiny_vae_params and "vae_shift" not in tiny_vae_params:
+
+        if model_class == "sd":
+            tiny_vae_params["vae_scale"] = np.array(0.18215)
+            tiny_vae_params["vae_shift"] = np.array(0.0)
+
+        elif model_class == "sdxl":
+            tiny_vae_params["vae_scale"] = np.array(0.13025)
+            tiny_vae_params["vae_shift"] = np.array(0.0)
+
+        elif model_class == "sd3":
+            tiny_vae_params["vae_scale"] = np.array(1.5305)
+            tiny_vae_params["vae_shift"] = np.array(0.0609)
+
+        elif model_class == "f1":
+            tiny_vae_params["vae_scale"] = np.array(0.3611)
+            tiny_vae_params["vae_shift"] = np.array(0.1159)
+
+    if dtype is not None:
+        for key, tensor in tiny_vae_params.items():
+            if isinstance(tensor, np.ndarray):
+                tiny_vae_params[key] = tensor.astype(dtype)
+
     return tiny_vae_params
+
+
 
 
 #===========================================================================#
@@ -294,16 +347,35 @@ def main(args: list=None, parent_script: str=None):
 
     # start parsing the arguments
     parser = argparse.ArgumentParser(prog=prog,
-        description="Create a tiny VAE from input files.",
+        description="Build a Tiny VAE model from encoderand decoder files.",
         formatter_class=argparse.RawTextHelpFormatter,
         )
     parser.add_argument("input_files", nargs="+", help="Input files to process")
-    parser.add_argument("-o", "--output_dir", help="Output directory for the VAE")
+    parser.add_argument("-o", "--output_dir", type=str            , help="output directory for the VAE")
+    parser.add_argument("-c", "--color"     , action="store_true" , help="Use color output when connected to a terminal")
+    parser.add_argument("--color-always"    , action="store_true" , help="always use color output")
+    _group = parser.add_mutually_exclusive_group()
+    _group.add_argument(     "--sd"         , dest="model_class", action="store_const", const="sd"  , help="build a VAE for a SD 1.5 model")
+    _group.add_argument(     "--sdxl"       , dest="model_class", action="store_const", const="sdxl", help="build a VAE for a SDXL model")
+    _group.add_argument(     "--sd3"        , dest="model_class", action="store_const", const="sd3" , help="build a VAE for a SD3 model")
+    _group.add_argument(     "--f1","--flux", dest="model_class", action="store_const", const="f1"  , help="build a VAE for a Flux.1 model")
+    _group = parser.add_mutually_exclusive_group()
+    _group.add_argument(     "--float16"    , dest="dtype", action="store_const", const=np.float16, help="Store the built VAE as float16")
+    _group.add_argument(     "--float32"    , dest="dtype", action="store_const", const=np.float32, help="Store the built VAE as float32") 
+    
+    # parse the arguments and check that they are valid
+    args = parser.parse_args(args)
 
-    args = parser.parse_args()
+   # determine if color should be used
+    use_color = args.color_always or (args.color and is_terminal_output())
+    if not use_color:
+        disable_colors()
 
-    #if not os.path.exists(args.output_dir):
-    #    os.makedirs(args.output_dir)
+    # check that a model class was specified
+    if not args.model_class:
+        fatal_error("A model class must be specified (--sd, --sdxl, --sd3 or --flux).")
+    
+    print("##>> Model class:", args.model_class)
 
     # find the encoder and decoder files and their tensor prefixes
     encoder_path, encoder_source_prefix = find_taesd_with_role(args.input_files, role="encoder")
@@ -318,11 +390,15 @@ def main(args: list=None, parent_script: str=None):
 
     state_dict = build_tiny_vae(encoder_path_and_prefix = (encoder_path, encoder_source_prefix),
                                 decoder_path_and_prefix = (decoder_path, decoder_source_prefix),
+                                model_class = args.model_class,
+                                dtype       = args.dtype
                                 )
 
     # find a unique path for the output file
-    output_file_path = "taesd_vae.safetensors"
+    output_file_path = f"tae{args.model_class}_vae{get_dtype_name(args.dtype,'_')}.safetensors"
     if args.output_dir:
+        if not os.path.exists(args.output_dir):
+            os.makedirs(args.output_dir)
         output_file_path = os.path.join(args.output_dir, output_file_path)
     output_file_path = find_unique_path(output_file_path)
 

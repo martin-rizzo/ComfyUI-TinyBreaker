@@ -13,6 +13,55 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 from .xcomfy.objects    import Model_pack
 from .utils.directories import PIXART_CHECKPOINTS_DIR
 
+# SDXL
+#   CLIP     : conditioner.embeders.[0,1]
+#   VAE      : first_stage_model.
+#                   decoder.
+#                   encoder.
+#                   post_quant_conv.
+#                   quant_conv.
+#   MODEL    : model.diffusion_model.[ SDXL ]
+
+# SD1.5 ------------------------------------
+#   CLIP     : cond_stage_model.transformer.text_model.
+#   VAE      : first_stage_model.
+#                   decoder.
+#                   encoder.
+#                   post_quant_conv.
+#                   quant_conv.
+#   MODEL    : model.diffusion_model.[ SD15 ]
+
+# MimiToy ----------------------------------
+#  CLIP      : cond_stage_model.transformer.text_model. / conditioner.embeders.[0,1]
+#  VAE       : first_stage_model.
+#                   decoder.
+#                   encoder.
+#                   post_quant_conv.
+#                   quant_conv.
+#  MODEL     : model.diffusion_model.[ PixArt ]
+#  TRANSCODER: taesd_encoder.
+#              taesd_decoder.
+#              taesdxl_decoder.
+#              taesdxl_encoder.
+#  REF_MODEL : refiner.diffusion_model.[ SD15 | SDXL ]
+
+#-------------------------------------------
+# Load Checkpoint
+#     -> MODEL
+#     -> VAE
+#     -> TRANSCODER
+#     -> REFINER_MODEL
+#     -> META
+#
+# UNet PixArt
+#
+# [ tiny_decoder_sdxl ]
+# [ tiny_encoder_sd   ]
+#
+# UNet Refiner
+#
+# < VAE Refiner | tiny_decoder_sd | tiny_decoder_sdxl >
+
 
 class LoadCheckpoint:
     TITLE       = "xPixArt | Load Checkpoint"
