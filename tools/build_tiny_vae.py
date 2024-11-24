@@ -1,6 +1,6 @@
 """
-File    : create_tiny_vae.py
-Purpose : Command-line tool to create a tiny Variational Autoencoder (VAE) model.
+File    : build_tiny_vae.py
+Purpose : Command-line tool to build a tiny Variational Autoencoder (VAE) model.
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
 Date    : Nov 23, 2024
 Repo    : https://github.com/martin-rizzo/ComfyUI-xPixArt
@@ -347,12 +347,12 @@ def main(args: list=None, parent_script: str=None):
 
     # start parsing the arguments
     parser = argparse.ArgumentParser(prog=prog,
-        description="Build a Tiny VAE model from encoderand decoder files.",
+        description="Build a Tiny VAE model from encoder and decoder files.",
         formatter_class=argparse.RawTextHelpFormatter,
         )
-    parser.add_argument("input_files", nargs="+", help="Input files to process")
+    parser.add_argument(   "input_files"    , nargs="+"           , help="input files to process")
     parser.add_argument("-o", "--output_dir", type=str            , help="output directory for the VAE")
-    parser.add_argument("-c", "--color"     , action="store_true" , help="Use color output when connected to a terminal")
+    parser.add_argument("-c", "--color"     , action="store_true" , help="use color output when connected to a terminal")
     parser.add_argument("--color-always"    , action="store_true" , help="always use color output")
     _group = parser.add_mutually_exclusive_group()
     _group.add_argument(     "--sd"         , dest="model_class", action="store_const", const="sd"  , help="build a VAE for a SD 1.5 model")
@@ -360,8 +360,8 @@ def main(args: list=None, parent_script: str=None):
     _group.add_argument(     "--sd3"        , dest="model_class", action="store_const", const="sd3" , help="build a VAE for a SD3 model")
     _group.add_argument(     "--f1","--flux", dest="model_class", action="store_const", const="f1"  , help="build a VAE for a Flux.1 model")
     _group = parser.add_mutually_exclusive_group()
-    _group.add_argument(     "--float16"    , dest="dtype", action="store_const", const=np.float16, help="Store the built VAE as float16")
-    _group.add_argument(     "--float32"    , dest="dtype", action="store_const", const=np.float32, help="Store the built VAE as float32") 
+    _group.add_argument(     "--float16"    , dest="dtype", action="store_const", const=np.float16, help="store the built VAE as float16")
+    _group.add_argument(     "--float32"    , dest="dtype", action="store_const", const=np.float32, help="store the built VAE as float32") 
     
     # parse the arguments and check that they are valid
     args = parser.parse_args(args)

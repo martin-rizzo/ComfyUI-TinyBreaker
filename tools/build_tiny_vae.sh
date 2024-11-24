@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# File    : create_tiny_vae.sh
-# Purpose : Wrapper for `create_tiny_vae.py` that automatically handles the python virtual env
+# File    : build_tiny_vae.sh
+# Purpose : Wrapper for `build_tiny_vae.py` that automatically handles the python virtual env
 # Author  : Martin Rizzo | <martinrizzo@gmail.com>
 # Date    : Nov 23, 2024
 # Repo    : https://github.com/martin-rizzo/SafetensorsKit
