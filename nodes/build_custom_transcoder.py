@@ -7,7 +7,7 @@ Repo    : https://github.com/martin-rizzo/ComfyUI-xPixArt
 License : MIT
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 """
-from .xcomfy.objects import Transcoder
+from .xcomfy.transcoder import Transcoder
 
 ENHANCER_OPS = [
     "None",
@@ -40,18 +40,17 @@ class BuildCustomTranscoder:
 
     @classmethod
     def build_transcoder(cls,  decoder, encoder, enhancer_op, enhancer_level):
-        gaussian_blur_level = 0.0
+        gaussian_blur_sigma = 0.0
 
         if enhancer_op == "Auto":
             # TODO: set blur 0.5 only when the encoder/decoder are `Tiny Autoencoders`
-            gaussian_blur_level = 0.5
+            gaussian_blur_sigma = 0.5
 
         elif enhancer_op == "Blur":
-            gaussian_blur_level = enhancer_level
-            
-        transcoder = Transcoder(model   = None,
-                                decoder = decoder,
-                                encoder = encoder,
-                                gaussian_blur_level = gaussian_blur_level
-                                )
+            gaussian_blur_sigma = enhancer_level
+
+        transcoder = Transcoder.from_decoder_encoder(decoder = decoder,
+                                                     encoder = encoder,
+                                                     gaussian_blur_sigma = gaussian_blur_sigma)
+
         return (transcoder,)

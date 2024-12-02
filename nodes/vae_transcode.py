@@ -10,7 +10,7 @@ License : MIT
     ComfyUI nodes providing experimental support for PixArt-Sigma model
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
-from .xcomfy.objects import Transcoder
+from .xcomfy.transcoder import Transcoder
 
 
 class VAETranscode:

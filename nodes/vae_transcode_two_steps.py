@@ -7,7 +7,8 @@ Repo    : https://github.com/martin-rizzo/ComfyUI-xPixArt
 License : MIT
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 """
-from .xcomfy.objects import VAE, Transcoder
+from .xcomfy.transcoder import Transcoder
+from .xcomfy.objects    import VAE
 
 
 class VAETranscodeTwoSteps:
