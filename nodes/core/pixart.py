@@ -1,5 +1,5 @@
 """
-File    : pixartsigma.py
+File    : pixart.py
 Purpose : Implementation of the PixArt model using PyTorch.
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
 Date    : May 2, 2024

@@ -18,7 +18,7 @@ from comfy                import supported_models_base
 from comfy                import model_management
 from comfy                import latent_formats
 from comfy                import conds
-from ..core.pixartsigma   import PixArtSigma
+from ..core.pixart        import PixArtSigma
 from ..utils.safetensors  import load_safetensors_header, estimate_model_params
 from ..utils.system       import logger
 
