@@ -12,8 +12,8 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 from typing import Optional
+from torch.nn.attention import SDPBackend, sdpa_kernel
 
 
 #----------------------------------------------------------------------------
@@ -55,20 +55,17 @@ class MultiHeadSelfAttention(nn.Module):
     Args:
         dim       (int): Number of input and output dimensions.
         num_heads (int): Number of attention heads.
-        use_fp32 (Optional[bool]): Whether to use float32 precision for attention computation.
     """
 
     def __init__(self,
                  dim      : int,
                  num_heads: int,
-                 use_fp32 : Optional[bool] = False
                  ):
         super().__init__()
         assert dim % num_heads == 0, "Self-Attention dim should be divisible by num_heads"
         self.dim       = dim
         self.num_heads = num_heads
         self.head_dim  = dim // num_heads
-        self.use_fp32  = use_fp32
         self.qkv       = nn.Linear(dim, dim * 3)
         self.proj      = nn.Linear(dim, dim)
 
@@ -81,12 +78,7 @@ class MultiHeadSelfAttention(nn.Module):
         qkv = qkv.permute(2, 0, 3, 1, 4)
         q, k, v = qkv.unbind(0)
 
-        if self.use_fp32:
-            attn_output = torch.nn.functional.scaled_dot_product_attention(
-                q.float(), k.float(), v.float()
-                ).to(q.dtype)
-        else:
-            attn_output = F.scaled_dot_product_attention(q, k, v)
+        attn_output = nn.functional.scaled_dot_product_attention(q, k, v)
 
         attn_output = attn_output.permute(0, 2, 1, 3).reshape(batch_size, seq_length, dim)
         return self.proj(attn_output)
@@ -137,7 +129,7 @@ class MultiHeadCrossAttention(nn.Module):
             cond_attn_mask = cond_attn_mask.to(q.device).bool()
 
         # scaled dot-product attention
-        attn_output = F.scaled_dot_product_attention(q, k, v, attn_mask=cond_attn_mask)
+        attn_output = nn.functional.scaled_dot_product_attention(q, k, v, attn_mask=cond_attn_mask)
 
         # reshape and concatenate heads
         attn_output = attn_output.transpose(1, 2).reshape(batch_size, seq_length, dim)

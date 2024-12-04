@@ -104,6 +104,7 @@ class TimestepEmbedder(nn.Module):
             )
 
     def forward(self, timesteps):
+        print("##")
         max_period = 10000
         pos_dtype  = self.positional_dtype
         mlp_dtype  = self.mlp[0].bias.dtype
@@ -177,10 +178,15 @@ class PixArtFinalLayer(nn.Module):
         self.linear            = nn.Linear(input_dim, patch_size * patch_size * output_dim, bias=True)
         self.scale_shift_table = nn.Parameter(torch.randn(2, input_dim) / input_dim ** 0.5)
 
-    def forward(self, x, t1):
+    def forward(self, x, t):
         # x = [batch_size, seq_length, input_dim]
         # t = [batch_size, input_dim]
-        shift, scale = (self.scale_shift_table.unsqueeze(0) + t1).chunk(2, dim=1)
+        print("##------------------")
+        print(f"x.shape: {x.shape}")
+        print(f"t1.shape: {t.shape}")
+        print(f"scale_shift_table.shape: {self.scale_shift_table.shape}")
+        print("##------------------")
+        shift, scale = (self.scale_shift_table.unsqueeze(0) + t.unsqueeze(1)).chunk(2, dim=1)
         x = modulate(self.norm_final(x), shift, scale)
         x = self.linear(x)
         return x

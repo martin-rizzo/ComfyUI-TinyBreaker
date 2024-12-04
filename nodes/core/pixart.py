@@ -17,11 +17,13 @@ from typing      import Dict, Union
 from safetensors import safe_open
 
 from .blocks_pixart import \
-    PatchEmbedder,         \
-    CaptionEmbedder,       \
-    TimestepEmbedder,      \
-    PixArtMSBlock,         \
-    PixArtFinalLayer
+    PixArtMSBlock #,         \
+#    PatchEmbedder,         \
+#    CaptionEmbedder,       \
+#    TimestepEmbedder,      \
+#    PixArtFinalLayer
+
+from .pixart_model import PatchEmbedder, TimestepEmbedder, CaptionEmbedder, PixArtBlock, PixArtFinalLayer
 
 # Tabla de conversion para las keys utilizadas en los archivos .safetensors
 DEPTH_TAG = "|depth|"
@@ -162,20 +164,28 @@ class PixArtSigma(nn.Module):
                                             hidden_dim
                                             )
             self.t_embedder = TimestepEmbedder(hidden_dim,
-                                               positional_dim   = 256,
-                                               positional_dtype = torch.float32
+                                               positional_channels = 256,
+                                               positional_dtype    = torch.float32
                                                )
             self.y_embedder = CaptionEmbedder(context_dim,
                                               hidden_dim
                                               )
+            # self.blocks = nn.ModuleList([
+            #     PixArtMSBlock(
+            #         hidden_dim,
+            #         num_heads,
+            #         mlp_ratio = mlp_ratio
+            #         )
+            #     for i in range(depth)
+            #     ])
             self.blocks = nn.ModuleList([
-                PixArtMSBlock(
+                PixArtBlock(
                     hidden_dim,
                     num_heads,
                     mlp_ratio = mlp_ratio
-                    )
-                for i in range(depth)
-                ])
+                ) for _ in range(depth)
+            ])
+
             self.final_layer = PixArtFinalLayer(hidden_dim,
                                                 patch_size,
                                                 self.output_dim
@@ -219,18 +229,15 @@ class PixArtSigma(nn.Module):
         if len(context.shape) == 3:
             context = context.unsqueeze(1)
 
-        pos_embed = self.cached_position_embeddings(height, width, x.device, x.dtype)
-        x  = self.x_embedder(x) + pos_embed       #         [batch_size, patches, hidden_dim]
-        t  = self.t_embedder(timesteps)           #                  [batch_size, hidden_dim]
-        t6 = self.t_block(t).reshape(batch_size, 6, hidden_dim)#  [batch_size, 6, hidden_dim]
-        context = self.y_embedder(context)        #   [batch_size, 1, seq_length, hidden_dim]
+        pos_embed     = self.cached_position_embeddings(height, width, x.device, x.dtype)
+        x             = self.x_embedder(x) + pos_embed       #         [batch_size, patches, hidden_dim]
+        tstep, tstep6 = self.get_cached_time_embeddings(timesteps)
+        context       = self.y_embedder(context)        #   [batch_size, 1, seq_length, hidden_dim]
 
         # x = [batch_size, patches, hidden_dim]
         for block in self.blocks:
-            x = block(x, t6, context, context_mask, **kwargs)
-
-        # [batch_size, patches, (patch_size^2)*output_dim] <- [batch_size, patches, hidden_dim]
-        x = self.final_layer(x, t.unsqueeze(1))
+            x = block(x, tstep6, context, context_mask)
+        x = self.final_layer(x, tstep)
 
         # unpatchify
         # [batch_size, out_channels, lat_height, lat_width]
@@ -243,6 +250,33 @@ class PixArtSigma(nn.Module):
         if return_eps_only:
             x = x.chunk(2, dim=1)[0]
         return x
+
+    def get_cached_time_embeddings(self, timesteps):
+        #  .timesteps : [batch_size]
+        #  .t         : [batch_size, hidden_dim]
+        #  .t6        : [batch_size, 6, hidden_dim]
+        batch_size = timesteps.shape[0]
+        hidden_dim = self.hidden_dim
+        t  = self.t_embedder(timesteps)
+        t6 = self.t_block(t).reshape(batch_size, 6, hidden_dim)
+        return t, t6
+
+    # def get_cached_embedding(self, timesteps):
+    #     # si timesteps no es un tensor de 1 solo elemento entonces hacer un forward normal
+    #     if timesteps.numel() > 1:
+    #         return self(timesteps)
+    #
+    #     # necesito extraer el numero almacenado en timesteps
+    #     timestep_index = int(timesteps.item())
+    #
+    #     # si el embedding para este timestep no existe en el cache, calcularlo
+    #     if timestep_index not in self.embeddings_cache:
+    #         self.embeddings_cache[timestep_index] = self(timesteps)
+    #     # else:
+    #     #     print("##>> Using cached embedding for timestep:", timestep_index)
+    #     #     print("##>> Cache size:", len(self.embeddings_cache) * self.embeddings_cache[timestep_index].shape[0])
+    #
+    #     return self.embeddings_cache[timestep_index]
 
 
     def cached_position_embeddings(self,
