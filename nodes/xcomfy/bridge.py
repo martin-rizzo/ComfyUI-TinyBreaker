@@ -18,7 +18,8 @@ from comfy                import supported_models_base
 from comfy                import model_management
 from comfy                import latent_formats
 from comfy                import conds
-from ..core.pixart        import PixArtSigma
+from ..core.pixart        import PixArtSigma as PixArtOldModel
+from ..core.pixart_model  import PixArtModel
 from ..utils.safetensors  import load_safetensors_header, estimate_model_params
 from ..utils.system       import logger
 
@@ -30,15 +31,20 @@ from ..utils.system       import logger
 class PixArt_Config(supported_models_base.BASE):
 
     unet_config = {
+        "latent_img_size"    :    -1, #  <---- sera configurado en __init__
+        "latent_img_channels":     4, # number of channels in the latent image
+        "internal_dim"       :  1152, # internal dimensionality used
+        "caption_dim"        :  4096, # dimensionality of the caption input (T5 encoded prompt)
+        "patch_size"         :     2, # size of each patch (in latent blocks)
+        "num_heads"          :    16, # number of attention heads in the transformer
+        "depth"              :    28, # number of layers in the transformer
+        #--- old // to delete ---#
         "input_size"      :    -1, #  <---- sera configurado en __init__
         "pe_interpolation":    -1, #  <---- sera configurado en __init__
         "context_len"     :   300, #  300 tokens maximo en el prompt
         "input_dim"       :     4, #    4 channels in latent image
         "hidden_dim"      :  1152, # 1152 channels usados internamente
         "context_dim"     :  4096, # 4096 features por cada prompt token
-        "patch_size"      :     2,
-        "num_heads"       :    16,
-        "depth"           :    28,
         }
 
     unet_extra_config = {
@@ -56,15 +62,16 @@ class PixArt_Config(supported_models_base.BASE):
 
     def __init__(self, image_size):
         super().__init__( self.__class__.unet_config )
+        self.unet_config["latent_img_size"]  = image_size//8
         self.unet_config["input_size"]       = image_size//8
         self.unet_config["pe_interpolation"] = image_size//512
 
     def get_model(self, state_dict, prefix="", device=None):
         out = PixArt(self, device=device)
         return out
-    
+
     def process_unet_state_dict(self, state_dict):
-        state_dict, missing_keys = PixArtSigma.get_pixart_state_dict(state_dict)
+        state_dict, missing_keys = PixArtOldModel.get_pixart_state_dict(state_dict)
         if len(missing_keys) > 0:
             logger.debug(f"PixArt DiT conversion has {len(missing_keys)} missing keys!")
             for i, key in enumerate(missing_keys):
@@ -85,7 +92,7 @@ class PixArt(BaseModel):
                  model_type  : ModelType    = ModelType.EPS,
                  device      : torch.device = None
                  ):
-        super().__init__(model_config, model_type, device=device, unet_model=PixArtSigma)
+        super().__init__(model_config, model_type, device=device, unet_model=PixArtModel)
 
 
     def extra_conds(self, **kwargs):
@@ -95,6 +102,8 @@ class PixArt(BaseModel):
         cond_attn_mask = kwargs.get("cond_attn_mask", None)
         if cond_attn_mask is not None:
             out["context_mask"] = conds.CONDRegular(cond_attn_mask)
+
+        print("##>> kwargs.keys:", kwargs.keys())
 
         return out
 
