@@ -12,18 +12,14 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import torch
 import torch.nn as nn
-from os          import PathLike
-from typing      import Dict, Union
-from safetensors import safe_open
-
-from .blocks_pixart import \
-    PixArtMSBlock #,         \
-#    PatchEmbedder,         \
-#    CaptionEmbedder,       \
-#    TimestepEmbedder,      \
-#    PixArtFinalLayer
-
-from .pixart_model import PatchEmbedder, TimestepEmbedder, CaptionEmbedder, PixArtBlock, PixArtFinalLayer
+from os            import PathLike
+from typing        import Dict, Union
+from safetensors   import safe_open
+from .pixart_model import PatchEmbedder,    \
+                          TimestepEmbedder, \
+                          CaptionEmbedder,  \
+                          PixArtBlock,      \
+                          PixArtFinalLayer
 
 # Tabla de conversion para las keys utilizadas en los archivos .safetensors
 DEPTH_TAG = "|depth|"
@@ -197,7 +193,7 @@ class PixArtSigma(nn.Module):
                 timesteps,      # time steps in the diffusion process.
                 context,           # conditional info (from prompt).
                 context_mask=None, # optional attention mask applied to conditional.
-                return_eps_only=False, # if True then return only the noise prediction (eps), otherwise return the full output
+                return_epsilon=False, # if True then return only the noise prediction (eps), otherwise return the full output
                 **kwargs):
         """
         x         = [batch_size, channels, H, W]
@@ -247,7 +243,7 @@ class PixArtSigma(nn.Module):
         x = x.permute(0, 5, 1, 3, 2, 4)
         x = x.reshape(batch_size, output_dim, latent_height, latent_width)
 
-        if return_eps_only:
+        if return_epsilon:
             x = x.chunk(2, dim=1)[0]
         return x
 

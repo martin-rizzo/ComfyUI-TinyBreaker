@@ -97,13 +97,11 @@ class PixArt(BaseModel):
 
     def extra_conds(self, **kwargs):
         out = super().extra_conds(**kwargs)
-        out["return_eps_only"] = conds.CONDConstant(True)
+        out["return_epsilon"] = conds.CONDConstant(True)
 
         cond_attn_mask = kwargs.get("cond_attn_mask", None)
         if cond_attn_mask is not None:
             out["context_mask"] = conds.CONDRegular(cond_attn_mask)
-
-        print("##>> kwargs.keys:", kwargs.keys())
 
         return out
 

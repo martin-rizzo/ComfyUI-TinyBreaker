@@ -45,7 +45,6 @@ class LoadTranscoder:
         safetensors_path = VAE_DIR.get_full_path(transcoder_name)
         state_dict       = comfy.utils.load_torch_file(safetensors_path, safe_load=True)
         transcoder_model = TinyTranscoderModel.from_state_dict(state_dict, prefix="")
-        transcoder_model = transcoder_model.to(device)
         transcoder_model.freeze()
         transcoder = Transcoder.from_model(transcoder_model)
         return (transcoder,)

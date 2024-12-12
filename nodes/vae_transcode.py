@@ -17,7 +17,7 @@ class VAETranscode:
     TITLE       = "xPixArt | VAE Transcode"
     CATEGORY    = "xPixArt"
     DESCRIPTION = "Transcode a latent image from one latent space to another."
-    
+
     #-- PARAMETERS -----------------------------#
     @classmethod
     def INPUT_TYPES(cls):
@@ -28,7 +28,6 @@ class VAETranscode:
             "optional": {
                 "transcoder": ("TRANSCODER", {"tooltip": "The transcoder to use for the processing."}),
             },
-                
         }
 
     #-- FUNCTION --------------------------------#
@@ -41,10 +40,16 @@ class VAETranscode:
                   samples   : dict,
                   transcoder: Transcoder = None,
                   ) -> dict:
-        
+
         if transcoder is None:
             return samples
-        
-        samples = transcoder( samples["samples"] )
-        return ({"samples": samples}, )
+
+        # `unet_compatible_latents=False` specifies that the latent images
+        # passed to the transcoder are in their raw, unnormalized form.
+        # This follows ComfyUI's convention where scaling and shifting
+        # (using `scale_factor`/`shift_factor`) are applied by the
+        # samplers **immediately before** the UNet processes the latents.
+        latents = samples["samples"]
+        latents = transcoder( latents, unet_compatible_latents=False )
+        return ({"samples": latents}, )
 

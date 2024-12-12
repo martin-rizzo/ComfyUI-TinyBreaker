@@ -291,7 +291,7 @@ class PixArtModel(nn.Module):
         self.base_size        = latent_img_size // patch_size
         self.pe_interpolation = latent_img_size / 64.          # Positional Encoding interpolation
         self.in_channels      = latent_img_channels
-        self.output_dim       = latent_img_channels * 2
+        self.out_channels     = latent_img_channels * 2
         self.internal_dim     = internal_dim
         self.patch_size       = patch_size
         self.num_heads        = num_heads
@@ -331,7 +331,7 @@ class PixArtModel(nn.Module):
 
             self.final_layer = PixArtFinalLayer(internal_dim,
                                                 patch_size,
-                                                self.output_dim
+                                                self.out_channels
                                                 )
 
 
@@ -340,77 +340,84 @@ class PixArtModel(nn.Module):
                 timestep    : torch.Tensor,         # time steps in the diffusion process.
                 caption     : torch.Tensor = None,  # conditional info (from prompt).
                 caption_mask: torch.Tensor = None,  # optional attention mask applied to conditional.
-                return_eps_only: bool      = False, # if True then return only the noise prediction (eps), otherwise return the full output
+                return_epsilon: bool       = False, # if True then return only the noise prediction (eps),
+                                                    # otherwise return (eps + variance) as the original implementation.
                 **kwargs):
-        # REF:
-        #  x            -> [batch_size, latent_channels, H, W]
-        #  timestep     -> [batch_size]
-        #  caption      -> [batch_size, caption_len, caption_dim]
-        #  caption_mask -> [batch_size, caption_len]
 
-        # `caption`` puede ser suministrado tambien como parametro `context` (como sucede en ComfyUI)
-        # y puede tener cualquiera de estos dos shapes:
-        #    [batch_size, caption_len, caption_dim]
-        #    [batch_size, 1, caption_len, caption_dim]
+        # parameter `caption` can also be provided as the parameter `context`
+        # and it can have one of these two shapes:
+        #   [batch_size, caption_len, caption_dim]
+        #   [batch_size, 1, caption_len, caption_dim]
         if caption is None:
             caption = kwargs["context"] if "context" in kwargs else torch.zeros(1, 0, 4096, device=self.device)
         if len(caption.shape) == 3:
-            caption = caption.unsqueeze(1)  # [batch_size, 1, caption_len, caption_dim]
+            caption = caption.unsqueeze(1)
 
+
+        # convert all inputs to the correct data type
         dtype = self.dtype
-        x            = x.to(dtype)
-        timestep     = timestep.to(dtype)
-        caption      = caption.to(dtype)
-        caption_mask = caption_mask.to(dtype) if caption_mask is not None else None
+        x            = x.to(dtype)                              # < [batch_size, latent_channels, latent_height, latent_width]
+        timestep     = timestep.to(dtype)                       # < [batch_size]
+        caption      = caption.to(dtype)                        # < [batch_size, caption_len, caption_dim]
+        if caption_mask is not None:
+            caption_mask = caption_mask.to(dtype)               # < [batch_size, caption_len] or None
+
 
         assert not self.training, \
-            "This PixArtSigma class can only be used for inference, no ha sido probrada en training."
+            "This PixArtModel class can only be used for inference and should not be used during training."
         assert caption_mask is None or _is_valid_mask(caption_mask, caption), \
-            "la caption_mask suministrada en forward(..) tiene un formato inadecuado"
-
+            "The provided `caption_mask` does not have the correct format for this forward method."
         batch_size, latent_height, latent_width = x.shape[0], x.shape[-2], x.shape[-1]
         height = latent_height // self.patch_size
         width  = latent_width  // self.patch_size
 
 
-        tstep, tstep6 = self.get_cached_time_embeddings(timestep)
-        pos           = self.cached_position_embeddings(height, width, x.device, x.dtype)
-        x             = self.x_embedder(x) + pos           # [batch_size, patches_count, internal_dim]
-        caption       = self.y_embedder(caption)           # [batch_size, 1, seq_length, internal_dim]
+        # generate the embeddings
+        tstep, tstep6 = self.cached_time_embeddings(timestep)
+        pos           = self.cached_pos_embeddings(height, width, x.device, x.dtype)
+        x             = self.x_embedder(x) + pos               # [batch_size, patches_count, internal_dim]
+        caption       = self.y_embedder(caption)               # [batch_size, 1, seq_length, internal_dim]
 
-
+        # apply transformer blocks
         for block in self.blocks:
-            x = block(x, tstep6, caption, caption_mask)    # [batch_size, patches_count, internal_dim]
-        x = self.final_layer(x, tstep)                     # [batch_size, patches_count, (patch_size^2)*(latent_channels*2)]
+            x = block(x, tstep6, caption, caption_mask)        # [batch_size, patches_count, internal_dim]
+        x = self.final_layer(x, tstep)                         # [batch_size, patches_count, (patch_size^2)*(latent_channels*2)]
 
         # unpatchify
-        # [batch_size, out_channels, lat_height, lat_width]
-        #                <- [batch_size, patches, (patch_size^2)*output_dim]
         assert x.shape[1] == height * width
-        x = x.view(batch_size, height, width, self.patch_size, self.patch_size, self.output_dim)
-        x = x.permute(0, 5, 1, 3, 2, 4)
-        x = x.reshape(batch_size, self.output_dim, latent_height, latent_width)
+        x = x.view(batch_size, height, width,                  # [batch_size, height, width, patch_size, patch_size, (latent_channels*2)]
+                   self.patch_size, self.patch_size,
+                   self.out_channels)
+        x = x.permute(0, 5, 1, 3, 2, 4)                        # [batch_size, (latent_channels*2), patch_size, width, patch_size]
+        x = x.reshape(batch_size, self.out_channels,           # [batch_size, (latent_channels*2), latent_height, latent_width]
+                      latent_height, latent_width)
 
-        if return_eps_only:
-            x = x.chunk(2, dim=1)[0]
+        # if only epsilon is required,
+        # remove the second half of the channels (variance?)
+        if return_epsilon:
+            return x.chunk(2, dim=1)[0]                        # > [batch_size, latent_channels, latent_height, latent_width]
+        else:
+            return x                                           # > [batch_size, (latent_channels*2), latent_height, latent_width]
 
-        return x
 
-    def get_cached_time_embeddings(self, timesteps):
-        #  .timesteps : [batch_size]
-        #  .t         : [batch_size, internal_dim]
-        #  .t6        : [batch_size, 6, internal_dim]
+    def cached_time_embeddings(self,
+                               timesteps: torch.Tensor
+                               ) -> torch.Tensor:
+        # REF:
+        #  timesteps -> [batch_size]
+        #  t         -> [batch_size, internal_dim]
+        #  t6        -> [batch_size, 6, internal_dim]
         batch_size = timesteps.shape[0]
         t  = self.t_embedder(timesteps)
         t6 = self.t_block(t).reshape(batch_size, 6, self.internal_dim)
         return t, t6
 
-    def cached_position_embeddings(self,
-                                   height: int,
-                                   width : int,
-                                   device: torch.device,
-                                   dtype : torch.dtype
-                                   ):
+    def cached_pos_embeddings(self,
+                              height: int,
+                              width : int,
+                              device: torch.device,
+                              dtype : torch.dtype
+                              ) -> torch.Tensor:
         """
         Computes and caches 2D sinusoidal position embeddings.
 
