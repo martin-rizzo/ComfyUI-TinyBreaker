@@ -10,7 +10,6 @@ License : MIT
     ComfyUI nodes providing experimental support for PixArt-Sigma model
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
-import math
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -31,38 +30,47 @@ def _is_valid_mask(caption_mask, caption):
             caption_mask.shape[1] == seq_length
 
 
-def _generate_positional_encodings(timesteps: torch.Tensor,
-                                   channels : int          = 256,
-                                   dtype    : torch.dtype  = torch.float32
+def _generate_positional_encodings(positions: torch.Tensor,
+                                   channels : int         = 576,
+                                   sincos   : bool        = True,
+                                   dtype    : torch.dtype = torch.float64
                                    ) -> torch.Tensor:
     """
-    Returns a tensor containing the positional encodings for a sequence of timesteps.
+    Generates positional encodings.
+
+    This function creates sinusoidal positional embeddings based on the provided positions.
+    The embeddings are created using sine and cosine functions, and they can be optionally
+    returned in either a (sin, cos) or (cos, sin) order.
+
     Args:
-        timesteps (torch.Tensor): A tensor containing the timesteps.
-        channels          (int) : The number of channels in the positional encoding.
-        dtype      (torch.dtype): The data type of the positional encoding.
-    Example:
-        >>> timesteps = torch.tensor([799, 699, 599, 499, 399, 299, 199, 99])
-        >>> encodings = _generate_positional_encodings(timesteps)
+        positions  (Tensor): A tensor containing the positions to be encoded.
+                             It can be a 1D tensor of shape [num_positions], or a
+                             higher-dimensional tensor, in which case it will be
+                             flattened to [num_positions].
+        channels      (int): The dimensionality of the positional encodings.
+                             (must be an even number)
+        sincos       (bool): If True, returns embeddings in (sin, cos) order;
+                             if False, returns embeddings in (cos, sin) order.
+        dtype (torch.dtype): The data type of the returned embeddings.
+
+    Returns:
+        A tensor containing the positional encodings.
+        The shape of the tensor is [num_positions, channels].
     """
-    max_period = 10000
+    assert channels % 2 == 0, "Embedding dimensionality must be even."
+    MAX_PERIOD    = 10000
     half_channels = channels // 2
-    frequencies   = torch.exp(-math.log(max_period) * torch.arange(half_channels, dtype=dtype, device=timesteps.device) / half_channels)
-    angle_rates   = timesteps.unsqueeze(-1) * frequencies.unsqueeze(0)
-    return torch.cat([torch.cos(angle_rates), torch.sin(angle_rates)], dim=-1)
+    frequencies   = torch.arange(half_channels, dtype=dtype, device=positions.device) / half_channels
 
+    #frequencies = torch.exp(-math.log(MAX_PERIOD) * frequencies)                   # [half_channels]
+    frequencies  = 1.0 / (MAX_PERIOD ** frequencies)                                # [half_channels]
 
-def _compute_1d_sinusoidal_pos_embed(embed_dim, positions, dtype=torch.float64):
-    """Compute the 1D sinusoidal positional embedding."""
-    assert embed_dim % 2 == 0, "Embedding dimensionality must be even."
-    half_embed_dim = embed_dim // 2
-
-    frequencies = torch.arange(half_embed_dim, dtype=dtype) / half_embed_dim
-    frequencies = 1.0 / (10000 ** frequencies)    # [half_embed_dim]
-    positions   = positions.reshape(-1).to(dtype) # [num_positions]
-
-    codes = torch.einsum("p,f->pf", positions, frequencies)        # [num_positions, half_embed_dim]
-    embed = torch.cat([torch.sin(codes), torch.cos(codes)], dim=1) # [num_positions, embed_dim]
+    positions   = positions.reshape(-1).to(dtype)                                   # [num_positions]
+    angle_rates = torch.einsum("p,f->pf", positions, frequencies)                   # [num_positions, half_channels]
+    if sincos:
+        embed = torch.cat([torch.sin(angle_rates), torch.cos(angle_rates)], dim=-1) # [num_positions, channels]
+    else:
+        embed = torch.cat([torch.cos(angle_rates), torch.sin(angle_rates)], dim=-1) # [num_positions, channels]
     return embed
 
 
@@ -269,7 +277,7 @@ class TimestepEmbedder(nn.Module):
         #  positional_encodings -> [batch_size, positional_channels]
         #  embedding            -> [batch_size,   output_channels  ]
         mlp_dtype            = self.mlp[0].bias.dtype
-        positional_encodings = _generate_positional_encodings(timesteps, self.positional_channels, self.positional_dtype)
+        positional_encodings = _generate_positional_encodings(timesteps, self.positional_channels, sincos=False, dtype=self.positional_dtype)
         embedding = self.mlp( positional_encodings.to(mlp_dtype) )
         return embedding
 
@@ -553,8 +561,8 @@ class PixArtModel(nn.Module):
         grid = torch.stack([grid_w, grid_h], dim=0)                     # [2, height, width]
         grid = grid.unsqueeze(1)                                        # [2, 1, height, width]
 
-        emb_h = _compute_1d_sinusoidal_pos_embed(embedding_dim // 2, grid[0])  # [height*width, embedding_dim/2]
-        emb_w = _compute_1d_sinusoidal_pos_embed(embedding_dim // 2, grid[1])  # [height*width, embedding_dim/2]
+        emb_h = _generate_positional_encodings(grid[0], embedding_dim // 2, sincos=True, dtype=torch.float64)  # [height*width, embedding_dim/2]
+        emb_w = _generate_positional_encodings(grid[1], embedding_dim // 2, sincos=True, dtype=torch.float64)  # [height*width, embedding_dim/2]
 
         pos_embeddings = torch.cat([emb_h, emb_w], dim=1) # [height*width, embedding_dim]
         pos_embeddings = pos_embeddings.unsqueeze(0).to(device, dtype=dtype)
