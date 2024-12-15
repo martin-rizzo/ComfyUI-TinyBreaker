@@ -13,26 +13,22 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 import math
 import torch
 import torch.nn as nn
-from .blocks_base import MultilayerPerceptron, MultiHeadSelfAttention, MultiHeadCrossAttention
-
+import torch.nn.functional as F
 
 #--------------------------------- HELPERS ---------------------------------#
 
-# def _parametric_modulation(tensor, scale, shift):
 def _scale_and_shift(tensor, scale, shift):
-    """Scale and shift a tensor.
-    """
+    """Scale and shift a tensor."""
     return tensor * (scale + 1) + shift
 
 
-def _is_valid_mask(context_mask, context):
-    """Checks if a given context mask is valid for a given context tensor.
-    """
-    batch_size = context.shape[0]
-    seq_length = context.shape[1]
-    return  isinstance(context_mask, torch.Tensor) and \
-            context_mask.shape[0] == batch_size    and \
-            context_mask.shape[1] == seq_length
+def _is_valid_mask(caption_mask, caption):
+    """Checks if a given context mask is valid for a given caption tensor."""
+    batch_size = caption.shape[0]
+    seq_length = caption.shape[1]
+    return  isinstance(caption_mask, torch.Tensor) and \
+            caption_mask.shape[0] == batch_size    and \
+            caption_mask.shape[1] == seq_length
 
 
 def _generate_positional_encodings(timesteps: torch.Tensor,
@@ -57,8 +53,7 @@ def _generate_positional_encodings(timesteps: torch.Tensor,
 
 
 def _compute_1d_sinusoidal_pos_embed(embed_dim, positions, dtype=torch.float64):
-    """Compute the 1D sinusoidal positional embedding.
-    """
+    """Compute the 1D sinusoidal positional embedding."""
     assert embed_dim % 2 == 0, "Embedding dimensionality must be even."
     half_embed_dim = embed_dim // 2
 
@@ -71,7 +66,120 @@ def _compute_1d_sinusoidal_pos_embed(embed_dim, positions, dtype=torch.float64):
     return embed
 
 
-#------------------------------ MODEL BLOCKS -------------------------------#
+class _MultilayerPerceptron(nn.Module):
+    """
+    Simple Multilayer Perceptron (MLP) module.
+    Args:
+        input_dim  (int): Number of input dimensions.
+        hidden_dim (int): Number of dimensions in the hidden layer.
+        output_dim (int): Number of output dimensions.
+        gelu_approximation (str, optional): Approximation method for GELU activation.
+            Options are "tanh" or "none". Defaults to "tanh".
+    """
+    def __init__(self,
+                 input_dim         : int,
+                 hidden_dim        : int,
+                 output_dim        : int,
+                 gelu_approximation: str = "tanh"
+                 ):
+        super().__init__()
+        self.fc1 = nn.Linear(input_dim, hidden_dim)
+        self.act = nn.GELU(approximate=gelu_approximation)
+        self.fc2 = nn.Linear(hidden_dim, output_dim)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        x = self.fc1(x)
+        x = self.act(x)
+        x = self.fc2(x)
+        return x
+
+
+class _MultiHeadSelfAttention(nn.Module):
+    """
+    Multi-Head Self-Attention module.
+    Args:
+        dim       (int): Number of input and output dimensions.
+        num_heads (int): Number of attention heads.
+    """
+    def __init__(self,
+                 dim      : int,
+                 num_heads: int,
+                 ):
+        super().__init__()
+        assert dim % num_heads == 0, "Self-Attention dim should be divisible by num_heads"
+        self.dim       = dim
+        self.num_heads = num_heads
+        self.head_dim  = dim // num_heads
+        self.qkv       = nn.Linear(dim, dim * 3)
+        self.proj      = nn.Linear(dim, dim)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        QKV_DIM = 3
+        batch_size, x_length, dim = x.shape
+        assert dim == self.dim, f"Self-Attention input dimension ({dim}) must match layer dimension ({self.dim})"
+
+        # linear projection
+        qkv = self.qkv(x)  # [batch_size, x_length, 3*dim]
+
+        # reshape to [batch_size, num_heads, length, head_dim]
+        qkv = qkv.reshape(batch_size, x_length, QKV_DIM, self.num_heads, self.head_dim).permute(2, 0, 3, 1, 4)
+        q, k, v = qkv.unbind(0)
+
+        x = F.scaled_dot_product_attention(q, k, v)
+        x = x.transpose(1, 2).reshape(batch_size, x_length, dim)
+        return self.proj(x)
+
+
+class _MultiHeadCrossAttention(nn.Module):
+    """
+    Milti-Head Cross-Attention module.
+    Args:
+        dim       (int): Number of input and output dimensions.
+        num_heads (int): Number of attention heads.
+    """
+    def __init__(self,
+                 dim      : int = 1152,
+                 num_heads: int = 16,
+                 ):
+        super().__init__()
+        assert dim % num_heads == 0, "Cross-Attention dim should be divisible by num_heads"
+        self.dim       = dim
+        self.num_heads = num_heads
+        self.head_dim  = dim // num_heads
+        self.q_linear  = nn.Linear(dim, dim)
+        self.kv_linear = nn.Linear(dim, dim * 2)
+        self.proj      = nn.Linear(dim, dim)
+
+    def forward(self, x, cond, cond_attn_mask=None):
+        # REF:
+        #  x              -> [batch_size,    x_length, dim]
+        #  cond           -> [batch_size, cond_length, dim]
+        #  cond_attn_mask -> [batch_size, cond_length]
+        KV_DIM = 2
+        cond_length = cond.shape[1]
+        batch_size, x_length, dim = x.shape
+        assert dim == self.dim, f"Cross-Attention input dimension ({dim}) must match layer dimension ({self.dim})"
+
+        # generate mask
+        if cond_attn_mask is not None:
+            cond_attn_mask = cond_attn_mask.unsqueeze(1)        # [batch_size, 1, cond_length]
+            cond_attn_mask = cond_attn_mask.to(q.device).bool()
+
+        # linear projection
+        q  = self.q_linear(x)      # [batch_size,    x_length,   dim]
+        kv = self.kv_linear(cond)  # [batch_size, cond_length, 2*dim]
+
+        # reshape to [batch_size, num_heads, length, head_dim]
+        q    =  q.view(batch_size,        x_length    , self.num_heads, self.head_dim).transpose(1, 2)
+        kv   = kv.view(batch_size, cond_length, KV_DIM, self.num_heads, self.head_dim).permute(2, 0, 3, 1, 4)
+        k, v = kv.unbind(0)
+
+        x = F.scaled_dot_product_attention(q, k, v, attn_mask=cond_attn_mask)
+        x = x.transpose(1, 2).reshape(batch_size, x_length, dim)
+        return self.proj(x)
+
+
+#---------------------------------------------------------------------------#
 class PatchEmbedder(nn.Module):
     """
     Projects a 2D latent image into a sequence of flattened image patches.
@@ -95,10 +203,9 @@ class PatchEmbedder(nn.Module):
     def forward(self, x):
         assert x.shape[-1] % self.patch_size == 0 and x.shape[-2] % self.patch_size == 0, \
             f"Input latent image dimensions {tuple(x.shape[-2:])} must be divisible by patch_size ({self.patch_size})."
-        # REF:
-        #   - num_patches_v = lat_image_height/patch_size
-        #   - num_patches_h = lat_image_width/patch_size
-        #   - num_patches   = num_patches_v * num_patches_h
+        # {num_patches_v} = lat_image_height/patch_size
+        # {num_patches_h} = lat_image_width/patch_size
+        # {num_patches}   = num_patches_v * num_patches_h
         # REF:
         #  x          -> [batch_size, input_channels , lat_image_height, lat_image_width]
         #  patches    -> [batch_size, output_channels, num_patches_v   , num_patches_h  ]
@@ -121,9 +228,9 @@ class CaptionEmbedder(nn.Module):
                  output_channels: int = 1152,
                  ):
         super().__init__()
-        self.y_proj = MultilayerPerceptron(input_dim  = input_channels,
-                                           hidden_dim = output_channels,
-                                           output_dim = output_channels)
+        self.y_proj = _MultilayerPerceptron(input_dim  = input_channels,
+                                            hidden_dim = output_channels,
+                                            output_dim = output_channels)
 
     def forward(self, caption):
         # REF:
@@ -169,7 +276,15 @@ class TimestepEmbedder(nn.Module):
 
 #---------------------------------------------------------------------------#
 class PixArtBlock(nn.Module):
+    """
+    The PixArt transformer block that integrates visual, textual and
+    temporal (timesteps) information.
 
+    Args:
+        inout_dim  (int) : Dimension of the input and output tensors.
+        num_heads  (int) : Number of attention heads in the transformer encoder.
+        mlp_ratio (float): Ratio of the hidden dimension to the input dimension in the MLP layer.
+    """
     def __init__(self,
                  inout_dim: int   = 1152,
                  num_heads: int   =   16,
@@ -179,36 +294,48 @@ class PixArtBlock(nn.Module):
 
         self.scale_shift_table = nn.Parameter(torch.randn(6, inout_dim) / inout_dim ** 0.5)
 
-        self.norm1 = nn.LayerNorm(inout_dim,
-                                  elementwise_affine = False,
-                                  eps                = 1e-6)
+        self.norm1             = nn.LayerNorm(inout_dim,
+                                              elementwise_affine = False,
+                                              eps                = 1e-6)
 
-        self.attn = MultiHeadSelfAttention(inout_dim,
-                                           num_heads = num_heads)
+        self.attn              = _MultiHeadSelfAttention(inout_dim,
+                                                         num_heads = num_heads)
 
-        self.cross_attn = MultiHeadCrossAttention(inout_dim,
-                                                  num_heads)
+        self.cross_attn        = _MultiHeadCrossAttention(inout_dim,
+                                                          num_heads)
 
-        self.norm2 = nn.LayerNorm(inout_dim,
-                                  elementwise_affine = False,
-                                  eps                = 1e-6)
+        self.norm2             = nn.LayerNorm(inout_dim,
+                                              elementwise_affine = False,
+                                              eps                = 1e-6)
 
-        self.mlp = MultilayerPerceptron(inout_dim,
-                                        hidden_dim = int(inout_dim * mlp_ratio),
-                                        output_dim = inout_dim)
+        self.mlp               = _MultilayerPerceptron(inout_dim,
+                                                       hidden_dim = int(inout_dim * mlp_ratio),
+                                                       output_dim = inout_dim)
 
-    def forward(self, x, time6, caption, caption_mask=None):
+    def forward(self, x, time6, caption: torch.Tensor, caption_mask: torch.Tensor = None):
         # REF:
-        #  t6 -> [batch_size, 6, inout_dim]
-        shift_msa, scale_msa, gate_msa,  \
-        shift_mlp, scale_mlp, gate_mlp = \
+        #  x             -> [batch_size, num_patches, inout_dim]
+        #  time6         -> [batch_size,           6, inout_dim]
+        #  caption       -> [batch_size,  seq_length, inout_dim]
+        #  caption_mask  -> [batch_size,  seq_length]
+        #  scale_*       -> [batch_size,           1, inout_dim]
+        #  shift_*       -> [batch_size,           1, inout_dim]
+        #  return        -> [batch_size, num_patches, inout_dim]
+        shift_attn, scale_attn, gate_attn,  \
+        shift_mlp , scale_mlp , gate_mlp  = \
             (self.scale_shift_table.unsqueeze(0) + time6).chunk(6, dim=1)
 
-        attn_input = _scale_and_shift( self.norm1(x), scale_msa, shift_msa )
-        x = x + gate_msa * self.attn( attn_input )
-        x = x + self.cross_attn(x, caption, caption_mask)
-        mlp_input = _scale_and_shift( self.norm2(x), scale_mlp, shift_mlp )
-        x = x + gate_mlp * self.mlp( mlp_input )
+        residual = x
+        x = _scale_and_shift(self.norm1(x), scale_attn, shift_attn)
+        x = residual + gate_attn * self.attn( x )
+
+        residual = x
+        x = residual + self.cross_attn(x, caption, caption_mask)
+
+        residual = x
+        x = _scale_and_shift(self.norm2(x), scale_mlp, shift_mlp)
+        x = residual + gate_mlp * self.mlp(x)
+
         return x
 
 
@@ -235,38 +362,25 @@ class PixArtFinalLayer(nn.Module):
         self.scale_shift_table = nn.Parameter(torch.randn(2, input_channels) / input_channels ** 0.5)
         self.linear            = nn.Linear(input_channels, patch_size * patch_size * output_channels, bias=True)
 
-    def forward(self, x, time):
+    def forward(self, x, time: torch.Tensor):
         # REF:
-        #  x                 -> [batch_size, seq_length, input_channels]
-        #  time.unsqueeze(1) -> [batch_size,          1, input_channels]
-        #  scale_params      -> [         1,          1, input_channels]
-        #  shift_params      -> [         1,          1, input_channels]
-        #  output            -> [batch_size, seq_length, patch_size * patch_size * output_channels]
-        time                       = time.unsqueeze(1)
-        shift_params, scale_params = self.scale_shift_table.unsqueeze(0).chunk(2, dim=1)
-        x      = self.norm_final(x)
-        x      = _scale_and_shift(x, scale_params+time, shift_params+time)
-        output = self.linear(x)
-        return output
+        #  x         -> [batch_size, seq_length, input_channels]
+        #  time1     -> [batch_size,          1, input_channels]
+        #  scale     -> [         1,          1, input_channels]
+        #  shift     -> [         1,          1, input_channels]
+        #  return    -> [batch_size, seq_length, patch_size * patch_size * output_channels]
+        time1        = time.unsqueeze(1)
+        shift, scale = (self.scale_shift_table.unsqueeze(0) + time1).chunk(2, dim=1)
 
-    # def forward_old(self, x, time):
-    #     # REF:
-    #     #  x                  -> [batch_size, seq_length, input_channels]
-    #     #  time               -> [batch_size,          1, input_channels]
-    #     #  shift_scale_params -> [         1,          2, input_channels]
-    #     #  scale_plus_time    -> [batch_size,          1, input_channels]
-    #     #  shift_plus_time    -> [batch_size,          1, input_channels]
-    #     time                             = time.unsqueeze(1)
-    #     shift_scale_params               = self.scale_shift_table.unsqueeze(0)
-    #     shift_plus_time, scale_plus_time = (shift_scale_params + time).chunk(2, dim=1)
-    #     x = self.norm_final(x)
-    #     x = scale_and_shift(x, scale_plus_time, shift_plus_time)
-    #     x = self.linear(x)
-    #     return x
+        x = self.norm_final(x)
+        x = _scale_and_shift(x, scale, shift)
+        x = self.linear(x)
+        return x
 
 
-
-#============================== PIXART MODEL ===============================#
+#===========================================================================#
+#////////////////////////////// PIXART MODEL ///////////////////////////////#
+#===========================================================================#
 
 class PixArtModel(nn.Module):
     """
@@ -304,7 +418,7 @@ class PixArtModel(nn.Module):
 
         with torch.device(device):
 
-            #-- embedder blocks --#
+            #- Embedder blocks ----------------------------
 
             self.x_embedder = PatchEmbedder(patch_size,
                                             latent_img_channels,
@@ -317,9 +431,10 @@ class PixArtModel(nn.Module):
                                                positional_channels = 256,
                                                positional_dtype    = torch.float32)
 
-            self.t_block = nn.Sequential(nn.SiLU(), nn.Linear(internal_dim, 6 * internal_dim))
+            self.t_block    = nn.Sequential(nn.SiLU(),
+                                            nn.Linear(internal_dim, 6 * internal_dim))
 
-            #-- transformer blocks --#
+            #- Transformer blocks -------------------------
 
             self.blocks = nn.ModuleList([
                 PixArtBlock(
@@ -331,60 +446,50 @@ class PixArtModel(nn.Module):
 
             self.final_layer = PixArtFinalLayer(internal_dim,
                                                 patch_size,
-                                                self.out_channels
-                                                )
+                                                self.out_channels)
+
+            #----------------------------------------------
 
 
     def forward(self,
-                x           : torch.Tensor,         # input images (in latent space).
-                timestep    : torch.Tensor,         # time steps in the diffusion process.
-                caption     : torch.Tensor = None,  # conditional info (from prompt).
-                caption_mask: torch.Tensor = None,  # optional attention mask applied to conditional.
-                return_epsilon: bool       = False, # if True then return only the noise prediction (eps),
+                x           : torch.Tensor,         # input latent images.
+                timestep    : torch.Tensor,         # time-steps in the diffusion process.
+                caption     : torch.Tensor = None,  # conditional caption info (from prompt).
+                caption_mask: torch.Tensor = None,  # optional attention mask for the caption.
+                return_epsilon: bool       = False, # if True, returns only the noise prediction (epsilon).
                                                     # otherwise return (eps + variance) as the original implementation.
-                **kwargs):
+                **kwargs
+                ):
 
-        # parameter `caption` can also be provided as the parameter `context`
-        # and it can have one of these two shapes:
-        #   [batch_size, caption_len, caption_dim]
-        #   [batch_size, 1, caption_len, caption_dim]
+        # handle the case where caption is provided as parameter 'context' (e.g. in ComfyUI)
         if caption is None:
             caption = kwargs["context"] if "context" in kwargs else torch.zeros(1, 0, 4096, device=self.device)
-        if len(caption.shape) == 3:
-            caption = caption.unsqueeze(1)
-
-
-        # convert all inputs to the correct data type
-        dtype = self.dtype
-        x            = x.to(dtype)                              # < [batch_size, latent_channels, latent_height, latent_width]
-        timestep     = timestep.to(dtype)                       # < [batch_size]
-        caption      = caption.to(dtype)                        # < [batch_size, caption_len, caption_dim]
-        if caption_mask is not None:
-            caption_mask = caption_mask.to(dtype)               # < [batch_size, caption_len] or None
-
 
         assert not self.training, \
             "This PixArtModel class can only be used for inference and should not be used during training."
         assert caption_mask is None or _is_valid_mask(caption_mask, caption), \
             "The provided `caption_mask` does not have the correct format for this forward method."
+
+        # calculate some constants that will be used later
         batch_size, latent_height, latent_width = x.shape[0], x.shape[-2], x.shape[-1]
         height = latent_height // self.patch_size
         width  = latent_width  // self.patch_size
 
-
         # generate the embeddings
-        tstep, tstep6 = self.cached_time_embeddings(timestep)
-        pos           = self.cached_pos_embeddings(height, width, x.device, x.dtype)
+        tstep, tstep6 = self._cached_time_embeddings(timestep)
+        pos           = self._cached_pos_embeddings(height, width, x.device, x.dtype)
         x             = self.x_embedder(x) + pos               # [batch_size, patches_count, internal_dim]
-        caption       = self.y_embedder(caption)               # [batch_size, 1, seq_length, internal_dim]
+        caption       = self.y_embedder(caption)               # [batch_size,    seq_length, internal_dim]
 
         # apply transformer blocks
         for block in self.blocks:
             x = block(x, tstep6, caption, caption_mask)        # [batch_size, patches_count, internal_dim]
         x = self.final_layer(x, tstep)                         # [batch_size, patches_count, (patch_size^2)*(latent_channels*2)]
 
+        assert x.shape[1] == height * width, \
+            "The number of patches doesn't match the expected value"
+
         # unpatchify
-        assert x.shape[1] == height * width
         x = x.view(batch_size, height, width,                  # [batch_size, height, width, patch_size, patch_size, (latent_channels*2)]
                    self.patch_size, self.patch_size,
                    self.out_channels)
@@ -400,9 +505,9 @@ class PixArtModel(nn.Module):
             return x                                           # > [batch_size, (latent_channels*2), latent_height, latent_width]
 
 
-    def cached_time_embeddings(self,
-                               timesteps: torch.Tensor
-                               ) -> torch.Tensor:
+    def _cached_time_embeddings(self,
+                                timesteps: torch.Tensor
+                                ) -> torch.Tensor:
         # REF:
         #  timesteps -> [batch_size]
         #  t         -> [batch_size, internal_dim]
@@ -412,12 +517,12 @@ class PixArtModel(nn.Module):
         t6 = self.t_block(t).reshape(batch_size, 6, self.internal_dim)
         return t, t6
 
-    def cached_pos_embeddings(self,
-                              height: int,
-                              width : int,
-                              device: torch.device,
-                              dtype : torch.dtype
-                              ) -> torch.Tensor:
+    def _cached_pos_embeddings(self,
+                               height: int,
+                               width : int,
+                               device: torch.device,
+                               dtype : torch.dtype
+                               ) -> torch.Tensor:
         """
         Computes and caches 2D sinusoidal position embeddings.
 
