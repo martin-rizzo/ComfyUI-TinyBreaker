@@ -1,67 +1,7 @@
 {
-  "last_node_id": 59,
-  "last_link_id": 107,
+  "last_node_id": 60,
+  "last_link_id": 108,
   "nodes": [
-    {
-      "id": 3,
-      "type": "KSampler",
-      "pos": [
-        920,
-        90
-      ],
-      "size": [
-        315,
-        262
-      ],
-      "flags": {},
-      "order": 6,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "model",
-          "type": "MODEL",
-          "link": 106,
-          "slot_index": 0
-        },
-        {
-          "name": "positive",
-          "type": "CONDITIONING",
-          "link": 21
-        },
-        {
-          "name": "negative",
-          "type": "CONDITIONING",
-          "link": 80
-        },
-        {
-          "name": "latent_image",
-          "type": "LATENT",
-          "link": 103
-        }
-      ],
-      "outputs": [
-        {
-          "name": "LATENT",
-          "type": "LATENT",
-          "links": [
-            7
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "KSampler"
-      },
-      "widgets_values": [
-        1,
-        "fixed",
-        20,
-        4.01,
-        "euler",
-        "sgm_uniform",
-        1
-      ]
-    },
     {
       "id": 8,
       "type": "VAEDecode",
@@ -174,48 +114,6 @@
       "bgcolor": "#353"
     },
     {
-      "id": 40,
-      "type": "CLIPTextEncode",
-      "pos": [
-        440,
-        330
-      ],
-      "size": [
-        432,
-        192
-      ],
-      "flags": {},
-      "order": 5,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "clip",
-          "type": "CLIP",
-          "link": 105
-        }
-      ],
-      "outputs": [
-        {
-          "name": "CONDITIONING",
-          "type": "CONDITIONING",
-          "links": [
-            80
-          ],
-          "slot_index": 0,
-          "shape": 3
-        }
-      ],
-      "title": "Negative Prompt",
-      "properties": {
-        "Node name for S&R": "CLIPTextEncode"
-      },
-      "widgets_values": [
-        ""
-      ],
-      "color": "#322",
-      "bgcolor": "#533"
-    },
-    {
       "id": 54,
       "type": "CLIPLoader",
       "pos": [
@@ -284,6 +182,48 @@
       ]
     },
     {
+      "id": 40,
+      "type": "CLIPTextEncode",
+      "pos": [
+        440,
+        330
+      ],
+      "size": [
+        432,
+        192
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 105
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            80
+          ],
+          "slot_index": 0,
+          "shape": 3
+        }
+      ],
+      "title": "Negative Prompt",
+      "properties": {
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        "macrophoto, bokeh"
+      ],
+      "color": "#322",
+      "bgcolor": "#533"
+    },
+    {
       "id": 59,
       "type": "LoadAnyVAE //xPixart",
       "pos": [
@@ -312,19 +252,19 @@
         "Node name for S&R": "LoadAnyVAE //xPixart"
       },
       "widgets_values": [
-        "tiny_vae_sdxl.safetensors"
+        "sdxl_vae.safetensors"
       ]
     },
     {
-      "id": 58,
+      "id": 60,
       "type": "LoadCheckpoint //xPixart",
       "pos": [
         20,
-        90
+        110
       ],
       "size": [
         380,
-        120
+        100
       ],
       "flags": {},
       "order": 3,
@@ -335,18 +275,12 @@
           "name": "MODEL",
           "type": "MODEL",
           "links": [
-            106
-          ],
-          "slot_index": 0
+            108
+          ]
         },
         {
           "name": "VAE",
           "type": "VAE",
-          "links": null
-        },
-        {
-          "name": "T5",
-          "type": "T5",
           "links": null
         },
         {
@@ -360,6 +294,66 @@
       },
       "widgets_values": [
         "PixArt-Sigma-XL-2-1024-MS.safetensors"
+      ]
+    },
+    {
+      "id": 3,
+      "type": "KSampler",
+      "pos": [
+        920,
+        90
+      ],
+      "size": [
+        315,
+        262
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 108,
+          "slot_index": 0
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 21
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 80
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 103
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            7
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "KSampler"
+      },
+      "widgets_values": [
+        1,
+        "fixed",
+        20,
+        4.01,
+        "euler",
+        "sgm_uniform",
+        1
       ]
     }
   ],
@@ -421,30 +415,30 @@
       "CLIP"
     ],
     [
-      106,
-      58,
-      0,
-      3,
-      0,
-      "MODEL"
-    ],
-    [
       107,
       59,
       0,
       8,
       1,
       "VAE"
+    ],
+    [
+      108,
+      60,
+      0,
+      3,
+      0,
+      "MODEL"
     ]
   ],
   "groups": [],
   "config": {},
   "extra": {
     "ds": {
-      "scale": 0.6577633488315054,
+      "scale": 0.7235396837146565,
       "offset": [
-        11.89541272797345,
-        7.913334962535354
+        43.925024814127525,
+        -8.87527392066035
       ]
     }
   },

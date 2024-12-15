@@ -14,16 +14,17 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
  ============
 
   Directory constants:
-      PIXART_CHECKPOINTS_DIR: folder storing pixart checkpoints
-      PIXART_LORAS_DIR      : folder storing pixart LoRAs
-      T5_CHECKPOINTS_DIR    : folder storing different T5 checkpoints
-      PROMPT_EMBEDS_DIR     : folder with various prompt embeddings for testing
+      STYLES_DIR            : project directory with the prompt styles
+      VAE_DIR               : the standard comfyui directory storing vae models
+      PIXART_CHECKPOINTS_DIR: custom directory storing PixArt checkpoints
+      PIXART_LORAS_DIR      : custom directory storing PixArt LoRAs
 
   These constant objects can be used as follows:
-      PIXART_CHECKPOINTS_DIR.folder_name
-      PIXART_CHECKPOINTS_DIR.get_filename_list()
-      PIXART_CHECKPOINTS_DIR.get_full_path(filename, for_save=False, overwrite=False)
-
+      path      = VAE_DIR.folder_name
+      filenames = VAE_DIR.get_filename_list()
+      VAE_DIR.get_full_path(filename)
+      VAE_DIR.get_full_path_or_raise(filename)
+      VAE_DIR.get_full_path_for_save(filename, overwrite=False)
 """
 import os
 import folder_paths
@@ -95,7 +96,7 @@ class ComfyDirectory:
     def paths(self):
         """Returns the list of paths associated with this directory."""
         return folder_paths.get_folder_paths(self.folder_name)
-    
+
 
     def get_filename_list(self):
         """Returns a list of filenames in the directory."""
@@ -166,14 +167,9 @@ class ComfyOutputDirectory(ComfyDirectory):
 
 #----------------------- PROJECT DIRECTORY STRUCTURE -----------------------#
 
-# get the directory of this file
-_this_file_dir = os.path.dirname(os.path.realpath(__file__))
-
-# these directories are used by the xPixArt custom nodes
+# These directories are used by the xPixArt custom nodes
 STYLES_DIR             = ProjectDirectory("styles")
 VAE_DIR                = ComfyModelDirectory("vae")
-T5_CHECKPOINTS_DIR     = ComfyModelDirectory("t5", custom=True)
 PIXART_CHECKPOINTS_DIR = ComfyModelDirectory("pixart", custom=True)
 PIXART_LORAS_DIR       = ComfyModelDirectory("pixart_loras", custom=True)
-PROMPT_EMBEDS_DIR      = ComfyOutputDirectory("prompt_embeds", custom=True)
 

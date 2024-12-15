@@ -13,55 +13,6 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 from .xcomfy.objects    import Model_pack
 from .utils.directories import PIXART_CHECKPOINTS_DIR
 
-# SDXL
-#   CLIP     : conditioner.embeders.[0,1]
-#   VAE      : first_stage_model.
-#                   decoder.
-#                   encoder.
-#                   post_quant_conv.
-#                   quant_conv.
-#   MODEL    : model.diffusion_model.[ SDXL ]
-
-# SD1.5 ------------------------------------
-#   CLIP     : cond_stage_model.transformer.text_model.
-#   VAE      : first_stage_model.
-#                   decoder.
-#                   encoder.
-#                   post_quant_conv.
-#                   quant_conv.
-#   MODEL    : model.diffusion_model.[ SD15 ]
-
-# MimiToy ----------------------------------
-#  CLIP      : cond_stage_model.transformer.text_model. / conditioner.embeders.[0,1]
-#  VAE       : first_stage_model.
-#                   decoder.
-#                   encoder.
-#                   post_quant_conv.
-#                   quant_conv.
-#  MODEL     : model.diffusion_model.[ PixArt ]
-#  TRANSCODER: taesd_encoder.
-#              taesd_decoder.
-#              taesdxl_decoder.
-#              taesdxl_encoder.
-#  REF_MODEL : refiner.diffusion_model.[ SD15 | SDXL ]
-
-#-------------------------------------------
-# Load Checkpoint
-#     -> MODEL
-#     -> VAE
-#     -> TRANSCODER
-#     -> REFINER_MODEL
-#     -> META
-#
-# UNet PixArt
-#
-# [ tiny_decoder_sdxl ]
-# [ tiny_encoder_sd   ]
-#
-# UNet Refiner
-#
-# < VAE Refiner | tiny_decoder_sd | tiny_decoder_sdxl >
-
 
 class LoadCheckpoint:
     TITLE       = "xPixArt | Load Checkpoint"
@@ -79,23 +30,21 @@ class LoadCheckpoint:
     
     #-- FUNCTION --------------------------------#
     FUNCTION = "load_checkpoint"
-    RETURN_TYPES = ("MODEL", "VAE", "T5", "STRING")
-    RETURN_NAMES = ("MODEL", "VAE", "T5", "META")
+    RETURN_TYPES = ("MODEL", "VAE", "STRING")
+    RETURN_NAMES = ("MODEL", "VAE", "META"  )
 
     def load_checkpoint(self, ckpt_name, output_vae=True, output_clip=True):
 
         # safetensors_path = PIXART_CHECKPOINTS_DIR.get_full_path(ckpt_name)
         # model = Model_packet_.from_safetensors(safetensors_path, prefix)
         # vae   = VAE_packet_.from_safetensors(safetensors_path, prefix)
-        # t5    = T5_packet_.from_safetensors(safetensors_path, prefix)
         # meta  = Meta_packet_.from_predefined("sigma", 2048)
-        # return (model, vae, t5, meta)
+        # return (model, vae, meta)
 
 
         safetensors_path = PIXART_CHECKPOINTS_DIR.get_full_path(ckpt_name)
         model_pack = None
         vae_pack   = None
-        t5_pack    = None
         meta_pack  = None
 
         model_pack = Model_pack.from_safetensors(
@@ -104,4 +53,4 @@ class LoadCheckpoint:
             weight_inplace_update = False
             );
 
-        return (model_pack, vae_pack, t5_pack, meta_pack)
+        return (model_pack, vae_pack, meta_pack)
