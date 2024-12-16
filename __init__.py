@@ -80,8 +80,12 @@ comfy_import_node(PlaceholderReplacer)
 from .nodes.prefixed_double_stage_sampler import PrefixedDoubleStageSampler
 comfy_import_node(PrefixedDoubleStageSampler)
 
+from .nodes.encode_prompts import EncodePrompts
+comfy_import_node(EncodePrompts)
+
 
 # Development Nodes
+
 
 
 
