@@ -10,6 +10,7 @@ License : MIT
     ComfyUI nodes providing experimental support for PixArt-Sigma model
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
+import comfy.utils
 from .xcomfy.model      import Model
 from .utils.directories import PIXART_CHECKPOINTS_DIR
 
@@ -27,7 +28,7 @@ class LoadCheckpoint:
                 "ckpt_name": (PIXART_CHECKPOINTS_DIR.get_filename_list(), {"tooltip": "The PixArt checkpoint to load."}),
                 }
             }
-    
+
     #-- FUNCTION --------------------------------#
     FUNCTION = "load_checkpoint"
     RETURN_TYPES = ("MODEL", "VAE", "STRING")
@@ -35,20 +36,10 @@ class LoadCheckpoint:
 
     def load_checkpoint(self, ckpt_name, output_vae=True, output_clip=True):
 
-        # model = Model.from_safetensors(safetensors_path, prefix)
-        # vae   = VAE.from_safetensors(safetensors_path, prefix)
-        # meta  = Meta.from_predefined("sigma", 2048)
-        # return (model, vae, meta)
+        ckpt_path  = PIXART_CHECKPOINTS_DIR.get_full_path(ckpt_name)
+        state_dict = comfy.utils.load_torch_file(ckpt_path)
 
-        safetensors_path = PIXART_CHECKPOINTS_DIR.get_full_path(ckpt_name)
-        model = None
-        vae   = None
-        meta  = None
-
-        model = Model.from_safetensors(
-            safetensors_path,
-            prefix = "",
-            weight_inplace_update = False
-            );
-
+        model = Model.from_state_dict(state_dict, prefix="", resolution=1024)
+        vae   = None  # VAE.from_state_dict(state_dict, prefix="")
+        meta  = None  # Meta.from_predefined("sigma", 2048)
         return (model, vae, meta)

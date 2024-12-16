@@ -240,10 +240,12 @@ class PixArtModelEx(PixArtModel):
 
 
     @classmethod
-    def infer_model_config(cls, state_dict: dict) -> dict:
+    def infer_model_config(cls, state_dict: dict, prefix = "", resolution: int = 1024) -> dict:
+        assert resolution==2048 or resolution==1024 or resolution==512 or resolution==256, f"PixArtModelEx: Unsupported resolution: {resolution}px"
+
         # TODO: implement this method to infer the model configuration from a state dictionary
         config = {
-            "latent_img_size"     :  128, # 64 = 512x512px || 128 = 1024x1024px || 256 = 2048x2048px
+            "latent_img_size"     : int(resolution//8), # 64 = 512x512px || 128 = 1024x1024px || 256 = 2048x2048px
             "latent_img_channels" :    4, # number of channels in the latent image
             "internal_dim"        : 1152, # internal dimensionality used
             "caption_dim"         : 4096, # dimensionality of the caption input (T5 encoded prompt)
