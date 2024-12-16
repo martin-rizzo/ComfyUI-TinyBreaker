@@ -1,10 +1,10 @@
 """
-File     : xconfy/transcoder.py
-Purpose  : The ComfyUI object transmitted across the TRANSCODER lines.
-Author   : Martin Rizzo | <martinrizzo@gmail.com>
-Date     : Nov 30, 2024
-Repo     : https://github.com/martin-rizzo/ComfyUI-xPixArt
-License  : MIT
+File    : xconfy/transcoder.py
+Purpose : The standard TRANSCODER object transmitted through ComfyUI's node system.
+Author  : Martin Rizzo | <martinrizzo@gmail.com>
+Date    : Nov 30, 2024
+Repo    : https://github.com/martin-rizzo/ComfyUI-xPixArt
+License : MIT
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                               ComfyUI-xPixArt
     ComfyUI nodes providing experimental support for PixArt-Sigma model
@@ -13,10 +13,10 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 import math
 import torch
 import torch.nn as nn
-from ..utils.system                    import logger
-from .objects                          import VAE
+from ..utils.system import logger
+from .vae           import VAE
+from comfy          import model_management
 from torchvision.transforms.functional import gaussian_blur
-from comfy                             import model_management
 
 
 class Transcoder:

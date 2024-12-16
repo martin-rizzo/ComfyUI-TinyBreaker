@@ -13,7 +13,7 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 import os
 import torch
 from .utils.directories import VAE_DIR
-from .xcomfy.objects    import VAE
+from .xcomfy.vae        import VAE
 from comfy.utils        import load_torch_file
 
 
@@ -95,7 +95,7 @@ class LoadAnyVAE:
         # check if it's necessary to adjust 'layer_number'
         if "decoder.layers.0.weight" in tae_tensors:
             decoder_layer_offset = 1
-       
+
         state_dict = {}
         for key, tensor in tae_tensors.items():
             prefix, layer_number = "", ""

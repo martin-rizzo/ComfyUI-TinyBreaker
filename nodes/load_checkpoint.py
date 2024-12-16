@@ -10,7 +10,7 @@ License : MIT
     ComfyUI nodes providing experimental support for PixArt-Sigma model
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
-from .xcomfy.objects    import Model_pack
+from .xcomfy.model      import Model
 from .utils.directories import PIXART_CHECKPOINTS_DIR
 
 
@@ -35,22 +35,20 @@ class LoadCheckpoint:
 
     def load_checkpoint(self, ckpt_name, output_vae=True, output_clip=True):
 
-        # safetensors_path = PIXART_CHECKPOINTS_DIR.get_full_path(ckpt_name)
-        # model = Model_packet_.from_safetensors(safetensors_path, prefix)
-        # vae   = VAE_packet_.from_safetensors(safetensors_path, prefix)
-        # meta  = Meta_packet_.from_predefined("sigma", 2048)
+        # model = Model.from_safetensors(safetensors_path, prefix)
+        # vae   = VAE.from_safetensors(safetensors_path, prefix)
+        # meta  = Meta.from_predefined("sigma", 2048)
         # return (model, vae, meta)
 
-
         safetensors_path = PIXART_CHECKPOINTS_DIR.get_full_path(ckpt_name)
-        model_pack = None
-        vae_pack   = None
-        meta_pack  = None
+        model = None
+        vae   = None
+        meta  = None
 
-        model_pack = Model_pack.from_safetensors(
+        model = Model.from_safetensors(
             safetensors_path,
             prefix = "",
             weight_inplace_update = False
             );
 
-        return (model_pack, vae_pack, meta_pack)
+        return (model, vae, meta)

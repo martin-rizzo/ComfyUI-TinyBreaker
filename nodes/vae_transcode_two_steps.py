@@ -8,7 +8,7 @@ License : MIT
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 """
 from .xcomfy.transcoder import Transcoder
-from .xcomfy.objects    import VAE
+from .xcomfy.vae        import VAE
 
 
 class VAETranscodeTwoSteps:

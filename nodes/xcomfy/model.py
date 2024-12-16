@@ -1,10 +1,10 @@
 """
-File     : comfy_bridge.py
-Purpose  : A layer of compatibility between ComfyUI and xPixArt nodes.
-Author   : Martin Rizzo | <martinrizzo@gmail.com>
-Date     : May 10, 2024
-Repo     : https://github.com/martin-rizzo/ComfyUI-xPixArt
-License  : MIT
+File    : xconfy/model.py
+Purpose : The standard MODEL object transmitted through ComfyUI's node system.
+Author  : Martin Rizzo | <martinrizzo@gmail.com>
+Date    : May 10, 2024
+Repo    : https://github.com/martin-rizzo/ComfyUI-xPixArt
+License : MIT
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                               ComfyUI-xPixArt
     ComfyUI nodes providing experimental support for PixArt-Sigma model
@@ -12,15 +12,13 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import os
 import torch
+import comfy.model_patcher
 from safetensors            import safe_open
+from comfy                  import model_management, supported_models_base, latent_formats, conds
 from comfy.model_base       import BaseModel, ModelType
-from comfy                  import supported_models_base
-from comfy                  import model_management
-from comfy                  import latent_formats
-from comfy                  import conds
-from ..core.pixart_model_ex import PixArtModelEx as PixArtModel
-from ..utils.safetensors    import load_safetensors_header, estimate_model_params
 from ..utils.system         import logger
+from ..utils.safetensors    import load_safetensors_header, estimate_model_params
+from ..core.pixart_model_ex import PixArtModelEx
 
 
 #============================================================================
@@ -91,7 +89,7 @@ class PixArt(BaseModel):
                  model_type  : ModelType    = ModelType.EPS,
                  device      : torch.device = None
                  ):
-        super().__init__(model_config, model_type, device=device, unet_model=PixArtModel)
+        super().__init__(model_config, model_type, device=device, unet_model=PixArtModelEx)
 
 
     def extra_conds(self, **kwargs):
@@ -160,3 +158,58 @@ def create_model_from_safetensors(safetensors_path,
     logger.debug(f" - load_device         : {load_device}"        )
     logger.debug(f" - offload_device      : {offload_device}"     )
     return model;
+
+
+
+
+class Model(comfy.model_patcher.ModelPatcher):
+    # el objeto que es transmitido por los hilos "MODEL -> model"
+    # debe ser compatible con la siguiente estructura:
+    #  - class ModelPatcher
+    #      - class BaseModel
+    #                .diffusion_model = PixArtMS(..)
+    #
+    #  ModelPatcher: [https://github.com/comfyanonymous/ComfyUI/blob/master/comfy/model_patcher.py]
+
+    def __init__(self,
+                 model,
+                 load_device,
+                 offload_device,
+                 size=0,
+                 weight_inplace_update=False
+                 ):
+        super().__init__(model,
+                         load_device=load_device,
+                         offload_device=offload_device,
+                         size=size,
+                         weight_inplace_update=weight_inplace_update
+                         )
+
+    # pequeña emulacion al comportamiento de "load_unet_state_dict(sd)"
+    # - https://github.com/comfyanonymous/ComfyUI/blob/master/comfy/sd.py
+    @classmethod
+    def from_safetensors(cls,
+                         safetensors_path,
+                         prefix="",
+                         weight_inplace_update=False,
+                         dtype=None
+                         ):
+
+
+        load_device    = model_management.get_torch_device()
+        offload_device = model_management.unet_offload_device()
+        model = create_model_from_safetensors(safetensors_path,
+                                              prefix         = prefix,
+                                              load_device    = load_device,
+                                              offload_device = offload_device)
+        model.diffusion_model.freeze()
+
+        # envolver al modelo en el nuevo objeto (derivado de ModelPatcher)
+        return Model(
+            model,
+            size = 0,
+            load_device           = load_device,
+            offload_device        = offload_device,
+            weight_inplace_update = weight_inplace_update
+            )
+
