@@ -1,6 +1,6 @@
 {
-  "last_node_id": 70,
-  "last_link_id": 164,
+  "last_node_id": 71,
+  "last_link_id": 167,
   "nodes": [
     {
       "id": 17,
@@ -74,68 +74,6 @@
       ]
     },
     {
-      "id": 51,
-      "type": "KSamplerAdvanced",
-      "pos": [
-        1071.83349609375,
-        679.166748046875
-      ],
-      "size": [
-        315,
-        334
-      ],
-      "flags": {},
-      "order": 18,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "model",
-          "type": "MODEL",
-          "link": 97
-        },
-        {
-          "name": "positive",
-          "type": "CONDITIONING",
-          "link": 156
-        },
-        {
-          "name": "negative",
-          "type": "CONDITIONING",
-          "link": 122
-        },
-        {
-          "name": "latent_image",
-          "type": "LATENT",
-          "link": 159
-        }
-      ],
-      "outputs": [
-        {
-          "name": "LATENT",
-          "type": "LATENT",
-          "links": [
-            96
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "KSamplerAdvanced"
-      },
-      "widgets_values": [
-        "enable",
-        0,
-        "fixed",
-        11,
-        2,
-        "deis",
-        "ddim_uniform",
-        6,
-        1000,
-        "disable"
-      ]
-    },
-    {
       "id": 53,
       "type": "KSamplerAdvanced",
       "pos": [
@@ -147,7 +85,7 @@
         302
       ],
       "flags": {},
-      "order": 15,
+      "order": 17,
       "mode": 0,
       "inputs": [
         {
@@ -224,7 +162,7 @@
         26
       ],
       "flags": {},
-      "order": 12,
+      "order": 13,
       "mode": 0,
       "inputs": [
         {
@@ -260,7 +198,7 @@
         26
       ],
       "flags": {},
-      "order": 14,
+      "order": 16,
       "mode": 0,
       "inputs": [
         {
@@ -296,13 +234,13 @@
         50
       ],
       "flags": {},
-      "order": 21,
+      "order": 22,
       "mode": 0,
       "inputs": [
         {
           "name": "samples",
           "type": "LATENT",
-          "link": 139
+          "link": 167
         },
         {
           "name": "vae",
@@ -337,7 +275,7 @@
         690
       ],
       "flags": {},
-      "order": 22,
+      "order": 23,
       "mode": 0,
       "inputs": [
         {
@@ -364,7 +302,7 @@
         26
       ],
       "flags": {},
-      "order": 10,
+      "order": 11,
       "mode": 0,
       "inputs": [
         {
@@ -378,76 +316,6 @@
           "name": "",
           "type": "VAE",
           "links": []
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
-    },
-    {
-      "id": 36,
-      "type": "Reroute",
-      "pos": [
-        1440,
-        590
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {},
-      "order": 19,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 162
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "LATENT",
-          "links": [],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
-    },
-    {
-      "id": 52,
-      "type": "Reroute",
-      "pos": [
-        1440,
-        630
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {},
-      "order": 20,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 96
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "LATENT",
-          "links": [
-            139
-          ],
-          "slot_index": 0
         }
       ],
       "properties": {
@@ -539,52 +407,6 @@
       ]
     },
     {
-      "id": 65,
-      "type": "LoadCheckpoint //xPixart",
-      "pos": [
-        -880,
-        20
-      ],
-      "size": [
-        340,
-        120
-      ],
-      "flags": {},
-      "order": 4,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "MODEL",
-          "type": "MODEL",
-          "links": [
-            150
-          ]
-        },
-        {
-          "name": "VAE",
-          "type": "VAE",
-          "links": null
-        },
-        {
-          "name": "T5",
-          "type": "T5",
-          "links": null
-        },
-        {
-          "name": "META",
-          "type": "STRING",
-          "links": null
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "LoadCheckpoint //xPixart"
-      },
-      "widgets_values": [
-        "PixArt-Sigma-1024.safetensors"
-      ]
-    },
-    {
       "id": 62,
       "type": "Note",
       "pos": [
@@ -596,7 +418,7 @@
         220
       ],
       "flags": {},
-      "order": 5,
+      "order": 4,
       "mode": 0,
       "inputs": [],
       "outputs": [],
@@ -620,7 +442,7 @@
         390
       ],
       "flags": {},
-      "order": 11,
+      "order": 12,
       "mode": 0,
       "inputs": [
         {
@@ -679,7 +501,7 @@
         82
       ],
       "flags": {},
-      "order": 6,
+      "order": 5,
       "mode": 0,
       "inputs": [],
       "outputs": [
@@ -705,71 +527,6 @@
       ]
     },
     {
-      "id": 63,
-      "type": "LoadAnyVAE //xPixart",
-      "pos": [
-        -880,
-        190
-      ],
-      "size": [
-        340,
-        60
-      ],
-      "flags": {},
-      "order": 7,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "VAE",
-          "type": "VAE",
-          "links": [
-            160
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "LoadAnyVAE //xPixart"
-      },
-      "widgets_values": [
-        "tiny_ae_sdxl.safetensors"
-      ]
-    },
-    {
-      "id": 64,
-      "type": "LoadAnyVAE //xPixart",
-      "pos": [
-        -880,
-        510
-      ],
-      "size": [
-        340,
-        60
-      ],
-      "flags": {},
-      "order": 8,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "VAE",
-          "type": "VAE",
-          "links": [
-            148,
-            161
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "LoadAnyVAE //xPixart"
-      },
-      "widgets_values": [
-        "tiny_ae_sd.safetensors"
-      ]
-    },
-    {
       "id": 70,
       "type": "Reroute",
       "pos": [
@@ -781,13 +538,13 @@
         26
       ],
       "flags": {},
-      "order": 16,
+      "order": 15,
       "mode": 0,
       "inputs": [
         {
           "name": "",
           "type": "*",
-          "link": 164
+          "link": 166
         }
       ],
       "outputs": [
@@ -817,7 +574,7 @@
         46
       ],
       "flags": {},
-      "order": 17,
+      "order": 18,
       "mode": 0,
       "inputs": [
         {
@@ -849,50 +606,6 @@
       "widgets_values": []
     },
     {
-      "id": 68,
-      "type": "BuildCustomTranscoder //xPixart",
-      "pos": [
-        -90,
-        690
-      ],
-      "size": [
-        314.29132080078125,
-        102
-      ],
-      "flags": {},
-      "order": 13,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "decoder",
-          "type": "VAE",
-          "link": 160
-        },
-        {
-          "name": "encoder",
-          "type": "VAE",
-          "link": 161
-        }
-      ],
-      "outputs": [
-        {
-          "name": "TRANSCODER",
-          "type": "TRANSCODER",
-          "links": [
-            164
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "BuildCustomTranscoder //xPixart"
-      },
-      "widgets_values": [
-        "Blur",
-        0.5
-      ]
-    },
-    {
       "id": 34,
       "type": "CLIPTextEncode",
       "pos": [
@@ -904,7 +617,7 @@
         80
       ],
       "flags": {},
-      "order": 9,
+      "order": 10,
       "mode": 0,
       "inputs": [
         {
@@ -928,6 +641,323 @@
       },
       "widgets_values": [
         "(worst quality, low quality:1.8)"
+      ]
+    },
+    {
+      "id": 65,
+      "type": "LoadCheckpoint //xPixart",
+      "pos": [
+        -880,
+        20
+      ],
+      "size": [
+        340,
+        120
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            150
+          ]
+        },
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": null
+        },
+        {
+          "name": "META",
+          "type": "STRING",
+          "links": null
+        },
+        {
+          "name": "META",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadCheckpoint //xPixart"
+      },
+      "widgets_values": [
+        "PixArt-Sigma-XL-2-1024-MS.safetensors"
+      ]
+    },
+    {
+      "id": 64,
+      "type": "LoadAnyVAE //xPixart",
+      "pos": [
+        -880,
+        510
+      ],
+      "size": [
+        340,
+        60
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [
+            148,
+            161
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadAnyVAE //xPixart"
+      },
+      "widgets_values": [
+        "tiny_vae_sd.safetensors"
+      ]
+    },
+    {
+      "id": 63,
+      "type": "LoadAnyVAE //xPixart",
+      "pos": [
+        -880,
+        190
+      ],
+      "size": [
+        340,
+        60
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [
+            160
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadAnyVAE //xPixart"
+      },
+      "widgets_values": [
+        "tiny_vae_sdxl.safetensors"
+      ]
+    },
+    {
+      "id": 52,
+      "type": "Reroute",
+      "pos": [
+        1440,
+        630
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 21,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 96
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "LATENT",
+          "links": [
+            167
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 68,
+      "type": "BuildCustomTranscoder //xPixart",
+      "pos": [
+        -152.19427490234375,
+        582.1968383789062
+      ],
+      "size": [
+        314.29132080078125,
+        102
+      ],
+      "flags": {},
+      "order": 14,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "decoder",
+          "type": "VAE",
+          "link": 160
+        },
+        {
+          "name": "encoder",
+          "type": "VAE",
+          "link": 161
+        }
+      ],
+      "outputs": [
+        {
+          "name": "TRANSCODER",
+          "type": "TRANSCODER",
+          "links": [],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "BuildCustomTranscoder //xPixart"
+      },
+      "widgets_values": [
+        "Blur",
+        0.5
+      ]
+    },
+    {
+      "id": 71,
+      "type": "LoadTranscoder //xPixart",
+      "pos": [
+        -220.82534790039062,
+        745.781005859375
+      ],
+      "size": [
+        410,
+        70
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "TRANSCODER",
+          "type": "TRANSCODER",
+          "links": [
+            166
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadTranscoder //xPixart"
+      },
+      "widgets_values": [
+        "transcoder_from_sdxl_to_sd.safetensors"
+      ]
+    },
+    {
+      "id": 36,
+      "type": "Reroute",
+      "pos": [
+        1440,
+        590
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 20,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 162
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "LATENT",
+          "links": [],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 51,
+      "type": "KSamplerAdvanced",
+      "pos": [
+        1071.83349609375,
+        679.166748046875
+      ],
+      "size": [
+        315,
+        334
+      ],
+      "flags": {},
+      "order": 19,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 97
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 156
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 122
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 159
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            96
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "KSamplerAdvanced"
+      },
+      "widgets_values": [
+        "enable",
+        0,
+        "fixed",
+        11,
+        2,
+        "deis",
+        "ddim_uniform",
+        6,
+        1000,
+        "disable"
       ]
     }
   ],
@@ -1019,14 +1049,6 @@
       27,
       1,
       "VAE"
-    ],
-    [
-      139,
-      52,
-      0,
-      27,
-      0,
-      "LATENT"
     ],
     [
       148,
@@ -1133,12 +1155,20 @@
       "TRANSCODER"
     ],
     [
-      164,
-      68,
+      166,
+      71,
       0,
       70,
       0,
       "*"
+    ],
+    [
+      167,
+      52,
+      0,
+      27,
+      0,
+      "LATENT"
     ]
   ],
   "groups": [
@@ -1211,10 +1241,10 @@
   "config": {},
   "extra": {
     "ds": {
-      "scale": 0.7986221257502564,
+      "scale": 0.5436060734144698,
       "offset": [
-        288.3985585323801,
-        -4.843234202915213
+        990.2359280377018,
+        176.7236945698815
       ]
     }
   },
