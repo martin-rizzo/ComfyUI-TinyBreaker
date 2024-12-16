@@ -571,28 +571,3 @@ class PixArtModel(nn.Module):
         self.pos_embeddings           = pos_embeddings
         return self.pos_embeddings
 
-
-    @property
-    def dtype(self):
-        """Returns the data type of the model parameters."""
-        return self.x_embedder.proj.weight.dtype
-
-
-    @property
-    def device(self):
-        """Returns the device on which the model parameters are located."""
-        return self.x_embedder.proj.weight.device
-
-
-    def freeze(self) -> None:
-        """Freeze all parameters of the model to prevent them from being updated during inference."""
-        for param in self.parameters():
-            param.requires_grad = False
-        self.eval()
-
-
-    def unfreeze(self) -> None:
-        """Unfreeze all parameters of the model to allow them to be updated during training."""
-        for param in self.parameters():
-            param.requires_grad = True
-        self.train()

@@ -12,16 +12,15 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import os
 import torch
-from safetensors          import safe_open
-from comfy.model_base     import BaseModel, ModelType
-from comfy                import supported_models_base
-from comfy                import model_management
-from comfy                import latent_formats
-from comfy                import conds
-from ..core.pixart        import PixArtSigma as PixArtOldModel
-from ..core.pixart_model  import PixArtModel
-from ..utils.safetensors  import load_safetensors_header, estimate_model_params
-from ..utils.system       import logger
+from safetensors            import safe_open
+from comfy.model_base       import BaseModel, ModelType
+from comfy                  import supported_models_base
+from comfy                  import model_management
+from comfy                  import latent_formats
+from comfy                  import conds
+from ..core.pixart_model_ex import PixArtModelEx as PixArtModel
+from ..utils.safetensors    import load_safetensors_header, estimate_model_params
+from ..utils.system         import logger
 
 
 #============================================================================
@@ -71,13 +70,13 @@ class PixArt_Config(supported_models_base.BASE):
         return out
 
     def process_unet_state_dict(self, state_dict):
-        state_dict, missing_keys = PixArtOldModel.get_pixart_state_dict(state_dict)
-        if len(missing_keys) > 0:
-            logger.debug(f"PixArt DiT conversion has {len(missing_keys)} missing keys!")
-            for i, key in enumerate(missing_keys):
-                if i>4: logger.debug("    ....") ; break
-                logger.debug(f"    - {key}")
-            print()
+        # state_dict, missing_keys = PixArtOldModel.get_pixart_state_dict(state_dict)
+        # if len(missing_keys) > 0:
+        #     logger.debug(f"PixArt DiT conversion has {len(missing_keys)} missing keys!")
+        #     for i, key in enumerate(missing_keys):
+        #         if i>4: logger.debug("    ....") ; break
+        #         logger.debug(f"    - {key}")
+        #     print()
         return state_dict
 
 
