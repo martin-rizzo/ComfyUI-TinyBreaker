@@ -37,6 +37,11 @@ def _find_tensor(state_dict: dict, template_key: str, subkey: str = None) -> tor
         parts = template_key.split("|")
         return state_dict.get(parts[0] + subkey + parts[2])
 
+def _get_number(key: str, prefix: str):
+    """Extracts a number from a key based on a given prefix. Returns 0 if not found."""
+    number_str = key[len(prefix):].split('.',1)[0]
+    return int(number_str) if number_str.isdigit() else 0
+
 
 #------------------- SUPPORT FOR DIFFERENT MODEL FORMATS -------------------#
 
@@ -130,47 +135,48 @@ class _DiffusersFormat:
         return pixart_state_dict, prefix
 
     # tags used to map tensor names in the conversion table template
-    DEPTH_TAG = "|depth|"
-    WB_TAG    = "|w,b|"
+    DEPTH_TAG = "{{depth}}"
+    WB_TAG    = "{{w,b}}"
     KV_TAG    = "|k+v|"
     QKV_TAG   = "|q+k+v|"
 
     # this template is used to create the conversion table
     CONVERSION_TABLE_TEMPLATE = [
-            #         PixArt Reference keys             |               HF Diffusers keys                    #
-            #------------------------------------------------------------------------------------------------#
-            # Patch embeddings                          |                                                    #
-            ("x_embedder.proj.|w,b|"                    , "pos_embed.proj.|w,b|"                             ),
-            # Caption projection                        |
-            ("y_embedder.y_embedding"                   , "caption_projection.y_embedding"                   ),
-            ("y_embedder.y_proj.fc1.|w,b|"              , "caption_projection.linear_1.|w,b|"                ),
-            ("y_embedder.y_proj.fc2.|w,b|"              , "caption_projection.linear_2.|w,b|"                ),
-            # AdaLN-single LN                           |
-            ("t_embedder.mlp.0.|w,b|"                   , "adaln_single.emb.timestep_embedder.linear_1.|w,b|"),
-            ("t_embedder.mlp.2.|w,b|"                   , "adaln_single.emb.timestep_embedder.linear_2.|w,b|"),
-            # Shared norm                               |
-            ("t_block.1.|w,b|"                          , "adaln_single.linear.|w,b|"                        ),
-            # Final block                               |
-            ("final_layer.linear.|w,b|"                 , "proj_out.|w,b|"                                   ),
-            ("final_layer.scale_shift_table"            , "scale_shift_table"                                ),
-            #--------------------------------- TRANSFORMER BLOCKS -------------------------------------------#
-            ("blocks.|depth|.scale_shift_table"         , "transformer_blocks.|depth|.scale_shift_table"     ),
-            # Projection                                |
-            ("blocks.|depth|.attn.proj.|w,b|"           , "transformer_blocks.|depth|.attn1.to_out.0.|w,b|"  ),
-            # Feed-forward                              |
-            ("blocks.|depth|.mlp.fc1.|w,b|"             , "transformer_blocks.|depth|.ff.net.0.proj.|w,b|"   ),
-            ("blocks.|depth|.mlp.fc2.|w,b|"             , "transformer_blocks.|depth|.ff.net.2.|w,b|"        ),
-            # Cross-attention (proj)                    |
-            ("blocks.|depth|.cross_attn.proj.|w,b|"     , "transformer_blocks.|depth|.attn2.to_out.0.|w,b|"  ),
-            # Cross-attention                           |
-            ("blocks.|depth|.cross_attn.q_linear.|w,b|" , "transformer_blocks.|depth|.attn2.to_q.|w,b|"      ),
-            ("blocks.|depth|.cross_attn.kv_linear.|w,b|", "transformer_blocks.|depth|.attn2.to_|k+v|.|w,b|"  ),
-            # Self-attention                            |
-            ("blocks.|depth|.attn.qkv.|w,b|"            , "transformer_blocks.|depth|.attn1.to_|q+k+v|.|w,b|"),
-    ]
+        #           PixArt Reference keys               |                 HF Diffusers keys                      #
+        #--------------------------------------------------------------------------------------------------------#
+        # Patch embeddings                              |                                                        #
+        ("x_embedder.proj.{{w,b}}"                      , "pos_embed.proj.{{w,b}}"                               ),
+        # Caption projection                            |                                                        |
+        ("y_embedder.y_embedding"                       , "caption_projection.y_embedding"                       ),
+        ("y_embedder.y_proj.fc1.{{w,b}}"                , "caption_projection.linear_1.{{w,b}}"                  ),
+        ("y_embedder.y_proj.fc2.{{w,b}}"                , "caption_projection.linear_2.{{w,b}}"                  ),
+        # AdaLN-single LN                               |                                                        |
+        ("t_embedder.mlp.0.{{w,b}}"                     , "adaln_single.emb.timestep_embedder.linear_1.{{w,b}}"  ),
+        ("t_embedder.mlp.2.{{w,b}}"                     , "adaln_single.emb.timestep_embedder.linear_2.{{w,b}}"  ),
+        # Shared norm                                   |                                                        |
+        ("t_block.1.{{w,b}}"                            , "adaln_single.linear.{{w,b}}"                          ),
+        # Final block                                   |                                                        |
+        ("final_layer.linear.{{w,b}}"                   , "proj_out.{{w,b}}"                                     ),
+        ("final_layer.scale_shift_table"                , "scale_shift_table"                                    ),
+        #-------------------------------------- TRANSFORMER BLOCKS -----------------------------------------------#
+        ("blocks.{{depth}}.scale_shift_table"           , "transformer_blocks.{{depth}}.scale_shift_table"       ),
+        # Projection                                    |                                                        |
+        ("blocks.{{depth}}.attn.proj.{{w,b}}"           , "transformer_blocks.{{depth}}.attn1.to_out.0.{{w,b}}"  ),
+        # Feed-forward                                  |                                                        |
+        ("blocks.{{depth}}.mlp.fc1.{{w,b}}"             , "transformer_blocks.{{depth}}.ff.net.0.proj.{{w,b}}"   ),
+        ("blocks.{{depth}}.mlp.fc2.{{w,b}}"             , "transformer_blocks.{{depth}}.ff.net.2.{{w,b}}"        ),
+        # Cross-attention (proj)                        |                                                        |
+        ("blocks.{{depth}}.cross_attn.proj.{{w,b}}"     , "transformer_blocks.{{depth}}.attn2.to_out.0.{{w,b}}"  ),
+        # Cross-attention                               |                                                        |
+        ("blocks.{{depth}}.cross_attn.q_linear.{{w,b}}" , "transformer_blocks.{{depth}}.attn2.to_q.{{w,b}}"      ),
+        ("blocks.{{depth}}.cross_attn.kv_linear.{{w,b}}", "transformer_blocks.{{depth}}.attn2.to_|k+v|.{{w,b}}"  ),
+        # Self-attention                                |                                                        |
+        ("blocks.{{depth}}.attn.qkv.{{w,b}}"            , "transformer_blocks.{{depth}}.attn1.to_|q+k+v|.{{w,b}}"),
+    ]   #--------------------------------------------------------------------------------------------------------#
 
     def get_conversion_table(self) -> list[tuple[str, str]]:
         DEPTH_TAG, WB_TAG  = self.DEPTH_TAG, self.WB_TAG
+        MAX_DEPTH = 50  # PixArt 900m model has 41 transformer blocks
 
         # if `_conversion_table` is already generated, return it directly
         if hasattr(self, "_conversion_table"):
@@ -178,7 +184,7 @@ class _DiffusersFormat:
 
         # generate `_conversion_table` from the info of the template CONVERSION_TABLE_TEMPLATE
         table = [ (pkey, dkey) for pkey,dkey in self.CONVERSION_TABLE_TEMPLATE if not DEPTH_TAG in pkey ]
-        for depth in range(28):
+        for depth in range(MAX_DEPTH):
             for pixart_key, diffusers_key in self.CONVERSION_TABLE_TEMPLATE:
                 if DEPTH_TAG in pixart_key:
                     pixart_key    =    pixart_key.replace(DEPTH_TAG, str(depth))
@@ -209,12 +215,14 @@ _SUPPORTED_FORMATS = [_PixArtFormat(), _DiffusersFormat()]
 #///////////////////////////// PIXART MODEL EX /////////////////////////////#
 #===========================================================================#
 
+
+
 class PixArtModelEx(PixArtModel):
 
     @classmethod
     def from_state_dict(cls,
                         state_dict       : dict,
-                        prefix           : str  = None,
+                        prefix           : str  = "",
                         config           : dict = None,
                         supported_formats: list = _SUPPORTED_FORMATS
                         ) -> "PixArtModel":
@@ -225,7 +233,7 @@ class PixArtModelEx(PixArtModel):
             state_dict: A dictionary containing the model's state. The keys represent
                         the parameter names, and the values are the corresponding tensors.
             prefix    : An optional prefix used to filter the state dictionary keys.
-                        If "?", an attempt is made to auto-detect the prefix.
+                        If an asterisk "*" is specified, the prefix will be automatically detected.
             config    : A dictionary containing the model's configuration.
                         If None, the configuration is inferred from the state dictionary.
             supported_formats: A list of supported formats for the state dictionary.
@@ -246,20 +254,70 @@ class PixArtModelEx(PixArtModel):
 
 
     @classmethod
-    def infer_model_config(cls, state_dict: dict, prefix = "", resolution: int = 1024) -> dict:
+    def infer_model_config(cls,
+                           state_dict: dict,
+                           prefix    : str = "",
+                           resolution: int = 1024
+                           ) -> dict:
+        """
+        Infers the model configuration from the state dictionary.
+
+        Args:
+           state_dict: A dictionary containing the PixArt model's state.
+           prefix    : An optional prefix used to filter the state dictionary keys.
+           resolution: The base resolution the model is intended to work at.
+        """
+        assert prefix != "*", \
+            f"PixArtModelEx: Prefix cannot be '*' when inferring model config. Please provide a valid prefix."
         assert resolution==2048 or resolution==1024 or resolution==512 or resolution==256, \
             f"PixArtModelEx: Unsupported resolution: {resolution}px"
 
-        # TODO: implement this method to infer the model configuration from a state dictionary
+        DEFAULT_LAST_BLOCK   =   27
+        DEFAULT_CAPTION_DIM  = 4096
+        DEFAULT_INTERNAL_DIM = 1152
+        DEFAULT_IN_CHANNELS  =    4
+        DEFAULT_PATCH_SIZE   =    2
+
+        # normalize the prefix to ensure it ends with a dot
+        if prefix and not prefix.endswith("."):
+            prefix += "."
+
+        # determine the number of layers in the model
+        # this is done by finding the block with the highest number
+        layer_prefix = f"{prefix}blocks."
+        last_block   = max((  _get_number(key,layer_prefix)
+                              for key in state_dict if key.startswith(layer_prefix)  ),
+                           default=DEFAULT_LAST_BLOCK)
+
+        # get the internal dimension, input channels and patch size
+        # this requires analyzing the `x_embedder.proj.weight` tensor
+        patch_embedder = state_dict.get(f"{prefix}x_embedder.proj.weight")
+        if isinstance(patch_embedder, torch.Tensor) and len(patch_embedder.shape)==4:
+            internal_dim = patch_embedder.shape[0]
+            in_channels  = patch_embedder.shape[1]
+            patch_size   = patch_embedder.shape[-1]
+        else:
+            internal_dim = DEFAULT_INTERNAL_DIM
+            in_channels  = DEFAULT_IN_CHANNELS
+            patch_size   = DEFAULT_PATCH_SIZE
+
+        # get the caption dimension
+        # this requires analyzing the `y_embedder.y_proj.fc1.weight` tensor
+        caption_embedder = state_dict.get(f"{prefix}y_embedder.y_proj.fc1.weight")
+        if isinstance(caption_embedder,torch.Tensor):
+            caption_dim  = caption_embedder.shape[-1]
+        else:
+            caption_dim  = DEFAULT_CAPTION_DIM
+
         config = {
             "latent_img_size"     : int(resolution//8), # 64 = 512x512px || 128 = 1024x1024px || 256 = 2048x2048px
-            "latent_img_channels" :    4, # number of channels in the latent image
-            "internal_dim"        : 1152, # internal dimensionality used
-            "caption_dim"         : 4096, # dimensionality of the caption input (T5 encoded prompt)
-            "patch_size"          :    2, # size of each patch (in latent blocks)
-            "num_heads"           :   16, # number of attention heads in the transformer
-            "depth"               :   28, # number of layers in the transformer
-            "mlp_ratio"           :  4.0, # ratio of the hidden dimension to the mlp dimension
+            "latent_img_channels" :    in_channels    , # number of channels in the latent image
+            "internal_dim"        :   internal_dim    , # internal dimensionality used
+            "caption_dim"         :    caption_dim    , # dimensionality of the caption input (T5 encoded prompt)
+            "patch_size"          :    patch_size     , # size of each patch (in latent blocks)
+            "num_heads"           :        16         , # number of attention heads in the transformer
+            "depth"               :   last_block+1    , # number of layers in the transformer
+            "mlp_ratio"           :       4.0         , # ratio of the hidden dimension to the mlp dimension
         }
         return config
 
