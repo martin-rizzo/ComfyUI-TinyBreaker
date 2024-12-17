@@ -16,9 +16,7 @@ from .pixart_model import PixArtModel
 
 
 def _detect_prefix(state_dict: dict, key_1:str, key_2:str) -> str:
-    """
-    Detects the model prefix based on the presence of two keys.
-    """
+    """Detects the model prefix based on the presence of two keys."""
     for key in state_dict.keys():
         if key.endswith(key_1):
             prefix = key[:-len(key_1)]
@@ -30,10 +28,9 @@ def _detect_prefix(state_dict: dict, key_1:str, key_2:str) -> str:
                 return prefix
     return ""
 
+
 def _find_tensor(state_dict: dict, template_key: str, subkey: str = None) -> torch.Tensor:
-    """
-    Finds a tensor in the state_dict using a template key.
-    """
+    """Finds a tensor in the state_dict using a template key."""
     if subkey is None:
         return state_dict.get(template_key)
     else:
@@ -41,9 +38,37 @@ def _find_tensor(state_dict: dict, template_key: str, subkey: str = None) -> tor
         return state_dict.get(parts[0] + subkey + parts[2])
 
 
-#----------------------- HF DIFFUSERS FORMAT SUPPORT -----------------------#
+#------------------- SUPPORT FOR DIFFERENT MODEL FORMATS -------------------#
 
-class _DiffusersFormatConverter:
+class _PixArtFormat:
+
+    def __call__(self, state_dict: dict, prefix: str) -> tuple[dict, str]:
+        KEY_1 = "t_embedder.mlp.0.weight"
+        KEY_2 = "final_layer.scale_shift_table"
+        original_state_dict, original_prefix = state_dict, prefix
+
+        # auto-detect prefix if the special prefix "*" is used
+        if prefix == "*":
+            prefix = _detect_prefix(state_dict, KEY_1, KEY_2)
+
+        # ensure that prefix always ends with a period '.'
+        if prefix and not prefix.endswith('.'):
+            prefix += '.'
+
+        # if the characteristic tensors of this format are not present
+        # then it is not a native PixArt model format, so we return the original values
+        if (f"{prefix}{KEY_1}" not in state_dict) or (f"{prefix}{KEY_2}" not in state_dict):
+            return original_state_dict, original_prefix
+
+        # remove prefix
+        if prefix:
+            state_dict = {key[len(prefix):]: tensor for key, tensor in state_dict.items() if key.startswith(prefix)}
+            prefix     = ""
+
+        return state_dict, prefix
+
+
+class _DiffusersFormat:
     """
     Converts a state dictionary from Hugging Face Diffusers format to standard PixArt format.
 
@@ -59,7 +84,8 @@ class _DiffusersFormatConverter:
         A tuple containing the converted state dictionary and the updated prefix.
     """
     def __call__(self, state_dict: dict, prefix: str) -> tuple[dict, str]:
-        KEY_1, KEY_2 = self.KEY_1, self.KEY_2
+        KEY_1 = "adaln_single.emb.timestep_embedder.linear_2.bias"
+        KEY_2 = "scale_shift_table"
         KV_TAG, QKV_TAG  = self.KV_TAG, self.QKV_TAG
         original_state_dict, original_prefix = state_dict, prefix
 
@@ -81,7 +107,7 @@ class _DiffusersFormatConverter:
             state_dict = {key[len(prefix):]: tensor for key, tensor in state_dict.items() if key.startswith(prefix)}
             prefix     = ""
         pixart_state_dict = {}
-        for pixart_key, diffusers_key in self.get_convertion_table():
+        for pixart_key, diffusers_key in self.get_conversion_table():
 
             if "|" not in diffusers_key:
                 _tensor = _find_tensor(state_dict, diffusers_key)
@@ -102,10 +128,6 @@ class _DiffusersFormatConverter:
                     pixart_state_dict[pixart_key] = torch.cat((_tensor_q, _tensor_k, _tensor_v))
 
         return pixart_state_dict, prefix
-
-    # these are characteristic tensor names for the HF Diffusers model
-    KEY_1 = "adaln_single.emb.timestep_embedder.linear_2.bias"
-    KEY_2 = "scale_shift_table"
 
     # tags used to map tensor names in the conversion table template
     DEPTH_TAG = "|depth|"
@@ -177,58 +199,42 @@ class _DiffusersFormatConverter:
         return self._conversion_table
 
 
+# The list of supported formats for conversion.
+# Each element is a callable that takes a `state_dict` and `prefix` as input
+# and returns a new state_dict with the parameters in the native pixart format.
+_SUPPORTED_FORMATS = [_PixArtFormat(), _DiffusersFormat()]
 
+
+#===========================================================================#
+#///////////////////////////// PIXART MODEL EX /////////////////////////////#
+#===========================================================================#
 
 class PixArtModelEx(PixArtModel):
-
-    @property
-    def dtype(self):
-        """Returns the data type of the model parameters."""
-        return self.x_embedder.proj.weight.dtype
-
-    @property
-    def device(self):
-        """Returns the device on which the model parameters are located."""
-        return self.x_embedder.proj.weight.device
 
     @classmethod
     def from_state_dict(cls,
                         state_dict       : dict,
-                        config           : dict = None,
                         prefix           : str  = None,
-                        format_converters: list = None,
+                        config           : dict = None,
+                        supported_formats: list = _SUPPORTED_FORMATS
                         ) -> "PixArtModel":
         """
         Creates a PixArtModel instance from a state dictionary.
 
         Args:
-            state_dict: A dictionary containing the model's state.
-                        The keys represent the parameter names, and the values are
-                        the corresponding tensors.
-            config    : A dictionary containing the model's configuration.
-                        If None, the configuration is inferred from the state dictionary.
+            state_dict: A dictionary containing the model's state. The keys represent
+                        the parameter names, and the values are the corresponding tensors.
             prefix    : An optional prefix used to filter the state dictionary keys.
                         If "?", an attempt is made to auto-detect the prefix.
-            format_converters: A list of format converters. Each converter should be a
-                               callable that takes a state dictionary as input and returns
-                               a modified state dictionary.
-                               These converters are used to adapt different state dictionary
-                               formats to the expected format of PixArtModel.
+            config    : A dictionary containing the model's configuration.
+                        If None, the configuration is inferred from the state dictionary.
+            supported_formats: A list of supported formats for the state dictionary.
+                               Each format is a callable that takes a state dictionary and
+                               a prefix, and returns a tuple containing the modified state
+                               dictionary and the detected prefix. Default is _SUPPORTED_FORMATS.
         """
-        # first try with any of the format converters (e.g., converter for diffusers format)
-        if format_converters:
-            for converter in format_converters:
-                state_dict, prefix = converter(state_dict, prefix)
-
-        # the "*" prefix is a special case that means the prefix should be detected automatically
-        if prefix == "*":
-            prefix = _detect_prefix(state_dict, "t_embedder.mlp.0.weight", "final_layer.scale_shift_table")
-
-        # filter the state dictionary by prefix
-        # (this allows loading of partial models or sub-models from a larger state dictionary)
-        if prefix:
-            prefix_length = len(prefix)
-            state_dict = {key[prefix_length:]: tensor for key, tensor in state_dict.items() if key.startswith(prefix)}
+        # normalize the state dictionary using the provided format converters
+        state_dict, prefix = cls.normalize_state_dict(state_dict, prefix, supported_formats)
 
         # if no config was provided then try to infer it automatically from the keys of the state_dict
         if not config:
@@ -241,7 +247,8 @@ class PixArtModelEx(PixArtModel):
 
     @classmethod
     def infer_model_config(cls, state_dict: dict, prefix = "", resolution: int = 1024) -> dict:
-        assert resolution==2048 or resolution==1024 or resolution==512 or resolution==256, f"PixArtModelEx: Unsupported resolution: {resolution}px"
+        assert resolution==2048 or resolution==1024 or resolution==512 or resolution==256, \
+            f"PixArtModelEx: Unsupported resolution: {resolution}px"
 
         # TODO: implement this method to infer the model configuration from a state dictionary
         config = {
@@ -255,6 +262,29 @@ class PixArtModelEx(PixArtModel):
             "mlp_ratio"           :  4.0, # ratio of the hidden dimension to the mlp dimension
         }
         return config
+
+
+    @property
+    def dtype(self):
+        """Returns the data type of the model parameters."""
+        return self.x_embedder.proj.weight.dtype
+
+
+    @property
+    def device(self):
+        """Returns the device on which the model parameters are located."""
+        return self.x_embedder.proj.weight.device
+
+
+    @staticmethod
+    def normalize_state_dict(state_dict       : dict,
+                             prefix           : str  = "",
+                             supported_formats: list = _SUPPORTED_FORMATS
+                             ) -> tuple[dict, str]:
+        """Normalizes a state dictionary to match the native PixArt format."""
+        for supported_format in supported_formats:
+            state_dict, prefix = supported_format(state_dict, prefix)
+        return state_dict, prefix
 
 
     def freeze(self) -> None:

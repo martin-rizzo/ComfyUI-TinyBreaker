@@ -49,16 +49,6 @@ class _PixArtConfig(supported_models_base.BASE):
         out = _PixArt(self, device=device)
         return out
 
-    # def process_unet_state_dict(self, state_dict):
-    #     state_dict, missing_keys = PixArtOldModel.get_pixart_state_dict(state_dict)
-    #     if len(missing_keys) > 0:
-    #         logger.debug(f"PixArt DiT conversion has {len(missing_keys)} missing keys!")
-    #         for i, key in enumerate(missing_keys):
-    #             if i>4: logger.debug("    ....") ; break
-    #             logger.debug(f"    - {key}")
-    #         print()
-    #     return state_dict
-
 
 class _PixArt(BaseModel):
     """
@@ -86,10 +76,23 @@ class _PixArt(BaseModel):
         return out
 
 
-# This function emulates the `model_config_from_unet` function defined in `/comfy/model_detection.py`
-# - https://github.com/comfyanonymous/ComfyUI/blob/master/comfy/model_detection.py
-def model_config_from_unet(state_dict, prefix, resolution, use_base_if_no_match=False):
-    return _PixArtConfig(state_dict, prefix, resolution=resolution)
+def model_config_from_unet(state_dict, prefix, resolution):
+    """
+    Detects the model configuration from a given UNet state dictionary.
+    It returns the appropriate configuration class and the normalized state dictionary and prefix.
+    This function simulates the `model_config_from_unet` function defined in `/comfy/model_detection.py`.
+    - https://github.com/comfyanonymous/ComfyUI/blob/master/comfy/model_detection.py
+    """
+    config = None
+    pixart_detected = True
+
+    # if the model is PixArt (the only one we support)
+    # then normalize the state dict to the native pixart format
+    if pixart_detected:
+        state_dict, prefix = PixArtModelEx.normalize_state_dict(state_dict, prefix)
+        config = _PixArtConfig(state_dict, prefix, resolution=resolution)
+
+    return config, state_dict, prefix
 
 
 
@@ -113,7 +116,7 @@ class Model(comfy.model_patcher.ModelPatcher):
             prefix      (str): The prefix used in the state dictionary.
             resolution  (int): The base resolution the model is intended to work at.
         """
-        model_config = model_config_from_unet(state_dict, prefix, resolution)
+        model_config, state_dict, prefix = model_config_from_unet(state_dict, prefix, resolution)
 
         # get information related to the model to be loaded
         parameters          = comfy.utils.calculate_parameters(state_dict, prefix)
