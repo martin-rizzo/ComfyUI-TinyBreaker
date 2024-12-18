@@ -223,6 +223,48 @@
       ]
     },
     {
+      "id": 40,
+      "type": "CLIPTextEncode",
+      "pos": [
+        440,
+        330
+      ],
+      "size": [
+        432,
+        192
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 105
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            80
+          ],
+          "slot_index": 0,
+          "shape": 3
+        }
+      ],
+      "title": "Negative Prompt",
+      "properties": {
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        "macrophoto, bokeh"
+      ],
+      "color": "#322",
+      "bgcolor": "#533"
+    },
+    {
       "id": 3,
       "type": "KSampler",
       "pos": [
@@ -275,11 +317,11 @@
       "widgets_values": [
         1,
         "fixed",
-        20,
+        11,
         4.01,
-        "euler",
-        "sgm_uniform",
-        1
+        "uni_pc",
+        "simple",
+        0.88
       ]
     },
     {
@@ -312,48 +354,6 @@
       "widgets_values": [
         "tiny_vae_sdxl.safetensors"
       ]
-    },
-    {
-      "id": 40,
-      "type": "CLIPTextEncode",
-      "pos": [
-        440,
-        330
-      ],
-      "size": [
-        432,
-        192
-      ],
-      "flags": {},
-      "order": 5,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "clip",
-          "type": "CLIP",
-          "link": 105
-        }
-      ],
-      "outputs": [
-        {
-          "name": "CONDITIONING",
-          "type": "CONDITIONING",
-          "links": [
-            80
-          ],
-          "slot_index": 0,
-          "shape": 3
-        }
-      ],
-      "title": "Negative Prompt",
-      "properties": {
-        "Node name for S&R": "CLIPTextEncode"
-      },
-      "widgets_values": [
-        "macrophoto, bokeh"
-      ],
-      "color": "#322",
-      "bgcolor": "#533"
     }
   ],
   "links": [
@@ -434,10 +434,10 @@
   "config": {},
   "extra": {
     "ds": {
-      "scale": 0.5979666807559139,
+      "scale": 0.597966680755914,
       "offset": [
-        22.92825609465213,
-        -13.97153065907802
+        82.38513861641428,
+        -2.1882690186380627
       ]
     }
   },

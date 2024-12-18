@@ -223,6 +223,79 @@
       ]
     },
     {
+      "id": 40,
+      "type": "CLIPTextEncode",
+      "pos": [
+        440,
+        330
+      ],
+      "size": [
+        432,
+        192
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 105
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            80
+          ],
+          "slot_index": 0,
+          "shape": 3
+        }
+      ],
+      "title": "Negative Prompt",
+      "properties": {
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        "macrophoto, bokeh"
+      ],
+      "color": "#322",
+      "bgcolor": "#533"
+    },
+    {
+      "id": 61,
+      "type": "VAELoader",
+      "pos": [
+        20,
+        260
+      ],
+      "size": [
+        380,
+        70
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [
+            109
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAELoader"
+      },
+      "widgets_values": [
+        "tiny_vae_sdxl.safetensors"
+      ]
+    },
+    {
       "id": 3,
       "type": "KSampler",
       "pos": [
@@ -275,85 +348,12 @@
       "widgets_values": [
         1,
         "fixed",
-        20,
+        24,
         4.01,
-        "euler",
-        "sgm_uniform",
-        1
+        "dpmpp_2m",
+        "karras",
+        0.8200000000000001
       ]
-    },
-    {
-      "id": 61,
-      "type": "VAELoader",
-      "pos": [
-        20,
-        260
-      ],
-      "size": [
-        380,
-        70
-      ],
-      "flags": {},
-      "order": 3,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "VAE",
-          "type": "VAE",
-          "links": [
-            109
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "VAELoader"
-      },
-      "widgets_values": [
-        "tiny_vae_sdxl.safetensors"
-      ]
-    },
-    {
-      "id": 40,
-      "type": "CLIPTextEncode",
-      "pos": [
-        440,
-        330
-      ],
-      "size": [
-        432,
-        192
-      ],
-      "flags": {},
-      "order": 5,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "clip",
-          "type": "CLIP",
-          "link": 105
-        }
-      ],
-      "outputs": [
-        {
-          "name": "CONDITIONING",
-          "type": "CONDITIONING",
-          "links": [
-            80
-          ],
-          "slot_index": 0,
-          "shape": 3
-        }
-      ],
-      "title": "Negative Prompt",
-      "properties": {
-        "Node name for S&R": "CLIPTextEncode"
-      },
-      "widgets_values": [
-        "macrophoto, bokeh"
-      ],
-      "color": "#322",
-      "bgcolor": "#533"
     }
   ],
   "links": [
@@ -434,10 +434,10 @@
   "config": {},
   "extra": {
     "ds": {
-      "scale": 0.5979666807559139,
+      "scale": 0.5979666807559142,
       "offset": [
-        22.92825609465213,
-        -13.97153065907802
+        84.48797918069094,
+        49.10496541861905
       ]
     }
   },
