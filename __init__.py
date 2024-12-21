@@ -59,6 +59,9 @@ comfy_import_node(LoadAnyVAE)
 from .nodes.load_transcoder import LoadTranscoder
 comfy_import_node(LoadTranscoder)
 
+from .nodes.load_style import LoadStyle
+comfy_import_node(LoadStyle)
+
 from .nodes.build_custom_transcoder import BuildCustomTranscoder
 comfy_import_node(BuildCustomTranscoder)
 
@@ -82,6 +85,9 @@ comfy_import_node(PrefixedDoubleStageSampler)
 
 from .nodes.encode_prompts import EncodePrompts
 comfy_import_node(EncodePrompts)
+
+from .nodes.gparams_unpacker import GParamsUnpacker
+comfy_import_node(GParamsUnpacker)
 
 
 # Development Nodes

@@ -12,7 +12,7 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 from .utils.directories import STYLES_DIR
 from .utils.system      import logger
-from .core.styles       import StyleCollection
+#from .core.styles       import StyleCollection
 
 
 class EncodePrompts:
@@ -48,8 +48,8 @@ class EncodePrompts:
         negative       = negative_prompt
         refiner        = cls.generate_refiner_prompt(refiner_focus, prompt)
 
-        if not style:
-            raise ValueError(f"Unknown style type '{style_name}'")
+        # if not style:
+        #     raise ValueError(f"Unknown style type '{style_name}'")
 
         prompt_cond   = cls.make_conditioning(prompt  , t5          , style, style_strength, type="prompt"  )
         negative_cond = cls.make_conditioning(negative, t5          , style, style_strength, type="negative")
@@ -80,14 +80,16 @@ class EncodePrompts:
 
     @classmethod
     def get_style(cls, style_name):
-        return cls.styles.get(style_name, None) 
+        #return cls.styles.get(style_name, None) 
+        return None
 
 
     @classmethod
     def get_style_names(cls):
-        cls.styles  = StyleCollection.from_directory( STYLES_DIR.paths[0] )
-        style_names = list( cls.styles.keys() )
-        return style_names
+        #cls.styles  = StyleCollection.from_directory( STYLES_DIR.paths[0] )
+        #style_names = list( cls.styles.keys() )
+        #return style_names
+        return ["INK", "PHOTO", "PIXEL ART"]
 
 
     @classmethod

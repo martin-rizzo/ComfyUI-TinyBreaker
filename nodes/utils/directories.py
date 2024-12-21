@@ -43,6 +43,15 @@ class ProjectDirectory:
         self.paths       = (os.path.join(_project_dir, folder_name), )
 
 
+    def get_full_path(self, filename: str) -> str:
+        """Returns the full path to a file in the directory, returning None if the file is not found."""
+        for path in self.paths:
+            full_path = os.path.join(path, filename)
+            if os.path.exists(full_path):
+                return full_path
+        return None
+
+
 #----------------------------- COMFY DIRECTORY -----------------------------#
 class ComfyDirectory:
     """
@@ -168,6 +177,7 @@ class ComfyOutputDirectory(ComfyDirectory):
 #----------------------- PROJECT DIRECTORY STRUCTURE -----------------------#
 
 # These directories are used by the xPixArt custom nodes
+PROJECT_DIR            = ProjectDirectory(".")
 STYLES_DIR             = ProjectDirectory("styles")
 VAE_DIR                = ComfyModelDirectory("vae")
 PIXART_CHECKPOINTS_DIR = ComfyModelDirectory("pixart", custom=True)
