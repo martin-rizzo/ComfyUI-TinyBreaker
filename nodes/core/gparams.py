@@ -16,6 +16,19 @@ def _is_prompt_key(key: str):
     PROMPT_KEYS = (".prompt", ".negative")
     return f".{key}" in PROMPT_KEYS
 
+def _normalize_prefix(prefix: str) -> str:
+    """Normalizes the given prefix to ensure it is valid"""
+    # remove whitespaces and ensure that the prefix ends with a period '.' 
+    prefix = prefix.strip()
+    if prefix and not prefix.endswith('.'):
+        return prefix + '.'
+    return prefix
+
+def _build_key(prefix: str, var_name: str) -> str:
+    """Returns the key by combining the prefix and variable name"""
+    prefix = _normalize_prefix(prefix)
+    return prefix + var_name.strip()
+
 
 def _replace_template_placeholder(template: str, prompt: str) -> str:
     """Replaces placeholders in the given template with the provided prompt"""
@@ -98,6 +111,61 @@ class GParams(dict):
 
         return gparams
 
+    def set(self, key: str, value) -> None:
+        """
+        Sets the value of a key in the GParams object.
+        If the key already exists, it is replaced with the new value.
+        """
+        if not isinstance(key,str):
+            return
+        self[key] = value
+
+    def set_prefixed(self, prefix: str, var_name: str, value) -> None:
+        """
+        Sets the value of a variable with a given prefix in the GParams object.
+        If the key already exists, it is replaced with the new value.
+        """
+        if not isinstance(prefix,str) or not isinstance(var_name,str):
+            return
+        self[ _build_key(prefix,var_name) ] = value
+
+
+    def get_prefixed(self, prefix: str, var_name: str, default = None):
+        """
+        Retrieves the variable of a key with a given prefix from the GParams object.
+        If the key does not exist, the default value is returned.
+        """
+        if not isinstance(prefix,str) or not isinstance(var_name,str):
+            return default
+        return self.get( _build_key(prefix,var_name), default=default )
+
+
+    def pop_prefixed(self, prefix: str, var_name: str, default = None):
+        """
+        Removes and returns the value of a variable with a given prefix from the GParams object.
+        If the key does not exist, the default value is returned.
+        """
+        if not isinstance(prefix,str) or not isinstance(var_name,str):
+            return default
+        return self.pop( _build_key(prefix,var_name), default=default )
+
+
+    def get_all_prefixed_keys(self, prefix: str) -> list[str]:
+        """
+        Returns a list of all keys with the given prefix in the GParams object.
+        If no keys are found, an empty list is returned.
+        """
+        if not isinstance(prefix,str):
+            return []
+        prefix = _normalize_prefix(prefix)
+        return [key for key in self.keys() if key.startswith(prefix)]
+
+
+    def copy(self) -> "GParams":
+        """Returns a copy of the GParams object."""
+        return GParams(self)
+
+    
 
     def to_text(self) -> str:
         """

@@ -89,6 +89,15 @@ comfy_import_node(EncodePrompts)
 from .nodes.gparams_unpacker import GParamsUnpacker
 comfy_import_node(GParamsUnpacker)
 
+from .nodes.set_cfg import SetCFG
+comfy_import_node(SetCFG)
+
+from .nodes.set_gparam import SetGParam
+comfy_import_node(SetGParam)
+
+from .nodes.set_noise_seed import SetNoiseSeed
+comfy_import_node(SetNoiseSeed)
+
 
 # Development Nodes
 

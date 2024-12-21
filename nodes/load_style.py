@@ -65,9 +65,11 @@ class LoadStyle:
         # }
 
         gparams = style_dict.get_style_params(style_name)
+
         print()
-        print("##>> gparams:", gparams)
+        print("##>> type(gparams):", type(gparams))
         print()
+
         return (gparams,)
 
 

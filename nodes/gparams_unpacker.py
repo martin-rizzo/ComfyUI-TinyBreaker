@@ -19,28 +19,31 @@ _DISCARD_PENULTIMATE_SIGMA_SAMPLERS = comfy.samplers.KSampler.DISCARD_PENULTIMAT
 DEFAULT_G_PARAMS = {
     "base.positive"       : "",
     "base.negative"       : "",
-    "base.steps"          : 12,
-    "base.cfg"            : 3.4,
     "base.sampler_name"   : "uni_pc",
     "base.scheduler"      : "simple",
     "base.start_at_step"  : 2,
+    "base.steps"          : 12,
+    "base.cfg"            : 3.4,
+    "base.noise_seed"     : 1,
 
     "refiner.positive"     : "",
     "refiner.negative"     : "",
-    "refiner.steps"        : 11,
-    "refiner.cfg"          : 2.0,
     "refiner.sampler_name" : "deis",
     "refiner.scheduler"    : "ddim_uniform",
     "refiner.start_at_step": 6,
+    "refiner.steps"        : 11,
+    "refiner.cfg"          : 2.0,
+    "refiner.noise_seed"   : 1,
 }
 
 _DEFAULT_POSITIVE      = ""
 _DEFAULT_NEGATIVE      = ""
-_DEFAULT_STEPS         = 12
-_DEFAULT_CFG           = 3.5
 _DEFAULT_SAMPLER_NAME  = "euler"
 _DEFAULT_SCHEDULER     = "normal"
 _DEFAULT_START_AT_STEP = 0
+_DEFAULT_STEPS         = 12
+_DEFAULT_CFG           = 3.5
+_DEFAULT_NOISE_SEED    = 1
 
 
 
@@ -65,14 +68,10 @@ class GParamsUnpacker:
 
     #-- FUNCTION --------------------------------#
     FUNCTION = "unpack"
-    RETURN_TYPES = ("MODEL", "CONDITIONING", "CONDITIONING", "SAMPLER", "SIGMAS", "FLOAT", "GPARAMS")
-    RETURN_NAMES = ("model", "positive"    , "negative"    , "sampler", "sigmas", "cfg"  , "gparams")
+    RETURN_TYPES = ("MODEL", "CONDITIONING", "CONDITIONING", "SAMPLER", "SIGMAS", "FLOAT", "INT"       )
+    RETURN_NAMES = ("model", "positive"    , "negative"    , "sampler", "sigmas", "cfg"  , "noise_seed")
 
     def unpack(self, prefix, model, clip, gparams=None):
-
-        print()
-        print("##>> gparams:", gparams)
-        print()
 
         # use default values if no gparams are provided
         if not gparams:
@@ -85,21 +84,17 @@ class GParamsUnpacker:
         positive      = str(  gparams.get(f"{prefix}prompt"       , _DEFAULT_POSITIVE     ))
         negative      = str(  gparams.get(f"{prefix}negative"     , _DEFAULT_NEGATIVE     ))
         steps         = int(  gparams.get(f"{prefix}steps"        , _DEFAULT_STEPS        ))
-        cfg           = float(gparams.get(f"{prefix}cfg"          , _DEFAULT_CFG          ))
         sampler_name  = str(  gparams.get(f"{prefix}sampler_name" , _DEFAULT_SAMPLER_NAME ))
         scheduler     = str(  gparams.get(f"{prefix}scheduler"    , _DEFAULT_SCHEDULER    ))
         start_at_step = int(  gparams.get(f"{prefix}start_at_step", _DEFAULT_START_AT_STEP))
+        cfg           = float(gparams.get(f"{prefix}cfg"          , _DEFAULT_CFG          ))
+        noise_seed    = int(  gparams.get(f"{prefix}noise_seed"   , _DEFAULT_NOISE_SEED   ))
         discard_penultimate_sigma = sampler_name in _DISCARD_PENULTIMATE_SIGMA_SAMPLERS
-
-        print("#>>--------")
-        print("#>> positive:", positive)
-        print("#>> negative:", negative)
-        print("#>>--------")
 
         positive, negative = self._encode(clip, positive, negative)
         sampler = comfy.samplers.sampler_object(sampler_name)
         sigmas  = self._calculate_sigmas(model, scheduler, steps, start_at_step, discard_penultimate_sigma)
-        return (model, positive, negative, sampler, sigmas, cfg, gparams)
+        return (model, positive, negative, sampler, sigmas, cfg, noise_seed)
 
 
 
