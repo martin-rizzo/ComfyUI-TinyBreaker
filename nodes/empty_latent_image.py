@@ -2,7 +2,7 @@
 File    : empty_latent_image.py
 Purpose : Create an empty latent image for use in ComfyUI with PixArt.
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
-Date    : May 14, 2024
+Date    : Dec 22, 2024
 Repo    : https://github.com/martin-rizzo/ComfyUI-xPixArt
 License : MIT
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -10,27 +10,22 @@ License : MIT
     ComfyUI nodes providing experimental support for PixArt-Sigma model
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
+import math
 import torch
 import comfy
 from   .utils.system import logger
+from   .core.gparams import GParams
 MAX_RESOLUTION=16384
 LATENT_SCALE_FACTOR=8
 
-# 1048576
 
-LANDSCAPE_SIZE_BY_ASPECT_RATIO = {
-    "1:1 square"      : (1024.0, 1024.0),
-    "4:3 tv"          : (1182.4,  886.8),
-    "48:35 (35 mm)"   : (1199.2,  874.4),
-    "71:50 ~IMAX"     : (1220.2,  859.3),
-    "3:2 photo"       : (1254.1,  836.1),
-    "16:10 wide"      : (1295.3,  809.5),
-    "16:9 hdtv"       : (1365.3,  768.0),
-    "2:1 mobile"      : (1448.2,  724.0),
-    "21:9 ultrawide"  : (1564.2,  670.4),
-    "12:5 anamorphic" : (1586.4,  661.0),
-    "70:27 cinerama"  : (1648.8,  636.0),
-    "32:9 s.ultrawide": (1930.9,  543.0),
+_DEFAULT_SCALE        = 1.0
+_DEFAULT_ASPECT_RATIO = "1:1"
+_DEFAULT_BATCH_SIZE   = 1
+_PREDEFINED_SCALES = {
+    "small"  : 0.82,
+    "normal" : 1.0,
+    "large"  : 1.22,
 }
 
 class EmptyLatentImage:
@@ -47,43 +42,107 @@ class EmptyLatentImage:
     def INPUT_TYPES(s):
         return {
             "required": {
-                "landscape" : ("BOOLEAN", {"default": True}),
-                "ratio"     : (list(LANDSCAPE_SIZE_BY_ASPECT_RATIO.keys()),),
-                "scale"     : ("FLOAT", {"default": 1.0, "min": 0.90, "max": 1.24, "step": 0.02}),
-                "batch_size": ("INT", {"default": 1, "min": 1, "max": 4096, "tooltip": "The number of latent images in the batch."})
+                "gparams": ("GPARAMS", {"tooltip": "The generation parameters ???"}),
                 },
             }
-    
+
     #-- FUNCTION --------------------------------#
-    FUNCTION = "generate"
+    FUNCTION = "generate_latents"
     RETURN_TYPES    = ("LATENT",)
     OUTPUT_TOOLTIPS = ("The empty latent image batch.",)
 
 
-    def generate(self, landscape, ratio, scale=1.0, batch_size=1):
+    def generate_latents(self, gparams: GParams):
+        PREFIX = "image"
 
-        # get the aspect ratio dimensions from the dictionary
-        width, height = LANDSCAPE_SIZE_BY_ASPECT_RATIO[ratio]
+        resolution  = 1024
+        scale       = gparams.get_prefixed(PREFIX, "scale"       , _DEFAULT_SCALE       )
+        ratio       = gparams.get_prefixed(PREFIX, "aspect_ratio", _DEFAULT_ASPECT_RATIO)
+        batch_size  = gparams.get_prefixed(PREFIX, "batch_size"  , _DEFAULT_BATCH_SIZE  )
+        orientation = gparams.get_prefixed(PREFIX, "orientation" , None                 )
 
-        # swap the width and height for portrait mode
-        if not landscape:
-            width, height = height, width
+        scale                              = self._parse_scale(scale)
+        ratio_numerator, ratio_denominator = self._parse_ratio(ratio)
 
-        # calculate the latent image dimensions based on the scale factor and aspect ratio
-        latent_width  = int(  width * scale // LATENT_SCALE_FACTOR )
-        latent_height = int( height * scale // LATENT_SCALE_FACTOR )
+        # orientation overrides the aspect ratio dimensions
+        if isinstance(orientation, str):
+            orientation = orientation.lower()
+            if   orientation == "portrait"  and ratio_numerator > ratio_denominator:
+                ratio_numerator, ratio_denominator = ratio_denominator, ratio_numerator
+            elif orientation == "landscape" and ratio_numerator < ratio_denominator:
+                ratio_numerator, ratio_denominator = ratio_denominator, ratio_numerator
 
-        # make sure the dimensions are even, as required by the model
+        latents = self._generate_latents(resolution, scale, ratio_numerator, ratio_denominator, batch_size, device=self.device)
+        return ({"samples":latents}, )
+
+
+
+    @staticmethod
+    def _generate_latents(resolution, scale, ratio_numerator, ratio_denominator, batch_size, device):
+
+        # calculate the image dimensions based on the resolution and aspect ratio
+        desired_area = resolution * resolution
+        width        = math.sqrt(desired_area * ratio_numerator / ratio_denominator)
+        height       = width * ratio_denominator / ratio_numerator
+
+        # calculate the latent dimensions
+        latent_width    = int(  width * scale // LATENT_SCALE_FACTOR )
+        latent_height   = int( height * scale // LATENT_SCALE_FACTOR )
+        latent_channels = 4
+
+        # make sure the latent dimensions are even, as required by the model
         if latent_width % 2 != 0:
             latent_width += 1
         if latent_height % 2 != 0:
             latent_height += 1
 
+        # report the calculated dimensions and create the batch of latents
         image_width, image_height = latent_width * LATENT_SCALE_FACTOR, latent_height * LATENT_SCALE_FACTOR
         logger.debug(f"Empty latent dimensions: {latent_width}x{latent_height} ({image_width}x{image_height})")
+        return torch.zeros([batch_size, latent_channels, latent_height, latent_width], device=device)
 
-        # create a batch of empty latent images
-        latents = torch.zeros([batch_size, 4, latent_height, latent_width],
-                              device=self.device
-                              )
-        return ({"samples":latents}, )
+
+    @staticmethod
+    def _parse_scale(scale):
+        if isinstance(scale, float):
+            return scale
+
+        elif scale in _PREDEFINED_SCALES:
+            return _PREDEFINED_SCALES[scale]
+
+        elif isinstance(scale, str):
+            try:
+                return float(scale)
+            except ValueError:
+                pass
+
+        # if none of the above conditions are met, use the default value
+        logger.debug(f"Invalid scale factor: '{scale}'. Using default value.")
+        return 1.0
+
+
+    @staticmethod
+    def _parse_ratio(ratio) -> tuple:
+
+        # asume the string is a fraction with the format "numerator:denominator"
+        if isinstance(ratio, str) and ':' in ratio:
+            numerator, denominator = ratio.split(':',1)
+            try:
+                return int(numerator), int(denominator)
+            except ValueError as e:
+                pass
+
+        # asume the string is a decimal number representing the width/height ratio
+        elif isinstance(ratio, str) and '.' in ratio:
+            try:
+                return float(ratio), 1
+            except ValueError as e:
+                pass
+
+        # asume the ratio is a float number representing the width/height ratio
+        elif isinstance(ratio, float):
+            return ratio, 1
+
+        # if none of the above conditions are met, use the default value
+        logger.debug(f"Invalid aspect ratio: '{ratio}'. Using default value.")
+        return 1, 1

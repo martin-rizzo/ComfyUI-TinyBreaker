@@ -68,20 +68,8 @@ comfy_import_node(BuildCustomTranscoder)
 
 # Operator Nodes
 
-from .nodes.vae_transcode import VAETranscode
-comfy_import_node(VAETranscode)
-
-from .nodes.vae_transcode_two_steps import VAETranscodeTwoSteps
-comfy_import_node(VAETranscodeTwoSteps)
-
 from .nodes.empty_latent_image import EmptyLatentImage
 comfy_import_node(EmptyLatentImage)
-
-from .nodes.placeholder_replacer import PlaceholderReplacer
-comfy_import_node(PlaceholderReplacer)
-
-from .nodes.prefixed_double_stage_sampler import PrefixedDoubleStageSampler
-comfy_import_node(PrefixedDoubleStageSampler)
 
 from .nodes.encode_prompts import EncodePrompts
 comfy_import_node(EncodePrompts)
@@ -89,14 +77,32 @@ comfy_import_node(EncodePrompts)
 from .nodes.gparams_unpacker import GParamsUnpacker
 comfy_import_node(GParamsUnpacker)
 
+from .nodes.placeholder_replacer import PlaceholderReplacer
+comfy_import_node(PlaceholderReplacer)
+
+from .nodes.prefixed_double_stage_sampler import PrefixedDoubleStageSampler
+comfy_import_node(PrefixedDoubleStageSampler)
+
 from .nodes.set_cfg import SetCFG
 comfy_import_node(SetCFG)
 
-from .nodes.set_gparam import SetGParam
-comfy_import_node(SetGParam)
+from .nodes.set_float import SetFloat
+comfy_import_node(SetFloat)
+
+from .nodes.set_image import SetImage
+comfy_import_node(SetImage)
 
 from .nodes.set_noise_seed import SetNoiseSeed
 comfy_import_node(SetNoiseSeed)
+
+from .nodes.unified_prompt_editor import UnifiedPromptEditor
+comfy_import_node(UnifiedPromptEditor)
+
+from .nodes.vae_transcode import VAETranscode
+comfy_import_node(VAETranscode)
+
+from .nodes.vae_transcode_two_steps import VAETranscodeTwoSteps
+comfy_import_node(VAETranscodeTwoSteps)
 
 
 # Development Nodes

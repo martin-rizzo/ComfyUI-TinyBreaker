@@ -45,9 +45,6 @@ class StyleDict:
         for section in config.sections():
             style_dict.add_new_style(section, config.items(section))
 
-        print("##>>--------------")
-        print(style_dict.styles)
-        print("##>>--------------")
         return style_dict
 
 

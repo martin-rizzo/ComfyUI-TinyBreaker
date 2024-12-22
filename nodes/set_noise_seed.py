@@ -1,6 +1,6 @@
 """
 File    : set_noise_seed.py
-Purpose : Node that sets the noise seed within a group of generation parameters.
+Purpose : Node that sets the noise seed, packing it into the generation parameters.
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
 Date    : Dec 21, 2024
 Repo    : https://github.com/martin-rizzo/ComfyUI-xPixArt
@@ -13,13 +13,13 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 from .core.gparams import GParams
 
 class SetNoiseSeed:
-    TITLE       = "xPixArt | Set noise seed"
+    TITLE       = "xPixArt | Set Noise Seed"
     CATEGORY    = "xPixArt"
     DESCRIPTION = "Allows to set the noise seed within a group of generation parameters."
 
     #-- PARAMETERS -----------------------------#
     @classmethod
-    def INPUT_TYPES(s):
+    def INPUT_TYPES(cls):
         return {
             "required": {
                 "gparams"   : ("GPARAMS", {"tooltip": "The original generation parameters which will be updated."}),

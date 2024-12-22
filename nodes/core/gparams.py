@@ -11,10 +11,10 @@ License : MIT
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 
-def _is_prompt_key(key: str):
+def _is_prompt(key: str):
     """Returns True if the given key is used to specify prompts or negative prompts"""
     PROMPT_KEYS = (".prompt", ".negative")
-    return f".{key}" in PROMPT_KEYS
+    return f".{key}".endswith(PROMPT_KEYS)
 
 def _normalize_prefix(prefix: str) -> str:
     """Normalizes the given prefix to ensure it is valid"""
@@ -44,7 +44,7 @@ def _replace_template_placeholder(template: str, prompt: str) -> str:
     # parse template into prefix, placeholder, and suffix
     prefix  , _, template = template.partition('{')
     template, _, suffix   = template.partition('}')
-    prefix_placeholder, suffix_placeholder = template.partition("prompt")
+    prefix_placeholder, _, suffix_placeholder = template.partition("prompt")
 
     # replace placeholder with prompt or empty string if no prompt is provided
     if prompt:
@@ -89,29 +89,35 @@ class GParams(dict):
         return gparams
 
 
-
     @classmethod
-    def from_template_and_values(cls, template: "GParams", values: "GParams") -> "GParams":
+    def from_template_and_data(cls, template: "GParams", data: "GParams") -> "GParams":
         """
-        Creates a new GParams object by merging the template and values.
+        Creates a new GParams object by merging the template and data parameters.
 
-        If the template contains placeholders for prompts or negative prompts,
-        they are replaced with the corresponding values from the values dictionary.
-        The rest of the values are added directly to the new GParams object.
+        If the `template` contains prompts with placeholders, these placeholders
+        are replaced with the corresponding values from the `data` parameters.
+
+        The rest of values that are not prompts are added directly to the
+        new GParams object, having as priority those from the `data` parameters.
+
         """
-        gparams = cls(template)
+        gparams = cls(data)
+        for template_key, template_value in template.items():
 
-        for key, value in values.items():
-            # if the key is a prompt key,
+            # if the template value is a prompt,
             # then replace the template placeholder with the provided value
-            if (key in template) and _is_prompt_key(key):
-                gparams[key] = _replace_template_placeholder( template[key], value )
-            else:
-                gparams[key] = value
+            if _is_prompt(template_key):
+                value = gparams.get(template_key, "")
+                gparams[template_key] = _replace_template_placeholder( template_value, value )
+
+            # any template value not found in `data` is added as it is
+            elif template_key not in gparams:
+                gparams[template_key] = template_value
 
         return gparams
 
-    def set(self, key: str, value) -> None:
+
+    def set(self, key: str, value, /) -> None:
         """
         Sets the value of a key in the GParams object.
         If the key already exists, it is replaced with the new value.
@@ -120,7 +126,7 @@ class GParams(dict):
             return
         self[key] = value
 
-    def set_prefixed(self, prefix: str, var_name: str, value) -> None:
+    def set_prefixed(self, prefix: str, var_name: str, value, /) -> None:
         """
         Sets the value of a variable with a given prefix in the GParams object.
         If the key already exists, it is replaced with the new value.
@@ -130,24 +136,24 @@ class GParams(dict):
         self[ _build_key(prefix,var_name) ] = value
 
 
-    def get_prefixed(self, prefix: str, var_name: str, default = None):
+    def get_prefixed(self, prefix: str, var_name: str, default = None, /):
         """
         Retrieves the variable of a key with a given prefix from the GParams object.
         If the key does not exist, the default value is returned.
         """
         if not isinstance(prefix,str) or not isinstance(var_name,str):
             return default
-        return self.get( _build_key(prefix,var_name), default=default )
+        return self.get( _build_key(prefix,var_name), default )
 
 
-    def pop_prefixed(self, prefix: str, var_name: str, default = None):
+    def pop_prefixed(self, prefix: str, var_name: str, default = None, /):
         """
         Removes and returns the value of a variable with a given prefix from the GParams object.
         If the key does not exist, the default value is returned.
         """
         if not isinstance(prefix,str) or not isinstance(var_name,str):
             return default
-        return self.pop( _build_key(prefix,var_name), default=default )
+        return self.pop( _build_key(prefix,var_name), default )
 
 
     def get_all_prefixed_keys(self, prefix: str) -> list[str]:

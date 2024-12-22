@@ -1,6 +1,6 @@
 """
-File    : set_gparam.py
-Purpose : Node that sets a float value within a group of generation parameters.
+File    : set_float.py
+Purpose : Node that sets a float value, packing it into the generation parameters.
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
 Date    : Dec 21, 2024
 Repo    : https://github.com/martin-rizzo/ComfyUI-xPixArt
@@ -12,8 +12,8 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 from .core.gparams import GParams
 
-class SetGParam:
-    TITLE       = "xPixArt | Set float"
+class SetFloat:
+    TITLE       = "xPixArt | Set Float"
     CATEGORY    = "xPixArt"
     DESCRIPTION = "Allows to set a float value within a group of generation parameters."
 

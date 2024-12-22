@@ -206,7 +206,6 @@ class StyleCollection(dict):
                 style     = Style.from_file(file_path)
                 if style:
                     style_name = cls._generate_style_name(file_name)
-                    # print("##>> adding style:", style_name)
                     style_collection[style_name] = style
 
         return style_collection

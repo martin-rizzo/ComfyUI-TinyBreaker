@@ -35,41 +35,10 @@ class LoadStyle:
     FUNCTION = "load_style"
     RETURN_TYPES = ("GPARAMS",)
     RETURN_NAMES = ("gparams",)
+    OUTPUT_TOOLTIPS = ("The generation parameters with the style loaded.",)
 
     def load_style(self, style_name):
-        """
-        Loads a style for image generation.
-
-        Args:
-            style_name (str): The name of the style to apply.
-
-        Returns:
-            dict: A dictionary containing the loaded style parameters.
-        """
-        # gparams = {
-        #     "base.positive"       : "An iPhone photo. The heroic leader, Master Chief with battle rifle and glowing green visor, at a fruit selling market in Ecuador. In the background there are many surprised people.",
-        #     "base.negative"       : "macrophoto, bokeh, out of focus",
-        #     "base.steps"          : 12,
-        #     "base.cfg"            : 3.4,
-        #     "base.sampler_name"   : "uni_pc",
-        #     "base.scheduler"      : "simple",
-        #     "base.start_at_step"  : 2,
-
-        #     "refiner.positive"     : "The heroic leader, Master Chief with battle rifle and glowing green visor, at a fruit selling market in Ecuador. In the background there are many surprised people.",
-        #     "refiner.negative"     : "(worst quality, low quality:1.8)",
-        #     "refiner.steps"        : 11,
-        #     "refiner.cfg"          : 2.0,
-        #     "refiner.sampler_name" : "deis",
-        #     "refiner.scheduler"    : "ddim_uniform",
-        #     "refiner.start_at_step": 6,
-        # }
-
         gparams = style_dict.get_style_params(style_name)
-
-        print()
-        print("##>> type(gparams):", type(gparams))
-        print()
-
         return (gparams,)
 
 
