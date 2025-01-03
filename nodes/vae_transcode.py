@@ -50,6 +50,7 @@ class VAETranscode:
         # (using `scale_factor`/`shift_factor`) are applied by the
         # samplers **immediately before** the UNet processes the latents.
         latents = samples["samples"]
-        latents = transcoder( latents, unet_compatible_latents=False )
+        latents = transcoder( latents )
+        # latents = transcoder( latents, unet_compatible_latents=False )
         return ({"samples": latents}, )
 

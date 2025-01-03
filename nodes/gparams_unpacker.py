@@ -73,11 +73,6 @@ class GParamsUnpacker:
 
     def unpack(self, prefix, model, clip, gparams=None):
 
-        print()
-        print("##>> gparams:")
-        print(gparams)
-        print()
-
         # use default values if no gparams are provided
         if not gparams:
             gparams = DEFAULT_G_PARAMS

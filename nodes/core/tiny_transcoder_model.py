@@ -302,8 +302,10 @@ class TinyTranscoderModel(nn.Module):
     def from_state_dict(cls, state_dict: dict, prefix: str = "", config: dict = None) -> "TinyTranscoderModel":
 
         # TODO: implement automatic detection of the model configuration from the state dictionary
-        if prefix == "?":
+        if prefix == "*":
             prefix = "" # detect_prefix(state_dict, "decoder.10.conv.4.bias", "encoder.12.conv.2.weight")
+        if prefix and not prefix.endswith('.'):
+            prefix += '.'
 
         if not config:
             config = cls.infer_model_config(state_dict)

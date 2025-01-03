@@ -10,6 +10,7 @@ License : MIT
     ComfyUI nodes providing experimental support for PixArt-Sigma model
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
+import comfy.model_detection
 import torch
 import comfy.utils
 import comfy.model_patcher
@@ -17,6 +18,14 @@ from comfy                  import model_management, supported_models_base, late
 from comfy.model_base       import BaseModel, ModelType
 from ..utils.system         import logger
 from ..core.pixart_model_ex import PixArtModelEx
+
+
+def normalize_prefix(prefix: str) -> str:
+    """Normalize a given prefix"""
+    prefix = prefix.strip()
+    if prefix and prefix != "*" and not prefix.endswith('.'):
+        prefix += '.'
+    return prefix
 
 
 #--------------------------------- PIXART ----------------------------------#
@@ -76,23 +85,35 @@ class _PixArt(BaseModel):
         return out
 
 
-def model_config_from_unet(state_dict, prefix, resolution):
+def _model_config_from_unet(state_dict: dict,
+                            prefix    : str,
+                            use_base_if_no_match: bool = False,
+                            resolution          : int  = 1024
+                            ) -> tuple[supported_models_base.BASE, dict, str]:
     """
     Detects the model configuration from a given UNet state dictionary.
     It returns the appropriate configuration class and the normalized state dictionary and prefix.
-    This function simulates the `model_config_from_unet` function defined in `/comfy/model_detection.py`.
-    - https://github.com/comfyanonymous/ComfyUI/blob/master/comfy/model_detection.py
+    This function wraps the `model_config_from_unet` function defined in `/comfy/model_detection.py`.
+     - https://github.com/comfyanonymous/ComfyUI/blob/master/comfy/model_detection.py
     """
-    config = None
-    pixart_detected = True
 
-    # if the model is PixArt (the only one we support)
-    # then normalize the state dict to the native pixart format
-    if pixart_detected:
+    # check if PixArt is present in the state dict,
+    # if so then execute the custom code for PixArt
+    pixprefix = PixArtModelEx.detect_prefix(state_dict)
+    print("##>> pxiprefix:", pixprefix)
+    print("##>> prefix:", prefix)
+
+    if PixArtModelEx.detect_prefix(state_dict, prefix) is not None:
+        logger.info("Detected PixArt model")
         state_dict, prefix = PixArtModelEx.normalize_state_dict(state_dict, prefix)
-        config = _PixArtConfig(state_dict, prefix, resolution=resolution)
+        model_config       = _PixArtConfig(state_dict, prefix, resolution=resolution)
+        return model_config, state_dict, prefix
 
-    return config, state_dict, prefix
+    # by default use the normal detection of ComfyUI
+    if prefix and not prefix.endswith("."):
+        prefix += "."
+    model_config = comfy.model_detection.model_config_from_unet(state_dict, prefix, use_base_if_no_match)
+    return model_config, state_dict, prefix
 
 
 
@@ -116,7 +137,9 @@ class Model(comfy.model_patcher.ModelPatcher):
             prefix      (str): The prefix used in the state dictionary.
             resolution  (int): The base resolution the model is intended to work at.
         """
-        model_config, state_dict, prefix = model_config_from_unet(state_dict, prefix, resolution)
+        model_config, state_dict, prefix = _model_config_from_unet(state_dict, prefix, resolution=resolution)
+        if model_config is None:
+            raise ValueError("Unsupported model type")
 
         # get information related to the model to be loaded
         parameters          = comfy.utils.calculate_parameters(state_dict, prefix)
@@ -130,7 +153,7 @@ class Model(comfy.model_patcher.ModelPatcher):
         model_config.set_inference_dtype(unet_dtype, manual_cast_dtype)
 
         # create the model
-        model = model_config.get_model(state_dict, prefix="", device=initial_load_device)
+        model = model_config.get_model(state_dict, prefix, device=initial_load_device)
 
         # load the parameters into the model
         model.load_model_weights(state_dict, prefix)
