@@ -20,14 +20,6 @@ from ..utils.system         import logger
 from ..core.pixart_model_ex import PixArtModelEx
 
 
-def normalize_prefix(prefix: str) -> str:
-    """Normalize a given prefix"""
-    prefix = prefix.strip()
-    if prefix and prefix != "*" and not prefix.endswith('.'):
-        prefix += '.'
-    return prefix
-
-
 #--------------------------------- PIXART ----------------------------------#
 
 class _PixArtConfig(supported_models_base.BASE):
@@ -96,12 +88,6 @@ def _model_config_from_unet(state_dict: dict,
     This function wraps the `model_config_from_unet` function defined in `/comfy/model_detection.py`.
      - https://github.com/comfyanonymous/ComfyUI/blob/master/comfy/model_detection.py
     """
-
-    # check if PixArt is present in the state dict,
-    # if so then execute the custom code for PixArt
-    pixprefix = PixArtModelEx.detect_prefix(state_dict)
-    print("##>> pxiprefix:", pixprefix)
-    print("##>> prefix:", prefix)
 
     if PixArtModelEx.detect_prefix(state_dict, prefix) is not None:
         logger.info("Detected PixArt model")

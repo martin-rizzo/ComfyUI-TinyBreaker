@@ -12,6 +12,7 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import comfy.utils
 from .xcomfy.model               import Model
+from .xcomfy.clip                import CLIP
 from .utils.directories          import PIXART_CHECKPOINTS_DIR
 from .core.tiny_transcoder_model import TinyTranscoderModel
 
@@ -41,11 +42,11 @@ class LoadCheckpoint:
         ckpt_path  = PIXART_CHECKPOINTS_DIR.get_full_path(ckpt_name)
         state_dict = comfy.utils.load_torch_file(ckpt_path)
 
-        meta          = None  # Meta.from_predefined("sigma", 2048)
+        metadata      = None  # Metadata.from_predefined("sigma", 2048)
         model         = Model.from_state_dict(state_dict, prefix="base.diffusion_model", resolution=1024)
         vae           = None  # VAE.from_state_dict(state_dict, prefix="")
         clip          = None
         transcoder    = TinyTranscoderModel.from_state_dict(state_dict, prefix="transcoder")
         refiner_model = Model.from_state_dict(state_dict, prefix="refiner.diffusion_model")
-        refiner_clip  = None
-        return (model, vae, clip, transcoder, refiner_model, refiner_clip, meta)
+        refiner_clip  = CLIP.from_state_dict(state_dict, prefix="refiner.conditioner", type="stable_diffusion")
+        return (model, vae, clip, transcoder, refiner_model, refiner_clip, metadata)
