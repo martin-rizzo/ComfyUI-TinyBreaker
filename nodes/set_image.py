@@ -26,8 +26,15 @@ _LANDSCAPE_SIZE_BY_ASPECT_RATIO = {
     "70:27 cinerama"  : (1648.8,  636.0),
     "32:9 s.ultrawide": (1930.9,  543.0),
 }
-_DEFAULT_RATIO = "1:1 square"
 
+_PREDEFINED_SCALES = {
+    "Small"  : 0.82,
+    "Medium" : 1.0,
+    "Large"  : 1.22,
+}
+
+_DEFAULT_RATIO = "1:1 square"
+_DEFAULT_SCALE = "Large"
 
 
 class SetImage:
@@ -42,12 +49,12 @@ class SetImage:
             "required": {
                 "gparams"   : ("GPARAMS"    , {"tooltip": "The original generation parameters which will be updated."}),
 
-                "landscape" : ("BOOLEAN"    , {"tooltip": "Set the image to landscape orientation. True for landscape, False for portrait.",
+                "landscape" : ("BOOLEAN"    , {"tooltip": "Set the image to landscape orientation. 'True' for landscape, 'False' for portrait.",
                                                "default": True}),
-                "ratio"     : (cls._ratios(), {"tooltip": "Select the aspect ratio for the image.",
+                "ratio"     : (cls._ratios(), {"tooltip": "The aspect ratio of the image.",
                                                "default": _DEFAULT_RATIO}),
-                "scale"     : ("FLOAT"      , {"tooltip": "Scale factor for the image size. Adjust to increase or decrease resolution, a value of 1.0 is the default size for the model.",
-                                               "default": 1.0, "min": 0.90, "max": 1.24, "step": 0.02}),
+                "scale"     : (cls._scales(), {"tooltip": "The scale factor for the image. ('Medium' is the size the model was trained on, but 'Large' is recommended)",
+                                               "default": _DEFAULT_SCALE}),
                 "batch_size": ("INT"        , {"tooltip": "Number of images to generate per prompt. Adjust this value for batching.",
                                                "default": 1, "min": 1, "max": 4096})
                 },
@@ -63,7 +70,7 @@ class SetImage:
                              gparams   : GParams,
                              landscape : bool,
                              ratio     : str,
-                             scale     : float,
+                             scale     : str,
                              batch_size: int
                              ):
         gparams = gparams.copy()
@@ -77,13 +84,17 @@ class SetImage:
             _parts = ratio.split(':')
             ratio = f"{_parts[1]}:{_parts[0]}"
 
-        gparams.set("image.scale"       , float(scale)   )
-        gparams.set("image.aspect_ratio", str(ratio)     )
-        gparams.set("image.batch_size"  , int(batch_size))
+        gparams.set("image.scale"       , float(_PREDEFINED_SCALES[scale]))
+        gparams.set("image.aspect_ratio", str(ratio)                      )
+        gparams.set("image.batch_size"  , int(batch_size)                 )
         return (gparams,)
 
 
 
-    @classmethod
-    def _ratios(self):
+    @staticmethod
+    def _ratios():
         return list(_LANDSCAPE_SIZE_BY_ASPECT_RATIO.keys())
+
+    @staticmethod
+    def _scales():
+        return list(_PREDEFINED_SCALES.keys())
