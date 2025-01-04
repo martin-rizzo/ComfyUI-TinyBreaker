@@ -117,7 +117,7 @@ class Model(comfy.model_patcher.ModelPatcher):
                         resolution: int  = 1024,
                         ) -> "Model":
         """
-        Create an instance of this class from the state dict of a PixArt model.
+        Creates an instance of this class from the state dict of a PixArt model.
         Args:
             state_dict (dict): The state dictionary of the PixArt model.
             prefix      (str): The prefix used in the state dictionary.
@@ -125,7 +125,7 @@ class Model(comfy.model_patcher.ModelPatcher):
         """
         model_config, state_dict, prefix = _model_config_from_unet(state_dict, prefix, resolution=resolution)
         if model_config is None:
-            raise ValueError("Unsupported model type")
+            raise ValueError("Model: Unsupported model type")
 
         # get information related to the model to be loaded
         parameters          = comfy.utils.calculate_parameters(state_dict, prefix)

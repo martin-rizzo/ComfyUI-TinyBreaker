@@ -13,8 +13,9 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 import comfy.utils
 from .xcomfy.model               import Model
 from .xcomfy.clip                import CLIP
+from .xcomfy.transcoder          import Transcoder
 from .utils.directories          import PIXART_CHECKPOINTS_DIR
-from .core.tiny_transcoder_model import TinyTranscoderModel
+
 
 
 
@@ -46,7 +47,7 @@ class LoadCheckpoint:
         model         = Model.from_state_dict(state_dict, prefix="base.diffusion_model", resolution=1024)
         vae           = None  # VAE.from_state_dict(state_dict, prefix="")
         clip          = None
-        transcoder    = TinyTranscoderModel.from_state_dict(state_dict, prefix="transcoder")
+        transcoder    = Transcoder.from_state_dict(state_dict, prefix="transcoder")
         refiner_model = Model.from_state_dict(state_dict, prefix="refiner.diffusion_model")
         refiner_clip  = CLIP.from_state_dict(state_dict, prefix="refiner.conditioner", type="stable_diffusion")
         return (model, vae, clip, transcoder, refiner_model, refiner_clip, metadata)

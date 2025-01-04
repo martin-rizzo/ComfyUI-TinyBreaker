@@ -13,24 +13,89 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 import math
 import torch
 import torch.nn as nn
-from ..utils.system import logger
-from .vae           import VAE
-from comfy          import model_management
+from ..utils.system               import logger
+from ..core.tiny_transcoder_model import TinyTranscoderModel
+from .vae                         import VAE
+from comfy                        import model_management
 from torchvision.transforms.functional import gaussian_blur
 
 
+#===========================================================================#
+#/////////////////////////////// TRANSCODER ////////////////////////////////#
+#===========================================================================#
+
 class Transcoder:
-    """
-    The ComfyUI object transmitted across the TRANSCODER lines.
+    """This class represents any TRANSCODER object transmitted through ComfyUI's node system."""
 
-    This object encapsulates the necessary components for transcoding latent
-    representations between different models (e.g., from a SDXL to SD15).
-    It allows for flexible configuration using either a custom model, or
-    a pair of decoder and encoder VAEs
+    @classmethod
+    def from_state_dict(cls,
+                        state_dict: dict,
+                        prefix    : str = "",
+                        device    : torch.device = None,
+                        dtype     : torch.dtype  = None,
+                        ) -> "Transcoder":
+        """
+        Creates a new `Transcoder` instance from a state dictionary of a TinyTranscoder model.
+        Args:
+            state_dict: The state dictionary of a TinyTranscoder model.
+            prefix    : The prefix that indicates where the model is located within state_dict.
+            device: The device where the model will be loaded.
+                    If no specified, the default ComfyUI VAE device will be used.
+            dtype : The data type used for the model.
+                    If no specified, the default ComfyUI VAE data type will be used.
+        """
 
-    **Important:** Do not create an instance of this class directly.
-    Instead, use the class methods `from_model` or `from_decoder_encoder`.
-    """
+        # try to create a TinyTranscoder model from state_dict
+        tiny_transcoder_model = TinyTranscoderModel.from_state_dict(state_dict, prefix)
+        if not tiny_transcoder_model:
+            raise ValueError("Transcoder: unsupported model type")
+
+        # determine device and data type where the model will be loaded
+        # (use comfyui default VAE device and data type if not specified)
+        working_dtypes = [torch.float16, torch.bfloat16, torch.float32]
+        if device is None:
+            device = model_management.vae_device()
+        if dtype is None:
+            dtype = model_management.vae_dtype(device, working_dtypes)
+
+        print("##>> device:", device)
+        print("##>> dtype:", dtype)
+
+        tiny_transcoder_model.to(device=device, dtype=dtype).freeze()
+        return cls(model=tiny_transcoder_model, model_device=device, model_dtype=dtype)
+
+
+    @classmethod
+    def from_decoder_encoder(cls,
+                             decoder: VAE,
+                             encoder: VAE,
+                             gaussian_blur_sigma: float = 0.0
+                             ) -> "Transcoder":
+        """
+        Creates a new `Transcoder` instance using separate decoder and encoder VAE models.
+
+        The transcoder will perform transcoding by first decoding a latent representation
+        using the provided `decoder` VAE, and then encoding the resulting image with the
+        provided `encoder` VAE.
+
+        **Intended Use:** This method is specifically designed for use with standard
+        ComfyUI VAE models. If you are working with custom models, it is recommended
+        to use the `from_model` method instead.
+
+        **Image Processing:** The transcoder optionally applies a Gaussian blur to the
+        decoded image *before* re-encoding. This step can help to smooth out artifacts
+        and improve the overall quality of the transcoded images in some cases.
+        It's important to note that blurring is not always necessary.
+
+        Args:
+            decoder (VAE): A standard VAE model that will be used for decoding.
+            encoder (VAE): A standard VAE model that will be used for encoding.
+            gaussian_blur_sigma (float, optional): The level of Gaussian blur to apply after decoding and before encoding.
+
+        """
+        return cls(decoder=decoder, encoder=encoder, gaussian_blur_sigma=gaussian_blur_sigma)
+
+
     def __init__(self,
                  model              : nn.Module    = None,
                  model_device       : torch.device = None,
@@ -69,72 +134,6 @@ class Transcoder:
         # if no transcoder model or encoder/decoder is available,
         # return the input samples as is.
         return x
-
-
-    @classmethod
-    def from_model(cls,
-                   model : nn.Module,
-                   device: torch.device = None,
-                   dtype : torch.dtype  = None,
-                   ) -> "Transcoder":
-        """
-        Creates a new `Transcoder` instance using a custom model.
-
-        This method is used when you want to use a single custom model for transcoding.
-        The model is expected to handle the entire transcoding process internally.
-
-        Args:
-            model : The model to use for transcoding.
-            device: The device where the model will be loaded.
-                    If no specified, the default ComfyUI VAE device will be used.
-            dtype : The data type used for the model.
-                    If no specified, the default ComfyUI VAE data type will be used.
-        Returns:
-            A new `Transcoder` instance configured with the provided model.
-        """
-        working_dtypes = [torch.float16, torch.bfloat16, torch.float32]
-        if device is None:
-            device = model_management.vae_device()
-        if dtype is None:
-            dtype = model_management.vae_dtype(device, working_dtypes)
-
-        model.to(device=device, dtype=dtype)
-        transcoder = cls(model=model, model_device=device, model_dtype=dtype)
-        return transcoder
-
-
-    @classmethod
-    def from_decoder_encoder(cls,
-                             decoder: VAE,
-                             encoder: VAE,
-                             gaussian_blur_sigma: float = 0.0
-                             ) -> "Transcoder":
-        """
-        Creates a new `Transcoder` instance using separate decoder and encoder VAE models.
-
-        The transcoder will perform transcoding by first decoding a latent representation
-        using the provided `decoder` VAE, and then encoding the resulting image with the
-        provided `encoder` VAE.
-
-        **Intended Use:** This method is specifically designed for use with standard
-        ComfyUI VAE models. If you are working with custom models, it is recommended
-        to use the `from_model` method instead.
-
-        **Image Processing:** The transcoder optionally applies a Gaussian blur to the
-        decoded image *before* re-encoding. This step can help to smooth out artifacts
-        and improve the overall quality of the transcoded images in some cases.
-        It's important to note that blurring is not always necessary and may not be
-        needed for all transcoding scenarios.
-
-        Args:
-            decoder (VAE): The VAE model used for decoding.
-            encoder (VAE): The VAE model used for encoding.
-            gaussian_blur_sigma (float, optional): The level of Gaussian blur to apply after decoding and before encoding.
-
-       Returns:
-            A new `Transcoder` instance configured with the provided decoder and encoder.
-        """
-        return cls(decoder=decoder, encoder=encoder, gaussian_blur_sigma=gaussian_blur_sigma)
 
 
     def __call__(self, x: torch.Tensor, **kwargs) -> torch.Tensor:
