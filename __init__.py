@@ -56,11 +56,14 @@ comfy_import_node(LoadCheckpoint)
 from .nodes.load_pixart_checkpoint import LoadPixArtCheckpoint
 comfy_import_node(LoadPixArtCheckpoint)
 
+from .nodes.load_transcoder import LoadTranscoder
+comfy_import_node(LoadTranscoder)
+
 from .nodes.load_any_vae import LoadAnyVAE
 comfy_import_node(LoadAnyVAE)
 
-from .nodes.load_transcoder import LoadTranscoder
-comfy_import_node(LoadTranscoder)
+from .nodes.load_partial_vae import LoadPartialVAE
+comfy_import_node(LoadPartialVAE)
 
 from .nodes.load_style import LoadStyle
 comfy_import_node(LoadStyle)
