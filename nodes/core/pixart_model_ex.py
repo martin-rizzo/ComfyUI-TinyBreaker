@@ -257,6 +257,7 @@ class PixArtModelEx(PixArtModel):
     @staticmethod
     def detect_prefix(state_dict       : dict,
                       prefix           : str  = "*",
+                      default          : str  = None,
                       supported_formats: list = _SUPPORTED_FORMATS
                       ) -> str:
         """
@@ -289,8 +290,8 @@ class PixArtModelEx(PixArtModel):
             elif prefix+name1 in state_dict and prefix+name2 in state_dict:
                     return prefix
 
-        # if no prefix is found, return `None`
-        return None
+        # if no prefix was detected then return `None` or the provided default
+        return default
 
 
     @staticmethod

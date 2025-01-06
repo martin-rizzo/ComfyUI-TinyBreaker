@@ -75,72 +75,6 @@
       }
     },
     {
-      "id": 26,
-      "type": "LoadPartialVAE //xPixart",
-      "pos": [
-        423.87255859375,
-        568.8983764648438
-      ],
-      "size": [
-        420,
-        82
-      ],
-      "flags": {},
-      "order": 0,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "VAE",
-          "type": "VAE",
-          "links": [
-            33
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "LoadPartialVAE //xPixart"
-      },
-      "widgets_values": [
-        "SDXL-FP16-FIX-sdxl.vae.safetensors",
-        "load encoder and decoder"
-      ]
-    },
-    {
-      "id": 25,
-      "type": "LoadPartialVAE //xPixart",
-      "pos": [
-        423.87255859375,
-        438.8983154296875
-      ],
-      "size": [
-        420,
-        82
-      ],
-      "flags": {},
-      "order": 1,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "VAE",
-          "type": "VAE",
-          "links": [
-            31
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "LoadPartialVAE //xPixart"
-      },
-      "widgets_values": [
-        "vae-ft-mse-840000-ema-pruned.safetensors",
-        "load encoder and decoder"
-      ]
-    },
-    {
       "id": 1,
       "type": "LoadImage",
       "pos": [
@@ -152,7 +86,7 @@
         320
       ],
       "flags": {},
-      "order": 2,
+      "order": 0,
       "mode": 0,
       "inputs": [],
       "outputs": [
@@ -190,7 +124,7 @@
         60
       ],
       "flags": {},
-      "order": 3,
+      "order": 1,
       "mode": 0,
       "inputs": [],
       "outputs": [
@@ -223,7 +157,7 @@
         60
       ],
       "flags": {},
-      "order": 4,
+      "order": 2,
       "mode": 0,
       "inputs": [],
       "outputs": [
@@ -256,7 +190,7 @@
         330
       ],
       "flags": {},
-      "order": 5,
+      "order": 3,
       "mode": 0,
       "inputs": [],
       "outputs": [
@@ -354,7 +288,7 @@
           "slot_index": 0
         }
       ],
-      "title": "VAE Encoder",
+      "title": "Partial VAE Encoder",
       "properties": {
         "Node name for S&R": "VAEEncode"
       },
@@ -480,7 +414,7 @@
           "slot_index": 0
         }
       ],
-      "title": "VAE Decode SDXL",
+      "title": "Partial VAE Decoder",
       "properties": {
         "Node name for S&R": "VAEDecode"
       },
@@ -539,6 +473,72 @@
         "Node name for S&R": "PreviewImage"
       },
       "widgets_values": []
+    },
+    {
+      "id": 25,
+      "type": "LoadPartialVAE //xPixart",
+      "pos": [
+        423.87255859375,
+        438.8983154296875
+      ],
+      "size": [
+        420,
+        82
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [
+            31
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadPartialVAE //xPixart"
+      },
+      "widgets_values": [
+        "vae-ft-mse-840000-ema-pruned.safetensors",
+        "load decoder only"
+      ]
+    },
+    {
+      "id": 26,
+      "type": "LoadPartialVAE //xPixart",
+      "pos": [
+        423.87255859375,
+        568.8983764648438
+      ],
+      "size": [
+        420,
+        82
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [
+            33
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadPartialVAE //xPixart"
+      },
+      "widgets_values": [
+        "SDXL-FP16-FIX-sdxl.vae.safetensors",
+        "load encoder only"
+      ]
     }
   ],
   "links": [
@@ -667,8 +667,8 @@
     "ds": {
       "scale": 0.7958936520861463,
       "offset": [
-        165.90022299661317,
-        -67.87565555666912
+        172.7535826637601,
+        -81.12548424648644
       ]
     }
   },

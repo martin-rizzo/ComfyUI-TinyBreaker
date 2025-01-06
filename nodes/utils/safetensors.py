@@ -11,10 +11,17 @@ License : MIT
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import os
-import sys
 import json
 import struct
-from typing import Union, Dict, Any
+from typing import Union
+
+
+def normalize_safetensors_prefix(prefix: str) -> str:
+    """Normalize a given prefix by ensuring it ends with a dot when it's not empty."""
+    prefix = prefix.strip()
+    if prefix and prefix != "*" and not prefix.endswith('.'):
+        prefix += '.'
+    return prefix
 
 
 def load_safetensors_header(file_path : str,
@@ -114,7 +121,7 @@ def detect_format_and_prefix(safetensors: Union[str, dict],
         safetensors = load_safetensors_header(safetensors)
     if not isinstance(safetensors, dict):
         return '', ''
-    
+
     # get the list of required tensors for each format
     all_tensors_a = format_a[1] if format_a else None
     all_tensors_b = format_b[1] if format_b else None
