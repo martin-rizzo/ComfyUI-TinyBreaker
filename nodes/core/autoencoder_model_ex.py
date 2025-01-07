@@ -20,36 +20,72 @@ def _normalize_prefix(prefix: str) -> str:
         prefix += '.'
     return prefix
 
-def _get_number(key: str, prefix: str, *, default: int = 0) -> int:
+
+#------------------ HELPER FUNCTIONS FOR MODEL DETECTION -------------------#
+
+def _get_tensor_number(key: str, prefix: str, *, default: int = 0) -> int:
     """Extracts a number from a key based on a given prefix. Returns 0 if not found."""
     number_str = key[len(prefix):].split('.',1)[0]
     return int(number_str) if number_str.isdigit() else default
 
+
 def _get_max_tensor_number(state_dict: dict, prefix: str, *, default: int = 0) -> int:
     """Finds and returns the maximum number from keys in a state dictionary based on a given prefix. Returns 0 if not found."""
-    return max([_get_number(key, prefix) for key in state_dict.keys() if key.startswith(prefix)], default=default)
+    return max([_get_tensor_number(key, prefix) for key in state_dict.keys() if key.startswith(prefix)], default=default)
+
 
 def _get_tensor_size(state_dict: dict, name: str, *, dim: int, default: int = 0) -> int:
+    """Returns the size of a tensor in a given dimension based on its name."""
     tensor = state_dict.get(name)
     return tensor.shape[dim] if tensor is not None else default
+
+
+def _detect_prefix(state_dict: dict, tensor_names: tuple) -> str | None:
+    """Detects the common prefix shared by two tensors in a given state dictionary."""
+    name = tensor_names[0]
+    for key in state_dict.keys():
+        if key.endswith(name):                                # check for the first signature tensor
+            detected_prefix = key[:-len(name)]
+            if detected_prefix+tensor_names[1] in state_dict: # check for the second signature tensor
+                return detected_prefix
+    return None
+
+
+def _verify_tensors(state_dict: dict, prefix: str, tensor_names: tuple) -> bool:
+    """Verifies the presence of two tensors based on a given prefix and tensor names."""
+    return prefix+tensor_names[0] in state_dict and prefix+tensor_names[1] in state_dict
 
 
 #------------------- SUPPORT FOR DIFFERENT MODEL FORMATS -------------------#
 
 class _NativeFormat:
-
-    # format must have its `SIGNATURE_TENSORS` constant with
-    # the names of tensors that are characteristic to it
-    SIGNATURE_TENSORS = [
+    """
+    Identify and process autoencoder models in its native format.
+    """
+    # these constants contain names of tensors that are characteristic of this format
+    # and they are used to verify whether a saved checkpoint is compatible with the format
+    SIGNATURE_ENCODER_TENSORS = (
+        "encoder.conv_in.weight",
+        "encoder.down.0.block.0.conv1.weight"
+    )
+    SIGNATURE_DECODER_TENSORS = (
         "decoder.conv_in.weight",
-        "decoder.up.0.block.0.nin_shortcut.weight"
-    ]
-
+        "decoder.up.0.block.0.conv1.weight"
+    )
     def build_native_state_dict(self, state_dict: dict) -> dict:
         return state_dict
 
 
-# The list of supported formats for conversion.
+class _HF_DiffusersFormat:
+    """
+    Identify and process autoencoder models in HF diffusers format.
+    ATTENTION: No support for HF diffusers format yet !!
+    """
+    def build_native_state_dict(self, state_dict: dict) -> dict:
+        return None
+
+
+# The list of supported formats.
 # Each element has a `build_native_state_dict()` function that takes a `state_dict`
 # as input and returns a new `state_dict` with keys and tensors in native format.
 _SUPPORTED_FORMATS = (_NativeFormat(), )
@@ -66,7 +102,8 @@ class AutoencoderModelEx(AutoencoderModel):
                         state_dict       : dict,
                         prefix           : str  = "",
                         config           : dict = None,
-                        supported_formats: list = _SUPPORTED_FORMATS
+                        return_config    : bool = False,
+                        supported_formats: list = _SUPPORTED_FORMATS,
                         ) -> "AutoencoderModelEx":
         """
         Creates a PixArtModel instance from a state dictionary.
@@ -78,8 +115,9 @@ class AutoencoderModelEx(AutoencoderModel):
                         If an asterisk "*" is specified, the prefix will be automatically detected.
             config    : A dictionary containing the model's configuration.
                         If None, the configuration is inferred from the state dictionary.
-           supported_formats: An optional list of supported formats to convert state_dict to native format.
-                              (this parameter normally does not need to be provided)
+            return_config: A boolean indicating whether to return the configuration along with the model.
+            supported_formats: An optional list of supported formats to convert state_dict to native format.
+                               (this parameter normally does not need to be provided)
         """
 
         # convert state_dict to native format using the provided format converters
@@ -91,6 +129,8 @@ class AutoencoderModelEx(AutoencoderModel):
 
         model = cls( **config )
         model.load_state_dict(state_dict, strict=False, assign=False)
+        if return_config:
+            return model, config
         return model
 
 
@@ -149,19 +189,21 @@ class AutoencoderModelEx(AutoencoderModel):
         """
         prefix = _normalize_prefix(prefix)
         for format in supported_formats:
-            name1 = format.SIGNATURE_TENSORS[0]
-            name2 = format.SIGNATURE_TENSORS[1]
+            decoder_name1, decoder_name2 = format.SIGNATURE_DECODER_TENSORS
 
-            # the default auto-detection mechanism
+            # use the default auto-detection mechanism "*"
             if prefix == "*":
-                for key in state_dict.keys():
-                    if key.endswith(name1):                     # check for the first signature tensor
-                        detected_prefix = key[:-len(name1)]
-                        if detected_prefix+name2 in state_dict: # check for the second signature tensor
-                            return detected_prefix
+                detected_prefix = _detect_prefix(state_dict, format.SIGNATURE_ENCODER_TENSORS)
+                if detected_prefix is not None:
+                    return detected_prefix
+                detected_prefix = _detect_prefix(state_dict, format.SIGNATURE_DECODER_TENSORS)
+                if detected_prefix is not None:
+                    return detected_prefix
 
-            # if a tentative prefix was provided, use it for detection
-            elif prefix+name1 in state_dict and prefix+name2 in state_dict:
+            # if a tentative prefix was provided, use it to verify that it is valid
+            elif _verify_tensors(state_dict, prefix, format.SIGNATURE_ENCODER_TENSORS):
+                return prefix
+            elif _verify_tensors(state_dict, prefix, format.SIGNATURE_DECODER_TENSORS):
                 return prefix
 
         # if no prefix was detected then return `None` or the provided default
@@ -199,7 +241,9 @@ class AutoencoderModelEx(AutoencoderModel):
 
         # generate the native `state_dict` using the format that matches the tensors
         for format in supported_formats:
-            if format.SIGNATURE_TENSORS[0] in unpref_state_dict and format.SIGNATURE_TENSORS[1] in unpref_state_dict:
+            if _verify_tensors(unpref_state_dict, "", format.SIGNATURE_ENCODER_TENSORS):
+                return format.build_native_state_dict(unpref_state_dict)
+            if _verify_tensors(unpref_state_dict, "", format.SIGNATURE_DECODER_TENSORS):
                 return format.build_native_state_dict(unpref_state_dict)
 
         # in case that it does not match any format, return the unprefixed `state_dict`

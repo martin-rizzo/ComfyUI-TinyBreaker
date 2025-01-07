@@ -29,8 +29,8 @@ def _custom_vae_model_from_state_dict(state_dict, prefix, config, vae_wrapper):
 
     if AutoencoderModelEx.detect_prefix(state_dict, prefix) is not None:
         logger.info("Detected custom AutoencoderModelEx model")
-        vae_model = AutoencoderModelEx.from_state_dict(state_dict)
-        vae_wrapper.latent_channels = state_dict["decoder.conv_in.weight"].shape[1]
+        vae_model, config = AutoencoderModelEx.from_state_dict(state_dict, return_config=True)
+        vae_wrapper.latent_channels = config["latent_channels"]
         return vae_model
 
     return None
@@ -87,6 +87,7 @@ class VAE(comfy.sd.VAE):
             dtype           (torch.dtype): The data type to which the tensors of the model will be converted.
             offload_device (torch.device): The device where the model will be offloaded when it's not active.
         """
+        args = [sd, device, config, dtype]
 
         #if 'decoder.up_blocks.0.resnets.0.norm1.weight' in sd.keys(): #diffusers format
         #    sd = diffusers_convert.convert_vae_state_dict(sd)
@@ -100,7 +101,7 @@ class VAE(comfy.sd.VAE):
         self.output_channels         = 3
         self.process_input           = lambda image: image * 2.0 - 1.0
         self.process_output          = lambda image: torch.clamp((image + 1.0) / 2.0, min=0.0, max=1.0)
-        self.working_dtypes          = [torch.bfloat16, torch.float32]
+        self.working_dtypes          = [torch.float16, torch.bfloat16, torch.float32]
         self.downscale_index_formula = None
         self.upscale_index_formula   = None
         self.first_stage_model       = None
@@ -137,7 +138,7 @@ class VAE(comfy.sd.VAE):
         # if the autoencoder model could NOT be created
         # then use the ComfyUI's default initialization
         else:
-            super().__init__(sd, device, config, dtype)
+            super().__init__(*args)
 
 
 
