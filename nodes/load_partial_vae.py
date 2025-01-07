@@ -15,11 +15,11 @@ from .xcomfy.vae        import VAE
 from comfy.utils        import load_torch_file as comfy_load_torch_file
 
 _COMPONENT_TO_REMOVE_BY_MODE  = {
-    "load encoder only"       : "decoder", # remove 'decoder'
-    "load decoder only"       : "encoder", # remove 'encoder'
-    "load encoder and decoder": ""         # don't remove anything
+    "encoder only": "decoder", # remove 'decoder'
+    "decoder only": "encoder", # remove 'encoder'
+    "both"        : ""         # don't remove anything
 }
-_DEFAULT_MODE = "load encoder and decoder"
+_DEFAULT_MODE = "both"
 
 
 class LoadPartialVAE:

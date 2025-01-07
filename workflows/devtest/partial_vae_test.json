@@ -504,7 +504,7 @@
       },
       "widgets_values": [
         "vae-ft-mse-840000-ema-pruned.safetensors",
-        "load decoder only"
+        "decoder only"
       ]
     },
     {
@@ -537,7 +537,7 @@
       },
       "widgets_values": [
         "SDXL-FP16-FIX-sdxl.vae.safetensors",
-        "load encoder only"
+        "encoder only"
       ]
     }
   ],
