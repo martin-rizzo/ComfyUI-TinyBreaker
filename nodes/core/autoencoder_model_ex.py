@@ -20,6 +20,19 @@ def _normalize_prefix(prefix: str) -> str:
         prefix += '.'
     return prefix
 
+def _get_number(key: str, prefix: str, *, default: int = 0) -> int:
+    """Extracts a number from a key based on a given prefix. Returns 0 if not found."""
+    number_str = key[len(prefix):].split('.',1)[0]
+    return int(number_str) if number_str.isdigit() else default
+
+def _get_max_tensor_number(state_dict: dict, prefix: str, *, default: int = 0) -> int:
+    """Finds and returns the maximum number from keys in a state dictionary based on a given prefix. Returns 0 if not found."""
+    return max([_get_number(key, prefix) for key in state_dict.keys() if key.startswith(prefix)], default=default)
+
+def _get_tensor_size(state_dict: dict, name: str, *, dim: int, default: int = 0) -> int:
+    tensor = state_dict.get(name)
+    return tensor.shape[dim] if tensor is not None else default
+
 
 #------------------- SUPPORT FOR DIFFERENT MODEL FORMATS -------------------#
 
@@ -204,20 +217,65 @@ class AutoencoderModelEx(AutoencoderModel):
         Returns:
            A dictionary containing the model's configuration.
         """
+        # currently, only models with double encoder channels are supported.
+        # automatically detecting the correct relationship between encoder and decoder latent channel
+        # counts can be difficult, as some of them (the encoder or decoder) may not be present.
+        use_double_encoding_channels = True
 
-        # TODO: implement config detection
+        # starting with everything set to zero
+        latent_channels              = 0
+        image_channels               = 0
+        encoder_hidden_channels      = 0
+        encoder_channel_multipliers  = None
+        encoder_res_blocks_per_layer = 0
+        decoder_hidden_channels      = 0
+        decoder_channel_multipliers  = None
+        decoder_res_blocks_per_layer = 0
+
+        # count the number of keys in each module to detect which one is present
+        encoder_keys_count = sum(1 for name in state_dict.keys() if name.startswith("encoder."))
+        decoder_keys_count = sum(1 for name in state_dict.keys() if name.startswith("decoder."))
+
+        # encoder auto-detection
+        if encoder_keys_count > 0:
+            latent_channels              = _get_tensor_size(state_dict, "encoder.conv_out.weight", dim=0, default=8)
+            if use_double_encoding_channels:
+                latent_channels = latent_channels // 2
+            image_channels               = _get_tensor_size(state_dict, "encoder.conv_in.weight", dim=1, default=3)
+            encoder_hidden_channels      = _get_tensor_size(state_dict, "encoder.conv_in.weight", dim=0, default=128)
+            encoder_channel_multipliers  = [1, 2, 4, 4]
+            encoder_res_blocks_per_layer = 1 + _get_max_tensor_number(state_dict, "encoder.down.0.block.", default=1)
+
+        # decoder auto-detection
+        if decoder_keys_count > 0:
+            latent_channels              = _get_tensor_size(state_dict, "decoder.conv_in.weight" , dim=1, default=4)
+            image_channels               = _get_tensor_size(state_dict, "decoder.conv_out.weight", dim=0, default=3)
+            decoder_hidden_channels      = _get_tensor_size(state_dict, "decoder.conv_out.weight", dim=1, default=128)
+            decoder_channel_multipliers  = [1, 2, 4, 4]
+            decoder_res_blocks_per_layer = _get_max_tensor_number(state_dict, "decoder.up.0.block.", default=2)
+
+        # print()
+        # print("##>> encoder_keys_count:"          , encoder_keys_count)
+        # print("##>> decoder_keys_count:"          , decoder_keys_count)
+        # print("##>> encoder_hidden_channels:"     , encoder_hidden_channels)
+        # print("##>> encoder_channel_multipliers:" , encoder_channel_multipliers)
+        # print("##>> encoder_res_blocks_per_layer:", encoder_res_blocks_per_layer)
+        # print("##>> decoder_hidden_channels:"     , decoder_hidden_channels)
+        # print("##>> decoder_channel_multipliers:" , decoder_channel_multipliers)
+        # print("##>> decoder_res_blocks_per_layer:", decoder_res_blocks_per_layer)
+        # print()
 
         config = {
-            "image_channels"              :     3,
-            "latent_channels"             :     4,
-            "pre_quant_channels"          :     4,
-            "encoder_hidden_channels"     :   128,
-            "encoder_channel_multipliers" : [1, 2, 4, 4],
-            "encoder_res_blocks_per_layer":     2,
-            "decoder_hidden_channels"     :   128,
-            "decoder_channel_multipliers" : [1, 2, 4, 4],
-            "decoder_res_blocks_per_level":     2,
-            "use_deterministic_encoding"  :  True,
-            "use_double_encoding_channels":  True,
+            "image_channels"              :   image_channels,
+            "latent_channels"             :   latent_channels,
+            "pre_quant_channels"          :   latent_channels,
+            "encoder_hidden_channels"     : encoder_hidden_channels,
+            "encoder_channel_multipliers" : encoder_channel_multipliers,
+            "encoder_res_blocks_per_layer": encoder_res_blocks_per_layer,
+            "decoder_hidden_channels"     : decoder_hidden_channels,
+            "decoder_channel_multipliers" : decoder_channel_multipliers,
+            "decoder_res_blocks_per_layer": decoder_res_blocks_per_layer,
+            "use_deterministic_encoding"  :   True,
+            "use_double_encoding_channels": use_double_encoding_channels,
         }
         return config

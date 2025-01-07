@@ -308,7 +308,7 @@ class AutoencoderModel(nn.Module):
                  encoder_res_blocks_per_layer: int   =     2,
                  decoder_hidden_channels     : int   =   128,
                  decoder_channel_multipliers : list  = [1, 2, 4, 4],
-                 decoder_res_blocks_per_level: int   =     2,
+                 decoder_res_blocks_per_layer: int   =     2,
                  use_deterministic_encoding  : bool  =  True,
                  use_double_encoding_channels: bool  =  True,
                  ):
@@ -337,13 +337,13 @@ class AutoencoderModel(nn.Module):
             self.quant_conv = nn.Conv2d(encoder_output_channels, encoder_latent_channels, 1)
 
         # configure the decoder submodel
-        if decoder_hidden_channels and decoder_channel_multipliers and decoder_res_blocks_per_level:
+        if decoder_hidden_channels and decoder_channel_multipliers and decoder_res_blocks_per_layer:
             self.post_quant_conv = nn.Conv2d(decoder_latent_channels, decoder_input_channels, 1)
             self.decoder = Decoder(input_channels       = decoder_input_channels,
                                 output_channels      = image_channels,
                                 hidden_channels      = decoder_hidden_channels,
                                 channel_multipliers  = decoder_channel_multipliers,
-                                res_blocks_per_layer = decoder_res_blocks_per_level)
+                                res_blocks_per_layer = decoder_res_blocks_per_layer)
 
 
     def encode(self, x):
