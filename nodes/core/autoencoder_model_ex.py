@@ -32,12 +32,12 @@ class _NativeFormat:
         "decoder.up.0.block.0.nin_shortcut.weight"
     ]
 
-    def normalize_state_dict(self, state_dict: dict) -> dict:
+    def build_native_state_dict(self, state_dict: dict) -> dict:
         return state_dict
 
 
 # The list of supported formats for conversion.
-# Each element has a `normalize_state_dict()` function that takes a `state_dict`
+# Each element has a `build_native_state_dict()` function that takes a `state_dict`
 # as input and returns a new `state_dict` with keys and tensors in native format.
 _SUPPORTED_FORMATS = (_NativeFormat(), )
 
@@ -65,21 +65,12 @@ class AutoencoderModelEx(AutoencoderModel):
                         If an asterisk "*" is specified, the prefix will be automatically detected.
             config    : A dictionary containing the model's configuration.
                         If None, the configuration is inferred from the state dictionary.
-            supported_formats: A list of supported formats for the state dictionary.
-                               Each format is a callable that takes a state dictionary and
-                               a prefix, and returns a tuple containing the modified state
-                               dictionary and the detected prefix. Default is _SUPPORTED_FORMATS.
+           supported_formats: An optional list of supported formats to convert state_dict to native format.
+                              (this parameter normally does not need to be provided)
         """
 
-        # always ensure that `prefix` is normalized
-        prefix = _normalize_prefix(prefix)
-
-        # auto-detect prefix in the special case when prefix is set to "*"
-        if prefix == "*":
-            prefix = cls.detect_prefix(state_dict, default="")
-
-        # normalize the state dictionary using the provided format converters
-        state_dict, prefix = cls.normalize_state_dict(state_dict, prefix, supported_formats)
+        # convert state_dict to native format using the provided format converters
+        state_dict = cls.build_native_state_dict(state_dict, prefix, supported_formats)
 
         # if no config was provided then try to infer it automatically from the keys of the state_dict
         if not config:
@@ -99,17 +90,14 @@ class AutoencoderModelEx(AutoencoderModel):
     @property
     def device(self):
         """Returns the device on which the model parameters are located."""
-        if self.encoder:
-            return self.encoder.device
-        elif self.decoder:
-            return self.decoder.device
-        else:
-            return None # torch.device("cpu")
+        return self.encoder.device if self.encoder else self.decoder.device
 
 
     @device.setter
     def device(self, device):
+        """Dummy function for applications that try to set the `device` property (e.g. ComfyUI)"""
         pass
+
 
     def freeze(self) -> None:
         """Freeze all parameters of the model to prevent them from being updated during inference."""
@@ -168,69 +156,56 @@ class AutoencoderModelEx(AutoencoderModel):
 
 
     @staticmethod
-    def normalize_state_dict(state_dict       : dict,
-                             prefix           : str  = "",
-                             supported_formats: list = _SUPPORTED_FORMATS
-                             ) -> tuple[dict, str]:
+    def build_native_state_dict(state_dict       : dict,
+                                prefix           : str  = "",
+                                supported_formats: list = _SUPPORTED_FORMATS
+                                ) -> dict:
         """
-        Normalizes a state dictionary to match the native format.
+        Returns a state dictionary that matches the native format for this model.
 
         Args:
-           state_dict       : A dictionary containing the model's state.
+           state_dict       : A dictionary containing the model's state in any format.
            prefix           : An optional prefix used to filter the state dictionary keys.
-           supported_formats: An optional list of supported formats to try when normalizing.
+                              If an asterisk "*" is specified, the prefix will be automatically detected.
+           supported_formats: An optional list of supported formats to convert state_dict to native format.
                               (this parameter normally does not need to be provided)
         Returns:
-           A tuple containing:
-           - A dictionary containing the model's state in native format.
-           - The new prefix to use with the new normalized dictionary.
-
+           A dictionary containing the model's state in native format.
         """
-        assert prefix != "*", \
-            f"AutoencoderModelEx: Prefix cannot be '*' when normalizing model tensors. Please provide a valid prefix."
 
-        # always ensure that `prefix` is normalized
+        # normalize prefix, forcing auto-detection when it is "*"
         prefix = _normalize_prefix(prefix)
+        if prefix == "*":
+            prefix = AutoencoderModelEx.detect_prefix(state_dict, default="")
 
-        # remove the prefix from `state_dict`
+        # remove prefix from tensor names
         if prefix:
-            state_dict = {key[len(prefix):]: tensor for key, tensor in state_dict.items() if key.startswith(prefix)}
-            prefix     = ""
+            unpref_state_dict = {name[len(prefix):]: tensor for name, tensor in state_dict.items() if name.startswith(prefix)}
+        else:
+            unpref_state_dict = state_dict
 
-        # iterate over all supported formats to find the appropriate one that can normalize the state_dict
-        # (supported formats are usually `_PixArtFormat` and `_DiffusersFormat`)
+        # generate the native `state_dict` using the format that matches the tensors
         for format in supported_formats:
+            if format.SIGNATURE_TENSORS[0] in unpref_state_dict and format.SIGNATURE_TENSORS[1] in unpref_state_dict:
+                return format.build_native_state_dict(unpref_state_dict)
 
-            # check whether this is the correct format to normalize `state_dict`
-            if f"{prefix}{format.SIGNATURE_TENSORS[0]}" not in state_dict or \
-               f"{prefix}{format.SIGNATURE_TENSORS[1]}" not in state_dict:
-                continue
-
-            # normalize `state_dict` using this supported format
-            state_dict = format.normalize_state_dict(state_dict)
-
-        return state_dict, prefix
+        # in case that it does not match any format, return the unprefixed `state_dict`
+        return unpref_state_dict
 
 
     @staticmethod
-    def infer_model_config(state_dict: dict,
-                           prefix    : str = "",
-                           ) -> dict:
+    def infer_model_config(state_dict: dict) -> dict:
         """
-        Infers the model configuration from the state dictionary.
+        Infers the model configuration from a native state dictionary.
 
         Args:
            state_dict: A dictionary containing the model's state in native format.
-           prefix    : An optional prefix used to filter the state dictionary keys.
+                       This dictionary can be created using the `build_native_state_dict` method.
         Returns:
            A dictionary containing the model's configuration.
-
         """
-        assert prefix != "*", \
-            f"AutoencoderModelEx: Prefix cannot be '*' when inferring model config. Please provide a valid prefix."
 
-        # always ensure that `prefix` is normalized
-        prefix = _normalize_prefix(prefix)
+        # TODO: implement config detection
 
         config = {
             "image_channels"              :     3,
