@@ -53,6 +53,9 @@ def comfy_import_node(cls):
 from .nodes.load_checkpoint import LoadCheckpoint
 comfy_import_node(LoadCheckpoint)
 
+from .nodes.load_checkpoint_advanced import LoadCheckpointAdvanced
+comfy_import_node(LoadCheckpointAdvanced)
+
 from .nodes.load_pixart_checkpoint import LoadPixArtCheckpoint
 comfy_import_node(LoadPixArtCheckpoint)
 
