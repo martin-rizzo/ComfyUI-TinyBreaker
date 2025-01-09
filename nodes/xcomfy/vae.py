@@ -12,26 +12,49 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import torch
 import comfy.sd
-from comfy                       import model_management
-from ..utils.safetensors         import normalize_safetensors_prefix
-from ..utils.system              import logger
-from ..core.autoencoder_model_ex import AutoencoderModelEx
+from comfy                            import model_management
+from ..utils.safetensors              import normalize_safetensors_prefix
+from ..utils.system                   import logger
+from ..core.autoencoder_model_ex      import AutoencoderModelEx
+#from ..core.tiny_autoencoder_model_ex import TinyAutoencoderModelEx
 
 
 
-
-def _custom_vae_model_from_state_dict(state_dict, prefix, config, vae_wrapper):
+def _custom_vae_model_from_state_dict(state_dict, prefix, vae_wrapper):
     """
-    Creates a custom VAE model from the given state_dict and config.
+    Creates a custom VAE model from the given state_dict.
     """
-    if config is not None:
+
+    # default values loaded at initialization,
+    # these can be overridden later by any model
+    if not state_dict:
+        vae_wrapper.memory_used_encode      = lambda shape, dtype: (1767 * shape[2] * shape[3]     ) * model_management.dtype_size(dtype) # <- for AutoencoderKL and need tweaking (should be lower)
+        vae_wrapper.memory_used_decode      = lambda shape, dtype: (2178 * shape[2] * shape[3] * 64) * model_management.dtype_size(dtype)
+        vae_wrapper.downscale_ratio         = 8
+        vae_wrapper.upscale_ratio           = 8
+        vae_wrapper.latent_channels         = 4
+        vae_wrapper.latent_dim              = 2
+        vae_wrapper.output_channels         = 3
+        vae_wrapper.process_input           = lambda image: image * 2.0 - 1.0
+        vae_wrapper.process_output          = lambda image: torch.clamp((image + 1.0) / 2.0, min=0.0, max=1.0)
+        vae_wrapper.working_dtypes          = [torch.float16, torch.bfloat16, torch.float32]
+        vae_wrapper.downscale_index_formula = None
+        vae_wrapper.upscale_index_formula   = None
         return None
 
-    if AutoencoderModelEx.detect_prefix(state_dict, prefix) is not None:
+    # the classic AutoencoderKL model used by Stable Diffusion
+    elif AutoencoderModelEx.detect_prefix(state_dict, prefix) is not None:
         logger.info("Detected custom AutoencoderModelEx model")
         vae_model, config = AutoencoderModelEx.from_state_dict(state_dict, return_config=True)
-        vae_wrapper.latent_channels = config["latent_channels"]
+        vae_wrapper.latent_channels = config["latent_channels"] # <- overrides latent channels
         return vae_model
+
+    # # the Tiny Autoencoder model by @madebyollin (https://github.com/madebyollin/taesd)
+    # elif TinyAutoencoderModelEx.detect_prefix(state_dict, prefix) is not None:
+    #     logger.info("Detected custom TinyAutoencoderModelEx model")
+    #     vae_model, config = TinyTranscoderModelEx.from_state_dict(state_dict, return_config=True)
+    #     vae_wrapper.latent_channels = config["latent_channels"] # <- overrides latent channels
+    #     return vae_model
 
     return None
 
@@ -89,28 +112,17 @@ class VAE(comfy.sd.VAE):
         """
         args = [sd, device, config, dtype]
 
-        #if 'decoder.up_blocks.0.resnets.0.norm1.weight' in sd.keys(): #diffusers format
-        #    sd = diffusers_convert.convert_vae_state_dict(sd)
+        # set default values
+        # e.g. self.memory_used_encode, self.downscale_ratio, self.latent_channels, etc.
+        _custom_vae_model_from_state_dict(None, None, self)
+        self.first_stage_model = None
 
-        self.memory_used_encode      = lambda shape, dtype: (1767 * shape[2] * shape[3]) * model_management.dtype_size(dtype) #These are for AutoencoderKL and need tweaking (should be lower)
-        self.memory_used_decode      = lambda shape, dtype: (2178 * shape[2] * shape[3] * 64) * model_management.dtype_size(dtype)
-        self.downscale_ratio         = 8
-        self.upscale_ratio           = 8
-        self.latent_channels         = 4
-        self.latent_dim              = 2
-        self.output_channels         = 3
-        self.process_input           = lambda image: image * 2.0 - 1.0
-        self.process_output          = lambda image: torch.clamp((image + 1.0) / 2.0, min=0.0, max=1.0)
-        self.working_dtypes          = [torch.float16, torch.bfloat16, torch.float32]
-        self.downscale_index_formula = None
-        self.upscale_index_formula   = None
-        self.first_stage_model       = None
-
+        # try to create a custom autoencoder model from the state_dict
         if _is_likely_custom_vae_model(sd, config):
-            self.first_stage_model = _custom_vae_model_from_state_dict(sd, "", config, self)
+            self.first_stage_model = _custom_vae_model_from_state_dict(sd, "", self)
 
-        # if the autoencoder model could be created (first_stage_model)
-        # then a custom initialization based on ComfyUI is used
+        # if a custom autoencoder model could be created (first_stage_model)
+        # then a custom initialization based on ComfyUI code is used
         if self.first_stage_model:
 
             self.first_stage_model.eval()
@@ -135,7 +147,7 @@ class VAE(comfy.sd.VAE):
             self.patcher = comfy.model_patcher.ModelPatcher(self.first_stage_model, load_device=self.device, offload_device=offload_device)
             logger.info(f"VAE load device: {self.device}, offload device: {offload_device}, dtype: {self.vae_dtype}")
 
-        # if the autoencoder model could NOT be created
+        # if a custom autoencoder model could NOT be created
         # then use the ComfyUI's default initialization
         else:
             super().__init__(*args)

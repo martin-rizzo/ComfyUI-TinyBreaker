@@ -63,7 +63,7 @@ class _NativeFormat:
     Identify and process autoencoder models in its native format.
     """
     # these constants contain names of tensors that are characteristic of this format
-    # and they are used to verify whether a saved checkpoint is compatible with the format
+    # and they are used to verify whether a checkpoint is compatible with the format.
     SIGNATURE_ENCODER_TENSORS = (
         "encoder.conv_in.weight",
         "encoder.down.0.block.0.conv1.weight"
@@ -115,7 +115,7 @@ class AutoencoderModelEx(AutoencoderModel):
                         If an asterisk "*" is specified, the prefix will be automatically detected.
             config    : A dictionary containing the model's configuration.
                         If None, the configuration is inferred from the state dictionary.
-            return_config: A boolean indicating whether to return the configuration along with the model.
+            return_config    : A boolean indicating whether to return the configuration along with the model.
             supported_formats: An optional list of supported formats to convert state_dict to native format.
                                (this parameter normally does not need to be provided)
         """
@@ -166,7 +166,7 @@ class AutoencoderModelEx(AutoencoderModel):
         self.train()
 
 
-    #====== Useful Static Methods ======#
+    #__ useful static methods _______________________________________
 
     @staticmethod
     def detect_prefix(state_dict       : dict,
@@ -189,7 +189,6 @@ class AutoencoderModelEx(AutoencoderModel):
         """
         prefix = _normalize_prefix(prefix)
         for format in supported_formats:
-            decoder_name1, decoder_name2 = format.SIGNATURE_DECODER_TENSORS
 
             # use the default auto-detection mechanism "*"
             if prefix == "*":

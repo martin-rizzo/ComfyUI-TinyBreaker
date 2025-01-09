@@ -179,6 +179,7 @@ class ComfyOutputDirectory(ComfyDirectory):
 # These directories are used by the xPixArt custom nodes
 PROJECT_DIR            = ProjectDirectory(".")
 STYLES_DIR             = ProjectDirectory("styles")
+CHECKPOINTS_DIR        = ComfyModelDirectory("checkpoints")
 VAE_DIR                = ComfyModelDirectory("vae")
 PIXART_CHECKPOINTS_DIR = ComfyModelDirectory("pixart", custom=True)
 PIXART_LORAS_DIR       = ComfyModelDirectory("pixart_loras", custom=True)
