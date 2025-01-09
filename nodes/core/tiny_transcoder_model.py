@@ -1,7 +1,8 @@
 """
 File    : tiny_transcoder_model.py
 Purpose : A lightweight model to convert images from one latent space to another.
-          (based on the Tiny AutoEncoder model by @madebyollin)
+          It is designed to be used in any project with minimal external dependencies.
+          Based on the Tiny AutoEncoder model by @madebyollin.
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
 Date    : Nov 30, 2024
 Repo    : https://github.com/martin-rizzo/ComfyUI-xPixArt
@@ -11,47 +12,39 @@ License : MIT
     ComfyUI nodes providing experimental support for PixArt-Sigma model
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
-import math
 import torch
 import torch.nn as nn
 from torchvision.transforms.functional import gaussian_blur
 
 
-class Clamp(nn.Module):
+class _Clamp(nn.Module):
     def forward(self, x):
         return torch.tanh(x / 3) * 3
 
 
-class GaussianBlur(nn.Module):
-    def __init__(self,
-                 sigma: float
-                 ):
+class _GaussianBlur(nn.Module):
+    def __init__(self, sigma: float):
         super().__init__()
-        self.sigma = sigma
+        # calculate the kernel_size for the given sigma
+        # the result should always be odd and equal to or greater than 3
+        unrounded_kernel_size = ((sigma - 0.8) / 0.3 + 1) * 2 + 1
+        kernel_size           = int(unrounded_kernel_size)
+        if kernel_size < unrounded_kernel_size:
+            kernel_size += 1
+        if kernel_size % 2 == 0:
+            kernel_size += 1
+        kernel_size = max(3, kernel_size)
+
+        self.sigma       = sigma
+        self.kernel_size = kernel_size
 
     def forward(self, x):
         if self.sigma <= 0.0:
             return x
-        # calculate the kernel_size for the given sigma
-        # the result should always be odd and equal to or greater than 3
-        kernel_size = ((self.sigma - 0.8) / 0.3 + 1) * 2 + 1
-        kernel_size = int( max(3.0, math.ceil(kernel_size)) )
-        if kernel_size % 2 == 0:
-            kernel_size += 1
-        # apply gaussian blur using the calculated kernel_size and sigma
-        return gaussian_blur(x, kernel_size=kernel_size, sigma=self.sigma)
+        return gaussian_blur(x, kernel_size=self.kernel_size, sigma=self.sigma)
 
 
-class ResidualBlock(nn.Module):
-    def __init__(self,
-                 n_in : int,
-                 n_out: int
-                 ):
-        super().__init__()
-        self.conv = nn.Sequential(Conv3x3(n_in, n_out), nn.ReLU(), Conv3x3(n_out, n_out), nn.ReLU(), Conv3x3(n_out, n_out))
-
-
-class Conv3x3(nn.Conv2d):
+class _Conv3x3(nn.Conv2d):
    def __init__(self,
                 input_channels: int,
                 output_channels: int,
@@ -60,15 +53,16 @@ class Conv3x3(nn.Conv2d):
         super().__init__(input_channels, output_channels, kernel_size=3, padding=1, **kwargs)
 
 
-class ResidualBlock(nn.Module):
+class _ResidualBlock(nn.Module):
     def __init__(self,
                  n_in : int,
                  n_out: int
                  ):
         super().__init__()
-        self.conv = nn.Sequential(Conv3x3(n_in, n_out), nn.ReLU(), Conv3x3(n_out, n_out), nn.ReLU(), Conv3x3(n_out, n_out))
+        self.conv = nn.Sequential(_Conv3x3(n_in, n_out), nn.ReLU(), _Conv3x3(n_out, n_out), nn.ReLU(), _Conv3x3(n_out, n_out))
         self.skip = nn.Conv2d(n_in, n_out, 1, bias=False) if n_in != n_out else nn.Identity()
         self.fuse = nn.ReLU()
+
     def forward(self, x):
         return self.fuse(self.conv(x) + self.skip(x))
 
@@ -95,19 +89,19 @@ class Decoder(nn.Sequential):
         rgb_chans = 3
         decoder   = []
 
-        decoder.append( Clamp()                          )
-        decoder.append( Conv3x3(latent_channels, ichans) )
-        decoder.append( nn.ReLU()                        )
+        decoder.append( _Clamp()                          )
+        decoder.append( _Conv3x3(latent_channels, ichans) )
+        decoder.append( nn.ReLU()                         )
 
         for _ in range(convolutional_layers):
             for _ in range(res_blocks_per_layer):
-                decoder.append( ResidualBlock(ichans, ichans)           )
-            decoder.append(         nn.Upsample(scale_factor=2)         )
-            decoder.append(         Conv3x3(ichans, ichans, bias=False) )
+                decoder.append( _ResidualBlock(ichans, ichans)           )
+            decoder.append(         nn.Upsample(scale_factor=2)          )
+            decoder.append(         _Conv3x3(ichans, ichans, bias=False) )
 
         if add_output_rgb_layer:
-            decoder.append( ResidualBlock(ichans, ichans) )
-            decoder.append( Conv3x3(64, rgb_chans)        )
+            decoder.append( _ResidualBlock(ichans, ichans) )
+            decoder.append( _Conv3x3(64, rgb_chans)        )
 
         super().__init__(*decoder)
 
@@ -135,15 +129,15 @@ class Encoder(nn.Sequential):
         encoder   = []
 
         if add_input_rgb_layer:
-            encoder.append( Conv3x3(rgb_chans, ichans)    )
-            encoder.append( ResidualBlock(ichans, ichans) )
+            encoder.append( _Conv3x3(rgb_chans, ichans)    )
+            encoder.append( _ResidualBlock(ichans, ichans) )
 
         for _ in range(convolutional_layers):
-            encoder.append( Conv3x3(ichans, ichans, stride=2, bias=False) )
+            encoder.append( _Conv3x3(ichans, ichans, stride=2, bias=False) )
             for _ in range(res_blocks_per_layer):
-                encoder.append( ResidualBlock(ichans, ichans) )
+                encoder.append( _ResidualBlock(ichans, ichans) )
 
-        encoder.append( Conv3x3(ichans, latent_channels) )
+        encoder.append( _Conv3x3(ichans, latent_channels) )
 
         super().__init__(*encoder)
 
@@ -235,12 +229,22 @@ class TinyTranscoderModel(nn.Module):
                  ):
         super().__init__()
 
+        # decoder layers
         self.decoder = Decoder(input_channels,
                                decoder_intermediate_channels,
                                decoder_convolutional_layers,
                                decoder_res_blocks_per_layer,
                                add_output_rgb_layer = use_internal_rgb_layer
                                )
+
+        # optional gaussian blur layer
+        # used as a bridge between decoder and encoder to soften errors
+        if use_gaussian_blur_bridge:
+            self.bridge = _GaussianBlur(0.5)
+        else:
+            self.bridge = nn.Identity()
+
+        # encoder layers
         self.encoder = Encoder(output_channels,
                                encoder_intermediate_channels,
                                encoder_convolutional_layers,
@@ -249,105 +253,21 @@ class TinyTranscoderModel(nn.Module):
                                )
 
         # non-trainable adapters that handle normalization/denormalization
-        # for compatibility with raw, unnormalized latent formats.
+        # for compatibility with raw, unnormalized latent formats
+        # (these are a kind of hacky workaround)
         self.unnormalized_adapter_in  = UnnormalizedLatentAdapter(input_latent_format , is_input=True )
         self.unnormalized_adapter_out = UnnormalizedLatentAdapter(output_latent_format, is_input=False)
 
-        # optional gaussian blur layer used as a bridge between
-        # decoder and encoder to soften errors
-        if use_gaussian_blur_bridge:
-            self.bridge = GaussianBlur(0.5)
-        else:
-            self.bridge = nn.Identity()
-
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        """
-        Performs a forward pass through the transcoder model.
-        Args:
-            x : Input tensor containing the latent image,
-                the expected shape is: (batch_size, input_channels, height, width)
-        Returns:
-            Output tensor containing the transcoded latent image,
-            shape will be: (batch_size, output_channels, height, width).
-        """
+        # REF:
+        #  x = [batch_size, input_channels, height, width]
         x = self.unnormalized_adapter_in(x)
         x = self.decoder(x).clamp(0, 1)
         x = self.bridge(x)
         x = self.encoder(x)
         x = self.unnormalized_adapter_out(x)
         return x
-
-
-    @classmethod
-    def infer_model_config(cls, state_dict: dict) -> dict:
-        # TODO: implement this method to infer the model configuration from a state dictionary
-        config = {
-            "input_channels"                :   4 ,
-            "output_channels"               :   4 ,
-            "decoder_intermediate_channels" :  64 ,
-            "decoder_convolutional_layers"  :   3 ,
-            "decoder_res_blocks_per_layer"  :   3 ,
-            "encoder_intermediate_channels" :  64 ,
-            "encoder_convolutional_layers"  :   3 ,
-            "encoder_res_blocks_per_layer"  :   3 ,
-            "use_internal_rgb_layer"        : True,
-            "use_gaussian_blur_bridge"      : True,
-            "input_latent_format"           : "unknown",
-            "output_latent_format"          : "unknown",
-        }
-        return config
-
-    @classmethod
-    def from_state_dict(cls, state_dict: dict, prefix: str = "", config: dict = None) -> "TinyTranscoderModel":
-
-        # TODO: implement automatic detection of the model configuration from the state dictionary
-        if prefix == "*":
-            prefix = "" # detect_prefix(state_dict, "decoder.10.conv.4.bias", "encoder.12.conv.2.weight")
-        if prefix and not prefix.endswith('.'):
-            prefix += '.'
-
-        if not config:
-            config = cls.infer_model_config(state_dict)
-
-        transcoder = cls( **config )
-
-        # filter the state dictionary if a prefix is provided
-        # (this allows loading of partial models or sub-models from a larger state dictionary)
-        if prefix:
-            prefix_length = len(prefix)
-            state_dict = {key[prefix_length:]: tensor for key, tensor in state_dict.items() if key.startswith(prefix)}
-
-        transcoder.load_state_dict(state_dict, strict=False, assign=False)
-        return transcoder
-
-
-    @property
-    def dtype(self):
-        """Returns the data type of the model parameters."""
-        return next(self.decoder.parameters()).dtype
-
-
-    @property
-    def device(self):
-        """Returns the device on which the model parameters are located."""
-        return next(self.decoder.parameters()).device
-
-
-    def freeze(self) -> None:
-        """Freeze all parameters of the model to prevent them from being updated during inference."""
-        for param in self.parameters():
-            param.requires_grad = False
-        self.eval()
-
-
-    def unfreeze(self) -> None:
-        """Unfreeze all parameters of the model to allow them to be updated during training."""
-        for param in self.parameters():
-            param.requires_grad = True
-        self.unnormalized_adapter_in.freeze()
-        self.unnormalized_adapter_out.freeze()
-        self.train()
 
 
     def load_state_dict(self, state_dict, *args, **kwargs):

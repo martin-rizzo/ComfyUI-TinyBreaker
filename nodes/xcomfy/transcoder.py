@@ -13,10 +13,10 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 import math
 import torch
 import torch.nn as nn
-from ..utils.system               import logger
-from ..core.tiny_transcoder_model import TinyTranscoderModel
-from .vae                         import VAE
-from comfy                        import model_management
+from ..utils.system                  import logger
+from ..core.tiny_transcoder_model_ex import TinyTranscoderModelEx
+from .vae                            import VAE
+from comfy                           import model_management
 from torchvision.transforms.functional import gaussian_blur
 
 
@@ -39,14 +39,14 @@ class Transcoder:
         Args:
             state_dict: The state dictionary of a TinyTranscoder model.
             prefix    : The prefix that indicates where the model is located within state_dict.
-            device: The device where the model will be loaded.
-                    If no specified, the default ComfyUI VAE device will be used.
-            dtype : The data type used for the model.
-                    If no specified, the default ComfyUI VAE data type will be used.
+            device    : The device where the model will be loaded.
+                        If no specified, the default ComfyUI VAE device will be used.
+            dtype     : The data type used for the model.
+                        If no specified, the default ComfyUI VAE data type will be used.
         """
 
         # try to create a TinyTranscoder model from state_dict
-        tiny_transcoder_model = TinyTranscoderModel.from_state_dict(state_dict, prefix)
+        tiny_transcoder_model = TinyTranscoderModelEx.from_state_dict(state_dict, prefix)
         if not tiny_transcoder_model:
             raise ValueError("Transcoder: unsupported model type")
 
