@@ -1,15 +1,16 @@
 """
 File    : tiny_transcoder_model.py
 Purpose : A lightweight model to convert images from one latent space to another.
-          It is designed to be used in any project with minimal external dependencies.
-          Based on the Tiny AutoEncoder model by @madebyollin.
+          The code has minimal dependencies and can be easily integrated into any project.
+          (model structure and weights are based on Tiny Autoencoders by @madebyollin)
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
 Date    : Nov 30, 2024
-Repo    : https://github.com/martin-rizzo/ComfyUI-xPixArt
+Repo    : https://github.com/martin-rizzo/ComfyUI-TinyBreaker
 License : MIT
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                              ComfyUI-xPixArt
-    ComfyUI nodes providing experimental support for PixArt-Sigma model
+                              ConfyUI-TinyBreaker
+ ComfyUI nodes for experimenting with the capabilities of the TinyBreaker model.
+  (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import torch

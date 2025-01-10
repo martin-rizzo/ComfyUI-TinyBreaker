@@ -3,35 +3,28 @@ File    : directories.py
 Purpose : Defines directory paths as constants for various model types.
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
 Date    : Nov 14, 2024
-Repo    : https://github.com/martin-rizzo/ComfyUI-xPixArt
+Repo    : https://github.com/martin-rizzo/ComfyUI-TinyBreaker
 License : MIT
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                              ComfyUI-xPixArt
-    ComfyUI nodes providing experimental support for PixArt-Sigma model
+                              ConfyUI-TinyBreaker
+ ComfyUI nodes for experimenting with the capabilities of the TinyBreaker model.
+  (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 
- File Summary
- ============
+ The directory objects can be used as follows:
 
-  Directory constants:
-      STYLES_DIR            : project directory with the prompt styles
-      VAE_DIR               : the standard comfyui directory storing vae models
-      PIXART_CHECKPOINTS_DIR: custom directory storing PixArt checkpoints
-      PIXART_LORAS_DIR      : custom directory storing PixArt LoRAs
-
-  These constant objects can be used as follows:
       path      = VAE_DIR.folder_name
       filenames = VAE_DIR.get_filename_list()
       VAE_DIR.get_full_path(filename)
       VAE_DIR.get_full_path_or_raise(filename)
       VAE_DIR.get_full_path_for_save(filename, overwrite=False)
+
 """
 import os
 import folder_paths
 
-
-#---------------------------- PROJECT DIRECTORY ----------------------------#
-class ProjectDirectory:
+#---------------------------------------------------------------------------#
+class _ProjectDirectory:
 
     def __init__(self,
                  folder_name : str
@@ -52,8 +45,8 @@ class ProjectDirectory:
         return None
 
 
-#----------------------------- COMFY DIRECTORY -----------------------------#
-class ComfyDirectory:
+#---------------------------------------------------------------------------#
+class _ComfyDirectory:
     """
     A base class to manage ComfyUI directories for storing and accessing files and models.
     This class will be subclassed to create specific directories for different purposes.
@@ -142,8 +135,8 @@ class ComfyDirectory:
         return file_path
 
 
-#-------------------------- COMFY MODEL DIRECTORY --------------------------#
-class ComfyModelDirectory(ComfyDirectory):
+#---------------------------------------------------------------------------#
+class _ComfyModelDirectory(_ComfyDirectory):
 
     def __init__(self,
                 folder_name : str,
@@ -158,8 +151,8 @@ class ComfyModelDirectory(ComfyDirectory):
                          )
 
 
-#------------------------- COMFY OUTPUT DIRECTORY --------------------------#
-class ComfyOutputDirectory(ComfyDirectory):
+#---------------------------------------------------------------------------#
+class _ComfyOutputDirectory(_ComfyDirectory):
 
     def __init__(self,
                 folder_name : str,
@@ -174,13 +167,13 @@ class ComfyOutputDirectory(ComfyDirectory):
                          )
 
 
-#----------------------- PROJECT DIRECTORY STRUCTURE -----------------------#
+#===========================================================================#
+#//////////////////////////// DIRECTORY OBJECTS ////////////////////////////#
+#===========================================================================#
 
-# These directories are used by the xPixArt custom nodes
-PROJECT_DIR            = ProjectDirectory(".")
-STYLES_DIR             = ProjectDirectory("styles")
-CHECKPOINTS_DIR        = ComfyModelDirectory("checkpoints")
-VAE_DIR                = ComfyModelDirectory("vae")
-PIXART_CHECKPOINTS_DIR = ComfyModelDirectory("pixart", custom=True)
-PIXART_LORAS_DIR       = ComfyModelDirectory("pixart_loras", custom=True)
+PROJECT_DIR            = _ProjectDirectory(".")
+STYLES_DIR             = _ProjectDirectory("styles")
+CHECKPOINTS_DIR        = _ComfyModelDirectory("checkpoints")
+VAE_DIR                = _ComfyModelDirectory("vae")
+PIXART_CHECKPOINTS_DIR = _ComfyModelDirectory("pixart", custom=True)
 

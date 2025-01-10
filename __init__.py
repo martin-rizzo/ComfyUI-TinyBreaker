@@ -1,15 +1,16 @@
 """
 File    : __init__.py
-Purpose : This file is used to register the nodes of the ComfyUI-xPixArt project.
+Purpose : Register the nodes of the ComfyUI-TinyBreaker project.
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
 Date    : May 4, 2024
-Repo    : https://github.com/martin-rizzo/ComfyUI-xPixArt
+Repo    : https://github.com/martin-rizzo/ComfyUI-TinyBreaker
 License : MIT
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                              ComfyUI-xPixArt
-    ComfyUI nodes providing experimental support for PixArt-Sigma model
+                              ConfyUI-TinyBreaker
+ ComfyUI nodes for experimenting with the capabilities of the TinyBreaker model.
+  (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
 
-    Copyright (c) 2024 Martin Rizzo
+    Copyright (c) 2024-2025 Martin Rizzo
 
     Permission is hereby granted, free of charge, to any person obtaining
     a copy of this software and associated documentation files (the
@@ -33,7 +34,7 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 from .nodes.utils.system import logger
 
-PROJECT_ID                 ="//xPixart"
+PROJECT_ID                 ="//TinyBreaker"
 NODE_CLASS_MAPPINGS        = {}
 NODE_DISPLAY_NAME_MAPPINGS = {}
 
@@ -55,9 +56,6 @@ comfy_import_node(LoadCheckpoint)
 
 from .nodes.load_checkpoint_advanced import LoadCheckpointAdvanced
 comfy_import_node(LoadCheckpointAdvanced)
-
-from .nodes.load_pixart_checkpoint import LoadPixArtCheckpoint
-comfy_import_node(LoadPixArtCheckpoint)
 
 from .nodes.load_transcoder import LoadTranscoder
 comfy_import_node(LoadTranscoder)
@@ -83,8 +81,8 @@ comfy_import_node(EmptyLatentImage)
 from .nodes.encode_prompts import EncodePrompts
 comfy_import_node(EncodePrompts)
 
-from .nodes.gparams_unpacker import GParamsUnpacker
-comfy_import_node(GParamsUnpacker)
+from .nodes.gen_params_unpacker import GenParamsUnpacker
+comfy_import_node(GenParamsUnpacker)
 
 from .nodes.placeholder_replacer import PlaceholderReplacer
 comfy_import_node(PlaceholderReplacer)
@@ -107,11 +105,11 @@ comfy_import_node(SetNoiseSeed)
 from .nodes.unified_prompt_editor import UnifiedPromptEditor
 comfy_import_node(UnifiedPromptEditor)
 
-from .nodes.vae_transcode import VAETranscode
-comfy_import_node(VAETranscode)
+from .nodes.transcode_latent import TranscodeLatent
+comfy_import_node(TranscodeLatent)
 
-from .nodes.vae_transcode_two_steps import VAETranscodeTwoSteps
-comfy_import_node(VAETranscodeTwoSteps)
+from .nodes.transcode_latent_two_steps import TranscodeLatentTwoSteps
+comfy_import_node(TranscodeLatentTwoSteps)
 
 
 # Development Nodes

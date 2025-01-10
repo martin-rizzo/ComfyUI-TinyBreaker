@@ -1,19 +1,20 @@
 """
 File    : system.py
-Purpose : System-level functions for the ComfyUI-xPixArt application.
+Purpose : System-level functions for the ConfyUI-TinyBreaker project.
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
 Date    : Nov 14, 2024
-Repo    : https://github.com/martin-rizzo/ComfyUI-xPixArt
+Repo    : https://github.com/martin-rizzo/ComfyUI-TinyBreaker
 License : MIT
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                              ComfyUI-xPixArt
-    ComfyUI nodes providing experimental support for PixArt-Sigma model
+                              ConfyUI-TinyBreaker
+ ComfyUI nodes for experimenting with the capabilities of the TinyBreaker model.
+  (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import sys
 import logging
 
-class CustomFormatter(logging.Formatter):
+class _CustomFormatter(logging.Formatter):
     """Custom formatter for the logger."""
     EMOJI  = "\U0001F3A8" # the emoji show before logger name
     COLOR  = "\033[0;33m" # yellow for the logger name color
@@ -36,10 +37,10 @@ class CustomFormatter(logging.Formatter):
 
 
 # Create a logger instance and set the custom formatter.
-logger = logging.getLogger("xPixArt")
+logger = logging.getLogger("ComfyUI-TinyBreaker")
 logger.propagate = False
 if not logger.handlers:
     handler = logging.StreamHandler(sys.stdout)
-    handler.setFormatter(CustomFormatter("[%(name)s %(levelname)s] %(message)s"))
+    handler.setFormatter(_CustomFormatter("[%(name)s %(levelname)s] %(message)s"))
     logger.addHandler(handler)
 logger.setLevel(logging.DEBUG)

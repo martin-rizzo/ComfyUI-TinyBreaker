@@ -1,23 +1,24 @@
 """
 File    : placeholder_replacement.py
-Desc    : Node that replaces placeholders in a text with corresponding values.
+Purpose : Node that replaces placeholders in a text with corresponding values.
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
 Date    : Nov 13, 2024
-Repo    : https://github.com/martin-rizzo/ComfyUI-xPixArt
+Repo    : https://github.com/martin-rizzo/ComfyUI-TinyBreaker
 License : MIT
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                              ComfyUI-xPixArt
-    ComfyUI nodes providing experimental support for PixArt-Sigma model
+                              ConfyUI-TinyBreaker
+ ComfyUI nodes for experimenting with the capabilities of the TinyBreaker model.
+  (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 
 
 class PlaceholderReplacer:
-    TITLE       = "xPixArt | Placeholder Replacer"
-    CATEGORY    = "xPixArt/strings"
+    TITLE       = "💪TB | Placeholder Replacer"
+    CATEGORY    = "TinyBreaker/strings"
     DESCRIPTION = "Replace placeholders in strings with their corresponding values."
 
-    #-- PARAMETERS -----------------------------#
+    #__ PARAMETERS ________________________________________
     @classmethod
     def INPUT_TYPES(cls):
         return {
@@ -29,8 +30,8 @@ class PlaceholderReplacer:
                 "var3"             : ("STRING", {"multiline": True, "dynamicPrompts": True}),
             }
         }
-    
-    #-- FUNCTION --------------------------------#
+
+    #__ FUNCTION __________________________________________
     FUNCTION = "replace_placeholders"
     RETURN_TYPES = ("STRING",)
     RETURN_NAMES = ("OUTPUT",)

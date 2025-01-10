@@ -1,14 +1,15 @@
 """
 File    : autoencoder_model_ex.py
-Purpose : Extension of the Autoencoder class to include additional useful funtionality.
+Purpose : Extension of the AutoencoderModel class to include additional useful funtionality.
           (includes autodetection of model comfiguation and support for HF diffusers format)
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
 Date    : Jan 5, 2024
-Repo    : https://github.com/martin-rizzo/ComfyUI-xPixArt
+Repo    : https://github.com/martin-rizzo/ComfyUI-TinyBreaker
 License : MIT
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                              ComfyUI-xPixArt
-    ComfyUI nodes providing experimental support for PixArt-Sigma model
+                              ConfyUI-TinyBreaker
+ ComfyUI nodes for experimenting with the capabilities of the TinyBreaker model.
+  (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 from .autoencoder_model import AutoencoderModel
@@ -106,7 +107,7 @@ class AutoencoderModelEx(AutoencoderModel):
                         supported_formats: list = _SUPPORTED_FORMATS,
                         ) -> "AutoencoderModelEx":
         """
-        Creates a PixArtModel instance from a state dictionary.
+        Creates an AutoencoderModelEx instance from a state dictionary.
 
         Args:
             state_dict: A dictionary containing the model's state. The keys represent

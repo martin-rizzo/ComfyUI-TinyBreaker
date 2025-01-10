@@ -3,11 +3,12 @@ File    : load_checkpoint_advanced.py
 Purpose : Node to load TinyBreaker checkpoints with customized parameters.
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
 Date    : Jan 7, 2025
-Repo    : https://github.com/martin-rizzo/ComfyUI-xPixArt
+Repo    : https://github.com/martin-rizzo/ComfyUI-TinyBreaker
 License : MIT
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                              ComfyUI-xPixArt
-    ComfyUI nodes providing experimental support for PixArt-Sigma model
+                              ConfyUI-TinyBreaker
+ ComfyUI nodes for experimenting with the capabilities of the TinyBreaker model.
+  (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import comfy.utils
@@ -23,7 +24,6 @@ _PIXART_TYPES = [
     "sigma-2K"
 ]
 _DEFAULT_PIXART_TYPE = "sigma-1024"
-
 
 
 class LoadCheckpointAdvanced:
@@ -129,6 +129,3 @@ class LoadCheckpointAdvanced:
             return CLIP.from_state_dict(state_dict, type="stable_diffusion")
 
 
-    @staticmethod
-    def pixart_types():
-        return PIXART_TYPES

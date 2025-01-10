@@ -1,13 +1,14 @@
 """
-File    : gparams.py
-Purpose : 
+File    : gen_params.py
+Purpose : Store and transport the parameters for image generation.
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
 Date    : Dec 20, 2024
-Repo    : https://github.com/martin-rizzo/ComfyUI-xPixArt
+Repo    : https://github.com/martin-rizzo/ComfyUI-TinyBreaker
 License : MIT
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                              ComfyUI-xPixArt
-    ComfyUI nodes providing experimental support for PixArt-Sigma model
+                              ConfyUI-TinyBreaker
+ ComfyUI nodes for experimenting with the capabilities of the TinyBreaker model.
+  (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 
@@ -53,19 +54,19 @@ def _replace_template_placeholder(template: str, prompt: str) -> str:
         return f"{prefix}{suffix}"
 
 
-class GParams(dict):
+class GenParams(dict):
 
     @classmethod
-    def from_raw_options(cls, options) -> "GParams":
+    def from_raw_options(cls, options) -> "GenParams":
         """
-        Creates a new GParams object from the given raw options.
+        Creates a new GenParams object from the given raw options.
 
         This method is used to parse raw options from configuration files.
         Raw options are key-value pairs where both the key and value are strings.
         The values can be quoted, numeric, or boolean. If a value is quoted,
         it will remain as a string even if it looks like a number or boolean.
         """
-        gparams = cls()
+        genparams = cls()
         for key, value in options:
             if not isinstance(key,str) or not isinstance(value,str):
                 continue
@@ -85,50 +86,51 @@ class GParams(dict):
             elif value.lower() in ('true', 'false'):
                 value = value.lower() == 'true'
 
-            gparams[key] = value
-        return gparams
+            genparams[key] = value
+        return genparams
 
 
     @classmethod
-    def from_template_and_data(cls, template: "GParams", data: "GParams") -> "GParams":
+    def from_template_and_data(cls, template: "GenParams", data: "GenParams") -> "GenParams":
         """
-        Creates a new GParams object by merging the template and data parameters.
+        Creates a new GenParams object by merging the template and data parameters.
 
         If the `template` contains prompts with placeholders, these placeholders
         are replaced with the corresponding values from the `data` parameters.
 
         The rest of values that are not prompts are added directly to the
-        new GParams object, having as priority those from the `data` parameters.
+        new GenParams object, having as priority those from the `data` parameters.
 
         """
-        gparams = cls(data)
+        genparams = cls(data)
         for template_key, template_value in template.items():
 
             # if the template value is a prompt,
             # then replace the template placeholder with the provided value
             if _is_prompt(template_key):
-                value = gparams.get(template_key, "")
-                gparams[template_key] = _replace_template_placeholder( template_value, value )
+                value = genparams.get(template_key, "")
+                genparams[template_key] = _replace_template_placeholder( template_value, value )
 
             # any template value not found in `data` is added as it is
-            elif template_key not in gparams:
-                gparams[template_key] = template_value
+            elif template_key not in genparams:
+                genparams[template_key] = template_value
 
-        return gparams
+        return genparams
 
 
     def set(self, key: str, value, /) -> None:
         """
-        Sets the value of a key in the GParams object.
+        Sets the value of a key in the GenParams object.
         If the key already exists, it is replaced with the new value.
         """
         if not isinstance(key,str):
             return
         self[key] = value
 
+
     def set_prefixed(self, prefix: str, var_name: str, value, /) -> None:
         """
-        Sets the value of a variable with a given prefix in the GParams object.
+        Sets the value of a variable with a given prefix in the GenParams object.
         If the key already exists, it is replaced with the new value.
         """
         if not isinstance(prefix,str) or not isinstance(var_name,str):
@@ -138,7 +140,7 @@ class GParams(dict):
 
     def get_prefixed(self, prefix: str, var_name: str, default = None, /):
         """
-        Retrieves the variable of a key with a given prefix from the GParams object.
+        Retrieves the variable of a key with a given prefix from the GenParams object.
         If the key does not exist, the default value is returned.
         """
         if not isinstance(prefix,str) or not isinstance(var_name,str):
@@ -148,7 +150,7 @@ class GParams(dict):
 
     def pop_prefixed(self, prefix: str, var_name: str, default = None, /):
         """
-        Removes and returns the value of a variable with a given prefix from the GParams object.
+        Removes and returns the value of a variable with a given prefix from the GenParams object.
         If the key does not exist, the default value is returned.
         """
         if not isinstance(prefix,str) or not isinstance(var_name,str):
@@ -158,7 +160,7 @@ class GParams(dict):
 
     def get_all_prefixed_keys(self, prefix: str) -> list[str]:
         """
-        Returns a list of all keys with the given prefix in the GParams object.
+        Returns a list of all keys with the given prefix in the GenParams object.
         If no keys are found, an empty list is returned.
         """
         if not isinstance(prefix,str):
@@ -167,20 +169,20 @@ class GParams(dict):
         return [key for key in self.keys() if key.startswith(prefix)]
 
 
-    def copy(self) -> "GParams":
-        """Returns a copy of the GParams object."""
-        return GParams(self)
+    def copy(self) -> "GenParams":
+        """Returns a copy of the GenParams object."""
+        return GenParams(self)
 
-    
 
     def to_text(self) -> str:
         """
-        Converts the GParams dictionary back into a text format.
+        Converts the GenParams dictionary back into a text format.
         """
         lines = []
         for key, value in self.items():
             lines.append(f"{key}={value}")
         return '\n'.join(lines)
+
 
     def __str__(self):
         return self.to_text()

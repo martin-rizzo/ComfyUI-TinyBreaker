@@ -1,17 +1,18 @@
 """
 File    : style_dict.py
-Purpose : 
+Purpose : Manages a dictionary of image styles to apply to user prompts.
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
 Date    : Dec 20, 2024
-Repo    : https://github.com/martin-rizzo/ComfyUI-xPixArt
+Repo    : https://github.com/martin-rizzo/ComfyUI-TinyBreaker
 License : MIT
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                              ComfyUI-xPixArt
-    ComfyUI nodes providing experimental support for PixArt-Sigma model
+                              ConfyUI-TinyBreaker
+ ComfyUI nodes for experimenting with the capabilities of the TinyBreaker model.
+  (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import configparser
-from .gparams import GParams
+from .gen_params import GenParams
 
 class StyleDict:
     """
@@ -55,12 +56,12 @@ class StyleDict:
         """Adds a new style to the dictionary"""
         if style_name in self.styles:
             raise ValueError(f"Style '{style_name}' already exists.")
-        self.styles[style_name] = GParams.from_raw_options(style_raw_options)
+        self.styles[style_name] = GenParams.from_raw_options(style_raw_options)
 
 
     def get_style_params(self, style_name):
-        """Returns the parameters for a given style or an empty `GParams` if the style is not found."""
-        return self.styles.get(style_name) or GParams()
+        """Returns the parameters for a given style or an empty `GenParams` if the style is not found."""
+        return self.styles.get(style_name) or GenParams()
 
 
     def remove_style(self, style_name):

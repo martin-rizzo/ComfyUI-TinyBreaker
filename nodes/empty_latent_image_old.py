@@ -3,11 +3,12 @@ File    : empty_latent_image_old.py
 Purpose : Create an empty latent image for use in ComfyUI with PixArt.
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
 Date    : May 14, 2024
-Repo    : https://github.com/martin-rizzo/ComfyUI-xPixArt
+Repo    : https://github.com/martin-rizzo/ComfyUI-TinyBreaker
 License : MIT
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                              ComfyUI-xPixArt
-    ComfyUI nodes providing experimental support for PixArt-Sigma model
+                              ConfyUI-TinyBreaker
+ ComfyUI nodes for experimenting with the capabilities of the TinyBreaker model.
+  (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import torch
@@ -34,15 +35,15 @@ LANDSCAPE_SIZE_BY_ASPECT_RATIO = {
 }
 
 class EmptyLatentImageOld:
-    TITLE       = "xPixArt | Empty Latent Image [Old Version]"
-    CATEGORY    = "xPixArt"
+    TITLE       = "💪TB | Empty Latent Image [Old Version]"
+    CATEGORY    = "TinyBreaker"
     DESCRIPTION = "Create a new batch of empty latent images to be denoised via sampling."
 
 
     def __init__(self):
         self.device = comfy.model_management.intermediate_device()
 
-    #-- PARAMETERS -----------------------------#
+    #__ PARAMETERS ________________________________________
     @classmethod
     def INPUT_TYPES(s):
         return {
@@ -53,8 +54,8 @@ class EmptyLatentImageOld:
                 "batch_size": ("INT", {"default": 1, "min": 1, "max": 4096, "tooltip": "The number of latent images in the batch."})
                 },
             }
-    
-    #-- FUNCTION --------------------------------#
+
+    #__ FUNCTION __________________________________________
     FUNCTION = "generate"
     RETURN_TYPES    = ("LATENT",)
     OUTPUT_TOOLTIPS = ("The empty latent image batch.",)

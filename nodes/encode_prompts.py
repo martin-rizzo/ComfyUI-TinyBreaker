@@ -3,24 +3,24 @@ File    : encode_prompts.py
 Purpose : Node to encode positive, negative and refiner prompts applying preconfigured styles.
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
 Date    : Nov 18, 2024
-Repo    : https://github.com/martin-rizzo/ComfyUI-xPixArt
+Repo    : https://github.com/martin-rizzo/ComfyUI-TinyBreaker
 License : MIT
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                              ComfyUI-xPixArt
-    ComfyUI nodes providing experimental support for PixArt-Sigma model
+                              ConfyUI-TinyBreaker
+ ComfyUI nodes for experimenting with the capabilities of the TinyBreaker model.
+  (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 from .utils.directories import STYLES_DIR
 from .utils.system      import logger
-#from .core.styles       import StyleCollection
 
 
 class EncodePrompts:
-    TITLE       = "xPixArt | Encode Prompts"
-    CATEGORY    = "xPixArt"
+    TITLE       = "💪TB | Encode Prompts"
+    CATEGORY    = "TinyBreaker"
     DESCRIPTION = "Generate text embeddings from positive, negative and refiner prompts applying preconfigured styles."
 
-    #-- PARAMETERS -----------------------------#
+    #__ PARAMETERS ________________________________________
     @classmethod
     def INPUT_TYPES(cls):
         return {
@@ -35,14 +35,14 @@ class EncodePrompts:
             },
         }
 
-    #-- FUNCTION --------------------------------#
+    #__ FUNCTION __________________________________________
     FUNCTION = "encode"
     RETURN_TYPES = ("CONDITIONING", "CONDITIONING", "CONDITIONING"    )
     RETURN_NAMES = ("positive"    , "negative"    , "refiner_positive")
 
     @classmethod
     def encode(cls, style_name, prompt, negative_prompt, refiner_focus, t5, refiner_clip):
-        
+
         style          = cls.get_style(style_name)
         style_strength = 1.0
         negative       = negative_prompt
@@ -57,8 +57,7 @@ class EncodePrompts:
         return ([prompt_cond], [negative_cond], [refiner_cond])
 
 
-
-    #-[ internal functions ]---------------------#
+    #__ internal functions ________________________________
 
     styles = {"None": None}
 
@@ -68,15 +67,15 @@ class EncodePrompts:
 
         if not refiner_focus:
             return prompt.strip()
-        
+
         elif "no-prompt" in refiner_focus:
             return refiner_focus.replace("no-prompt", "").strip()
-        
+
         else:
             prompt        = prompt.strip()
             refiner_focus = refiner_focus.strip()
             return f"{refiner_focus}, {prompt}" if prompt else refiner_focus
-        
+
 
     @classmethod
     def get_style(cls, style_name):
@@ -97,14 +96,14 @@ class EncodePrompts:
         """
         Encode the given text using the provided CLIP model.
         (if a style is specified, apply the style to text and resulting embedding)
-        
+
         Args:
             text  (str): The input text to encode.
             clip (CLIP): The CLIP model used for encoding the text.
             style (Style): The style to apply to the text before encoding.
             style_strength (float): The strength of the style effect.
             type (str): The type of conditioning ("prompt", "negative" or "refiner").
-        
+
         Returns:
             list: A list containing the encoded condition and any additional output from the CLIP model.
         """

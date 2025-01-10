@@ -1,24 +1,25 @@
 """
-File    : vae_transcode.py
-Purpose : Node to transcode between different latent spaces.
+File    : transcode_latent.py
+Purpose : Node to transcode images between different latent spaces.
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
 Date    : Nov 21, 2024
-Repo    : https://github.com/martin-rizzo/ComfyUI-xPixArt
+Repo    : https://github.com/martin-rizzo/ComfyUI-TinyBreaker
 License : MIT
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                              ComfyUI-xPixArt
-    ComfyUI nodes providing experimental support for PixArt-Sigma model
+                              ConfyUI-TinyBreaker
+ ComfyUI nodes for experimenting with the capabilities of the TinyBreaker model.
+  (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 from .xcomfy.transcoder import Transcoder
 
 
-class VAETranscode:
-    TITLE       = "xPixArt | VAE Transcode"
-    CATEGORY    = "xPixArt"
+class TranscodeLatent:
+    TITLE       = "💪TB | Transcode Latent"
+    CATEGORY    = "TinyBreaker"
     DESCRIPTION = "Transcode a latent image from one latent space to another."
 
-    #-- PARAMETERS -----------------------------#
+    #__ PARAMETERS ________________________________________
     @classmethod
     def INPUT_TYPES(cls):
         return {
@@ -30,16 +31,12 @@ class VAETranscode:
             },
         }
 
-    #-- FUNCTION --------------------------------#
+    #__ FUNCTION __________________________________________
     FUNCTION = "transcode"
     RETURN_TYPES    = ("LATENT",)
     OUTPUT_TOOLTIPS = ("The transcoded latent.",)
 
-    @classmethod
-    def transcode(cls,
-                  samples   : dict,
-                  transcoder: Transcoder = None,
-                  ) -> dict:
+    def transcode(self, samples: dict, transcoder: Transcoder = None) -> tuple:
 
         if transcoder is None:
             return samples

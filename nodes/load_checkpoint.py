@@ -3,11 +3,12 @@ File    : load_checkpoint.py
 Purpose : Node to load TinyBreaker checkpoints.
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
 Date    : Jan 1, 2025
-Repo    : https://github.com/martin-rizzo/ComfyUI-xPixArt
+Repo    : https://github.com/martin-rizzo/ComfyUI-TinyBreaker
 License : MIT
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                              ComfyUI-xPixArt
-    ComfyUI nodes providing experimental support for PixArt-Sigma model
+                              ConfyUI-TinyBreaker
+ ComfyUI nodes for experimenting with the capabilities of the TinyBreaker model.
+  (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import comfy.utils
@@ -17,14 +18,12 @@ from .xcomfy.transcoder          import Transcoder
 from .utils.directories          import PIXART_CHECKPOINTS_DIR
 
 
-
-
 class LoadCheckpoint:
-    TITLE       = "TinyBreaker | Load Checkpoint"
-    CATEGORY    = "xPixArt"
+    TITLE       = "💪TB | Load Checkpoint"
+    CATEGORY    = "TinyBreaker"
     DESCRIPTION = "Load TinyBreaker checkpoints."
 
-    #-- PARAMETERS -----------------------------#
+    #__ PARAMETERS ________________________________________
     @classmethod
     def INPUT_TYPES(s):
         return {
@@ -33,7 +32,7 @@ class LoadCheckpoint:
                 }
             }
 
-    #-- FUNCTION --------------------------------#
+    #__ FUNCTION __________________________________________
     FUNCTION = "load_checkpoint"
     RETURN_TYPES = ("MODEL", "VAE", "CLIP", "TRANSCODER", "MODEL"        , "CLIP"        , "STRING"  )
     RETURN_NAMES = ("MODEL", "VAE", "CLIP", "TRANSCODER", "REFINER_MODEL", "REFINER_CLIP", "METADATA")

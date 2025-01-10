@@ -1,13 +1,14 @@
 """
-File    : gparams_unpacker.py
+File    : gen_params_unpacker.py
 Desc    : Node that unpacks the sampling parameters from the `gparams` line.
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
 Date    : Dec 19, 2024
-Repo    : https://github.com/martin-rizzo/ComfyUI-xPixArt
+Repo    : https://github.com/martin-rizzo/ComfyUI-TinyBreaker
 License : MIT
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                              ComfyUI-xPixArt
-    ComfyUI nodes providing experimental support for PixArt-Sigma model
+                              ConfyUI-TinyBreaker
+ ComfyUI nodes for experimenting with the capabilities of the TinyBreaker model.
+  (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import torch
@@ -16,7 +17,7 @@ from .xcomfy.model import Model
 _DISCARD_PENULTIMATE_SIGMA_SAMPLERS = comfy.samplers.KSampler.DISCARD_PENULTIMATE_SIGMA_SAMPLERS
 
 
-DEFAULT_G_PARAMS = {
+_DEFAULT_GENPARAMS = {
     "base.positive"       : "",
     "base.negative"       : "",
     "base.sampler_name"   : "uni_pc",
@@ -46,13 +47,12 @@ _DEFAULT_CFG           = 3.5
 _DEFAULT_NOISE_SEED    = 1
 
 
+class GenParamsUnpacker:
+    TITLE = "💪TB | GenParams Unpacker"
+    CATEGORY = "TinyBreaker"
+    DESCRIPTION = "Unpacks the generation parameters from a `genparams` line into separate output values."
 
-class GParamsUnpacker:
-    TITLE = "xPixArt | GParams Unpacker"
-    CATEGORY = "xPixArt"
-    DESCRIPTION = ""
-
-    #-- PARAMETERS -----------------------------#
+    #__ PARAMETERS ________________________________________
     @classmethod
     def INPUT_TYPES(cls):
         return {
@@ -62,33 +62,33 @@ class GParamsUnpacker:
                 "clip"  : ("CLIP"  , {"tooltip": "The CLIP model used for encoding the prompts."})
             },
             "optional": {
-                "gparams": ("GPARAMS", {"tooltip": "The generation parameters to unpack."}),
+                "genparams": ("GPARAMS", {"tooltip": "The generation parameters to unpack."}),
             }
         }
 
-    #-- FUNCTION --------------------------------#
+    #__ FUNCTION __________________________________________
     FUNCTION = "unpack"
     RETURN_TYPES = ("MODEL", "CONDITIONING", "CONDITIONING", "SAMPLER", "SIGMAS", "FLOAT", "INT"       )
     RETURN_NAMES = ("model", "positive"    , "negative"    , "sampler", "sigmas", "cfg"  , "noise_seed")
 
-    def unpack(self, prefix, model, clip, gparams=None):
+    def unpack(self, prefix, model, clip, genparams=None):
 
         # use default values if no gparams are provided
-        if not gparams:
-            gparams = DEFAULT_G_PARAMS
+        if not genparams:
+            genparams = _DEFAULT_GENPARAMS
 
         # ensure that prefix always ends with a period '.'
         if prefix and not prefix.endswith('.'):
             prefix += '.'
 
-        positive      = str(  gparams.get(f"{prefix}prompt"       , _DEFAULT_POSITIVE     ))
-        negative      = str(  gparams.get(f"{prefix}negative"     , _DEFAULT_NEGATIVE     ))
-        steps         = int(  gparams.get(f"{prefix}steps"        , _DEFAULT_STEPS        ))
-        sampler_name  = str(  gparams.get(f"{prefix}sampler_name" , _DEFAULT_SAMPLER_NAME ))
-        scheduler     = str(  gparams.get(f"{prefix}scheduler"    , _DEFAULT_SCHEDULER    ))
-        start_at_step = int(  gparams.get(f"{prefix}start_at_step", _DEFAULT_START_AT_STEP))
-        cfg           = float(gparams.get(f"{prefix}cfg"          , _DEFAULT_CFG          ))
-        noise_seed    = int(  gparams.get(f"{prefix}noise_seed"   , _DEFAULT_NOISE_SEED   ))
+        positive      = str(  genparams.get(f"{prefix}prompt"       , _DEFAULT_POSITIVE     ))
+        negative      = str(  genparams.get(f"{prefix}negative"     , _DEFAULT_NEGATIVE     ))
+        steps         = int(  genparams.get(f"{prefix}steps"        , _DEFAULT_STEPS        ))
+        sampler_name  = str(  genparams.get(f"{prefix}sampler_name" , _DEFAULT_SAMPLER_NAME ))
+        scheduler     = str(  genparams.get(f"{prefix}scheduler"    , _DEFAULT_SCHEDULER    ))
+        start_at_step = int(  genparams.get(f"{prefix}start_at_step", _DEFAULT_START_AT_STEP))
+        cfg           = float(genparams.get(f"{prefix}cfg"          , _DEFAULT_CFG          ))
+        noise_seed    = int(  genparams.get(f"{prefix}noise_seed"   , _DEFAULT_NOISE_SEED   ))
         discard_penultimate_sigma = sampler_name in _DISCARD_PENULTIMATE_SIGMA_SAMPLERS
 
         positive, negative = self._encode(clip, positive, negative)
@@ -97,6 +97,7 @@ class GParamsUnpacker:
         return (model, positive, negative, sampler, sigmas, cfg, noise_seed)
 
 
+    #__ internal functions ________________________________
 
     @staticmethod
     def _calculate_sigmas(model                    : Model,

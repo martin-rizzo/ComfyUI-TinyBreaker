@@ -3,63 +3,64 @@ File    : empty_latent_image.py
 Purpose : Create an empty latent image for use in ComfyUI with PixArt.
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
 Date    : Dec 22, 2024
-Repo    : https://github.com/martin-rizzo/ComfyUI-xPixArt
+Repo    : https://github.com/martin-rizzo/ComfyUI-TinyBreaker
 License : MIT
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                              ComfyUI-xPixArt
-    ComfyUI nodes providing experimental support for PixArt-Sigma model
+                              ConfyUI-TinyBreaker
+ ComfyUI nodes for experimenting with the capabilities of the TinyBreaker model.
+  (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import math
 import torch
 import comfy
 from   .utils.system import logger
-from   .core.gparams import GParams
+from   .core.gen_params import GenParams
 MAX_RESOLUTION=16384
 LATENT_SCALE_FACTOR=8
 
-
-_DEFAULT_SCALE        = 1.0
-_DEFAULT_ASPECT_RATIO = "1:1"
-_DEFAULT_BATCH_SIZE   = 1
 _PREDEFINED_SCALES = {
     "small"  : 0.82,
     "normal" : 1.0,
     "large"  : 1.22,
 }
+_DEFAULT_SCALE        = 1.0
+_DEFAULT_ASPECT_RATIO = "1:1"
+_DEFAULT_BATCH_SIZE   = 1
+
 
 class EmptyLatentImage:
-    TITLE       = "xPixArt | Empty Latent Image"
-    CATEGORY    = "xPixArt"
+    TITLE       = "💪TB | Empty Latent Image"
+    CATEGORY    = "TinyBreaker"
     DESCRIPTION = "Create a new batch of empty latent images to be denoised via sampling."
 
 
     def __init__(self):
         self.device = comfy.model_management.intermediate_device()
 
-    #-- PARAMETERS -----------------------------#
+    #__ PARAMETERS ________________________________________
     @classmethod
     def INPUT_TYPES(s):
         return {
             "required": {
-                "gparams": ("GPARAMS", {"tooltip": "The generation parameters ???"}),
+                "genparams": ("GENPARAMS", {"tooltip": "The generation parameters ???"}),
                 },
             }
 
-    #-- FUNCTION --------------------------------#
+    #__ FUNCTION __________________________________________
     FUNCTION = "generate_latents"
     RETURN_TYPES    = ("LATENT",)
     OUTPUT_TOOLTIPS = ("The empty latent image batch.",)
 
 
-    def generate_latents(self, gparams: GParams):
+    def generate_latents(self, genparams: GenParams):
         PREFIX = "image"
 
         resolution  = 1024
-        scale       = gparams.get_prefixed(PREFIX, "scale"       , _DEFAULT_SCALE       )
-        ratio       = gparams.get_prefixed(PREFIX, "aspect_ratio", _DEFAULT_ASPECT_RATIO)
-        batch_size  = gparams.get_prefixed(PREFIX, "batch_size"  , _DEFAULT_BATCH_SIZE  )
-        orientation = gparams.get_prefixed(PREFIX, "orientation" , None                 )
+        scale       = genparams.get_prefixed(PREFIX, "scale"       , _DEFAULT_SCALE       )
+        ratio       = genparams.get_prefixed(PREFIX, "aspect_ratio", _DEFAULT_ASPECT_RATIO)
+        batch_size  = genparams.get_prefixed(PREFIX, "batch_size"  , _DEFAULT_BATCH_SIZE  )
+        orientation = genparams.get_prefixed(PREFIX, "orientation" , None                 )
 
         scale                              = self._parse_scale(scale)
         ratio_numerator, ratio_denominator = self._parse_ratio(ratio)
@@ -76,6 +77,7 @@ class EmptyLatentImage:
         return ({"samples":latents}, )
 
 
+    #__ internal functions ________________________________
 
     @staticmethod
     def _generate_latents(resolution, scale, ratio_numerator, ratio_denominator, batch_size, device):

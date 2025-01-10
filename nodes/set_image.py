@@ -3,14 +3,15 @@ File    : set_image.py
 Purpose : Node that sets the image attributes, packaging them into the generation parameters.
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
 Date    : Dec 21, 2024
-Repo    : https://github.com/martin-rizzo/ComfyUI-xPixArt
+Repo    : https://github.com/martin-rizzo/ComfyUI-TinyBreaker
 License : MIT
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                              ComfyUI-xPixArt
-    ComfyUI nodes providing experimental support for PixArt-Sigma model
+                              ConfyUI-TinyBreaker
+ ComfyUI nodes for experimenting with the capabilities of the TinyBreaker model.
+  (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
-from .core.gparams import GParams
+from .core.gen_params import GenParams
 
 _LANDSCAPE_SIZE_BY_ASPECT_RATIO = {
     "1:1 square"      : (1024.0, 1024.0),
@@ -38,16 +39,16 @@ _DEFAULT_SCALE = "Large"
 
 
 class SetImage:
-    TITLE       = "xPixArt | Set Image"
-    CATEGORY    = "xPixArt"
+    TITLE       = "💪TB | Set Image"
+    CATEGORY    = "TinyBreaker"
     DESCRIPTION = "Sets the image attributes, packaging them into the generation parameters."
 
-    #-- PARAMETERS -----------------------------#
+    #__ PARAMETERS ________________________________________
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "gparams"   : ("GPARAMS"    , {"tooltip": "The original generation parameters which will be updated."}),
+                "genparams" : ("GENPARAMS"  , {"tooltip": "The original generation parameters which will be updated."}),
 
                 "landscape" : ("BOOLEAN"    , {"tooltip": "Set the image to landscape orientation. 'True' for landscape, 'False' for portrait.",
                                                "default": True}),
@@ -60,20 +61,20 @@ class SetImage:
                 },
             }
 
-    #-- FUNCTION --------------------------------#
+    #__ FUNCTION __________________________________________
     FUNCTION = "set_image_attributes"
-    RETURN_TYPES    = ("GPARAMS",)
-    RETURN_NAMES    = ("gparams",)
+    RETURN_TYPES    = ("GENPARAMS",)
+    RETURN_NAMES    = ("genparams",)
     OUTPUT_TOOLTIPS = ("The generation parameters with the updated noise seed.",)
 
     def set_image_attributes(self,
-                             gparams   : GParams,
+                             genparams : GenParams,
                              landscape : bool,
                              ratio     : str,
                              scale     : str,
                              batch_size: int
                              ):
-        gparams = gparams.copy()
+        genparams = genparams.copy()
 
         # get the actual aspect ratio from the input string,
         # stripping any additional text after the first space
@@ -84,12 +85,13 @@ class SetImage:
             _parts = ratio.split(':')
             ratio = f"{_parts[1]}:{_parts[0]}"
 
-        gparams.set("image.scale"       , float(_PREDEFINED_SCALES[scale]))
-        gparams.set("image.aspect_ratio", str(ratio)                      )
-        gparams.set("image.batch_size"  , int(batch_size)                 )
-        return (gparams,)
+        genparams.set("image.scale"       , float(_PREDEFINED_SCALES[scale]))
+        genparams.set("image.aspect_ratio", str(ratio)                      )
+        genparams.set("image.batch_size"  , int(batch_size)                 )
+        return (genparams,)
 
 
+    #__ internal functions ________________________________
 
     @staticmethod
     def _ratios():
@@ -98,3 +100,4 @@ class SetImage:
     @staticmethod
     def _scales():
         return list(_PREDEFINED_SCALES.keys())
+

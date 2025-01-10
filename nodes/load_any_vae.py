@@ -3,11 +3,12 @@ File    : load_any_vae.py
 Purpose : Node to load any VAE model including `Tiny AutoEncoder` (TAESD) variants.
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
 Date    : Nov 16, 2024
-Repo    : https://github.com/martin-rizzo/ComfyUI-xPixArt
+Repo    : https://github.com/martin-rizzo/ComfyUI-TinyBreaker
 License : MIT
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                              ComfyUI-xPixArt
-    ComfyUI nodes providing experimental support for PixArt-Sigma model
+                              ConfyUI-TinyBreaker
+ ComfyUI nodes for experimenting with the capabilities of the TinyBreaker model.
+  (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import os
@@ -18,11 +19,11 @@ from comfy.utils        import load_torch_file
 
 
 class LoadAnyVAE:
-    TITLE       = "xPixArt | Load Any VAE"
-    CATEGORY    = "xPixArt"
+    TITLE       = "💪TB | Load Any VAE"
+    CATEGORY    = "TinyBreaker"
     DESCRIPTION = "Load VAE models including `Tiny AutoEncoder` (TAESD) variants."
 
-    #-- PARAMETERS -----------------------------#
+    #__ PARAMETERS ________________________________________
     @classmethod
     def INPUT_TYPES(cls):
         return {
@@ -31,7 +32,7 @@ class LoadAnyVAE:
                 }
             }
 
-    #-- FUNCTION --------------------------------#
+    #__ FUNCTION __________________________________________
     FUNCTION = "load_any_vae"
     RETURN_TYPES = ("VAE",)
 
@@ -49,8 +50,7 @@ class LoadAnyVAE:
         return (vae,)
 
 
-
-    #-< internal functions >---------------------#
+    #__ internal functions ________________________________
 
     @staticmethod
     def is_taesd(state_dict: dict) -> bool:

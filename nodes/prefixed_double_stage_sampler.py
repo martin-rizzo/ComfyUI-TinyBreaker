@@ -1,11 +1,15 @@
 """
 File    : prefixed_double_stage_sampler.py
-Purpose : 
+Purpose : Node for sampling a model using the double stage sampler.
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
 Date    : Nov 22, 2024
-Repo    : https://github.com/martin-rizzo/ComfyUI-xPixArt
+Repo    : https://github.com/martin-rizzo/ComfyUI-TinyBreaker
 License : MIT
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+                              ConfyUI-TinyBreaker
+ ComfyUI nodes for experimenting with the capabilities of the TinyBreaker model.
+  (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import torch
 import comfy.sample
@@ -93,11 +97,11 @@ def common_ksampler(model,
 
 
 class PrefixedDoubleStageSampler:
-    TITLE       = "xPixArt | Prefixed Double Stage Sampler"
-    CATEGORY    = "xPixArt"
-    DESCRIPTION = ""
+    TITLE       = "💪TB | Prefixed Double Stage Sampler"
+    CATEGORY    = "TinyBreaker"
+    DESCRIPTION = "A sampler that combines two samplers in a single pass."
 
-    #-- PARAMETERS -----------------------------#
+    #__ PARAMETERS ________________________________________
     @classmethod
     def INPUT_TYPES(cls):
         return {
@@ -120,8 +124,9 @@ class PrefixedDoubleStageSampler:
             },
         }
 
-    RETURN_TYPES = ("LATENT",)
+    #__ FUNCTION __________________________________________
     FUNCTION = "sample"
+    RETURN_TYPES = ("LATENT",)
 
     def sample(self,
                model,
@@ -138,7 +143,7 @@ class PrefixedDoubleStageSampler:
                refiner_negative=None,
                refiner_variation=0
                ):
-        
+
         force_full_denoise = True
         disable_noise      = False
         denoise            = 1.0

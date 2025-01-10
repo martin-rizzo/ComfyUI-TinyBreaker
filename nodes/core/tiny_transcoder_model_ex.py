@@ -1,16 +1,17 @@
 """
 File    : tiny_transcoder_model_ex.py
-Purpose : To provide an extended version of the `TinyTranscoderModel` class with
+Purpose : Provides an extended version of the `TinyTranscoderModel` class with
           features like automatic detection of model configuration. It is designed
           to be used alongside `tiny_transcoder_model.py` in any project with
           minimal external dependencies.
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
 Date    : Jan 5, 2024
-Repo    : https://github.com/martin-rizzo/ComfyUI-xPixArt
+Repo    : https://github.com/martin-rizzo/ComfyUI-TinyBreaker
 License : MIT
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                              ComfyUI-xPixArt
-    ComfyUI nodes providing experimental support for PixArt-Sigma model
+                              ConfyUI-TinyBreaker
+ ComfyUI nodes for experimenting with the capabilities of the TinyBreaker model.
+  (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 from .tiny_transcoder_model import TinyTranscoderModel
