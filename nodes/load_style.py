@@ -13,13 +13,12 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 from .core.style_dict import StyleDict
 from .utils.directories import PROJECT_DIR
-
-style_dict = StyleDict.from_file( PROJECT_DIR.get_full_path("STYLES.cfg") )
+_STYLE_DICT = StyleDict.from_file( PROJECT_DIR.get_full_path("STYLES.cfg") )
 
 
 class LoadStyle:
-    TITLE       = "xPixArt | Load Style"
-    CATEGORY    = "xPixArt"
+    TITLE       = "💪TB | Load Style"
+    CATEGORY    = "TinyBreaker"
     DESCRIPTION = "Loads a style for image generation"
 
     #__ PARAMETERS ________________________________________
@@ -27,7 +26,7 @@ class LoadStyle:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "style_name": (style_dict.list_styles(), {"tooltip": "The name of the style to use."}),
+                "style_name": (_STYLE_DICT.list_styles(), {"tooltip": "The name of the style to use."}),
             },
         }
 
@@ -38,7 +37,7 @@ class LoadStyle:
     OUTPUT_TOOLTIPS = ("The generation parameters with the style loaded.",)
 
     def load_style(self, style_name):
-        genparams = style_dict.get_style_params(style_name)
+        genparams = _STYLE_DICT.get_style_params(style_name)
         return (genparams,)
 
 

@@ -21,9 +21,14 @@ from ..core.tiny_autoencoder_model_ex import TinyAutoencoderModelEx
 
 
 
-def _custom_vae_model_from_state_dict(state_dict, prefix, vae_wrapper):
+def _custom_vae_model_from_state_dict(state_dict: dict, prefix: str, vae_wrapper: "VAE"):
     """
     Creates a custom VAE model from the given state_dict.
+    Args:
+        state_dict : The dictionary containing the model's parameters.
+        prefix     : The prefix used to identify the submodel within the state_dict.
+        vae_wrapper: The ComfyUI wrapper object. This is used by ComfyUI to store
+                     the model's memory usage and other properties.
     """
 
     # default values loaded at initialization,
@@ -45,6 +50,7 @@ def _custom_vae_model_from_state_dict(state_dict, prefix, vae_wrapper):
 
     # the classic AutoencoderKL model used by Stable Diffusion
     elif AutoencoderModelEx.detect_prefix(state_dict, prefix) is not None:
+        vae_model: AutoencoderModelEx
         logger.info("Detected custom AutoencoderModelEx model")
         vae_model, config = AutoencoderModelEx.from_state_dict(state_dict, return_config=True)
         vae_wrapper.latent_channels = config["latent_channels"] # <- overrides latent channels
@@ -52,8 +58,10 @@ def _custom_vae_model_from_state_dict(state_dict, prefix, vae_wrapper):
 
     # the Tiny Autoencoder model by @madebyollin (https://github.com/madebyollin/taesd)
     elif TinyAutoencoderModelEx.detect_prefix(state_dict, prefix) is not None:
+        vae_model: TinyAutoencoderModelEx
         logger.info("Detected custom TinyAutoencoderModelEx model")
         vae_model, config = TinyAutoencoderModelEx.from_state_dict(state_dict, return_config=True)
+        vae_model.emulate_std_autoencoder = True
         vae_wrapper.latent_channels = config["latent_channels"] # <- overrides latent channels
         return vae_model
 

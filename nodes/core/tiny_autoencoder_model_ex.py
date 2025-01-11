@@ -48,12 +48,16 @@ class _NativeFormat:
     # these constants contain names of tensors that are characteristic of this format
     # and they are used to verify whether a checkpoint is compatible with the format.
     SIGNATURE_ENCODER_TENSORS = (
-        "taesd_encoder.0.weight",
-        "taesd_encoder.3.conv.0.bias"
+        "encoder.0.weight",
+        "encoder.3.conv.0.bias"
+        #"taesd_encoder.0.weight",
+        #"taesd_encoder.3.conv.0.bias"
     )
     SIGNATURE_DECODER_TENSORS = (
-        "taesd_decoder.1.weight",
-        "taesd_decoder.3.conv.0.bias"
+        "decoder.1.weight",
+        "decoder.3.conv.0.bias"
+        #"taesd_decoder.1.weight",
+        #"taesd_decoder.3.conv.0.bias"
     )
     def build_native_state_dict(self, state_dict: dict) -> dict:
         return state_dict

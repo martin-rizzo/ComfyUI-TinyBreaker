@@ -62,7 +62,7 @@ class GenParamsUnpacker:
                 "clip"  : ("CLIP"  , {"tooltip": "The CLIP model used for encoding the prompts."})
             },
             "optional": {
-                "genparams": ("GPARAMS", {"tooltip": "The generation parameters to unpack."}),
+                "genparams": ("GENPARAMS", {"tooltip": "The generation parameters to unpack."}),
             }
         }
 

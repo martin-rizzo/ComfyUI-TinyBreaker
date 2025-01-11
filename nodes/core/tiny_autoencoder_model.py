@@ -66,8 +66,8 @@ class Encoder(nn.Sequential):
         channels = hidden_channels
         encoder  = []
 
-        encoder.append( _Conv3x3(input_channels, channels) )
-        encoder.append( _ResidualBlock(channels, channels) )
+        encoder.append( _Conv3x3(input_channels, channels) ) # self[0]
+        encoder.append( _ResidualBlock(channels, channels) ) # self[1]
 
         for _ in range(convolutional_layers):
             encoder.append( _Conv3x3(channels, channels, stride=2, bias=False) )
@@ -77,6 +77,18 @@ class Encoder(nn.Sequential):
         encoder.append( _Conv3x3(channels, output_channels) )
 
         super().__init__(*encoder)
+
+
+    @property
+    def dtype(self):
+        """Returns the data type of the decoder parameters."""
+        return self[0].weight.dtype
+
+
+    @property
+    def device(self):
+        """Returns the device on which the decoder parameters are located."""
+        return self[0].weight.device
 
 
 #---------------------------------------------------------------------------#
@@ -100,9 +112,9 @@ class Decoder(nn.Sequential):
         channels = hidden_channels
         decoder  = []
 
-        decoder.append( _Clamp()                           )
-        decoder.append( _Conv3x3(input_channels, channels) )
-        decoder.append( nn.ReLU()                          )
+        decoder.append( _Clamp()                           ) # self[0]
+        decoder.append( _Conv3x3(input_channels, channels) ) # self[1]
+        decoder.append( nn.ReLU()                          ) # self[2]
 
         for _ in range(convolutional_layers):
             for _ in range(res_blocks_per_layer):
@@ -114,6 +126,18 @@ class Decoder(nn.Sequential):
         decoder.append( _Conv3x3(64, output_channels)        )
 
         super().__init__(*decoder)
+
+
+    @property
+    def dtype(self):
+        """Returns the data type of the decoder parameters."""
+        return self[1].weight.dtype
+
+
+    @property
+    def device(self):
+        """Returns the device on which the decoder parameters are located."""
+        return self[1].weight.device
 
 
 #===========================================================================#
@@ -164,12 +188,12 @@ class TinyAutoencoderModel(nn.Module):
                                    decoder_res_blocks_per_layer,
                                    )
 
-        # these values are used to scale/shift the latent space when simulating a standard autoencoder
+        # these values are used to scale/shift the latent space when emulating a standard autoencoder
         self.encoder_scale_factor = SCALE_SHIFT_BY_LATENT_FORMAT[encoder_latent_format][0]
         self.encoder_shift_factor = SCALE_SHIFT_BY_LATENT_FORMAT[encoder_latent_format][1]
         self.decoder_shift_factor = SCALE_SHIFT_BY_LATENT_FORMAT[decoder_latent_format][0]
         self.decoder_scale_factor = SCALE_SHIFT_BY_LATENT_FORMAT[decoder_latent_format][1]
-        self.simulate_std_autoencoder = False
+        self.emulate_std_autoencoder = False
 
 
     def forward(self, x):
@@ -180,23 +204,43 @@ class TinyAutoencoderModel(nn.Module):
 
     def encode(self, x: torch.Tensor) -> torch.Tensor:
         # this implementation supports that the encoder is not present
-        # and can simulate the range of values returned by a standard autoencoder
         if not self.encoder:
             return None
+
+        if self.emulate_std_autoencoder:
+            # standard autoencoders recive a range [-1, 1] for image input
+            # but tiny expect range [0, 1]
+            x.add_(1).mul_(0.5)
+
         x = self.encoder(x)
-        if self.simulate_std_autoencoder:
+
+        if self.emulate_std_autoencoder:
+            # standard autoencoders have particular scale/shift values
+            # but tiny always has scale_factor=1.0 and shift_factor=0.0
+            # so we need to adjust the latent space after encoding it
             x = (x / self.encoder_scale_factor) - self.encoder_shift_factor
+
         return x
 
 
     def decode(self, x: torch.Tensor) -> torch.Tensor:
         # this implementation supports that the decoder is not present
-        # and can simulate the range of values returned by a standard autoencoder
         if not self.decoder:
             return None
-        if self.simulate_std_autoencoder:
-            x = (x + self.decoder_shift_factor) * self.decoder_scale_factor
+
+        if self.emulate_std_autoencoder:
+            # tiny always has scale_factor=1.0 and shift_factor=0.0
+            # but standard autoencoders have particular scale/shift values
+            # so we need to adjust the latent space before decoding it
+            x = (x + self.decoder_shift_factor).mul_(self.decoder_scale_factor)
+
         x = self.decoder(x)
+
+        if self.emulate_std_autoencoder:
+            # tiny generate a range [0, 1] for output images
+            # but standard autoencoders use range [-1, 1]
+            x.mul_(2).sub_(1)
+
         return x
 
 
