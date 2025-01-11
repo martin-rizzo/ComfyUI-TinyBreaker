@@ -17,7 +17,7 @@ from comfy                            import model_management
 from ..utils.safetensors              import normalize_safetensors_prefix
 from ..utils.system                   import logger
 from ..core.autoencoder_model_ex      import AutoencoderModelEx
-#from ..core.tiny_autoencoder_model_ex import TinyAutoencoderModelEx
+from ..core.tiny_autoencoder_model_ex import TinyAutoencoderModelEx
 
 
 
@@ -50,12 +50,12 @@ def _custom_vae_model_from_state_dict(state_dict, prefix, vae_wrapper):
         vae_wrapper.latent_channels = config["latent_channels"] # <- overrides latent channels
         return vae_model
 
-    # # the Tiny Autoencoder model by @madebyollin (https://github.com/madebyollin/taesd)
-    # elif TinyAutoencoderModelEx.detect_prefix(state_dict, prefix) is not None:
-    #     logger.info("Detected custom TinyAutoencoderModelEx model")
-    #     vae_model, config = TinyTranscoderModelEx.from_state_dict(state_dict, return_config=True)
-    #     vae_wrapper.latent_channels = config["latent_channels"] # <- overrides latent channels
-    #     return vae_model
+    # the Tiny Autoencoder model by @madebyollin (https://github.com/madebyollin/taesd)
+    elif TinyAutoencoderModelEx.detect_prefix(state_dict, prefix) is not None:
+        logger.info("Detected custom TinyAutoencoderModelEx model")
+        vae_model, config = TinyAutoencoderModelEx.from_state_dict(state_dict, return_config=True)
+        vae_wrapper.latent_channels = config["latent_channels"] # <- overrides latent channels
+        return vae_model
 
     return None
 

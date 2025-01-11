@@ -1,11 +1,8 @@
 """
-File    : tiny_transcoder_model_ex.py
-Purpose : Provides an extended version of the `TinyTranscoderModel` class with
-          features like automatic detection of model configuration. It is designed
-          to be used alongside `tiny_transcoder_model.py` in any project with
-          minimal external dependencies.
+File    : tiny_autoencoder_model_ex.py
+Purpose : Extension of the `TinyAutoencoderModel` class including additional functionality.
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
-Date    : Jan 5, 2025
+Date    : Jan 10, 2025
 Repo    : https://github.com/martin-rizzo/ComfyUI-TinyBreaker
 License : MIT
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -14,7 +11,7 @@ License : MIT
   (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
-from .tiny_transcoder_model import TinyTranscoderModel
+from .tiny_autoencoder_model import TinyAutoencoderModel
 
 def _normalize_prefix(prefix: str) -> str:
     """Normalize a given prefix by ensuring it ends with a dot."""
@@ -46,16 +43,29 @@ def _verify_tensors(state_dict: dict, prefix: str, tensor_names: tuple) -> bool:
 
 class _NativeFormat:
     """
-    Identify and process tiny transcoders models in its native format.
+    Identify and process autoencoder models in its native format.
     """
     # these constants contain names of tensors that are characteristic of this format
     # and they are used to verify whether a checkpoint is compatible with the format.
-    SIGNATURE_TENSORS = (
-        "decoder.3.conv.0.weight",
-        "encoder.3.conv.0.weight"
+    SIGNATURE_ENCODER_TENSORS = (
+        "taesd_encoder.0.weight",
+        "taesd_encoder.3.conv.0.bias"
+    )
+    SIGNATURE_DECODER_TENSORS = (
+        "taesd_decoder.1.weight",
+        "taesd_decoder.3.conv.0.bias"
     )
     def build_native_state_dict(self, state_dict: dict) -> dict:
         return state_dict
+
+
+class _HF_DiffusersFormat:
+    """
+    Identify and process autoencoder models in HF diffusers format.
+    ATTENTION: No support for HF diffusers format yet !!
+    """
+    def build_native_state_dict(self, state_dict: dict) -> dict:
+        return None
 
 
 # The list of supported formats.
@@ -66,10 +76,9 @@ _SUPPORTED_FORMATS = (_NativeFormat(), )
 
 
 #===========================================================================#
-#//////////////////////// TINY TRANSCODER MODEL EX /////////////////////////#
+#//////////////////////// TINY AUTOENCODER MODEL EX ////////////////////////#
 #===========================================================================#
-class TinyTranscoderModelEx(TinyTranscoderModel):
-    """Extension of the TinyTranscoderModel class with additional functionality."""
+class TinyAutoencoderModelEx(TinyAutoencoderModel):
 
     @classmethod
     def from_state_dict(cls,
@@ -78,9 +87,9 @@ class TinyTranscoderModelEx(TinyTranscoderModel):
                         config           : dict = None,
                         return_config    : bool = False,
                         supported_formats: list = _SUPPORTED_FORMATS,
-                        ) -> "TinyTranscoderModelEx":
+                        ) -> "TinyAutoencoderModelEx":
         """
-        Create a TinyTranscoderModelEx instance from a state dictionary.
+        Creates a TinyAutoencoderModelEx instance from a state dictionary.
 
         Args:
             state_dict: A dictionary containing the model's state. The keys represent
@@ -91,7 +100,7 @@ class TinyTranscoderModelEx(TinyTranscoderModel):
                         If None, the configuration is inferred from the state dictionary.
             return_config    : A boolean indicating whether to return the configuration along with the model.
             supported_formats: An optional list of supported formats to convert state_dict to native format.
-                                (this parameter normally does not need to be provided)
+                               (this parameter normally does not need to be provided)
         """
 
         # convert state_dict to native format using the provided format converters
@@ -137,13 +146,10 @@ class TinyTranscoderModelEx(TinyTranscoderModel):
         """Unfreeze all parameters of the model to allow them to be updated during training."""
         for param in self.parameters():
             param.requires_grad = True
-        self.unnormalized_adapter_in.freeze()
-        self.unnormalized_adapter_out.freeze()
         self.train()
 
 
     #__ useful static methods _______________________________________
-
 
     @staticmethod
     def detect_prefix(state_dict       : dict,
@@ -169,16 +175,22 @@ class TinyTranscoderModelEx(TinyTranscoderModel):
 
             # use the default auto-detection mechanism "*"
             if prefix == "*":
-                detected_prefix = _detect_prefix(state_dict, format.SIGNATURE_TENSORS)
+                detected_prefix = _detect_prefix(state_dict, format.SIGNATURE_ENCODER_TENSORS)
+                if detected_prefix is not None:
+                    return detected_prefix
+                detected_prefix = _detect_prefix(state_dict, format.SIGNATURE_DECODER_TENSORS)
                 if detected_prefix is not None:
                     return detected_prefix
 
             # if a tentative prefix was provided, use it to verify that it is valid
-            elif _verify_tensors(state_dict, prefix, format.SIGNATURE_TENSORS):
+            elif _verify_tensors(state_dict, prefix, format.SIGNATURE_ENCODER_TENSORS):
+                return prefix
+            elif _verify_tensors(state_dict, prefix, format.SIGNATURE_DECODER_TENSORS):
                 return prefix
 
         # if no prefix was detected then return `None` or the provided default
         return default
+
 
 
     @staticmethod
@@ -202,7 +214,7 @@ class TinyTranscoderModelEx(TinyTranscoderModel):
         # normalize prefix, forcing auto-detection when it is "*"
         prefix = _normalize_prefix(prefix)
         if prefix == "*":
-            prefix = TinyTranscoderModelEx.detect_prefix(state_dict, default="")
+            prefix = TinyAutoencoderModelEx.detect_prefix(state_dict, default="")
 
         # remove prefix from tensor names
         if prefix:
@@ -212,7 +224,9 @@ class TinyTranscoderModelEx(TinyTranscoderModel):
 
         # generate the native `state_dict` using the format that matches the tensors
         for format in supported_formats:
-            if _verify_tensors(unpref_state_dict, "", format.SIGNATURE_TENSORS):
+            if _verify_tensors(unpref_state_dict, "", format.SIGNATURE_ENCODER_TENSORS):
+                return format.build_native_state_dict(unpref_state_dict)
+            if _verify_tensors(unpref_state_dict, "", format.SIGNATURE_DECODER_TENSORS):
                 return format.build_native_state_dict(unpref_state_dict)
 
         # in case that it does not match any format, return the unprefixed `state_dict`
@@ -230,20 +244,16 @@ class TinyTranscoderModelEx(TinyTranscoderModel):
         Returns:
            A dictionary containing the model's configuration.
         """
-        # TODO: implement this method to infer the model configuration from a state dictionary
-
         config = {
-            "input_channels"                :   4 ,
-            "output_channels"               :   4 ,
-            "decoder_intermediate_channels" :  64 ,
-            "decoder_convolutional_layers"  :   3 ,
-            "decoder_res_blocks_per_layer"  :   3 ,
-            "encoder_intermediate_channels" :  64 ,
-            "encoder_convolutional_layers"  :   3 ,
-            "encoder_res_blocks_per_layer"  :   3 ,
-            "use_internal_rgb_layer"        : True,
-            "use_gaussian_blur_bridge"      : True,
-            "input_latent_format"           : "unknown",
-            "output_latent_format"          : "unknown",
+            "image_channels"               :     3    ,
+            "latent_channels"              :     4    ,
+            "encoder_hidden_channels"      :    64    ,
+            "encoder_convolutional_layers" :     3    ,
+            "encoder_res_blocks_per_layer" :     3    ,
+            "decoder_hidden_channels"      :    64    ,
+            "decoder_convolutional_layers" :     3    ,
+            "decoder_res_blocks_per_layer" :     3    ,
+            "encoder_latent_format"        : "unknown",
+            "decoder_latent_format"        : "unknown",
         }
         return config

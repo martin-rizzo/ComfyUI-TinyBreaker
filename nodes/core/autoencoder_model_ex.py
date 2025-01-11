@@ -3,7 +3,7 @@ File    : autoencoder_model_ex.py
 Purpose : Extension of the AutoencoderModel class to include additional useful funtionality.
           (includes autodetection of model comfiguation and support for HF diffusers format)
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
-Date    : Jan 5, 2024
+Date    : Jan 5, 2025
 Repo    : https://github.com/martin-rizzo/ComfyUI-TinyBreaker
 License : MIT
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -83,6 +83,7 @@ class _HF_DiffusersFormat:
     ATTENTION: No support for HF diffusers format yet !!
     """
     def build_native_state_dict(self, state_dict: dict) -> dict:
+        # TODO: add support for HF diffusers format in AutoencoderModelEx
         return None
 
 
