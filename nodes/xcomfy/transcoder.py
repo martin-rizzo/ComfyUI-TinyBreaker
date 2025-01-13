@@ -59,7 +59,9 @@ class Transcoder:
         if dtype is None:
             dtype = model_management.vae_dtype(device, working_dtypes)
 
-        model.to(device=device, dtype=dtype).freeze()
+        model.emulate_std_decoderencoder = True
+        model.to(device=device, dtype=dtype)
+        model.freeze()
         return cls(model=model, model_device=device, model_dtype=dtype)
 
 

@@ -72,9 +72,9 @@ class _ResidualBlock(nn.Module):
 
 
 #---------------------------------------------------------------------------#
-class Decoder(nn.Sequential):
+class TransD(nn.Sequential):
     """
-    The decoder part of the model.
+    The decoder part of the transcoder model.
     Args:
         latent_channels       (int): Number of channels in the input latent space.
         intermediate_channels (int): Number of channels in the intermediate layers.
@@ -111,9 +111,9 @@ class Decoder(nn.Sequential):
 
 
 #---------------------------------------------------------------------------#
-class Encoder(nn.Sequential):
+class TransE(nn.Sequential):
     """
-    The encoder part of the model.
+    The encoder part of the transcoder model.
     Args:
         latent_channels           (int): Number of channels in the output latent space.
         intermediate_channels     (int): Number of channels in the intermediate layers.
@@ -144,53 +144,6 @@ class Encoder(nn.Sequential):
         encoder.append( _Conv3x3(ichans, latent_channels) )
 
         super().__init__(*encoder)
-
-
-#---------------------------------------------------------------------------#
-class UnnormalizedLatentAdapter(nn.Module):
-    """
-    Adapts an unnormalized latent tensor to/from the expected format.
-
-    Important: This transformation is designed for latents that are *not* normalized
-    to have a mean of 0 and a standard deviation of 1. If the input latents are
-    already normalized, this adaptation should not be used.
-
-    Args:
-        latent_format (str): The format of the latent to normalize. Must be one of the
-                             following: "unknown", "raw", "sd15", "sdxl", "sd3", "flux"
-        is_input     (bool): If True, applies the transformation to bring the latent to
-                             the desired range (e.g., for use as input to a UNet model).
-                             If False, applies the inverse transformation to return to
-                             the original latent space (e.g., for vae decoding).
-    """
-    def __init__(self,
-                 latent_format: str  = "unknown",
-                 is_input     : bool = False,
-                 ):
-        super().__init__()
-        SCALE_SHIFT_BY_LATENT_FORMAT = {
-            "unknown": (1.     ,  0.    ), # <- used when the parameters are read from file
-            "raw"    : (1.     ,  0.    ), # <- used when no scaling or shifting is needed
-            "sd15"   : (0.18215,  0.    ), # parameters for Stable Diffusion v1.5 latents
-            "sdxl"   : (0.13025,  0.    ), # parameters for Stable Diffusion XL latents
-            "sd3"    : (1.5305 , -0.0609), # parameters for Stable Diffusion 3 latents
-            "flux"   : (0.3611 , -0.1159), # parameters for Flux latents
-        }
-        scale_shift = SCALE_SHIFT_BY_LATENT_FORMAT.get(latent_format.lower(), (1.,0.))
-        self.scale_factor = torch.nn.Parameter(torch.tensor(scale_shift[0], dtype=torch.float32), requires_grad=False)
-        self.shift_factor = torch.nn.Parameter(torch.tensor(scale_shift[1], dtype=torch.float32), requires_grad=False)
-        self.is_input     = is_input
-
-    def forward(self, x):
-        if self.is_input:
-            return (x + self.shift_factor) * self.scale_factor
-        else:
-            return (x / self.scale_factor) - self.shift_factor
-
-    def freeze(self) -> None:
-        """Freeze all parameters of this module."""
-        for param in self.parameters():
-            param.requires_grad = False
 
 
 #===========================================================================#
@@ -232,50 +185,81 @@ class TranscoderModel(nn.Module):
                  output_latent_format         : str  = "unknown",
                  ):
         super().__init__()
+        SCALE_SHIFT_BY_LATENT_FORMAT = {
+            "unknown": (1.     ,  0.    ), # <- used when the scale/shift values will be read from the model's weights
+            "sd15"   : (0.18215,  0.    ), # parameters for Stable Diffusion v1.5 latents
+            "sdxl"   : (0.13025,  0.    ), # parameters for Stable Diffusion XL latents
+            "sd3"    : (1.5305 , -0.0609), # parameters for Stable Diffusion 3 latents
+            "flux"   : (0.3611 , -0.1159), # parameters for Flux latents
+            }
 
         # decoder layers
-        self.decoder = Decoder(input_channels,
-                               decoder_intermediate_channels,
-                               decoder_convolutional_layers,
-                               decoder_res_blocks_per_layer,
-                               add_output_rgb_layer = use_internal_rgb_layer
-                               )
+        self.transd = TransD(input_channels,
+                             decoder_intermediate_channels,
+                             decoder_convolutional_layers,
+                             decoder_res_blocks_per_layer,
+                             add_output_rgb_layer = use_internal_rgb_layer
+                             )
 
-        # optional gaussian blur layer
-        # used as a bridge between decoder and encoder to soften errors
-        if use_gaussian_blur_bridge:
-            self.bridge = _GaussianBlur(0.5)
-        else:
-            self.bridge = nn.Identity()
+        # # optional gaussian blur layer
+        # # used as a bridge between decoder and encoder to soften errors
+        # if use_gaussian_blur_bridge:
+        #     self.transx = _GaussianBlur(0.5)
+        # else:
+        #     self.transx = nn.Identity()
 
         # encoder layers
-        self.encoder = Encoder(output_channels,
-                               encoder_intermediate_channels,
-                               encoder_convolutional_layers,
-                               encoder_res_blocks_per_layer,
-                               add_input_rgb_layer = use_internal_rgb_layer
-                               )
+        self.transe = TransE(output_channels,
+                             encoder_intermediate_channels,
+                             encoder_convolutional_layers,
+                             encoder_res_blocks_per_layer,
+                             add_input_rgb_layer = use_internal_rgb_layer
+                             )
 
-        # non-trainable adapters that handle normalization/denormalization
-        # for compatibility with raw, unnormalized latent formats
-        # (these are a kind of hacky workaround)
-        self.unnormalized_adapter_in  = UnnormalizedLatentAdapter(input_latent_format , is_input=True )
-        self.unnormalized_adapter_out = UnnormalizedLatentAdapter(output_latent_format, is_input=False)
+        # these values are used to scale/shift the latent space when emulating a standard autoencoder
+        self.input_scale_factor      = SCALE_SHIFT_BY_LATENT_FORMAT[input_latent_format][0]
+        self.input_shift_factor      = SCALE_SHIFT_BY_LATENT_FORMAT[input_latent_format][1]
+        self.output_inv_scale_factor = 1. / SCALE_SHIFT_BY_LATENT_FORMAT[output_latent_format][0]
+        self.output_shift_factor     = SCALE_SHIFT_BY_LATENT_FORMAT[output_latent_format][1]
+        self.emulate_std_decoderencoder = False
+
 
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         # REF:
         #  x = [batch_size, input_channels, height, width]
-        x = self.unnormalized_adapter_in(x)
-        x = self.decoder(x).clamp(0, 1)
-        x = self.bridge(x)
-        x = self.encoder(x)
-        x = self.unnormalized_adapter_out(x)
+
+        if self.emulate_std_decoderencoder:
+            # the transcoder expects latent images with scale_factor=1.0 and shift_factor=0.0
+            # (raw latents as outputed from unet block), but standard decoders
+            # have different scale/shift values therefore if we want to emulate
+            # a decoder+encoder pair, we need to adjust the latent space
+            x = x.clone().sub_(self.input_shift_factor).mul_(self.input_scale_factor)
+
+        x = self.transd(x)  #.clamp(0, 1)
+        x = self.transe(x)
+
+        if self.emulate_std_decoderencoder:
+            # undo the adjustment we made above
+            x.mul_(self.output_inv_scale_factor).add_(self.output_shift_factor)
+
         return x
 
 
     def load_state_dict(self, state_dict, *args, **kwargs):
-        """Overridden method to load model state keeping the adapter parameters frozen."""
+        """Override the default load_state_dict method to handle scale/shift values."""
+
+        if "in_emu.scale_factor" in state_dict:
+            self.input_scale_factor = state_dict.pop("in_emu.scale_factor").item()
+        if "in_emu.shift_factor" in state_dict:
+            self.input_shift_factor = state_dict.pop("in_emu.shift_factor").item()
+        if "out_emu.scale_factor" in state_dict:
+            self.output_inv_scale_factor = 1. / state_dict.pop("out_emu.scale_factor").item()
+        if "out_emu.shift_factor" in state_dict:
+            self.output_shift_factor = state_dict.pop("out_emu.shift_factor").item()
+
+        # TODO: resolve how implementing this in the model's state dict
+        if "transx.gaussian_blur_sigma" in state_dict:
+            _ = state_dict.pop("transx.gaussian_blur_sigma")
+
         super().load_state_dict(state_dict, *args, **kwargs)
-        self.unnormalized_adapter_in.freeze()
-        self.unnormalized_adapter_out.freeze()

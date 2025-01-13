@@ -191,8 +191,8 @@ class TinyAutoencoderModel(nn.Module):
         # these values are used to scale/shift the latent space when emulating a standard autoencoder
         self.encoder_scale_factor = SCALE_SHIFT_BY_LATENT_FORMAT[encoder_latent_format][0]
         self.encoder_shift_factor = SCALE_SHIFT_BY_LATENT_FORMAT[encoder_latent_format][1]
-        self.decoder_shift_factor = SCALE_SHIFT_BY_LATENT_FORMAT[decoder_latent_format][0]
-        self.decoder_scale_factor = SCALE_SHIFT_BY_LATENT_FORMAT[decoder_latent_format][1]
+        self.decoder_scale_factor = SCALE_SHIFT_BY_LATENT_FORMAT[decoder_latent_format][0]
+        self.decoder_shift_factor = SCALE_SHIFT_BY_LATENT_FORMAT[decoder_latent_format][1]
         self.emulate_std_autoencoder = False
 
 
@@ -244,7 +244,8 @@ class TinyAutoencoderModel(nn.Module):
         return x
 
 
-    def load_state_dict(self, state_dict, strict = True, assign = False):
+    def load_state_dict(self, state_dict, *args, **kwargs):
+        """Override the default load_state_dict method to handle scale/shift values."""
         state_dict = state_dict.copy()
 
         # the scale/shift values are not part of the model's weights
@@ -273,5 +274,5 @@ class TinyAutoencoderModel(nn.Module):
         if "decoder.vae_shift" in state_dict:
             self.decoder_shift_factor = state_dict.pop("decoder.vae_shift").item()
 
-        return super().load_state_dict(state_dict, strict, assign)
+        return super().load_state_dict(state_dict, *args, **kwargs)
 

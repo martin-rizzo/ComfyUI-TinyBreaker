@@ -51,8 +51,8 @@ class _NativeFormat:
     # these constants contain names of tensors that are characteristic of this format
     # and they are used to verify whether a checkpoint is compatible with the format.
     SIGNATURE_TENSORS = (
-        "decoder.3.conv.0.weight",
-        "encoder.3.conv.0.weight"
+        "transd.3.conv.0.bias",
+        "transe.3.conv.0.weight"
     )
     def build_native_state_dict(self, state_dict: dict) -> dict:
         return state_dict
@@ -111,13 +111,13 @@ class TranscoderModelEx(TranscoderModel):
     @property
     def dtype(self):
         """Returns the data type of the model parameters."""
-        return self.encoder.dtype if self.encoder else self.decoder.dtype
+        return self.transe.dtype if self.transe else self.transd.dtype
 
 
     @property
     def device(self):
         """Returns the device on which the model parameters are located."""
-        return self.encoder.device if self.encoder else self.decoder.device
+        return self.transe.device if self.transe else self.transd.device
 
 
     @device.setter
