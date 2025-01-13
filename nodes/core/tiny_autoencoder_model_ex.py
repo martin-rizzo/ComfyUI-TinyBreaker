@@ -162,7 +162,9 @@ class TinyAutoencoderModelEx(TinyAutoencoderModel):
     def from_state_dict(cls,
                         state_dict       : dict,
                         prefix           : str  = "",
+                        *,
                         config           : dict = None,
+                        filename         : str  = "",
                         return_config    : bool = False,
                         supported_formats: list = _SUPPORTED_FORMATS,
                         ) -> "TinyAutoencoderModelEx":
@@ -183,7 +185,8 @@ class TinyAutoencoderModelEx(TinyAutoencoderModel):
 
         # convert state_dict to native format using the provided format converters
         state_dict = cls.build_native_state_dict(state_dict, prefix,
-                                                 supported_formats=supported_formats)
+                                                 filename          = filename,
+                                                 supported_formats = supported_formats)
 
         # if no config was provided then try to infer it automatically from the keys of the state_dict
         if not config:
@@ -331,17 +334,17 @@ class TinyAutoencoderModelEx(TinyAutoencoderModel):
             if "encoder.vae_scale" not in state_dict or "decoder.vae_scale" not in state_dict:
                 lower_case_filename = filename.lower()
                 if  "f1" in lower_case_filename or "flux" in lower_case_filename:
-                    state_dict["vae_scale"] = torch.tensor(_SCALE_AND_SHIFT_BY_LATENT_FORMAT["f1"][0])
-                    state_dict["vae_shift"] = torch.tensor(_SCALE_AND_SHIFT_BY_LATENT_FORMAT["f1"][1])
+                    state_dict["vae_scale"] = torch.tensor([ _SCALE_AND_SHIFT_BY_LATENT_FORMAT["f1"  ][0] ])
+                    state_dict["vae_shift"] = torch.tensor([ _SCALE_AND_SHIFT_BY_LATENT_FORMAT["f1"  ][1] ])
                 elif "sd3" in lower_case_filename:
-                    state_dict["vae_scale"] = torch.tensor(_SCALE_AND_SHIFT_BY_LATENT_FORMAT["sd3"][0])
-                    state_dict["vae_shift"] = torch.tensor(_SCALE_AND_SHIFT_BY_LATENT_FORMAT["sd3"][1])
+                    state_dict["vae_scale"] = torch.tensor([ _SCALE_AND_SHIFT_BY_LATENT_FORMAT["sd3" ][0] ])
+                    state_dict["vae_shift"] = torch.tensor([ _SCALE_AND_SHIFT_BY_LATENT_FORMAT["sd3" ][1] ])
                 elif "sdxl" in lower_case_filename:
-                    state_dict["vae_scale"] = torch.tensor(_SCALE_AND_SHIFT_BY_LATENT_FORMAT["sdxl"][0])
-                    state_dict["vae_shift"] = torch.tensor(_SCALE_AND_SHIFT_BY_LATENT_FORMAT["sdxl"][1])
+                    state_dict["vae_scale"] = torch.tensor([ _SCALE_AND_SHIFT_BY_LATENT_FORMAT["sdxl"][0] ])
+                    state_dict["vae_shift"] = torch.tensor([ _SCALE_AND_SHIFT_BY_LATENT_FORMAT["sdxl"][1] ])
                 else:
-                    state_dict["vae_scale"] = torch.tensor(_SCALE_AND_SHIFT_BY_LATENT_FORMAT["sd"][0])
-                    state_dict["vae_shift"] = torch.tensor(_SCALE_AND_SHIFT_BY_LATENT_FORMAT["sd"][0])
+                    state_dict["vae_scale"] = torch.tensor([ _SCALE_AND_SHIFT_BY_LATENT_FORMAT["sd"  ][0] ])
+                    state_dict["vae_shift"] = torch.tensor([ _SCALE_AND_SHIFT_BY_LATENT_FORMAT["sd"  ][1] ])
 
         return state_dict
 

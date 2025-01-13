@@ -39,6 +39,6 @@ class LoadAnyVAE:
         vae_path   = VAE_DIR.get_full_path_or_raise(vae_name)
         state_dict = load_torch_file(vae_path)
         # return a new instance of the VAE class from the loaded state dictionary
-        vae = VAE.from_state_dict(state_dict)
+        vae = VAE.from_state_dict(state_dict, filename=vae_name)
         return (vae,)
 

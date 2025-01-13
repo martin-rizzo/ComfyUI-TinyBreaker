@@ -21,7 +21,7 @@ from ..core.tiny_autoencoder_model_ex import TinyAutoencoderModelEx
 
 
 
-def _custom_vae_model_from_state_dict(state_dict: dict, prefix: str, vae_wrapper: "VAE"):
+def _custom_vae_model_from_state_dict(state_dict: dict, prefix: str, vae_wrapper: "VAE", filename: str = ""):
     """
     Creates a custom VAE model from the given state_dict.
     Args:
@@ -61,7 +61,7 @@ def _custom_vae_model_from_state_dict(state_dict: dict, prefix: str, vae_wrapper
     elif TinyAutoencoderModelEx.detect_prefix(state_dict, prefix) is not None:
         logger.debug("Loading custom TinyAutoencoderModelEx model")
         vae_model: TinyAutoencoderModelEx
-        vae_model, config = TinyAutoencoderModelEx.from_state_dict(state_dict, return_config=True)
+        vae_model, config = TinyAutoencoderModelEx.from_state_dict(state_dict, return_config=True, filename=filename)
         vae_model.emulate_std_autoencoder = True
         vae_wrapper.latent_channels = config["latent_channels"] # <- overrides latent channels
         vae_model.freeze()
@@ -107,7 +107,14 @@ class VAE(comfy.sd.VAE):
     [https://github.com/comfyanonymous/ComfyUI/blob/master/comfy/sd.py]
     """
 
-    def __init__(self, sd=None, device=None, config=None, dtype=None, offload_device = None):
+    def __init__(self,
+                 state_dict: dict = None,
+                 *,
+                 config        : dict         = None,
+                 filename      : str          = "",
+                 dtype         : torch.dtype  = None,
+                 device        : torch.device = None,
+                 offload_device: torch.device = None):
         """
         Custom initialization method for the VAE class.
 
@@ -115,13 +122,16 @@ class VAE(comfy.sd.VAE):
         adding support for custom autoencoder models.
 
         Args:
-            sd                     (dict): A dictionary containing the state_dict of the VAE.
-            device         (torch.device): The device where the model will be loaded when it's active and being used.
+            state_dict             (dict): A dictionary containing the tensors of the VAE model.
             config                 (dict): A dictionary containing the configuration of the VAE.
+            filename                (str): The name of the file where the VAE is stored (some models use this for autodetection)
+            device         (torch.device): The device where the model will be loaded when it's active and being used.
             dtype           (torch.dtype): The data type to which the tensors of the model will be converted.
             offload_device (torch.device): The device where the model will be offloaded when it's not active.
         """
-        args = [sd, device, config, dtype]
+        # ATTENTION!:
+        # this arguments must be in the same order as in `comfy.sd.VAE.__init__(...)`
+        super_args = [state_dict, device, config, dtype]
 
         # set default values
         # e.g. self.memory_used_encode, self.downscale_ratio, self.latent_channels, etc.
@@ -129,19 +139,12 @@ class VAE(comfy.sd.VAE):
         self.first_stage_model = None
 
         # try to create a custom autoencoder model from the state_dict
-        if _is_likely_custom_vae_model(sd, config):
-            self.first_stage_model = _custom_vae_model_from_state_dict(sd, "", self)
+        if _is_likely_custom_vae_model(state_dict, config):
+            self.first_stage_model = _custom_vae_model_from_state_dict(state_dict, "", self, filename=filename)
 
         # if a custom autoencoder model could be created (first_stage_model)
         # then a custom initialization based on ComfyUI code is used
         if self.first_stage_model:
-
-            # self.first_stage_model.eval()
-            # missing_keys, unexpected_keys = self.first_stage_model.load_state_dict(sd, strict=False)
-            # if missing_keys:
-            #     logger.warning(f"Missing VAE keys {missing_keys}")
-            # if unexpected_keys:
-            #     logger.debug(f"Leftover VAE keys {unexpected_keys}")
 
             if device is None:
                 device = model_management.vae_device()
@@ -161,7 +164,7 @@ class VAE(comfy.sd.VAE):
         # if a custom autoencoder model could NOT be created
         # then use the ComfyUI's default initialization
         else:
-            super().__init__(*args)
+            super().__init__(*super_args)
 
 
 
@@ -169,6 +172,7 @@ class VAE(comfy.sd.VAE):
     def from_state_dict(cls,
                         state_dict: dict,
                         prefix    : str  = "",
+                        filename  : str  = "",
                         device           = None,
                         dtype            = None
                         ) -> "VAE":
@@ -190,6 +194,6 @@ class VAE(comfy.sd.VAE):
             state_dict = {key[len(prefix):]: tensor for key, tensor in state_dict.items() if key.startswith(prefix)}
 
         # load the VAE model using the custom initialization
-        vae = cls(state_dict, device=device, config=None, dtype=dtype)
+        vae = cls(state_dict, config=None, filename=filename, device=device, dtype=dtype)
         return vae
 

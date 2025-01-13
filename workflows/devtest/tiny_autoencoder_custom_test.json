@@ -440,12 +440,12 @@
       "id": 16,
       "type": "LoadAnyVAE //TinyBreaker",
       "pos": [
-        440,
+        410,
         450
       ],
       "size": [
-        315,
-        58
+        390,
+        60
       ],
       "flags": {},
       "order": 3,
@@ -582,10 +582,10 @@
       "id": 1,
       "title": "Tiny AutoEncoder Custom Test",
       "bounding": [
-        397.2422180175781,
-        290.48492431640625,
-        412.5142517089844,
-        337.011962890625
+        390,
+        290,
+        430,
+        340
       ],
       "color": "#b58b2a",
       "font_size": 24,
