@@ -247,6 +247,23 @@ class TinyAutoencoderModel(nn.Module):
     def load_state_dict(self, state_dict, strict = True, assign = False):
         state_dict = state_dict.copy()
 
+        # the scale/shift values are not part of the model's weights
+        # so we need to remove them from the state dict before loading it
+
+        # this section implements the conventional loading of scale and shift values.
+        # where the encoder and decoder share a common latent space
+        if "vae_scale" in state_dict:
+            vae_scale = state_dict.pop("vae_scale").item()
+            self.encoder_scale_factor = vae_scale
+            self.decoder_scale_factor = vae_scale
+        if "vae_shift" in state_dict:
+            vae_shift = state_dict.pop("vae_shift").item()
+            self.encoder_shift_factor = vae_shift
+            self.decoder_shift_factor = vae_shift
+
+        # this section implements a custom approach to loading scale and shift values,
+        # which allows the encoder and decoder to have independent latent spaces and,
+        # consequently, different scale and shift parameters
         if "encoder.vae_scale" in state_dict:
             self.encoder_scale_factor = state_dict.pop("encoder.vae_scale").item()
         if "encoder.vae_shift" in state_dict:

@@ -11,7 +11,16 @@ License : MIT
   (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
+import torch
 from .tiny_autoencoder_model import TinyAutoencoderModel
+
+# scale_factor/shift_factor values used for the latent space of different models
+_SCALE_AND_SHIFT_BY_LATENT_FORMAT = {
+    "sd"  : (0.18215, 0.    ),
+    "sdxl": (0.13025, 0.    ),
+    "sd3" : (1.5305 , 0.0609),
+    "f1"  : (0.3611 , 0.1159)
+}
 
 def _normalize_prefix(prefix: str) -> str:
     """Normalize a given prefix by ensuring it ends with a dot."""
@@ -19,6 +28,49 @@ def _normalize_prefix(prefix: str) -> str:
     if prefix and prefix != "*" and not prefix.endswith('.'):
         prefix += '.'
     return prefix
+
+
+def _replace_prefix(state_dict: dict, old_prefix: str, new_prefix: str) -> dict:
+    """Replaces the prefix of each key in a state dictionary."""
+    fixed_dict: dict[str, torch.Tensor] = {}
+    for key in state_dict.keys():
+        if key.startswith(old_prefix):
+            fixed_dict[key.replace(old_prefix, new_prefix,1)] = state_dict[key]
+        else:
+            fixed_dict[key] = state_dict[key]
+    return fixed_dict
+
+
+def _shift_layers(state_dict  : dict,
+                  layer_prefix: str,
+                  offset      : int
+                  ) -> dict:
+    """
+    Returns a new state dictionary where layers are shifted by a specified offset.
+    Args:
+        state_dict    (dict): The original model parameters.
+        layer_prefix   (str): The prefix used to identify the layers to shift.
+        offset         (int): The number of layers to shift. Positive values shift the
+                              layers forward, negative values shift them backward.
+    """
+    fixed_dict = {}
+    for key, tensor in state_dict.items():
+
+        if not key.startswith(layer_prefix):
+            fixed_dict[key] = tensor
+            continue
+
+        _parts = key[len(layer_prefix):].split('.',1)
+        if not _parts[0].isdecimal():
+            fixed_dict[key] = tensor
+            continue
+
+        new_layer_number = int(_parts[0]) + offset
+        dot_suffix       = f".{_parts[1]}" if len(_parts)>1 else ""
+        fixed_key        = f"{layer_prefix}{new_layer_number}{dot_suffix}"
+        fixed_dict[fixed_key] = tensor
+
+    return fixed_dict
 
 
 #------------------ HELPER FUNCTIONS FOR MODEL DETECTION -------------------#
@@ -43,40 +95,62 @@ def _verify_tensors(state_dict: dict, prefix: str, tensor_names: tuple) -> bool:
 
 class _NativeFormat:
     """
-    Identify and process autoencoder models in its native format.
+    Identify tiny autoencoder models in its native format.
     """
     # these constants contain names of tensors that are characteristic of this format
     # and they are used to verify whether a checkpoint is compatible with the format.
     SIGNATURE_ENCODER_TENSORS = (
         "encoder.0.weight",
         "encoder.3.conv.0.bias"
-        #"taesd_encoder.0.weight",
-        #"taesd_encoder.3.conv.0.bias"
     )
     SIGNATURE_DECODER_TENSORS = (
         "decoder.1.weight",
         "decoder.3.conv.0.bias"
-        #"taesd_decoder.1.weight",
-        #"taesd_decoder.3.conv.0.bias"
     )
     def build_native_state_dict(self, state_dict: dict) -> dict:
         return state_dict
 
 
+class _ComfyUIFormat:
+    """
+    Identify and translate tiny autoencoder models from the ComfyUI format.
+    """
+    SIGNATURE_ENCODER_TENSORS = (
+        "taesd_encoder.0.weight",
+        "taesd_encoder.3.conv.0.bias"
+    )
+    SIGNATURE_DECODER_TENSORS = (
+        "taesd_decoder.1.weight",
+        "taesd_decoder.3.conv.0.bias"
+    )
+    def build_native_state_dict(self, state_dict: dict) -> dict:
+        state_dict = _replace_prefix(state_dict, "taesd_encoder.", "encoder.")
+        state_dict = _replace_prefix(state_dict, "taesd_decoder.", "decoder.")
+        return state_dict
+
+
 class _HF_DiffusersFormat:
     """
-    Identify and process autoencoder models in HF diffusers format.
-    ATTENTION: No support for HF diffusers format yet !!
+    Identify and translate tiny autoencoder models from the HuggingFace Diffusers format.
     """
+    SIGNATURE_ENCODER_TENSORS = (
+        "encoder.layers.0.weight",
+        "encoder.layers.1.conv.2.bias"
+    )
+    SIGNATURE_DECODER_TENSORS = (
+        "decoder.layers.3.conv.0.weight",
+        "decoder.layers.4.conv.2.bias"
+    )
     def build_native_state_dict(self, state_dict: dict) -> dict:
-        return None
+        state_dict = _replace_prefix(state_dict, "encoder.layers.", "encoder.")
+        state_dict = _replace_prefix(state_dict, "decoder.layers.", "decoder.")
+        return state_dict
 
 
 # The list of supported formats.
 # Each element has a `build_native_state_dict()` function that takes a `state_dict`
 # as input and returns a new `state_dict` with keys and tensors in native format.
-_SUPPORTED_FORMATS = (_NativeFormat(), )
-
+_SUPPORTED_FORMATS = (_HF_DiffusersFormat(), _ComfyUIFormat(), _NativeFormat(), )
 
 
 #===========================================================================#
@@ -108,7 +182,8 @@ class TinyAutoencoderModelEx(TinyAutoencoderModel):
         """
 
         # convert state_dict to native format using the provided format converters
-        state_dict = cls.build_native_state_dict(state_dict, prefix, supported_formats)
+        state_dict = cls.build_native_state_dict(state_dict, prefix,
+                                                 supported_formats=supported_formats)
 
         # if no config was provided then try to infer it automatically from the keys of the state_dict
         if not config:
@@ -199,7 +274,8 @@ class TinyAutoencoderModelEx(TinyAutoencoderModel):
 
     @staticmethod
     def build_native_state_dict(state_dict       : dict,
-                                prefix           : str  = "",
+                                prefix           : str  = "", *,
+                                filename         : str  = "",
                                 supported_formats: list = _SUPPORTED_FORMATS
                                 ) -> dict:
         """
@@ -222,19 +298,52 @@ class TinyAutoencoderModelEx(TinyAutoencoderModel):
 
         # remove prefix from tensor names
         if prefix:
-            unpref_state_dict = {name[len(prefix):]: tensor for name, tensor in state_dict.items() if name.startswith(prefix)}
-        else:
-            unpref_state_dict = state_dict
+            state_dict = {name[len(prefix):]: tensor for name, tensor in state_dict.items() if name.startswith(prefix)}
 
-        # generate the native `state_dict` using the format that matches the tensors
+        # try to convert `state_dict` to native format
         for format in supported_formats:
-            if _verify_tensors(unpref_state_dict, "", format.SIGNATURE_ENCODER_TENSORS):
-                return format.build_native_state_dict(unpref_state_dict)
-            if _verify_tensors(unpref_state_dict, "", format.SIGNATURE_DECODER_TENSORS):
-                return format.build_native_state_dict(unpref_state_dict)
+            if _verify_tensors(state_dict, "", format.SIGNATURE_ENCODER_TENSORS):
+                state_dict = format.build_native_state_dict(state_dict)
+                break
 
-        # in case that it does not match any format, return the unprefixed `state_dict`
-        return unpref_state_dict
+            if _verify_tensors(state_dict, "", format.SIGNATURE_DECODER_TENSORS):
+                state_dict = format.build_native_state_dict(state_dict)
+                break
+
+        # in this point, we should have a native format `state_dict`,
+        # but it may be necessary to apply a last fix to match this expected format:
+        #  Layer |     Tensor     |  Module
+        # -------+----------------+---------------------------
+        #    0   |        -       |  Clamp()
+        #    1   | [64, ch, 3, 3] |  conv(latent_channels, 64)
+        #    2   |        -       |  ReLU()
+        #  ....  |      .....     |  ......
+        #
+        # if the tensor "decoder.0.weight" exists (which should not exist),
+        # then shift all the decoder layers by 1
+        if f"decoder.0.weight" in state_dict:
+            state_dict = _shift_layers(state_dict, layer_prefix="decoder.", offset=1)
+
+
+        # add vae_scale and vae_shift if they are missing
+        # (vae_scale and vae_shift are used for standard vae emulation)
+        if "vae_scale" not in state_dict:
+            if "encoder.vae_scale" not in state_dict or "decoder.vae_scale" not in state_dict:
+                lower_case_filename = filename.lower()
+                if  "f1" in lower_case_filename or "flux" in lower_case_filename:
+                    state_dict["vae_scale"] = torch.tensor(_SCALE_AND_SHIFT_BY_LATENT_FORMAT["f1"][0])
+                    state_dict["vae_shift"] = torch.tensor(_SCALE_AND_SHIFT_BY_LATENT_FORMAT["f1"][1])
+                elif "sd3" in lower_case_filename:
+                    state_dict["vae_scale"] = torch.tensor(_SCALE_AND_SHIFT_BY_LATENT_FORMAT["sd3"][0])
+                    state_dict["vae_shift"] = torch.tensor(_SCALE_AND_SHIFT_BY_LATENT_FORMAT["sd3"][1])
+                elif "sdxl" in lower_case_filename:
+                    state_dict["vae_scale"] = torch.tensor(_SCALE_AND_SHIFT_BY_LATENT_FORMAT["sdxl"][0])
+                    state_dict["vae_shift"] = torch.tensor(_SCALE_AND_SHIFT_BY_LATENT_FORMAT["sdxl"][1])
+                else:
+                    state_dict["vae_scale"] = torch.tensor(_SCALE_AND_SHIFT_BY_LATENT_FORMAT["sd"][0])
+                    state_dict["vae_shift"] = torch.tensor(_SCALE_AND_SHIFT_BY_LATENT_FORMAT["sd"][0])
+
+        return state_dict
 
 
     @staticmethod

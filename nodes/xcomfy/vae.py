@@ -49,20 +49,22 @@ def _custom_vae_model_from_state_dict(state_dict: dict, prefix: str, vae_wrapper
         return None
 
     # the classic AutoencoderKL model used by Stable Diffusion
-    elif AutoencoderModelEx.detect_prefix(state_dict, prefix) is not None:
+    if AutoencoderModelEx.detect_prefix(state_dict, prefix) is not None:
+        logger.debug("Loading custom AutoencoderModelEx model")
         vae_model: AutoencoderModelEx
-        logger.info("Detected custom AutoencoderModelEx model")
         vae_model, config = AutoencoderModelEx.from_state_dict(state_dict, return_config=True)
         vae_wrapper.latent_channels = config["latent_channels"] # <- overrides latent channels
+        vae_model.freeze()
         return vae_model
 
     # the Tiny Autoencoder model by @madebyollin (https://github.com/madebyollin/taesd)
     elif TinyAutoencoderModelEx.detect_prefix(state_dict, prefix) is not None:
+        logger.debug("Loading custom TinyAutoencoderModelEx model")
         vae_model: TinyAutoencoderModelEx
-        logger.info("Detected custom TinyAutoencoderModelEx model")
         vae_model, config = TinyAutoencoderModelEx.from_state_dict(state_dict, return_config=True)
         vae_model.emulate_std_autoencoder = True
         vae_wrapper.latent_channels = config["latent_channels"] # <- overrides latent channels
+        vae_model.freeze()
         return vae_model
 
     return None
@@ -78,7 +80,7 @@ def _is_likely_custom_vae_model(state_dict, config):
     """
     CONFYUI_STANDARD_TENSOR_NAMES = [
         "decoder.mid.block_1.mix_factor",                     # <- VIDEO (?)
-        "taesd_decoder.1.weight",                             # <- Tiny Autoencoder
+        #"taesd_decoder.1.weight",                             # <- Tiny Autoencoder
         "vquantizer.codebook.weight",                         # <- VQGan (Stage A of stable cascade)
         "backbone.1.0.block.0.1.num_batches_tracked",         # <- effnet (encoder for Stage C of stable cascade)
         "blocks.11.num_batches_tracked",                      # <- previewer (decoder for Stage C of stable cascade)
@@ -134,12 +136,12 @@ class VAE(comfy.sd.VAE):
         # then a custom initialization based on ComfyUI code is used
         if self.first_stage_model:
 
-            self.first_stage_model.eval()
-            missing_keys, unexpected_keys = self.first_stage_model.load_state_dict(sd, strict=False)
-            if missing_keys:
-                logger.warning(f"Missing VAE keys {missing_keys}")
-            if unexpected_keys:
-                logger.debug(f"Leftover VAE keys {unexpected_keys}")
+            # self.first_stage_model.eval()
+            # missing_keys, unexpected_keys = self.first_stage_model.load_state_dict(sd, strict=False)
+            # if missing_keys:
+            #     logger.warning(f"Missing VAE keys {missing_keys}")
+            # if unexpected_keys:
+            #     logger.debug(f"Leftover VAE keys {unexpected_keys}")
 
             if device is None:
                 device = model_management.vae_device()
