@@ -14,10 +14,10 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 import math
 import torch
 import torch.nn as nn
-from ..utils.system                  import logger
-from ..core.tiny_transcoder_model_ex import TinyTranscoderModelEx
-from .vae                            import VAE
-from comfy                           import model_management
+from ..utils.system                    import logger
+from ..core.transcoder_model_ex        import TranscoderModelEx
+from .vae                              import VAE
+from comfy                             import model_management
 from torchvision.transforms.functional import gaussian_blur
 
 
@@ -36,9 +36,9 @@ class Transcoder:
                         dtype     : torch.dtype  = None,
                         ) -> "Transcoder":
         """
-        Creates a new `Transcoder` instance from a state dictionary of a TinyTranscoder model.
+        Creates a new `Transcoder` instance from a state dictionary.
         Args:
-            state_dict: The state dictionary of a TinyTranscoder model.
+            state_dict: A dictionary containing the tensor parameters of a Transcoder model.
             prefix    : The prefix that indicates where the model is located within state_dict.
             device    : The device where the model will be loaded.
                         If no specified, the default ComfyUI VAE device will be used.
@@ -46,9 +46,9 @@ class Transcoder:
                         If no specified, the default ComfyUI VAE data type will be used.
         """
 
-        # try to create a TinyTranscoder model from state_dict
-        tiny_transcoder_model = TinyTranscoderModelEx.from_state_dict(state_dict, prefix)
-        if not tiny_transcoder_model:
+        # try to create the Transcoder model from state_dict
+        model = TranscoderModelEx.from_state_dict(state_dict, prefix)
+        if not model:
             raise ValueError("Transcoder: unsupported model type")
 
         # determine device and data type where the model will be loaded
@@ -59,11 +59,8 @@ class Transcoder:
         if dtype is None:
             dtype = model_management.vae_dtype(device, working_dtypes)
 
-        print("##>> device:", device)
-        print("##>> dtype:", dtype)
-
-        tiny_transcoder_model.to(device=device, dtype=dtype).freeze()
-        return cls(model=tiny_transcoder_model, model_device=device, model_dtype=dtype)
+        model.to(device=device, dtype=dtype).freeze()
+        return cls(model=model, model_device=device, model_dtype=dtype)
 
 
     @classmethod

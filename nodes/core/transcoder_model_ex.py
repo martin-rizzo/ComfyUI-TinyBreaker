@@ -1,9 +1,9 @@
 """
-File    : tiny_transcoder_model_ex.py
-Purpose : Provides an extended version of the `TinyTranscoderModel` class with
-          features like automatic detection of model configuration. It is designed
-          to be used alongside `tiny_transcoder_model.py` in any project with
-          minimal external dependencies.
+File    : transcoder_model_ex.py
+Purpose : Provides an extended version of the `TranscoderModel` class with
+          features like automatic detection of model configuration. It is
+          designed to be used alongside `transcoder_model.py` in any project
+          with minimal external dependencies.
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
 Date    : Jan 5, 2025
 Repo    : https://github.com/martin-rizzo/ComfyUI-TinyBreaker
@@ -14,7 +14,7 @@ License : MIT
   (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
-from .tiny_transcoder_model import TinyTranscoderModel
+from .transcoder_model import TranscoderModel
 
 def _normalize_prefix(prefix: str) -> str:
     """Normalize a given prefix by ensuring it ends with a dot."""
@@ -46,7 +46,7 @@ def _verify_tensors(state_dict: dict, prefix: str, tensor_names: tuple) -> bool:
 
 class _NativeFormat:
     """
-    Identify and process tiny transcoders models in its native format.
+    Identify transcoders models in its native format.
     """
     # these constants contain names of tensors that are characteristic of this format
     # and they are used to verify whether a checkpoint is compatible with the format.
@@ -66,10 +66,10 @@ _SUPPORTED_FORMATS = (_NativeFormat(), )
 
 
 #===========================================================================#
-#//////////////////////// TINY TRANSCODER MODEL EX /////////////////////////#
+#/////////////////////////// TRANSCODER MODEL EX ///////////////////////////#
 #===========================================================================#
-class TinyTranscoderModelEx(TinyTranscoderModel):
-    """Extension of the TinyTranscoderModel class with additional functionality."""
+class TranscoderModelEx(TranscoderModel):
+    """Extension of the TranscoderModel class with additional functionality."""
 
     @classmethod
     def from_state_dict(cls,
@@ -78,9 +78,9 @@ class TinyTranscoderModelEx(TinyTranscoderModel):
                         config           : dict = None,
                         return_config    : bool = False,
                         supported_formats: list = _SUPPORTED_FORMATS,
-                        ) -> "TinyTranscoderModelEx":
+                        ) -> "TranscoderModelEx":
         """
-        Create a TinyTranscoderModelEx instance from a state dictionary.
+        Create a TranscoderModelEx instance from a state dictionary.
 
         Args:
             state_dict: A dictionary containing the model's state. The keys represent
@@ -202,7 +202,7 @@ class TinyTranscoderModelEx(TinyTranscoderModel):
         # normalize prefix, forcing auto-detection when it is "*"
         prefix = _normalize_prefix(prefix)
         if prefix == "*":
-            prefix = TinyTranscoderModelEx.detect_prefix(state_dict, default="")
+            prefix = TranscoderModelEx.detect_prefix(state_dict, default="")
 
         # remove prefix from tensor names
         if prefix:

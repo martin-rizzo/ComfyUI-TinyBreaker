@@ -1,8 +1,11 @@
 """
-File    : tiny_transcoder_model.py
+File    : transcoder_model.py
 Purpose : A lightweight model to convert images from one latent space to another.
           The code has minimal dependencies and can be easily integrated into any project.
-          (model structure and weights are based on Tiny Autoencoders by @madebyollin)
+          >>
+          >>  model structure and weights are based on Tiny Autoencoders by @madebyollin
+          >>  https://github.com/madebyollin/taesd
+          >>
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
 Date    : Nov 30, 2024
 Repo    : https://github.com/martin-rizzo/ComfyUI-TinyBreaker
@@ -191,10 +194,10 @@ class UnnormalizedLatentAdapter(nn.Module):
 
 
 #===========================================================================#
-#////////////////////////// TINY TRANSCODER MODEL //////////////////////////#
+#//////////////////////////// TRANSCODER MODEL /////////////////////////////#
 #===========================================================================#
 
-class TinyTranscoderModel(nn.Module):
+class TranscoderModel(nn.Module):
     """
     This model transcodes latent images between different formats (e.g., SDXL to SD1.5).
 
