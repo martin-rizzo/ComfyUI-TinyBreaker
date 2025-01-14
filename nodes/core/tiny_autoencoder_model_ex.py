@@ -277,7 +277,8 @@ class TinyAutoencoderModelEx(TinyAutoencoderModel):
 
     @staticmethod
     def build_native_state_dict(state_dict       : dict,
-                                prefix           : str  = "", *,
+                                prefix           : str  = "",
+                                *,
                                 filename         : str  = "",
                                 supported_formats: list = _SUPPORTED_FORMATS
                                 ) -> dict:

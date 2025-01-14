@@ -76,7 +76,6 @@ class TranscoderModelEx(TranscoderModel):
                         state_dict       : dict,
                         prefix           : str  = "",
                         config           : dict = None,
-                        return_config    : bool = False,
                         supported_formats: list = _SUPPORTED_FORMATS,
                         ) -> "TranscoderModelEx":
         """
@@ -95,17 +94,16 @@ class TranscoderModelEx(TranscoderModel):
         """
 
         # convert state_dict to native format using the provided format converters
-        state_dict = cls.build_native_state_dict(state_dict, prefix, supported_formats)
+        state_dict = cls.build_native_state_dict(state_dict, prefix,
+                                                 supported_formats = supported_formats)
 
-        # if no config was provided then try to infer it automatically from the keys of the state_dict
+        # if no config was provided then try to infer it automatically from the state_dict
         if not config:
             config = cls.infer_model_config(state_dict)
 
         model = cls( **config )
-        model.load_state_dict(state_dict, strict=False, assign=False)
-        if return_config:
-            return model, config
-        return model
+        missing_keys, unexpected_keys = model.load_state_dict(state_dict, strict=False, assign=False)
+        return model, config, missing_keys, unexpected_keys
 
 
     @property
@@ -182,8 +180,9 @@ class TranscoderModelEx(TranscoderModel):
 
 
     @staticmethod
-    def build_native_state_dict(state_dict       : dict,
-                                prefix           : str  = "",
+    def build_native_state_dict(state_dict: dict,
+                                prefix    : str  = "",
+                                *,# keyword-only arguments #
                                 supported_formats: list = _SUPPORTED_FORMATS
                                 ) -> dict:
         """
@@ -206,17 +205,16 @@ class TranscoderModelEx(TranscoderModel):
 
         # remove prefix from tensor names
         if prefix:
-            unpref_state_dict = {name[len(prefix):]: tensor for name, tensor in state_dict.items() if name.startswith(prefix)}
-        else:
-            unpref_state_dict = state_dict
+            state_dict = {name[len(prefix):]: tensor for name, tensor in state_dict.items() if name.startswith(prefix)}
 
-        # generate the native `state_dict` using the format that matches the tensors
+        # try to convert to native format
         for format in supported_formats:
-            if _verify_tensors(unpref_state_dict, "", format.SIGNATURE_TENSORS):
-                return format.build_native_state_dict(unpref_state_dict)
+            if _verify_tensors(state_dict, "", format.SIGNATURE_TENSORS):
+                state_dict = format.build_native_state_dict(state_dict)
+                break
 
-        # in case that it does not match any format, return the unprefixed `state_dict`
-        return unpref_state_dict
+        # return the un-prefixed, native state dictionary
+        return state_dict
 
 
     @staticmethod

@@ -46,7 +46,7 @@ class LoadCheckpoint:
         model         = Model.from_state_dict(state_dict, prefix="base.diffusion_model", resolution=1024)
         vae           = None  # VAE.from_state_dict(state_dict, prefix="")
         clip          = None
-        transcoder    = Transcoder.from_state_dict(state_dict, prefix="transcoder")
+        transcoder    = Transcoder.from_state_dict(state_dict, prefix="transcoder", filename=ckpt_name)
         refiner_model = Model.from_state_dict(state_dict, prefix="refiner.diffusion_model")
         refiner_clip  = CLIP.from_state_dict(state_dict, prefix="refiner.conditioner", type="stable_diffusion")
         return (model, vae, clip, transcoder, refiner_model, refiner_clip, metadata)

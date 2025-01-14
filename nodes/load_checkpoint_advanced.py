@@ -60,7 +60,7 @@ class LoadCheckpointAdvanced:
 
         model             = Model.from_state_dict(state_dict, prefix="base.diffusion_model", resolution=1024)
         vae_obj           = self.vae_object(vae, state_dict)
-        transcoder_obj    = self.transcoder_object(transcoder, state_dict, use_sdxl_refiner)
+        transcoder_obj    = self.transcoder_object(transcoder, ckpt_name, state_dict, use_sdxl_refiner)
         refiner_model_obj = self.refiner_object(refiner, state_dict)
         refiner_clip_obj  = self.refiner_clip_object(refiner, state_dict)
         return (model, vae_obj, transcoder_obj, refiner_model_obj, refiner_clip_obj, metadata)
@@ -94,16 +94,22 @@ class LoadCheckpointAdvanced:
         return ["default", *VAE_DIR.get_filename_list()]
 
     @staticmethod
-    def transcoder_object(name: str, state_dict: dict, use_sdxl_refiner: bool) -> Transcoder:
-        if name == "default":
-            if use_sdxl_refiner:
-                return Transcoder.identity()
-            else:
-                return Transcoder.from_state_dict(state_dict, prefix="transcoder")
-        else:
-            transcoder_path = VAE_DIR.get_full_path(name)
-            state_dict      = comfy.utils.load_torch_file(transcoder_path)
-            return Transcoder.from_state_dict(state_dict)
+    def transcoder_object(transcoder_name   : str,
+                          default_ckpt_name : str,
+                          default_state_dict: dict,
+                          use_sdxl_refiner  : bool = False
+                          ) -> Transcoder:
+        #if use_sdxl_refiner:
+        #    return Transcoder.identity()
+
+        # use default state dict
+        if transcoder_name == "default":
+            return Transcoder.from_state_dict(default_state_dict, prefix="transcoder", filename=default_ckpt_name)
+
+        # load transcoder from file
+        transcoder_path = VAE_DIR.get_full_path(transcoder_name)
+        state_dict      = comfy.utils.load_torch_file(transcoder_path)
+        return Transcoder.from_state_dict(state_dict, filename=transcoder_name)
 
 
     @staticmethod

@@ -262,4 +262,4 @@ class TranscoderModel(nn.Module):
         if "transx.gaussian_blur_sigma" in state_dict:
             _ = state_dict.pop("transx.gaussian_blur_sigma")
 
-        super().load_state_dict(state_dict, *args, **kwargs)
+        return super().load_state_dict(state_dict, *args, **kwargs)

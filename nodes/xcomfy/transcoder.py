@@ -1,6 +1,7 @@
 """
 File    : xconfy/transcoder.py
-Purpose : The standard TRANSCODER object transmitted through ComfyUI's node system.
+Purpose : The standard TRANSCODER object transmitted through ComfyUI's node wires.
+          This code is the bridge between custom Transcoder models and the node system.
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
 Date    : Nov 30, 2024
 Repo    : https://github.com/martin-rizzo/ComfyUI-TinyBreaker
@@ -11,14 +12,37 @@ License : MIT
   (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
-import math
+import os
 import torch
-import torch.nn as nn
 from ..utils.system                    import logger
 from ..core.transcoder_model_ex        import TranscoderModelEx
 from .vae                              import VAE
 from comfy                             import model_management
 from torchvision.transforms.functional import gaussian_blur
+
+
+def _create_custom_transcoder_model(state_dict: dict,
+                                    prefix    : str,
+                                    filename  : str,
+                                    ) -> tuple[object, list]:
+    """
+    Main function to create custom Transcoder models from a state dictionary.
+    Here must be added the code to detect and instantiate any new Transcoder model.
+
+    Args:
+        state_dict: A dictionary containing the tensor parameters of the model.
+        prefix    : A prefix indicating which of the tensors in state_dict belong to the model.
+        filename  : The name of the file from which state_dict was loaded.
+    Returns:
+        A tuple containing the Transcoder model and a list of missing keys (if any)
+    """
+    # only one type of Transcoder is supported
+    # therefore no autodetection of models is performed
+    logger.info(f"Loading TranscoderModelEx from '{filename}'")
+    transcoder_model, _, missing_keys, _ = \
+        TranscoderModelEx.from_state_dict(state_dict, prefix)
+
+    return transcoder_model, missing_keys
 
 
 #===========================================================================#
@@ -32,6 +56,8 @@ class Transcoder:
     def from_state_dict(cls,
                         state_dict: dict,
                         prefix    : str = "",
+                        *,# keyword-only arguments #
+                        filename  : str = "",
                         device    : torch.device = None,
                         dtype     : torch.dtype  = None,
                         ) -> "Transcoder":
@@ -40,16 +66,20 @@ class Transcoder:
         Args:
             state_dict: A dictionary containing the tensor parameters of a Transcoder model.
             prefix    : The prefix that indicates where the model is located within state_dict.
+            filename  : The name of the file from which state_dict was loaded.
             device    : The device where the model will be loaded.
                         If no specified, the default ComfyUI VAE device will be used.
             dtype     : The data type used for the model.
                         If no specified, the default ComfyUI VAE data type will be used.
         """
+        filename = os.path.basename(filename)
 
-        # try to create the Transcoder model from state_dict
-        model = TranscoderModelEx.from_state_dict(state_dict, prefix)
+        # try to create the custom Transcoder model
+        model, missing_keys = _create_custom_transcoder_model(state_dict, prefix, filename)
         if not model:
-            raise ValueError("Transcoder: unsupported model type")
+            raise ValueError("TRANSCODER: unsupported model type")
+        if missing_keys:
+            logger.warning(f"Missing TRANSCODER keys: {missing_keys}")
 
         # determine device and data type where the model will be loaded
         # (use comfyui default VAE device and data type if not specified)
@@ -62,6 +92,7 @@ class Transcoder:
         model.emulate_std_decoderencoder = True
         model.to(device=device, dtype=dtype)
         model.freeze()
+        logger.info(f"TRANSCODER model device: {device}, dtype: {dtype}")
         return cls(model=model, model_device=device, model_dtype=dtype)
 
 
@@ -97,12 +128,12 @@ class Transcoder:
 
 
     def __init__(self,
-                 model              : nn.Module    = None,
-                 model_device       : torch.device = None,
-                 model_dtype        : torch.dtype  = None,
-                 decoder            : VAE          = None,
-                 encoder            : VAE          = None,
-                 gaussian_blur_sigma: float        = 0.0 ,
+                 model                      = None,
+                 model_device: torch.device = None,
+                 model_dtype : torch.dtype  = None,
+                 decoder     : VAE          = None,
+                 encoder     : VAE          = None,
+                 gaussian_blur_sigma: float = 0.0 ,
                  ):
         self.model               = model
         self.model_device        = model_device
@@ -168,10 +199,13 @@ class Transcoder:
 
         # calculate the kernel_size for the given sigma
         # the result should always be odd and equal to or greater than 3
-        kernel_size = ((sigma - 0.8) / 0.3 + 1) * 2 + 1 
-        kernel_size = int( max(3.0, math.ceil(kernel_size)) )
+        unrounded_kernel_size = ((sigma - 0.8) / 0.3 + 1) * 2 + 1
+        kernel_size           = int(unrounded_kernel_size)
+        if kernel_size < unrounded_kernel_size:
+            kernel_size += 1
         if kernel_size % 2 == 0:
             kernel_size += 1
+        kernel_size = max(3, kernel_size)
 
         # apply gaussian blur using the calculated kernel_size and sigma
         tensor = tensor.permute(0, 3, 1, 2)
