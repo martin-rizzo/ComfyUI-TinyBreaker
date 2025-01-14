@@ -16,7 +16,7 @@ import logging
 
 class _CustomFormatter(logging.Formatter):
     """Custom formatter for the logger."""
-    EMOJI  = "\U0001F3A8" # the emoji show before logger name
+    EMOJI  = "\U0001F4AA" # the emoji show before logger name
     COLOR  = "\033[0;33m" # yellow for the logger name color
     RESET  = "\033[0m"    # reset to default color
     COLORS = {
@@ -37,7 +37,7 @@ class _CustomFormatter(logging.Formatter):
 
 
 # Create a logger instance and set the custom formatter.
-logger = logging.getLogger("ComfyUI-TinyBreaker")
+logger = logging.getLogger("TinyBreaker")
 logger.propagate = False
 if not logger.handlers:
     handler = logging.StreamHandler(sys.stdout)
