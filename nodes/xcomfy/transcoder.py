@@ -26,8 +26,8 @@ def _create_custom_transcoder_model(state_dict: dict,
                                     filename  : str,
                                     ) -> tuple[object, list]:
     """
-    Main function to create custom Transcoder models from a state dictionary.
-    Here must be added the code to detect and instantiate any new Transcoder model.
+    Main function to create a custom Transcoder model from the given state_dict.
+    Here must be added the code to detect and instantiate any custom Transcoder model.
 
     Args:
         state_dict: A dictionary containing the tensor parameters of the model.

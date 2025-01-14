@@ -59,7 +59,7 @@ class LoadCheckpointAdvanced:
         metadata          = None  # Metadata.from_predefined("sigma", 2048)
 
         model             = Model.from_state_dict(state_dict, prefix="base.diffusion_model", resolution=1024)
-        vae_obj           = self.vae_object(vae, state_dict)
+        vae_obj           = self.vae_object(vae, ckpt_name, state_dict)
         transcoder_obj    = self.transcoder_object(transcoder, ckpt_name, state_dict, use_sdxl_refiner)
         refiner_model_obj = self.refiner_object(refiner, state_dict)
         refiner_clip_obj  = self.refiner_clip_object(refiner, state_dict)
@@ -78,15 +78,23 @@ class LoadCheckpointAdvanced:
         return ["default", "high quality", *VAE_DIR.get_filename_list()]
 
     @staticmethod
-    def vae_object(name: str, state_dict: dict) -> dict:
-        if name == "default":
-            return VAE.from_state_dict(state_dict, prefix="first_stage_model")
-        elif name == "high quality":
-            return VAE.from_state_dict(state_dict, prefix="first_stage_hqmodel")
-        else:
-            vae_path   = VAE_DIR.get_full_path(name)
-            state_dict = comfy.utils.load_torch_file(vae_path)
-            return VAE.from_state_dict(state_dict)
+    def vae_object(vae_name: str,
+                   default_ckpt_name,
+                   default_state_dict: dict
+                   ) -> VAE:
+
+        # use the vae stored in the default checkpoint
+        if vae_name == "default":
+            return VAE.from_state_dict(default_state_dict, prefix="first_stage_model", filename=default_ckpt_name)
+
+        # use the high quality vae stored in the default checkpoint
+        if vae_name == "high quality":
+            return VAE.from_state_dict(default_state_dict, prefix="first_stage_hqmodel", filename=default_ckpt_name)
+
+        # load vae from file
+        vae_path   = VAE_DIR.get_full_path(vae_name)
+        state_dict = comfy.utils.load_torch_file(vae_path)
+        return VAE.from_state_dict(state_dict, filename=vae_name)
 
 
     @staticmethod
@@ -102,7 +110,7 @@ class LoadCheckpointAdvanced:
         #if use_sdxl_refiner:
         #    return Transcoder.identity()
 
-        # use default state dict
+        # use the transcoder stored in the default checkpoint
         if transcoder_name == "default":
             return Transcoder.from_state_dict(default_state_dict, prefix="transcoder", filename=default_ckpt_name)
 

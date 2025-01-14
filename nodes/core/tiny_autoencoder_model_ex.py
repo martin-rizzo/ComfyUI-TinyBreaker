@@ -162,12 +162,11 @@ class TinyAutoencoderModelEx(TinyAutoencoderModel):
     def from_state_dict(cls,
                         state_dict       : dict,
                         prefix           : str  = "",
-                        *,
+                        *, # keyword-only arguments #
                         config           : dict = None,
                         filename         : str  = "",
-                        return_config    : bool = False,
                         supported_formats: list = _SUPPORTED_FORMATS,
-                        ) -> "TinyAutoencoderModelEx":
+                        ) -> tuple[ "TinyAutoencoderModelEx", dict, list, list ]:
         """
         Creates a TinyAutoencoderModelEx instance from a state dictionary.
 
@@ -178,7 +177,7 @@ class TinyAutoencoderModelEx(TinyAutoencoderModel):
                         If an asterisk "*" is specified, the prefix will be automatically detected.
             config    : A dictionary containing the model's configuration.
                         If None, the configuration is inferred from the state dictionary.
-            return_config    : A boolean indicating whether to return the configuration along with the model.
+            filename  : The name of the file containing the model's weights. (optional)
             supported_formats: An optional list of supported formats to convert state_dict to native format.
                                (this parameter normally does not need to be provided)
         """
@@ -188,15 +187,13 @@ class TinyAutoencoderModelEx(TinyAutoencoderModel):
                                                  filename          = filename,
                                                  supported_formats = supported_formats)
 
-        # if no config was provided then try to infer it automatically from the keys of the state_dict
+        # if no config was provided then try to infer it automatically from the state_dict
         if not config:
             config = cls.infer_model_config(state_dict)
 
         model = cls( **config )
-        model.load_state_dict(state_dict, strict=False, assign=False)
-        if return_config:
-            return model, config
-        return model
+        missing_keys, unexpected_keys = model.load_state_dict(state_dict, strict=False, assign=False)
+        return model, config, missing_keys, unexpected_keys
 
 
     @property

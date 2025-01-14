@@ -73,11 +73,12 @@ class TranscoderModelEx(TranscoderModel):
 
     @classmethod
     def from_state_dict(cls,
-                        state_dict       : dict,
-                        prefix           : str  = "",
+                        state_dict: dict,
+                        prefix    : str  = "",
+                        *,# keyword-only arguments #
                         config           : dict = None,
                         supported_formats: list = _SUPPORTED_FORMATS,
-                        ) -> "TranscoderModelEx":
+                        ) -> tuple[ "TranscoderModelEx", dict, list, list ]:
         """
         Create a TranscoderModelEx instance from a state dictionary.
 
@@ -88,7 +89,6 @@ class TranscoderModelEx(TranscoderModel):
                         If an asterisk "*" is specified, the prefix will be automatically detected.
             config    : A dictionary containing the model's configuration.
                         If None, the configuration is inferred from the state dictionary.
-            return_config    : A boolean indicating whether to return the configuration along with the model.
             supported_formats: An optional list of supported formats to convert state_dict to native format.
                                 (this parameter normally does not need to be provided)
         """

@@ -103,10 +103,10 @@ class AutoencoderModelEx(AutoencoderModel):
     def from_state_dict(cls,
                         state_dict       : dict,
                         prefix           : str  = "",
+                        *,# keyword-only arguments #
                         config           : dict = None,
-                        return_config    : bool = False,
                         supported_formats: list = _SUPPORTED_FORMATS,
-                        ) -> "AutoencoderModelEx":
+                        ) -> tuple[ "AutoencoderModelEx", dict, list, list ]:
         """
         Creates an AutoencoderModelEx instance from a state dictionary.
 
@@ -117,23 +117,21 @@ class AutoencoderModelEx(AutoencoderModel):
                         If an asterisk "*" is specified, the prefix will be automatically detected.
             config    : A dictionary containing the model's configuration.
                         If None, the configuration is inferred from the state dictionary.
-            return_config    : A boolean indicating whether to return the configuration along with the model.
             supported_formats: An optional list of supported formats to convert state_dict to native format.
                                (this parameter normally does not need to be provided)
         """
 
         # convert state_dict to native format using the provided format converters
-        state_dict = cls.build_native_state_dict(state_dict, prefix, supported_formats)
+        state_dict = cls.build_native_state_dict(state_dict, prefix,
+                                                 supported_formats = supported_formats)
 
-        # if no config was provided then try to infer it automatically from the keys of the state_dict
+        # if no config was provided then try to infer it automatically from the state_dict
         if not config:
             config = cls.infer_model_config(state_dict)
 
         model = cls( **config )
-        model.load_state_dict(state_dict, strict=False, assign=False)
-        if return_config:
-            return model, config
-        return model
+        missing_keys, unexpected_keys = model.load_state_dict(state_dict, strict=False, assign=False)
+        return model, config, missing_keys, unexpected_keys
 
 
     @property
