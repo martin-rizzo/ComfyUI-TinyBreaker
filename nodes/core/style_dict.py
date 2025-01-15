@@ -25,23 +25,31 @@ class StyleDict:
     @classmethod
     def from_file(cls, file_path: str) -> 'StyleDict':
         """
-        Creates an instance of StyleDict from a configuration file.
+        Returns a new instance of StyleDict populated with all styles defined in the file.
         Args:
             file_path (str): The path to the configuration file.
-        Returns:
-            An instance of StyleDict populated with all styles defined in the file.
         """
-
-        # read the configuration file content into a string
-        # but ensure it has a [DEFAULT] section, this trick ensures that
-        # configparser treats the unnamed section as a default section
+        content = ""
         with open(file_path, 'r') as file:
-            config_content = file.read()
-        if "[DEFAULT]" not in config_content:
-            config_content = "[DEFAULT]\n" + config_content
+            content = file.read()
+        return cls.from_string(content)
 
+
+    @classmethod
+    def from_string(cls, config_string: str) -> 'StyleDict':
+        """
+        Returns a new instance of StyleDict populated with all styles defined in the string.
+        Args:
+            config_string (str): A string containing configuration data.
+        """
+        # ensure config has a [DEFAULT] section, this trick ensures that
+        # the parser treats the unnamed first section as a default section
+        if "[DEFAULT]" not in config_string:
+            config_string = "[DEFAULT]\n" + config_string
+
+        # use configparser to extract any defined styles
         config = configparser.ConfigParser(empty_lines_in_values=False)
-        config.read_string(config_content)
+        config.read_string(config_string)
         style_dict = cls()
         for section in config.sections():
             style_dict.add_new_style(section, config.items(section))
@@ -59,8 +67,8 @@ class StyleDict:
         self.styles[style_name] = GenParams.from_raw_options(style_raw_options)
 
 
-    def get_style_params(self, style_name):
-        """Returns the parameters for a given style or an empty `GenParams` if the style is not found."""
+    def get_style_genparams(self, style_name):
+        """Returns the generation parameters for a given style or an empty `GenParams` if the style is not found."""
         return self.styles.get(style_name) or GenParams()
 
 
@@ -71,8 +79,8 @@ class StyleDict:
         del self.styles[style_name]
 
 
-    def list_styles(self):
-        """Returns a list of all styles in the dictionary."""
+    def names(self):
+        """Returns a list of all style names."""
         return list(self.styles.keys())
 
 
