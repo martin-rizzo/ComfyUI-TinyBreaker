@@ -123,9 +123,26 @@ class GenParams(dict):
         Sets the value of a key in the GenParams object.
         If the key already exists, it is replaced with the new value.
         """
-        if not isinstance(key,str):
-            return
         self[key] = value
+
+
+    def add(self, key: str, value, /) -> None:
+        """
+        Mathematically adds a value to an existing key in the GenParams object.
+        If the key does not exist, it is created with the given value.
+        """
+        # forzar que value sea un numero
+        if isinstance(value,str):
+            value = float(value) if value.replace('.', '', 1).isdigit() else 0
+        else:
+            value = float(value)
+
+        # update existing keys or add new ones
+        if key in self:
+            self[key] += value
+        else:
+            self[key] = value
+
 
 
     def set_prefixed(self, prefix: str, var_name: str, value, /) -> None:

@@ -42,8 +42,8 @@ class SetImageCFGAndSeed(GenParams):
                 "size"       : (cls.scales(), {"tooltip": "The relative size for the image. ('Medium' is the size the model was trained on, but 'Large' is recommended)",
                                                "default": DEFAULT_SCALE_NAME
                                                }),
-                "cfg"        : ("FLOAT"     , {"tooltip": "The classifier-free guidance scale to use. (higher values often result in better adherence to the prompt)",
-                                               "default": 3.4, "min": 1.0, "max": 8.0, "step": 0.2, "round": 0.01
+                "cfg_tweak"  : ("FLOAT"     , {"tooltip": "An adjustment to the default classifier-free guidance value. Positive values increase prompt adherence; negative values allow more model freedom. A value of 0.0 uses the default setting.",
+                                               "default": 0.0, "min": -4.0, "max": 4.0, "step": 0.2, "round": 0.01
                                                }),
                 "noise_seed" : ("INT"       , {"tooltip": "The pattern of the random noise to use as starting point for the image generation.",
                                                "default": 1, "min": 0, "max": 0xffffffffffffffff
@@ -63,7 +63,7 @@ class SetImageCFGAndSeed(GenParams):
                              ratio      : str,
                              size       : str,
                              noise_seed : int,
-                             cfg        : float,
+                             cfg_tweak  : float,
                              ):
         genparams = genparams.copy()
         ratio = normalize_aspect_ratio(ratio, orientation=orientation)
@@ -71,7 +71,7 @@ class SetImageCFGAndSeed(GenParams):
         genparams.set("image.scale"       , float( SCALES_BY_NAME.get(size, 1.0) ))
         genparams.set("image.batch_size"  , int(   1                             ))
         genparams.set("base.noise_seed"   , int(   noise_seed                    ))
-        genparams.set("base.cfg"          , float( cfg                           ))
+        genparams.add("base.cfg"          , float( cfg_tweak                     ))
         return (genparams,)
 
 
