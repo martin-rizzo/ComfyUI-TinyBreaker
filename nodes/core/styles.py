@@ -1,6 +1,6 @@
 """
-File    : style_dict.py
-Purpose : Manages a dictionary of image styles to apply to user prompts.
+File    : styles.py
+Purpose : A class for easily managing a set of pre-configured styles
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
 Date    : Dec 20, 2024
 Repo    : https://github.com/martin-rizzo/ComfyUI-TinyBreaker
@@ -16,18 +16,18 @@ import configparser
 from .gen_params import GenParams
 
 
-class StyleDict:
+class Styles:
     """
-    A class to manage a dictionary of styles.
+    A class for managing a set of pre-configured styles.
     """
     def __init__(self):
         self.styles = {}
 
 
     @classmethod
-    def from_file(cls, file_path: str) -> "StyleDict":
+    def from_file(cls, file_path: str) -> "Styles":
         """
-        Returns a new instance of StyleDict populated with all styles defined in the file.
+        Returns a new instance of Styles populated with all styles defined in the file.
         Args:
             file_path (str): The path to the configuration file.
         """
@@ -38,9 +38,9 @@ class StyleDict:
 
 
     @classmethod
-    def from_string(cls, config_string: str) -> "StyleDict":
+    def from_string(cls, config_string: str) -> "Styles":
         """
-        Returns a new instance of StyleDict populated with all styles defined in the string.
+        Returns a new instance of Styles populated with all styles defined in the string.
         Args:
             config_string (str): A string containing configuration data.
         """
@@ -52,26 +52,21 @@ class StyleDict:
         # use configparser to extract any defined styles
         config = configparser.ConfigParser(empty_lines_in_values=False)
         config.read_string(config_string)
-        style_dict = cls()
+        styles = cls()
         for section in config.sections():
-            style_dict.add_new_style(section, config.items(section))
+            styles.add_style(section, config.items(section))
 
-        return style_dict
+        return styles
 
 
-    def add_new_style(self,
-                      style_name       : str,
-                      style_raw_options: tuple[str,str]
-                      ):
+    def add_style(self,
+                  style_name       : str,
+                  style_raw_options: tuple[str,str]
+                  ):
         """Adds a new style to the dictionary"""
         if style_name in self.styles:
             raise ValueError(f"Style '{style_name}' already exists.")
         self.styles[style_name] = GenParams.from_raw_options(style_raw_options)
-
-
-    def get_style_genparams(self, style_name):
-        """Returns the generation parameters for a given style or an empty `GenParams` if the style is not found."""
-        return self.styles.get(style_name) or GenParams()
 
 
     def remove_style(self, style_name):
@@ -81,25 +76,37 @@ class StyleDict:
         del self.styles[style_name]
 
 
+    def get_genparams(self, style_name):
+        """Returns the generation parameters for a given style or an empty `GenParams` if the style is not found."""
+        return self.styles.get(style_name) or GenParams()
+
+
     def names(self):
-        """Returns a list of all style names."""
-        return list(self.styles.keys())
+        """
+        Returns a dynamic view of the names of all contained styles.
+
+        This method returns a view object, similar to `dict.keys()`, that reflects
+        the current set of style names. Changes to the styles will be immediately
+        visible through this view.
+        To obtain a static list of style names, use `list( styles.names() )`.
+        """
+        return self.styles.keys()
 
 
 #---------------------------------------------------------------------------#
 
-def load_all_style_dict_versions(dir_path   : str,
-                                 file_prefix: str="styles",
-                                 extension  : str=".ini"
-                                 ):
+def load_all_styles_versions(dir_path   : str,
+                             file_prefix: str="styles",
+                             extension  : str=".ini"
+                             )-> dict[str, Styles]:
     """
-    Loads multiple StyleDict object from files in the specified directory.
+    Loads multiple Styles object from files in the specified directory.
     Args:
         dir_path    (str): The path to the directory containing style files.
         file_prefix (str): The prefix of the style files. Default is "styles".
         extension   (str): The extension of the style files. Default is ".cfg".
     Returns:
-        dict[str, StyleDict]: A dictionary mapping style names to their respective StyleDict objects.
+        A dictionary mapping style version to their respective Styles objects.
     """
 
     def _extract_number(string:str, prefix_len, suffix_len) -> int:
@@ -119,15 +126,15 @@ def load_all_style_dict_versions(dir_path   : str,
     file_names.sort( key=lambda name: _extract_number(name, file_prefix_len, extension_len) )
 
     # Create an empty dictionary to store the loaded styles
-    style_dicts = {}
+    styles_by_version = {}
 
     # load the styles in reverse order of the list (the first is the last version)
     for file_name in reversed(file_names):
         version_number = _extract_number(file_name, file_prefix_len, extension_len)
         version   = f"{version_number//10}.{version_number%10}" if version_number > 0 else "???"
         file_path = os.path.join(dir_path, file_name)
-        style_dicts[version] = StyleDict.from_file(file_path)
+        styles_by_version[version] = Styles.from_file(file_path)
 
-    return style_dicts
+    return styles_by_version
 
 

@@ -1,6 +1,6 @@
 {
-  "last_node_id": 132,
-  "last_link_id": 357,
+  "last_node_id": 133,
+  "last_link_id": 359,
   "nodes": [
     {
       "id": 90,
@@ -395,7 +395,7 @@
       },
       "widgets_values": [
         true,
-        1077191920831622,
+        697393969863713,
         "randomize",
         3.4
       ]
@@ -1370,42 +1370,6 @@
       ]
     },
     {
-      "id": 125,
-      "type": "PrimitiveNode",
-      "pos": [
-        -450,
-        -130
-      ],
-      "size": [
-        500,
-        640
-      ],
-      "flags": {},
-      "order": 2,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "STRING",
-          "type": "STRING",
-          "links": [
-            356
-          ],
-          "slot_index": 0,
-          "widget": {
-            "name": "custom_styles"
-          }
-        }
-      ],
-      "title": "Custom Styles",
-      "properties": {
-        "Run widget replace on values": false
-      },
-      "widgets_values": [
-        ""
-      ]
-    },
-    {
       "id": 114,
       "type": "SetImage //TinyBreaker",
       "pos": [
@@ -1423,7 +1387,7 @@
         {
           "name": "genparams",
           "type": "GENPARAMS",
-          "link": 357
+          "link": 359
         }
       ],
       "outputs": [
@@ -1485,7 +1449,7 @@
       ]
     },
     {
-      "id": 132,
+      "id": 133,
       "type": "LoadStyle //TinyBreaker",
       "pos": [
         80,
@@ -1500,11 +1464,11 @@
       "mode": 0,
       "inputs": [
         {
-          "name": "custom_styles",
+          "name": "custom_definitions",
           "type": "STRING",
-          "link": 356,
+          "link": 358,
           "widget": {
-            "name": "custom_styles"
+            "name": "custom_definitions"
           },
           "shape": 7
         }
@@ -1514,7 +1478,7 @@
           "name": "genparams",
           "type": "GENPARAMS",
           "links": [
-            357
+            359
           ],
           "slot_index": 0
         }
@@ -1525,7 +1489,43 @@
       "widgets_values": [
         "CUTETOY",
         "0.1",
-        ""
+        "[CUSTOM.1]\nbase.prompt        = \"\"\nbase.negative      = \"\"\nbase.steps         = 12\nbase.cfg           = 3.4\nbase.sampler_name  = \"uni_pc\"\nbase.scheduler     = \"simple\"\nbase.start_at_step = 2\nrefiner.prompt        = \"\"\nrefiner.negative      = \"(worst quality, low quality:1.8)\"\nrefiner.start_at_step = 6\nrefiner.steps         = 11\nrefiner.cfg           = 2.0\nrefiner.sampler_name  = \"deis\"\nrefiner.scheduler     = \"ddim_uniform\"\n\n[CUSTOM.2]\nbase.prompt        = \"\"\nbase.negative      = \"\"\nbase.steps         = 12\nbase.cfg           = 3.4\nbase.sampler_name  = \"uni_pc\"\nbase.scheduler     = \"simple\"\nbase.start_at_step = 2\nrefiner.prompt        = \"\"\nrefiner.negative      = \"(worst quality, low quality:1.8)\"\nrefiner.start_at_step = 6\nrefiner.steps         = 11\nrefiner.cfg           = 2.0\nrefiner.sampler_name  = \"deis\"\nrefiner.scheduler     = \"ddim_uniform\"\n\n"
+      ]
+    },
+    {
+      "id": 125,
+      "type": "PrimitiveNode",
+      "pos": [
+        -450,
+        -130
+      ],
+      "size": [
+        500,
+        640
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": [
+            358
+          ],
+          "slot_index": 0,
+          "widget": {
+            "name": "custom_definitions"
+          }
+        }
+      ],
+      "title": "Custom Styles",
+      "properties": {
+        "Run widget replace on values": false
+      },
+      "widgets_values": [
+        "[CUSTOM.1]\nbase.prompt        = \"\"\nbase.negative      = \"\"\nbase.steps         = 12\nbase.cfg           = 3.4\nbase.sampler_name  = \"uni_pc\"\nbase.scheduler     = \"simple\"\nbase.start_at_step = 2\nrefiner.prompt        = \"\"\nrefiner.negative      = \"(worst quality, low quality:1.8)\"\nrefiner.start_at_step = 6\nrefiner.steps         = 11\nrefiner.cfg           = 2.0\nrefiner.sampler_name  = \"deis\"\nrefiner.scheduler     = \"ddim_uniform\"\n\n[CUSTOM.2]\nbase.prompt        = \"\"\nbase.negative      = \"\"\nbase.steps         = 12\nbase.cfg           = 3.4\nbase.sampler_name  = \"uni_pc\"\nbase.scheduler     = \"simple\"\nbase.start_at_step = 2\nrefiner.prompt        = \"\"\nrefiner.negative      = \"(worst quality, low quality:1.8)\"\nrefiner.start_at_step = 6\nrefiner.steps         = 11\nrefiner.cfg           = 2.0\nrefiner.sampler_name  = \"deis\"\nrefiner.scheduler     = \"ddim_uniform\"\n\n"
       ]
     }
   ],
@@ -1931,16 +1931,16 @@
       "GENPARAMS"
     ],
     [
-      356,
+      358,
       125,
       0,
-      132,
+      133,
       0,
       "STRING"
     ],
     [
-      357,
-      132,
+      359,
+      133,
       0,
       114,
       0,
@@ -1980,8 +1980,8 @@
     "ds": {
       "scale": 0.9831250000000027,
       "offset": [
-        -58.44108876033523,
-        226.63670726233948
+        11.55093574408571,
+        222.0150809547626
       ]
     }
   },
