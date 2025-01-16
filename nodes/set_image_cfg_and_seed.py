@@ -2,7 +2,7 @@
 File    : set_image_and_cfg.py
 Purpose : Node to set image attributes and CFG, packaging them into genparams
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
-Date    : Jan 16, 2024
+Date    : Jan 16, 2025
 Repo    : https://github.com/martin-rizzo/ComfyUI-TinyBreaker
 License : MIT
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -21,7 +21,7 @@ from .common import LANDSCAPE_SIZES_BY_ASPECT_RATIO, \
                     normalize_aspect_ratio
 
 
-class SetImageCFGAndSeed(GenParams):
+class SetImageCFGAndSeed:
     TITLE       = "💪TB | Set Image, CFG and Seed"
     CATEGORY    = "TinyBreaker"
     DESCRIPTION = "Sets the image attributes, CFG and seed values, packaging them into the generation parameters."
