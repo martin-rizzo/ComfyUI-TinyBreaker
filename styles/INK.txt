@@ -1,7 +1,0 @@
-# File: INK.txt
-# Ink-style illustrations with bold outlines and hand-painted details.
-PROMPT  : "Cute pencil illustration{. prompt}. Outlined minimalist with solid colors."
-NEGATIVE: "blurry"
-REFINER : "pixel-art, low-res, blocky"
-# refiner deis steps 6-8
-

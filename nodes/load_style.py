@@ -11,24 +11,13 @@ License : MIT
   (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
-from .core.style_dict   import StyleDict
+from .core.style_dict   import StyleDict, load_all_style_dict_versions
 from .utils.directories import PROJECT_DIR
 from .utils.system      import logger
-_PREDEFINED_STYLE_FILE = "STYLES.cfg"
+_STYLES_DIR = PROJECT_DIR.get_full_path("styles")
 
-# load the pre-defined styles logging any errors that may occur
-try:
-    _PREDEFINED_STYLE_DICT = StyleDict.from_file( PROJECT_DIR.get_full_path(_PREDEFINED_STYLE_FILE) )
-except FileNotFoundError:
-    logger.error(f"The file {_PREDEFINED_STYLE_FILE} was not found.")
-    _PREDEFINED_STYLE_DICT = StyleDict()
-except PermissionError:
-    logger.error(f"You do not have permission to read the file {_PREDEFINED_STYLE_FILE}.")
-    _PREDEFINED_STYLE_DICT = StyleDict()
-except IsADirectoryError:
-    logger.error(f"{_PREDEFINED_STYLE_FILE} is a directory, not a file (!!!).")
-    _PREDEFINED_STYLE_DICT = StyleDict()
-
+# load all versions of the pre-defined styles
+_PREDEFINED_STYLE_DICTS_BY_VERSION = load_all_style_dict_versions(dir_path=_STYLES_DIR)
 
 
 # TODO: rename to SelectStyle (?)
@@ -42,7 +31,8 @@ class LoadStyle:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "selected_style": (cls.style_names(), {"tooltip": "The name of the style to use."}),
+                "version"   : (cls.versions()   , {"tooltip": "The version of the file with the pre-defined styles."}),
+                "style_name": (cls.style_names(), {"tooltip": "The name of the style to use."}),
             },
             "optional": {
                 "custom_styles": ("STRING", {"tooltip": "A string containing a list of custom styles that override the pre-defined styles.",
@@ -57,15 +47,17 @@ class LoadStyle:
     OUTPUT_TOOLTIPS = ("The generation parameters with the selected style loaded.",)
 
 
-    def load_style(self, selected_style, custom_styles=None):
+    def load_style(self, version: str, style_name: str, custom_styles=None):
+
+        # load the pre-defined style
+        predefined_style_dict = _PREDEFINED_STYLE_DICTS_BY_VERSION[version]
+        genparams = predefined_style_dict.get_style_genparams(style_name)
+
         # try to load the user styles from string (if any)
         custom_style_dict = StyleDict.from_string(custom_styles) if custom_styles else None
-
-        # load the selected style from pre-defined styles and combine it with the user style
-        genparams = _PREDEFINED_STYLE_DICT.get_style_genparams(selected_style)
-        if custom_style_dict and selected_style != "none":
-            custom_genparams = custom_style_dict.get_style_genparams(selected_style)
-            genparams.update(custom_genparams)
+        if custom_style_dict and style_name != "none":
+            genparams = genparams.copy()
+            genparams.update( custom_style_dict.get_style_genparams(style_name) )
 
         return (genparams,)
 
@@ -73,5 +65,17 @@ class LoadStyle:
     #__ internal functions ________________________________
 
     @classmethod
+    def versions(cls):
+        return list( _PREDEFINED_STYLE_DICTS_BY_VERSION.keys() )
+
+
+    @classmethod
     def style_names(cls):
-        return _PREDEFINED_STYLE_DICT.names()
+        # return the list of style of the first valid version
+        # (versions are ordered by number, from most recent to oldest)
+        for style_dict in _PREDEFINED_STYLE_DICTS_BY_VERSION.values():
+            names = style_dict.names()
+            if len(names) > 0:
+                return names
+        return []
+

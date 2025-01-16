@@ -11,8 +11,10 @@ License : MIT
   (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
+import os
 import configparser
 from .gen_params import GenParams
+
 
 class StyleDict:
     """
@@ -23,7 +25,7 @@ class StyleDict:
 
 
     @classmethod
-    def from_file(cls, file_path: str) -> 'StyleDict':
+    def from_file(cls, file_path: str) -> "StyleDict":
         """
         Returns a new instance of StyleDict populated with all styles defined in the file.
         Args:
@@ -36,7 +38,7 @@ class StyleDict:
 
 
     @classmethod
-    def from_string(cls, config_string: str) -> 'StyleDict':
+    def from_string(cls, config_string: str) -> "StyleDict":
         """
         Returns a new instance of StyleDict populated with all styles defined in the string.
         Args:
@@ -82,5 +84,55 @@ class StyleDict:
     def names(self):
         """Returns a list of all style names."""
         return list(self.styles.keys())
+
+
+#---------------------------------------------------------------------------#
+
+def load_all_style_dict_versions(dir_path   : str,
+                                 file_prefix: str="styles",
+                                 extension  : str=".ini"
+                                 ):
+    """
+    Loads multiple StyleDict object from files in the specified directory.
+    Args:
+        dir_path    (str): The path to the directory containing style files.
+        file_prefix (str): The prefix of the style files. Default is "styles".
+        extension   (str): The extension of the style files. Default is ".cfg".
+    Returns:
+        dict[str, StyleDict]: A dictionary mapping style names to their respective StyleDict objects.
+    """
+
+    def _extract_number(string:str, prefix_len, suffix_len) -> int:
+        """Extracts a number from a string"""
+        number = string[prefix_len:-suffix_len] if suffix_len else string[prefix_len:]
+        number = number.lstrip('_').lstrip('v') # remove leading 'v' for version strings
+        if not number.isdigit(): return 0
+        return int(number)
+
+    def _extract_version(string:str, prefix_len, suffix_len) -> int:
+        """Extracts a version number from a string"""
+        number = _extract_number(string, prefix_len, suffix_len)
+        if number <= 0: return "vxxx"
+        return f"v{number//10}.{number%10}"
+
+    file_prefix_len = len(file_prefix)
+    extension_len   = len(extension)
+
+    # find all files in the directory that match the specified prefix and extension
+    file_names = [f for f in os.listdir(dir_path) if f.startswith(file_prefix) and f.endswith(extension)]
+
+    # ordenar por el numero que le sigue al prefijo
+    file_names.sort( key=lambda name: _extract_number(name, file_prefix_len, extension_len) )
+
+    # Create an empty dictionary to store the loaded styles
+    style_dicts = {}
+
+    # load the styles in reverse order of the list (the first is the last version)
+    for file_name in reversed(file_names):
+        version   = _extract_version(file_name, file_prefix_len, extension_len)
+        file_path = os.path.join(dir_path, file_name)
+        style_dicts[version] = StyleDict.from_file(file_path)
+
+    return style_dicts
 
 
