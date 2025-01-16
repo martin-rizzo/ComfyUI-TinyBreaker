@@ -72,6 +72,25 @@ comfy_import_node(LoadStyle)
 from .nodes.build_custom_transcoder import BuildCustomTranscoder
 comfy_import_node(BuildCustomTranscoder)
 
+# GenParams Nodes
+
+from .nodes.unified_prompt_editor import UnifiedPromptEditor
+comfy_import_node(UnifiedPromptEditor)
+
+from .nodes.set_float import SetFloat
+comfy_import_node(SetFloat)
+
+from .nodes.set_cfg import SetCFG
+comfy_import_node(SetCFG)
+
+from .nodes.set_image import SetImage
+comfy_import_node(SetImage)
+
+from .nodes.set_image_cfg_and_seed import SetImageCFGAndSeed
+comfy_import_node(SetImageCFGAndSeed)
+
+from .nodes.set_noise_seed import SetNoiseSeed
+comfy_import_node(SetNoiseSeed)
 
 # Operator Nodes
 
@@ -89,21 +108,6 @@ comfy_import_node(PlaceholderReplacer)
 
 from .nodes.prefixed_double_stage_sampler import PrefixedDoubleStageSampler
 comfy_import_node(PrefixedDoubleStageSampler)
-
-from .nodes.set_cfg import SetCFG
-comfy_import_node(SetCFG)
-
-from .nodes.set_float import SetFloat
-comfy_import_node(SetFloat)
-
-from .nodes.set_image import SetImage
-comfy_import_node(SetImage)
-
-from .nodes.set_noise_seed import SetNoiseSeed
-comfy_import_node(SetNoiseSeed)
-
-from .nodes.unified_prompt_editor import UnifiedPromptEditor
-comfy_import_node(UnifiedPromptEditor)
 
 from .nodes.transcode_latent import TranscodeLatent
 comfy_import_node(TranscodeLatent)

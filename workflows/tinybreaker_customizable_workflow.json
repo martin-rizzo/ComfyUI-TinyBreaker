@@ -1,6 +1,6 @@
 {
-  "last_node_id": 133,
-  "last_link_id": 359,
+  "last_node_id": 136,
+  "last_link_id": 363,
   "nodes": [
     {
       "id": 90,
@@ -194,7 +194,7 @@
         180
       ],
       "flags": {},
-      "order": 25,
+      "order": 23,
       "mode": 0,
       "inputs": [
         {
@@ -284,7 +284,7 @@
         50
       ],
       "flags": {},
-      "order": 27,
+      "order": 25,
       "mode": 0,
       "inputs": [
         {
@@ -326,7 +326,7 @@
         198
       ],
       "flags": {},
-      "order": 26,
+      "order": 24,
       "mode": 0,
       "inputs": [
         {
@@ -395,7 +395,7 @@
       },
       "widgets_values": [
         true,
-        697393969863713,
+        45562724505379,
         "randomize",
         3.4
       ]
@@ -448,7 +448,7 @@
         30
       ],
       "flags": {},
-      "order": 23,
+      "order": 21,
       "mode": 0,
       "inputs": [
         {
@@ -483,7 +483,7 @@
         178
       ],
       "flags": {},
-      "order": 24,
+      "order": 22,
       "mode": 0,
       "inputs": [
         {
@@ -573,7 +573,7 @@
         200
       ],
       "flags": {},
-      "order": 28,
+      "order": 26,
       "mode": 0,
       "inputs": [
         {
@@ -659,7 +659,7 @@
         26
       ],
       "flags": {},
-      "order": 31,
+      "order": 29,
       "mode": 0,
       "inputs": [
         {
@@ -693,7 +693,7 @@
         26
       ],
       "flags": {},
-      "order": 30,
+      "order": 28,
       "mode": 0,
       "inputs": [
         {
@@ -729,7 +729,7 @@
         26
       ],
       "flags": {},
-      "order": 29,
+      "order": 27,
       "mode": 0,
       "inputs": [
         {
@@ -801,7 +801,7 @@
         26
       ],
       "flags": {},
-      "order": 17,
+      "order": 15,
       "mode": 0,
       "inputs": [
         {
@@ -837,7 +837,7 @@
         26
       ],
       "flags": {},
-      "order": 18,
+      "order": 16,
       "mode": 0,
       "inputs": [
         {
@@ -873,7 +873,7 @@
         26
       ],
       "flags": {},
-      "order": 22,
+      "order": 20,
       "mode": 0,
       "inputs": [
         {
@@ -911,7 +911,7 @@
         26
       ],
       "flags": {},
-      "order": 20,
+      "order": 18,
       "mode": 0,
       "inputs": [
         {
@@ -947,7 +947,7 @@
         26
       ],
       "flags": {},
-      "order": 19,
+      "order": 17,
       "mode": 0,
       "inputs": [
         {
@@ -1019,7 +1019,7 @@
         50
       ],
       "flags": {},
-      "order": 32,
+      "order": 30,
       "mode": 0,
       "inputs": [
         {
@@ -1164,7 +1164,7 @@
         26
       ],
       "flags": {},
-      "order": 21,
+      "order": 19,
       "mode": 0,
       "inputs": [
         {
@@ -1200,7 +1200,7 @@
         670
       ],
       "flags": {},
-      "order": 34,
+      "order": 32,
       "mode": 0,
       "inputs": [
         {
@@ -1227,7 +1227,7 @@
         26
       ],
       "flags": {},
-      "order": 33,
+      "order": 31,
       "mode": 0,
       "inputs": [
         {
@@ -1252,165 +1252,6 @@
       }
     },
     {
-      "id": 115,
-      "type": "SetFloat //TinyBreaker",
-      "pos": [
-        80,
-        310
-      ],
-      "size": [
-        260,
-        82
-      ],
-      "flags": {},
-      "order": 15,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "link": 352
-        }
-      ],
-      "outputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "links": [],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "SetFloat //TinyBreaker"
-      },
-      "widgets_values": [
-        "base.cfg",
-        3.4
-      ]
-    },
-    {
-      "id": 117,
-      "type": "SetNoiseSeed //TinyBreaker",
-      "pos": [
-        80,
-        430
-      ],
-      "size": [
-        260,
-        110
-      ],
-      "flags": {},
-      "order": 14,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "link": 312
-        }
-      ],
-      "outputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "links": [
-            338
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "SetNoiseSeed //TinyBreaker"
-      },
-      "widgets_values": [
-        "refiner.noise_seed",
-        1,
-        "fixed"
-      ]
-    },
-    {
-      "id": 116,
-      "type": "SetNoiseSeed //TinyBreaker",
-      "pos": [
-        80,
-        160
-      ],
-      "size": [
-        260,
-        110
-      ],
-      "flags": {},
-      "order": 13,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "link": 351
-        }
-      ],
-      "outputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "links": [
-            312,
-            352
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "SetNoiseSeed //TinyBreaker"
-      },
-      "widgets_values": [
-        "base.noise_seed",
-        1,
-        "fixed"
-      ]
-    },
-    {
-      "id": 114,
-      "type": "SetImage //TinyBreaker",
-      "pos": [
-        80,
-        -10
-      ],
-      "size": [
-        260,
-        130
-      ],
-      "flags": {},
-      "order": 12,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "link": 359
-        }
-      ],
-      "outputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "links": [
-            351
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "SetImage //TinyBreaker"
-      },
-      "widgets_values": [
-        false,
-        "3:2 photo",
-        "Large",
-        1
-      ]
-    },
-    {
       "id": 113,
       "type": "UnifiedPromptEditor //TinyBreaker",
       "pos": [
@@ -1422,7 +1263,7 @@
         610
       ],
       "flags": {},
-      "order": 16,
+      "order": 14,
       "mode": 0,
       "inputs": [
         {
@@ -1446,50 +1287,6 @@
       },
       "widgets_values": [
         "A racing car parked in front of a sushi shop during the tumultuous night in Tokyo."
-      ]
-    },
-    {
-      "id": 133,
-      "type": "LoadStyle //TinyBreaker",
-      "pos": [
-        80,
-        -130
-      ],
-      "size": [
-        260,
-        82
-      ],
-      "flags": {},
-      "order": 9,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "custom_definitions",
-          "type": "STRING",
-          "link": 358,
-          "widget": {
-            "name": "custom_definitions"
-          },
-          "shape": 7
-        }
-      ],
-      "outputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "links": [
-            359
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "LoadStyle //TinyBreaker"
-      },
-      "widgets_values": [
-        "CUTETOY",
-        "0.1",
-        "[CUSTOM.1]\nbase.prompt        = \"\"\nbase.negative      = \"\"\nbase.steps         = 12\nbase.cfg           = 3.4\nbase.sampler_name  = \"uni_pc\"\nbase.scheduler     = \"simple\"\nbase.start_at_step = 2\nrefiner.prompt        = \"\"\nrefiner.negative      = \"(worst quality, low quality:1.8)\"\nrefiner.start_at_step = 6\nrefiner.steps         = 11\nrefiner.cfg           = 2.0\nrefiner.sampler_name  = \"deis\"\nrefiner.scheduler     = \"ddim_uniform\"\n\n[CUSTOM.2]\nbase.prompt        = \"\"\nbase.negative      = \"\"\nbase.steps         = 12\nbase.cfg           = 3.4\nbase.sampler_name  = \"uni_pc\"\nbase.scheduler     = \"simple\"\nbase.start_at_step = 2\nrefiner.prompt        = \"\"\nrefiner.negative      = \"(worst quality, low quality:1.8)\"\nrefiner.start_at_step = 6\nrefiner.steps         = 11\nrefiner.cfg           = 2.0\nrefiner.sampler_name  = \"deis\"\nrefiner.scheduler     = \"ddim_uniform\"\n\n"
       ]
     },
     {
@@ -1526,6 +1323,133 @@
       },
       "widgets_values": [
         "[CUSTOM.1]\nbase.prompt        = \"\"\nbase.negative      = \"\"\nbase.steps         = 12\nbase.cfg           = 3.4\nbase.sampler_name  = \"uni_pc\"\nbase.scheduler     = \"simple\"\nbase.start_at_step = 2\nrefiner.prompt        = \"\"\nrefiner.negative      = \"(worst quality, low quality:1.8)\"\nrefiner.start_at_step = 6\nrefiner.steps         = 11\nrefiner.cfg           = 2.0\nrefiner.sampler_name  = \"deis\"\nrefiner.scheduler     = \"ddim_uniform\"\n\n[CUSTOM.2]\nbase.prompt        = \"\"\nbase.negative      = \"\"\nbase.steps         = 12\nbase.cfg           = 3.4\nbase.sampler_name  = \"uni_pc\"\nbase.scheduler     = \"simple\"\nbase.start_at_step = 2\nrefiner.prompt        = \"\"\nrefiner.negative      = \"(worst quality, low quality:1.8)\"\nrefiner.start_at_step = 6\nrefiner.steps         = 11\nrefiner.cfg           = 2.0\nrefiner.sampler_name  = \"deis\"\nrefiner.scheduler     = \"ddim_uniform\"\n\n"
+      ]
+    },
+    {
+      "id": 117,
+      "type": "SetNoiseSeed //TinyBreaker",
+      "pos": [
+        80,
+        220
+      ],
+      "size": [
+        260,
+        110
+      ],
+      "flags": {},
+      "order": 13,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 363
+        }
+      ],
+      "outputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "links": [
+            338
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "SetNoiseSeed //TinyBreaker"
+      },
+      "widgets_values": [
+        "refiner.noise_seed",
+        1,
+        "fixed"
+      ]
+    },
+    {
+      "id": 133,
+      "type": "LoadStyle //TinyBreaker",
+      "pos": [
+        80,
+        -120
+      ],
+      "size": [
+        260,
+        82
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "custom_definitions",
+          "type": "STRING",
+          "link": 358,
+          "widget": {
+            "name": "custom_definitions"
+          },
+          "shape": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "links": [
+            362
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadStyle //TinyBreaker"
+      },
+      "widgets_values": [
+        "CUTETOY",
+        "0.1",
+        "[CUSTOM.1]\nbase.prompt        = \"\"\nbase.negative      = \"\"\nbase.steps         = 12\nbase.cfg           = 3.4\nbase.sampler_name  = \"uni_pc\"\nbase.scheduler     = \"simple\"\nbase.start_at_step = 2\nrefiner.prompt        = \"\"\nrefiner.negative      = \"(worst quality, low quality:1.8)\"\nrefiner.start_at_step = 6\nrefiner.steps         = 11\nrefiner.cfg           = 2.0\nrefiner.sampler_name  = \"deis\"\nrefiner.scheduler     = \"ddim_uniform\"\n\n[CUSTOM.2]\nbase.prompt        = \"\"\nbase.negative      = \"\"\nbase.steps         = 12\nbase.cfg           = 3.4\nbase.sampler_name  = \"uni_pc\"\nbase.scheduler     = \"simple\"\nbase.start_at_step = 2\nrefiner.prompt        = \"\"\nrefiner.negative      = \"(worst quality, low quality:1.8)\"\nrefiner.start_at_step = 6\nrefiner.steps         = 11\nrefiner.cfg           = 2.0\nrefiner.sampler_name  = \"deis\"\nrefiner.scheduler     = \"ddim_uniform\"\n\n"
+      ]
+    },
+    {
+      "id": 136,
+      "type": "SetImageCFGAndSeed //TinyBreaker",
+      "pos": [
+        80,
+        0
+      ],
+      "size": [
+        260,
+        180
+      ],
+      "flags": {},
+      "order": 12,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 362
+        }
+      ],
+      "outputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "links": [
+            363
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "SetImageCFGAndSeed //TinyBreaker"
+      },
+      "widgets_values": [
+        "Portrait",
+        "3:2 photo",
+        "Large",
+        3.4000000000000004,
+        1,
+        "fixed"
       ]
     }
   ],
@@ -1673,14 +1597,6 @@
       76,
       5,
       "LATENT"
-    ],
-    [
-      312,
-      116,
-      0,
-      117,
-      0,
-      "GENPARAMS"
     ],
     [
       314,
@@ -1915,22 +1831,6 @@
       "IMAGE"
     ],
     [
-      351,
-      114,
-      0,
-      116,
-      0,
-      "GENPARAMS"
-    ],
-    [
-      352,
-      116,
-      0,
-      115,
-      0,
-      "GENPARAMS"
-    ],
-    [
       358,
       125,
       0,
@@ -1939,10 +1839,18 @@
       "STRING"
     ],
     [
-      359,
+      362,
       133,
       0,
-      114,
+      136,
+      0,
+      "GENPARAMS"
+    ],
+    [
+      363,
+      136,
+      0,
+      117,
       0,
       "GENPARAMS"
     ]
@@ -1980,8 +1888,8 @@
     "ds": {
       "scale": 0.9831250000000027,
       "offset": [
-        11.55093574408571,
-        222.0150809547626
+        36.76886796352279,
+        224.7114448716838
       ]
     }
   },
