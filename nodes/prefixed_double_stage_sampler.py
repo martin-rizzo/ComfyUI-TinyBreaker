@@ -110,7 +110,7 @@ class PrefixedDoubleStageSampler:
                 "positive"    : ("CONDITIONING", ),
                 "negative"    : ("CONDITIONING", ),
                 "latent_image": ("LATENT"      , ),
-                "noise_seed"  : ("INT"         , {"default": 0  , "min": 0  , "max": 0xffffffffffffffff}),
+                "noise_seed"  : ("INT"         , {"default": 1  , "min": 1  , "max": 0xffffffffffffffff}),
                 "cfg"         : ("FLOAT"       , {"default": 8.0, "min": 0.0, "max": 100.0, "step":0.1, "round": 0.01}),
                 "sampler"     : (QUALITY_LEVEL , {"default": QUALITY_LEVEL[0]}),
                 "refiner"     : (QUALITY_LEVEL , {"default": QUALITY_LEVEL[0]}),

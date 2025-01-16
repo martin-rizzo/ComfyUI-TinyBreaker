@@ -46,7 +46,7 @@ class SetImageCFGAndSeed(GenParams):
                                                "default": 0.0, "min": -4.0, "max": 4.0, "step": 0.2, "round": 0.01
                                                }),
                 "noise_seed" : ("INT"       , {"tooltip": "The pattern of the random noise to use as starting point for the image generation.",
-                                               "default": 1, "min": 0, "max": 0xffffffffffffffff
+                                               "default": 1, "min": 1, "max": 0xffffffffffffffff
                                                }),
                 },
             }

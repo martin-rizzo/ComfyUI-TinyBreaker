@@ -25,7 +25,7 @@ class SetNoiseSeed:
             "required": {
                 "genparams" : ("GENPARAMS", {"tooltip": "The original generation parameters which will be updated."}),
                 "key"       : ("STRING"   , {"tooltip": "The full key of the parameter to modify. This key must include the prefix if any."}),
-                "noise_seed": ("INT"      , {"tooltip": "The noise seed number to apply.", "default": 1, "min": 0, "max": 0xffffffffffffffff}),
+                "noise_seed": ("INT"      , {"tooltip": "The noise seed number to apply.", "default": 1, "min": 1, "max": 0xffffffffffffffff}),
             },
         }
 

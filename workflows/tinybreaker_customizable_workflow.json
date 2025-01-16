@@ -395,7 +395,7 @@
       },
       "widgets_values": [
         true,
-        719490057953034,
+        174421661287863,
         "randomize",
         3.4
       ]
@@ -1370,46 +1370,6 @@
       ]
     },
     {
-      "id": 117,
-      "type": "SetNoiseSeed //TinyBreaker",
-      "pos": [
-        80,
-        220
-      ],
-      "size": [
-        280,
-        110
-      ],
-      "flags": {},
-      "order": 13,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "link": 366
-        }
-      ],
-      "outputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "links": [
-            338
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "SetNoiseSeed //TinyBreaker"
-      },
-      "widgets_values": [
-        "refiner.noise_seed",
-        1,
-        "fixed"
-      ]
-    },
-    {
       "id": 137,
       "type": "SetImageCFGAndSeed //TinyBreaker",
       "pos": [
@@ -1448,6 +1408,46 @@
         "3:2 photo",
         "Large",
         0,
+        1,
+        "fixed"
+      ]
+    },
+    {
+      "id": 117,
+      "type": "SetNoiseSeed //TinyBreaker",
+      "pos": [
+        80,
+        220
+      ],
+      "size": [
+        280,
+        110
+      ],
+      "flags": {},
+      "order": 13,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 366
+        }
+      ],
+      "outputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "links": [
+            338
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "SetNoiseSeed //TinyBreaker"
+      },
+      "widgets_values": [
+        "refiner.noise_seed",
         1,
         "fixed"
       ]
@@ -1888,8 +1888,8 @@
     "ds": {
       "scale": 0.9831250000000027,
       "offset": [
-        36.76886796352279,
-        224.7114448716838
+        42.95346550152169,
+        238.59874423017675
       ]
     }
   },
