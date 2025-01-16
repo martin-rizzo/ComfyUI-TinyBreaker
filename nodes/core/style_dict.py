@@ -109,12 +109,6 @@ def load_all_style_dict_versions(dir_path   : str,
         if not number.isdigit(): return 0
         return int(number)
 
-    def _extract_version(string:str, prefix_len, suffix_len) -> int:
-        """Extracts a version number from a string"""
-        number = _extract_number(string, prefix_len, suffix_len)
-        if number <= 0: return "vxxx"
-        return f"v{number//10}.{number%10}"
-
     file_prefix_len = len(file_prefix)
     extension_len   = len(extension)
 
@@ -129,7 +123,8 @@ def load_all_style_dict_versions(dir_path   : str,
 
     # load the styles in reverse order of the list (the first is the last version)
     for file_name in reversed(file_names):
-        version   = _extract_version(file_name, file_prefix_len, extension_len)
+        version_number = _extract_number(file_name, file_prefix_len, extension_len)
+        version   = f"{version_number//10}.{version_number%10}" if version_number > 0 else "???"
         file_path = os.path.join(dir_path, file_name)
         style_dicts[version] = StyleDict.from_file(file_path)
 

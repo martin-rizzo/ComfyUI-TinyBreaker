@@ -31,8 +31,8 @@ class LoadStyle:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "version"   : (cls.versions()   , {"tooltip": "The version of the file with the pre-defined styles."}),
                 "style_name": (cls.style_names(), {"tooltip": "The name of the style to use."}),
+                "version"   : (cls.versions()   , {"tooltip": "The version of the file with the pre-defined styles."}),
             },
             "optional": {
                 "custom_styles": ("STRING", {"tooltip": "A string containing a list of custom styles that override the pre-defined styles.",
