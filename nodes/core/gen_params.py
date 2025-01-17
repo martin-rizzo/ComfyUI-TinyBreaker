@@ -10,6 +10,21 @@ License : MIT
  ComfyUI nodes for experimenting with the capabilities of the TinyBreaker model.
   (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+Some common parameters stored in GenParams object:
+    "user.prompt"        (str): The prompt the user entered in the UI.
+    "user.negative"      (str): The negative prompt the user entered in the UI.
+    "base.prompt"        (str): The prompt used for the base model.
+    "base.negative"      (str): The negative prompt used for the base model.
+    "base.start_at_step" (int): The step at which the sampler starts the diffusion process.
+    "base.steps"         (int): The total number of steps the sampler will take.
+    "base.cfg"         (float): The guidance scale used by the sampler of the base model.
+    "base.noise_seed"    (int): The seed used for initial noise by the sampler of the base model.
+    "base.sampler_name"  (str): The name of the sampler of the base model.
+    "base.scheduler"     (str): The name of the scheduler used by the sampler of the base model.
+    "refiner.prompt"     (str): The prompt used for the refiner model.
+    "refiner.negative"   (str): The negative prompt used for the refiner model.
+    ....
 """
 
 def _is_prompt(key: str):
@@ -131,7 +146,7 @@ class GenParams(dict):
         Mathematically adds a value to an existing key in the GenParams object.
         If the key does not exist, it is created with the given value.
         """
-        # forzar que value sea un numero
+        # force `value` to be a numeric value
         if isinstance(value,str):
             value = float(value) if value.replace('.', '', 1).isdigit() else 0
         else:

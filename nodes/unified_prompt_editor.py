@@ -36,9 +36,19 @@ class UnifiedPromptEditor:
 
     def parse_text(self, genparams, text):
         template_params = genparams
-        data_params = GenParams()
-        data_params.set("base.prompt"   , text)
-        data_params.set("refiner.prompt", text)
 
+        prompt   = text
+        negative = ""
+
+        # create a new GenParams applying the user's parameters to the template
+        data_params = GenParams()
+        data_params.set("base.prompt"     , prompt  )
+        data_params.set("base.negative"   , negative)
+        data_params.set("refiner.prompt"  , prompt  )
+        data_params.set("refiner.negative", negative)
         genparams = GenParams.from_template_and_data(template_params, data_params)
+
+        # before returning, store the original user's prompts for future reference
+        genparams.set("user.prompt"  , prompt)
+        genparams.set("user.negative", negative)
         return (genparams,)

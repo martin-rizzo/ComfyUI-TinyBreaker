@@ -1,6 +1,6 @@
 """
 File    : common.py
-Purpose : Common constants and functions used by all nodes.
+Purpose : Common functions and constants that can be used by any node
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
 Date    : Jan 16, 2025
 Repo    : https://github.com/martin-rizzo/ComfyUI-TinyBreaker
@@ -11,6 +11,83 @@ License : MIT
   (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
+import json
+import time
+from PIL.PngImagePlugin import PngInfo
+from .core.gen_params   import GenParams
+
+#--------------------------- VARIABLE EXPANSION ----------------------------#
+
+def find_next_variable(string: str) -> tuple[str, str, str]:
+    """
+    Finds the next variable in a string.
+
+    This function searches for the next variable in a string and returns a
+    tuple containing the text before, the variable name and the text after.
+    If the variable name returned is `END` then there are no more variables
+    and the parsing is complete.
+
+    Args:
+        string: The string to search for the next variable.
+    Returns:
+        A tuple containing the text before, the variable name and the text after.
+    """
+    text    , _ , remainder = string.partition("%")
+    var_name, ct, remainder = remainder.partition("%")
+    return (text, var_name, remainder) if ct else (string, "END", "")
+
+
+def expand_variables(template  : str,
+                     time      : time.struct_time = None,
+                     extra_vars: dict             = None
+                     ) -> str:
+    """
+    Returns a string that is the copy of `template` but with its variables expanded
+    Args:
+        template  : The string containing the variables to expand.
+        time      : The current time.
+        extra_vars: A dictionary of additional expandable variables with their values.
+    """
+    TIME_VARS = ("year", "month", "day", "hour", "minute", "second")
+    output = ""
+
+    while True:
+        value = None
+        text, var, template = find_next_variable(template)
+
+        # if `%END%` (or no more text to parse) then exit the loop
+        if var == "END":
+            output += text
+            break
+        # try to resolve time variables
+        if (time is not None) and (var in TIME_VARS):
+            if   var == "year"  : value = str(time.tm_year)
+            elif var == "month" : value = str(time.tm_mon ).zfill(2)
+            elif var == "day"   : value = str(time.tm_mday).zfill(2)
+            elif var == "hour"  : value = str(time.tm_hour).zfill(2)
+            elif var == "minute": value = str(time.tm_min ).zfill(2)
+            elif var == "second": value = str(time.tm_sec ).zfill(2)
+        # try to resolve full date variable
+        elif (time is not None) and var.startswith("date:"):
+            value = var[5:]
+            value = value.replace("yyyy", str(time.tm_year))
+            value = value.replace("yy"  , str(time.tm_year)[-2:])
+            value = value.replace("MM"  , str(time.tm_mon ).zfill(2))
+            value = value.replace("dd"  , str(time.tm_mday).zfill(2))
+            value = value.replace("hh"  , str(time.tm_hour).zfill(2))
+            value = value.replace("mm"  , str(time.tm_min ).zfill(2))
+            value = value.replace("ss"  , str(time.tm_sec ).zfill(2))
+        # try to resolve extra variables
+        elif (extra_vars is not None) and (var in extra_vars):
+            value = str(extra_vars[var])[:16]
+
+        # if a value was found, add it to the output,
+        # otherwise add the variable name without modification
+        output += f"{text}{value}" if value is not None else f"{text}%{var}%"
+
+    return output
+
+#-------------------------- IMAGE SCALES & RATIOS --------------------------#
 
 LANDSCAPE_SIZES_BY_ASPECT_RATIO = {
     "1:1 square"      : (1024.0, 1024.0),
@@ -63,4 +140,73 @@ def normalize_aspect_ratio(aspect_ratio: str, *, orientation: str = DEFAULT_ORIE
         width, height = height, width
 
     return f"{width}:{height}"
+
+#------------------------------ PNG METADATA -------------------------------#
+
+def create_a1111_params(genparams   : GenParams | None,
+                        image_width : int,
+                        image_height: int
+                        ) -> str:
+    """
+    Return a string containing generation parameters in A1111 format.
+    Args:
+        genparams   : A GenParams dictionary containing the original generation parameters.
+        image_width : The width of the generated image.
+        image_height: The height of the generated image.
+    """
+    if not genparams:
+        return ""
+
+    def a1111_normalized_string(text: str) -> str:
+        return text.strip().replace("\n", " ").replace("\r", " ").replace("\t", " ")
+
+    # extract and clean up parameters from the GenParams dictionary
+    positive      = a1111_normalized_string( genparams.get("user.prompt"  , "") )
+    negative      = a1111_normalized_string( genparams.get("user.negative", "") )
+    base_steps    = max(0, genparams.get("base.steps"   ,0) - genparams.get("base.start_at_step"   ,0))
+    refiner_steps = max(0, genparams.get("refiner.steps",0) - genparams.get("refiner.start_at_step",0))
+    sampler       = genparams.get("base.sampler_name")
+    cfg_scale     = genparams.get("base.cfg")
+    seed          = genparams.get("base.noise_seed")
+    width         = image_width
+    height        = image_height
+
+    # build A1111 params string
+    a1111_params = f"{positive}\nNegative prompt: {negative}\nSteps: {base_steps + refiner_steps}, "
+    if sampler:
+        a1111_params += f"Sampler: {sampler}, "
+    if cfg_scale:
+        a1111_params += f"CFG scale: {cfg_scale}, "
+    if seed:
+        a1111_params += f"Seed: {seed}, "
+    if width and height:
+        a1111_params += f"Size: {image_width}x{image_height}, "
+
+    # remove the trailing comma and return it
+    a1111_params = a1111_params.strip().rstrip(",")
+    return a1111_params
+
+
+def create_png_info(*,# keyword-only arguments #
+                    prompt       : dict,
+                    extra_pnginfo: dict = None,
+                    a1111_params : str  = None
+                    ) -> PngInfo | None:
+    """
+    Return a PngInfo object containing the provided generation parameters.
+    PngInfo is a class that is used to store metadata in PNG files.
+    It is used by this node to embed generation parameters in PNG files.
+    """
+    if not any([prompt, extra_pnginfo, a1111_params]):
+        return None
+
+    metadata = PngInfo()
+    if a1111_params:
+        metadata.add_text("parameters", a1111_params)
+    if prompt:
+        metadata.add_text("prompt", json.dumps(prompt))
+    if extra_pnginfo:
+        for key, content_dict in extra_pnginfo.items():
+            metadata.add_text(key, json.dumps(content_dict))
+    return metadata
 

@@ -115,6 +115,8 @@ comfy_import_node(TranscodeLatent)
 from .nodes.transcode_latent_two_steps import TranscodeLatentTwoSteps
 comfy_import_node(TranscodeLatentTwoSteps)
 
+from .nodes.save_image import SaveImage
+comfy_import_node(SaveImage)
 
 # Development Nodes
 
