@@ -17,15 +17,13 @@ import numpy as np
 import folder_paths
 from PIL                import Image
 from .core.gen_params   import GenParams
-from .common            import create_a1111_params, \
-                               create_png_info,     \
-                               expand_variables
+from .common            import create_a1111_params, create_png_info, expand_variables
 
 
 class SaveImage:
     TITLE       = "💪TB | Save Image"
     CATEGORY    = "TinyBreaker"
-    DESCRIPTION = "Saves images embedding A1111/CivitAI metadata within PNG files. This facilitates easy extraction of prompts and settings through widely available tools."
+    DESCRIPTION = "Saves generated images along with A1111/CivitAI metadata within PNG files. This facilitates easy extraction of prompts and settings through widely available tools."
     OUTPUT_NODE = True
 
     @classmethod
