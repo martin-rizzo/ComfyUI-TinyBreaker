@@ -143,6 +143,53 @@ def normalize_aspect_ratio(aspect_ratio: str, *, orientation: str = DEFAULT_ORIE
 
 #------------------------------ PNG METADATA -------------------------------#
 
+A1111_SAMPLER_BY_COMFY_NAME = {
+    "euler"                    : "Euler",
+    "euler_cfg_pp"             : "Euler",
+    "euler_ancestral"          : "Euler a",
+    "euler_ancestral_cfg_pp"   : "Euler a",
+    "heun"                     : "Heun",
+    "heunpp2"                  : "Heun",
+    "dpm_2"                    : "DPM2",
+    "dpm_2_ancestral"          : "DPM2 a",
+    "lms"                      : "LMS",
+    "dpm_fast"                 : "DPM fast",
+    "dpm_adaptive"             : "DPM adaptive",
+    "dpmpp_2s_ancestral"       : "DPM++ 2S a",
+    "dpmpp_2s_ancestral_cfg_pp": "DPM++ 2S a",
+    "dpmpp_sde"                : "DPM++ SDE",
+    "dpmpp_sde_gpu"            : "DPM++ SDE",
+    "dpmpp_2m"                 : "DPM++ 2M",
+    "dpmpp_2m_cfg_pp"          : "DPM++ 2M",
+    "dpmpp_2m_sde"             : "DPM++ 2M SDE",
+    "dpmpp_2m_sde_gpu"         : "DPM++ 2M SDE",
+    "dpmpp_3m_sde"             : "DPM++ 3M SDE",
+    "dpmpp_3m_sde_gpu"         : "DPM++ 3M SDE",
+    "lcm"                      : "LCM",
+    "ddim"                     : "DDIM",
+    "uni_pc"                   : "UniPC",
+    "uni_pc_bh2"               : "UniPC",
+#    "ddpm"                     : "",
+#    "ipndm"                    : "",
+#    "ipndm_v"                  : "",
+#    "deis"                     : "",
+#    "res_multistep"            : "",
+#    "res_multistep_cfg_pp"     : "",
+}
+
+A1111_SCHEDULER_BY_COMFY_NAME = {
+    "normal"          : "",
+    "karras"          : " Karras",
+    "exponential"     : " Exponential",
+#    "sgm_uniform"     : "",
+#    "simple"          : "",
+#    "ddim_uniform"    : "",
+#    "beta"            : "",
+#    "linear_quadratic": "",
+#    "kl_optimal"      : "",
+}
+
+
 def create_a1111_params(genparams   : GenParams | None,
                         image_width : int,
                         image_height: int
@@ -157,15 +204,23 @@ def create_a1111_params(genparams   : GenParams | None,
     if not genparams:
         return ""
 
-    def a1111_normalized_string(text: str) -> str:
+    def a1111_normalized_string(text: str, /) -> str:
         return text.strip().replace("\n", " ").replace("\r", " ").replace("\t", " ")
+
+    def a1111_sampler_name(comfy_sampler: str, comfy_scheduler: str, /) -> str:
+        if not comfy_sampler:
+            return ""
+        a1111_sampler =  A1111_SAMPLER_BY_COMFY_NAME.get(comfy_sampler, "Euler")
+        a1111_sampler += A1111_SCHEDULER_BY_COMFY_NAME.get(comfy_scheduler or "normal", "")
+        return a1111_sampler
+
 
     # extract and clean up parameters from the GenParams dictionary
     positive      = a1111_normalized_string( genparams.get("user.prompt"  , "") )
     negative      = a1111_normalized_string( genparams.get("user.negative", "") )
     base_steps    = max(0, genparams.get("base.steps"   ,0) - genparams.get("base.start_at_step"   ,0))
     refiner_steps = max(0, genparams.get("refiner.steps",0) - genparams.get("refiner.start_at_step",0))
-    sampler       = genparams.get("base.sampler_name")
+    sampler       = a1111_sampler_name( genparams.get("base.sampler_name"), genparams.get("base.scheduler") )
     cfg_scale     = genparams.get("base.cfg")
     seed          = genparams.get("base.noise_seed")
     width         = image_width
