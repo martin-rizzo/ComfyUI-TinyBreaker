@@ -1,6 +1,6 @@
 {
-  "last_node_id": 146,
-  "last_link_id": 376,
+  "last_node_id": 148,
+  "last_link_id": 378,
   "nodes": [
     {
       "id": 90,
@@ -395,7 +395,7 @@
       },
       "widgets_values": [
         true,
-        721718895183893,
+        29959047642082,
         "randomize",
         3.4
       ]
@@ -1189,46 +1189,6 @@
       }
     },
     {
-      "id": 117,
-      "type": "SetNoiseSeed //TinyBreaker",
-      "pos": [
-        80,
-        220
-      ],
-      "size": [
-        280,
-        110
-      ],
-      "flags": {},
-      "order": 13,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "link": 366
-        }
-      ],
-      "outputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "links": [
-            338
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "SetNoiseSeed //TinyBreaker"
-      },
-      "widgets_values": [
-        "refiner.noise_seed",
-        1,
-        "fixed"
-      ]
-    },
-    {
       "id": 130,
       "type": "Reroute",
       "pos": [
@@ -1282,7 +1242,7 @@
         {
           "name": "genparams",
           "type": "GENPARAMS",
-          "link": 338
+          "link": 378
         }
       ],
       "outputs": [
@@ -1364,7 +1324,7 @@
           "name": "genparams",
           "type": "GENPARAMS",
           "links": [
-            366
+            377
           ],
           "slot_index": 0
         }
@@ -1422,7 +1382,7 @@
       "widgets_values": [
         "CUTETOY",
         "last",
-        ""
+        "[CUSTOM.1]\nbase.prompt        = \"\"\nbase.negative      = \"\"\nbase.steps         = 12\nbase.steps_start   = 2\nbase.cfg           = 3.4\nbase.sampler_name  = \"uni_pc\"\nbase.scheduler     = \"simple\"\nrefiner.prompt        = \"\"\nrefiner.negative      = \"(worst quality, low quality:1.8)\"\nrefiner.steps         = 11\nrefiner.steps_start   = 6\nrefiner.cfg           = 2.0\nrefiner.sampler_name  = \"deis\"\nrefiner.scheduler     = \"ddim_uniform\"\n\n[CUSTOM.2]\nbase.prompt        = \"\"\nbase.negative      = \"\"\nbase.steps         = 12\nbase.steps_start   = 2\nbase.cfg           = 3.4\nbase.sampler_name  = \"uni_pc\"\nbase.scheduler     = \"simple\"\nrefiner.prompt        = \"\"\nrefiner.negative      = \"(worst quality, low quality:1.8)\"\nrefiner.steps         = 11\nrefiner.steps_start   = 6\nrefiner.cfg           = 2.0\nrefiner.sampler_name  = \"deis\"\nrefiner.scheduler     = \"ddim_uniform\"\n"
       ]
     },
     {
@@ -1453,11 +1413,51 @@
           }
         }
       ],
+      "title": "Custom Styles",
       "properties": {
         "Run widget replace on values": false
       },
       "widgets_values": [
-        ""
+        "[CUSTOM.1]\nbase.prompt        = \"\"\nbase.negative      = \"\"\nbase.steps         = 12\nbase.steps_start   = 2\nbase.cfg           = 3.4\nbase.sampler_name  = \"uni_pc\"\nbase.scheduler     = \"simple\"\nrefiner.prompt        = \"\"\nrefiner.negative      = \"(worst quality, low quality:1.8)\"\nrefiner.steps         = 11\nrefiner.steps_start   = 6\nrefiner.cfg           = 2.0\nrefiner.sampler_name  = \"deis\"\nrefiner.scheduler     = \"ddim_uniform\"\n\n[CUSTOM.2]\nbase.prompt        = \"\"\nbase.negative      = \"\"\nbase.steps         = 12\nbase.steps_start   = 2\nbase.cfg           = 3.4\nbase.sampler_name  = \"uni_pc\"\nbase.scheduler     = \"simple\"\nrefiner.prompt        = \"\"\nrefiner.negative      = \"(worst quality, low quality:1.8)\"\nrefiner.steps         = 11\nrefiner.steps_start   = 6\nrefiner.cfg           = 2.0\nrefiner.sampler_name  = \"deis\"\nrefiner.scheduler     = \"ddim_uniform\"\n"
+      ]
+    },
+    {
+      "id": 148,
+      "type": "SetImageTweaks //TinyBreaker",
+      "pos": [
+        80,
+        220
+      ],
+      "size": [
+        280,
+        106
+      ],
+      "flags": {},
+      "order": 13,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 377
+        }
+      ],
+      "outputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "links": [
+            378
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "SetImageTweaks //TinyBreaker"
+      },
+      "widgets_values": [
+        1,
+        "none",
+        0
       ]
     }
   ],
@@ -1759,14 +1759,6 @@
       "*"
     ],
     [
-      338,
-      117,
-      0,
-      113,
-      0,
-      "GENPARAMS"
-    ],
-    [
       340,
       56,
       0,
@@ -1823,14 +1815,6 @@
       "*"
     ],
     [
-      366,
-      137,
-      0,
-      117,
-      0,
-      "GENPARAMS"
-    ],
-    [
       369,
       27,
       0,
@@ -1869,6 +1853,22 @@
       146,
       0,
       "STRING"
+    ],
+    [
+      377,
+      137,
+      0,
+      148,
+      0,
+      "GENPARAMS"
+    ],
+    [
+      378,
+      148,
+      0,
+      113,
+      0,
+      "GENPARAMS"
     ]
   ],
   "groups": [
@@ -1904,8 +1904,8 @@
     "ds": {
       "scale": 0.983125000000005,
       "offset": [
-        15.857190885016362,
-        243.35822593466335
+        63.66392960084595,
+        215.89478028939914
       ]
     }
   },

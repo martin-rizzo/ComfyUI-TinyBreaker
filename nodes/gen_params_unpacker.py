@@ -114,11 +114,28 @@ class GenParamsUnpacker:
                           ) -> torch.Tensor:
         """Calculates the sigma values for a given model and scheduler."""
 
-        steps = min(steps, steps_end)
+        steps       = min(steps, steps_end)
+        steps_start = max(0, steps_start)
+
+        # 'steps_nfactor' modulates the number of steps. A positive value signifies
+        # a proportional increase, while a negative value indicates a proportional
+        # decrease in the total steps.
+        # Note: The specific effect is context-dependent and may require careful adjustment.
+        if steps_nfactor > 0:
+            nstart = min( steps_nfactor, steps_start )
+            nend   = steps_nfactor - nstart
+        elif steps_nfactor < 0:
+            nstart = steps_nfactor
+            nend   = 0
+        else:
+            nstart, nend = 0, 0
+        steps_start -= nstart
+        steps_end   += nend
+        steps       += nend
 
         # if no steps are specified, return an empty tensor
         # this is useful when no sampling should be performed
-        if steps <= 0 or steps_start >= steps_end:
+        if steps <= 0 or steps_start >= steps:
             return torch.FloatTensor([])
 
         # if discard was requested,
@@ -134,7 +151,7 @@ class GenParamsUnpacker:
         sigmas = sigmas[-( steps+1 ):]
 
         # discard all sigmas before the specified start step
-        steps_start = max( 0, min(steps_start, len(sigmas) ))
+        steps_start = min(steps_start, len(sigmas))
         if steps_start > 0:
             sigmas = sigmas[steps_start:]
 

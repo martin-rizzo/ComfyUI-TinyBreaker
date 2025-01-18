@@ -14,7 +14,7 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 from .core.gen_params import GenParams
 
 _NFACTORS_BY_REFINAMENT = {
-    "none"    : -1000,
+    "disabled": -10000,
     "minimal" : -2,
     "low"     : -1,
     "normal"  : 0,
