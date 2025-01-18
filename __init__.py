@@ -92,6 +92,9 @@ comfy_import_node(SetImageCFGAndSeed)
 from .nodes.set_noise_seed import SetNoiseSeed
 comfy_import_node(SetNoiseSeed)
 
+from .nodes.set_image_tweaks import SetImageTweaks
+comfy_import_node(SetImageTweaks)
+
 # Operator Nodes
 
 from .nodes.empty_latent_image import EmptyLatentImage
