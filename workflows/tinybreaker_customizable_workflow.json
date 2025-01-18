@@ -1,6 +1,6 @@
 {
-  "last_node_id": 137,
-  "last_link_id": 366,
+  "last_node_id": 143,
+  "last_link_id": 368,
   "nodes": [
     {
       "id": 90,
@@ -395,7 +395,7 @@
       },
       "widgets_values": [
         true,
-        174421661287863,
+        630077810412628,
         "randomize",
         3.4
       ]
@@ -1252,42 +1252,6 @@
       }
     },
     {
-      "id": 125,
-      "type": "PrimitiveNode",
-      "pos": [
-        -450,
-        -130
-      ],
-      "size": [
-        500,
-        640
-      ],
-      "flags": {},
-      "order": 2,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "STRING",
-          "type": "STRING",
-          "links": [
-            358
-          ],
-          "slot_index": 0,
-          "widget": {
-            "name": "custom_definitions"
-          }
-        }
-      ],
-      "title": "Custom Styles",
-      "properties": {
-        "Run widget replace on values": false
-      },
-      "widgets_values": [
-        "[CUSTOM.1]\nbase.prompt        = \"\"\nbase.negative      = \"\"\nbase.steps         = 12\nbase.cfg           = 3.4\nbase.sampler_name  = \"uni_pc\"\nbase.scheduler     = \"simple\"\nbase.start_at_step = 2\nrefiner.prompt        = \"\"\nrefiner.negative      = \"(worst quality, low quality:1.8)\"\nrefiner.start_at_step = 6\nrefiner.steps         = 11\nrefiner.cfg           = 2.0\nrefiner.sampler_name  = \"deis\"\nrefiner.scheduler     = \"ddim_uniform\"\n\n[CUSTOM.2]\nbase.prompt        = \"\"\nbase.negative      = \"\"\nbase.steps         = 12\nbase.cfg           = 3.4\nbase.sampler_name  = \"uni_pc\"\nbase.scheduler     = \"simple\"\nbase.start_at_step = 2\nrefiner.prompt        = \"\"\nrefiner.negative      = \"(worst quality, low quality:1.8)\"\nrefiner.start_at_step = 6\nrefiner.steps         = 11\nrefiner.cfg           = 2.0\nrefiner.sampler_name  = \"deis\"\nrefiner.scheduler     = \"ddim_uniform\"\n\n"
-      ]
-    },
-    {
       "id": 113,
       "type": "UnifiedPromptEditor //TinyBreaker",
       "pos": [
@@ -1326,50 +1290,6 @@
       ]
     },
     {
-      "id": 133,
-      "type": "LoadStyle //TinyBreaker",
-      "pos": [
-        80,
-        -120
-      ],
-      "size": [
-        280,
-        82
-      ],
-      "flags": {},
-      "order": 9,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "custom_definitions",
-          "type": "STRING",
-          "link": 358,
-          "widget": {
-            "name": "custom_definitions"
-          },
-          "shape": 7
-        }
-      ],
-      "outputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "links": [
-            364
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "LoadStyle //TinyBreaker"
-      },
-      "widgets_values": [
-        "CUTETOY",
-        "0.1",
-        "[CUSTOM.1]\nbase.prompt        = \"\"\nbase.negative      = \"\"\nbase.steps         = 12\nbase.cfg           = 3.4\nbase.sampler_name  = \"uni_pc\"\nbase.scheduler     = \"simple\"\nbase.start_at_step = 2\nrefiner.prompt        = \"\"\nrefiner.negative      = \"(worst quality, low quality:1.8)\"\nrefiner.start_at_step = 6\nrefiner.steps         = 11\nrefiner.cfg           = 2.0\nrefiner.sampler_name  = \"deis\"\nrefiner.scheduler     = \"ddim_uniform\"\n\n[CUSTOM.2]\nbase.prompt        = \"\"\nbase.negative      = \"\"\nbase.steps         = 12\nbase.cfg           = 3.4\nbase.sampler_name  = \"uni_pc\"\nbase.scheduler     = \"simple\"\nbase.start_at_step = 2\nrefiner.prompt        = \"\"\nrefiner.negative      = \"(worst quality, low quality:1.8)\"\nrefiner.start_at_step = 6\nrefiner.steps         = 11\nrefiner.cfg           = 2.0\nrefiner.sampler_name  = \"deis\"\nrefiner.scheduler     = \"ddim_uniform\"\n\n"
-      ]
-    },
-    {
       "id": 137,
       "type": "SetImageCFGAndSeed //TinyBreaker",
       "pos": [
@@ -1387,7 +1307,7 @@
         {
           "name": "genparams",
           "type": "GENPARAMS",
-          "link": 364
+          "link": 368
         }
       ],
       "outputs": [
@@ -1450,6 +1370,86 @@
         "refiner.noise_seed",
         1,
         "fixed"
+      ]
+    },
+    {
+      "id": 139,
+      "type": "PrimitiveNode",
+      "pos": [
+        -460,
+        -120
+      ],
+      "size": [
+        510,
+        630
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": [
+            367
+          ],
+          "slot_index": 0,
+          "widget": {
+            "name": "custom_definitions"
+          }
+        }
+      ],
+      "title": "Custom Styles",
+      "properties": {
+        "Run widget replace on values": false
+      },
+      "widgets_values": [
+        "[CUSTOM.1]\nbase.prompt        = \"\"\nbase.negative      = \"\"\nbase.start_at_step = 2\nbase.steps         = 12\nbase.cfg           = 3.4\nbase.sampler_name  = \"uni_pc\"\nbase.scheduler     = \"simple\"\nrefiner.prompt        = \"\"\nrefiner.negative      = \"(worst quality, low quality:1.8)\"\nrefiner.start_at_step = 6\nrefiner.steps         = 11\nrefiner.cfg           = 2.0\nrefiner.sampler_name  = \"deis\"\nrefiner.scheduler     = \"ddim_uniform\"\n\n[CUSTOM.2]\nbase.prompt        = \"\"\nbase.negative      = \"\"\nbase.start_at_step = 2\nbase.steps         = 12\nbase.cfg           = 3.4\nbase.sampler_name  = \"uni_pc\"\nbase.scheduler     = \"simple\"\nrefiner.prompt        = \"\"\nrefiner.negative      = \"(worst quality, low quality:1.8)\"\nrefiner.start_at_step = 6\nrefiner.steps         = 11\nrefiner.cfg           = 2.0\nrefiner.sampler_name  = \"deis\"\nrefiner.scheduler     = \"ddim_uniform\"\n"
+      ]
+    },
+    {
+      "id": 138,
+      "type": "SelectStyle //TinyBreaker",
+      "pos": [
+        80,
+        -120
+      ],
+      "size": [
+        280,
+        82
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "custom_definitions",
+          "type": "STRING",
+          "link": 367,
+          "widget": {
+            "name": "custom_definitions"
+          },
+          "shape": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "links": [
+            368
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "SelectStyle //TinyBreaker"
+      },
+      "widgets_values": [
+        "CUTETOY",
+        "last",
+        "[CUSTOM.1]\nbase.prompt        = \"\"\nbase.negative      = \"\"\nbase.start_at_step = 2\nbase.steps         = 12\nbase.cfg           = 3.4\nbase.sampler_name  = \"uni_pc\"\nbase.scheduler     = \"simple\"\nrefiner.prompt        = \"\"\nrefiner.negative      = \"(worst quality, low quality:1.8)\"\nrefiner.start_at_step = 6\nrefiner.steps         = 11\nrefiner.cfg           = 2.0\nrefiner.sampler_name  = \"deis\"\nrefiner.scheduler     = \"ddim_uniform\"\n\n[CUSTOM.2]\nbase.prompt        = \"\"\nbase.negative      = \"\"\nbase.start_at_step = 2\nbase.steps         = 12\nbase.cfg           = 3.4\nbase.sampler_name  = \"uni_pc\"\nbase.scheduler     = \"simple\"\nrefiner.prompt        = \"\"\nrefiner.negative      = \"(worst quality, low quality:1.8)\"\nrefiner.start_at_step = 6\nrefiner.steps         = 11\nrefiner.cfg           = 2.0\nrefiner.sampler_name  = \"deis\"\nrefiner.scheduler     = \"ddim_uniform\"\n"
       ]
     }
   ],
@@ -1831,26 +1831,26 @@
       "IMAGE"
     ],
     [
-      358,
-      125,
-      0,
-      133,
-      0,
-      "STRING"
-    ],
-    [
-      364,
-      133,
-      0,
-      137,
-      0,
-      "GENPARAMS"
-    ],
-    [
       366,
       137,
       0,
       117,
+      0,
+      "GENPARAMS"
+    ],
+    [
+      367,
+      139,
+      0,
+      138,
+      0,
+      "STRING"
+    ],
+    [
+      368,
+      138,
+      0,
+      137,
       0,
       "GENPARAMS"
     ]
@@ -1886,10 +1886,10 @@
   "config": {},
   "extra": {
     "ds": {
-      "scale": 0.9831250000000027,
+      "scale": 0.983125000000005,
       "offset": [
-        42.95346550152169,
-        238.59874423017675
+        12.504838919716532,
+        245.19473995556677
       ]
     }
   },

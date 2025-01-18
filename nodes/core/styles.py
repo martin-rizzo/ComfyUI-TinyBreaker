@@ -98,7 +98,7 @@ class Styles:
 def load_all_styles_versions(dir_path   : str,
                              file_prefix: str="styles",
                              extension  : str=".ini"
-                             )-> dict[str, Styles]:
+                             )-> tuple[ dict[str,Styles], str ]:
     """
     Loads multiple Styles object from files in the specified directory.
     Args:
@@ -120,21 +120,22 @@ def load_all_styles_versions(dir_path   : str,
     extension_len   = len(extension)
 
     # find all files in the directory that match the specified prefix and extension
-    file_names = [f for f in os.listdir(dir_path) if f.startswith(file_prefix) and f.endswith(extension)]
+    # and sort by the number/version that follows the prefix in the filename (first the highest value ones)
+    sorted_file_names = [f for f in os.listdir(dir_path) if f.startswith(file_prefix) and f.endswith(extension)]
+    sorted_file_names.sort( key=lambda name: -_extract_number(name, file_prefix_len, extension_len) )
 
-    # ordenar por el numero que le sigue al prefijo
-    file_names.sort( key=lambda name: _extract_number(name, file_prefix_len, extension_len) )
-
-    # Create an empty dictionary to store the loaded styles
+    last_version = ""
     styles_by_version = {}
 
-    # load the styles in reverse order of the list (the first is the last version)
-    for file_name in reversed(file_names):
+    # load the styles, indexing them by their version number
+    for file_name in sorted_file_names:
         version_number = _extract_number(file_name, file_prefix_len, extension_len)
         version   = f"{version_number//10}.{version_number%10}" if version_number > 0 else "???"
         file_path = os.path.join(dir_path, file_name)
         styles_by_version[version] = Styles.from_file(file_path)
+        if not last_version:
+            last_version = version
 
-    return styles_by_version
+    return styles_by_version, last_version
 
 

@@ -1,6 +1,6 @@
 """
 File    : load_style.py
-Desc    : Node that loads a pre-defined style from the STYLES.cfg file.
+Desc    : Node to select a pre-defined style and load it into the generation parameters.
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
 Date    : Dec 19, 2024
 Repo    : https://github.com/martin-rizzo/ComfyUI-TinyBreaker
@@ -11,20 +11,18 @@ License : MIT
   (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
-from .core.styles   import Styles, load_all_styles_versions
+from .core.styles       import Styles, load_all_styles_versions
 from .utils.directories import PROJECT_DIR
-from .utils.system      import logger
-_STYLES_DIR = PROJECT_DIR.get_full_path("styles")
 
 # load all versions of the pre-defined styles
-_PREDEFINED_STYLES_BY_VERSION = load_all_styles_versions(dir_path=_STYLES_DIR)
+_PREDEFINED_STYLES_BY_VERSION, _LAST_VERSION = \
+    load_all_styles_versions(dir_path = PROJECT_DIR.get_full_path("styles"))
 
 
-# TODO: rename to SelectStyle (?)
-class LoadStyle:
-    TITLE       = "💪TB | Load Style"
+class SelectStyle:
+    TITLE       = "💪TB | Select Style"
     CATEGORY    = "TinyBreaker"
-    DESCRIPTION = "Loads a style with parameters for image generation."
+    DESCRIPTION = "Select a predefined style from a list of available options and load it into the generation parameters. Additionally, you can also provide custom definitions to create your own unique styles."
 
     #__ PARAMETERS ________________________________________
     @classmethod
@@ -32,7 +30,7 @@ class LoadStyle:
         return {
             "required": {
                 "style_name": (cls.style_names(), {"tooltip": "The name of the style to use."}),
-                "version"   : (cls.versions()   , {"tooltip": "The version of the file with the pre-defined styles."}),
+                "version"   : (cls.versions()   , {"tooltip": "The version of the styles file to use. By selecting a particular version, you're choosing a snapshot of the style at that point in time."}),
             },
             "optional": {
                 "custom_definitions": ("STRING", {"tooltip": "A string containing a list of custom styles that override the pre-defined styles.",
@@ -47,7 +45,9 @@ class LoadStyle:
     OUTPUT_TOOLTIPS = ("The generation parameters with the selected style loaded.",)
 
 
-    def load_style(self, version: str, style_name: str, custom_definitions=None):
+    def load_style(self, version: str, style_name: str, custom_definitions: str = None):
+        if version == "last":
+            version = _LAST_VERSION
 
         # load the pre-defined styles
         predefined_styles = _PREDEFINED_STYLES_BY_VERSION[version]
@@ -66,7 +66,7 @@ class LoadStyle:
 
     @classmethod
     def versions(cls) -> list[str]:
-        return list( _PREDEFINED_STYLES_BY_VERSION.keys() )
+        return [ "last", *_PREDEFINED_STYLES_BY_VERSION.keys() ]
 
 
     @classmethod

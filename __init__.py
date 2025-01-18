@@ -66,8 +66,8 @@ comfy_import_node(LoadAnyVAE)
 from .nodes.load_partial_vae import LoadPartialVAE
 comfy_import_node(LoadPartialVAE)
 
-from .nodes.load_style import LoadStyle
-comfy_import_node(LoadStyle)
+from .nodes.select_style import SelectStyle
+comfy_import_node(SelectStyle)
 
 from .nodes.build_custom_transcoder import BuildCustomTranscoder
 comfy_import_node(BuildCustomTranscoder)
