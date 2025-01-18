@@ -219,18 +219,21 @@ def create_a1111_params(genparams   : GenParams | None,
 
 
     # extract and clean up parameters from the GenParams dictionary
-    positive      = a1111_normalized_string( genparams.get("user.prompt"  , "") )
-    negative      = a1111_normalized_string( genparams.get("user.negative", "") )
-    base_steps    = max(0, genparams.get("base.steps"   ,0) - genparams.get("base.start_at_step"   ,0))
-    refiner_steps = max(0, genparams.get("refiner.steps",0) - genparams.get("refiner.start_at_step",0))
-    sampler       = a1111_sampler_name( genparams.get("base.sampler_name"), genparams.get("base.scheduler") )
-    cfg_scale     = genparams.get("base.cfg")
-    seed          = genparams.get("base.noise_seed")
-    width         = image_width
-    height        = image_height
+    positive            = a1111_normalized_string( genparams.get("user.prompt"  , "") )
+    negative            = a1111_normalized_string( genparams.get("user.negative", "") )
+    sampler             = a1111_sampler_name( genparams.get("base.sampler_name"), genparams.get("base.scheduler") )
+    cfg_scale           = genparams.get("base.cfg")
+    base_steps_start    = genparams.get("base.steps_start"   ,0)
+    refiner_steps_start = genparams.get("refiner.steps_start",0)
+    base_steps_end      = min( genparams.get("base.steps"   ,0), genparams.get("base.steps_end"   ,10000) )
+    refiner_steps_end   = min( genparams.get("refiner.steps",0), genparams.get("refiner.steps_end",10000) )
+    seed                = genparams.get("base.noise_seed")
+    width               = image_width
+    height              = image_height
+    steps = max(0, base_steps_end-base_steps_start) + max(0, refiner_steps_end-refiner_steps_start)
 
     # build A1111 params string
-    a1111_params = f"{positive}\nNegative prompt: {negative}\nSteps: {base_steps + refiner_steps}, "
+    a1111_params = f"{positive}\nNegative prompt: {negative}\nSteps: {steps}, "
     if sampler:
         a1111_params += f"Sampler: {sampler}, "
     if cfg_scale:

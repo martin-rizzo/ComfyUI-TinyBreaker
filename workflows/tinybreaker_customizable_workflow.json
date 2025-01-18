@@ -1,6 +1,6 @@
 {
-  "last_node_id": 143,
-  "last_link_id": 368,
+  "last_node_id": 146,
+  "last_link_id": 376,
   "nodes": [
     {
       "id": 90,
@@ -395,7 +395,7 @@
       },
       "widgets_values": [
         true,
-        630077810412628,
+        721718895183893,
         "randomize",
         3.4
       ]
@@ -1038,7 +1038,7 @@
           "name": "IMAGE",
           "type": "IMAGE",
           "links": [
-            349
+            369
           ],
           "slot_index": 0
         }
@@ -1189,150 +1189,6 @@
       }
     },
     {
-      "id": 18,
-      "type": "SaveImage",
-      "pos": [
-        930,
-        -170
-      ],
-      "size": [
-        620,
-        670
-      ],
-      "flags": {},
-      "order": 32,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "images",
-          "type": "IMAGE",
-          "link": 350
-        }
-      ],
-      "outputs": [],
-      "properties": {},
-      "widgets_values": [
-        "TinyBreaker/%date:yyyy_MM_dd%/TB"
-      ]
-    },
-    {
-      "id": 130,
-      "type": "Reroute",
-      "pos": [
-        1720,
-        -170
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {},
-      "order": 31,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 349
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "IMAGE",
-          "links": [
-            350
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
-    },
-    {
-      "id": 113,
-      "type": "UnifiedPromptEditor //TinyBreaker",
-      "pos": [
-        370,
-        -120
-      ],
-      "size": [
-        530,
-        600
-      ],
-      "flags": {},
-      "order": 14,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "link": 338
-        }
-      ],
-      "outputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "links": [
-            343
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "UnifiedPromptEditor //TinyBreaker"
-      },
-      "widgets_values": [
-        "A racing car parked in front of a sushi shop during the tumultuous night in Tokyo."
-      ]
-    },
-    {
-      "id": 137,
-      "type": "SetImageCFGAndSeed //TinyBreaker",
-      "pos": [
-        80,
-        0
-      ],
-      "size": [
-        280,
-        180
-      ],
-      "flags": {},
-      "order": 12,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "link": 368
-        }
-      ],
-      "outputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "links": [
-            366
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "SetImageCFGAndSeed //TinyBreaker"
-      },
-      "widgets_values": [
-        "Portrait",
-        "3:2 photo",
-        "Large",
-        0,
-        1,
-        "fixed"
-      ]
-    },
-    {
       "id": 117,
       "type": "SetNoiseSeed //TinyBreaker",
       "pos": [
@@ -1373,7 +1229,204 @@
       ]
     },
     {
-      "id": 139,
+      "id": 130,
+      "type": "Reroute",
+      "pos": [
+        1720,
+        -170
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 31,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 369
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "IMAGE",
+          "links": [
+            370
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 113,
+      "type": "UnifiedPromptEditor //TinyBreaker",
+      "pos": [
+        370,
+        -120
+      ],
+      "size": [
+        530,
+        600
+      ],
+      "flags": {},
+      "order": 14,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 338
+        }
+      ],
+      "outputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "links": [
+            343,
+            371
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "UnifiedPromptEditor //TinyBreaker"
+      },
+      "widgets_values": [
+        "A racing car parked in front of a sushi shop during the tumultuous night in Tokyo."
+      ]
+    },
+    {
+      "id": 144,
+      "type": "SaveImage //TinyBreaker",
+      "pos": [
+        920,
+        -170
+      ],
+      "size": [
+        620,
+        670
+      ],
+      "flags": {},
+      "order": 32,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 370
+        },
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 371,
+          "shape": 7
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "SaveImage //TinyBreaker"
+      },
+      "widgets_values": [
+        "TinyBreaker/%date:yyyy_MM_dd%/TB"
+      ]
+    },
+    {
+      "id": 137,
+      "type": "SetImageCFGAndSeed //TinyBreaker",
+      "pos": [
+        80,
+        0
+      ],
+      "size": [
+        280,
+        180
+      ],
+      "flags": {},
+      "order": 12,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 375
+        }
+      ],
+      "outputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "links": [
+            366
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "SetImageCFGAndSeed //TinyBreaker"
+      },
+      "widgets_values": [
+        "portrait",
+        "3:2  (photo)",
+        "large",
+        0,
+        1,
+        "fixed"
+      ]
+    },
+    {
+      "id": 146,
+      "type": "SelectStyle //TinyBreaker",
+      "pos": [
+        80,
+        -120
+      ],
+      "size": [
+        280,
+        82
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "custom_definitions",
+          "type": "STRING",
+          "link": 376,
+          "widget": {
+            "name": "custom_definitions"
+          },
+          "shape": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "links": [
+            375
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "SelectStyle //TinyBreaker"
+      },
+      "widgets_values": [
+        "CUTETOY",
+        "last",
+        ""
+      ]
+    },
+    {
+      "id": 145,
       "type": "PrimitiveNode",
       "pos": [
         -460,
@@ -1392,7 +1445,7 @@
           "name": "STRING",
           "type": "STRING",
           "links": [
-            367
+            376
           ],
           "slot_index": 0,
           "widget": {
@@ -1400,56 +1453,11 @@
           }
         }
       ],
-      "title": "Custom Styles",
       "properties": {
         "Run widget replace on values": false
       },
       "widgets_values": [
-        "[CUSTOM.1]\nbase.prompt        = \"\"\nbase.negative      = \"\"\nbase.start_at_step = 2\nbase.steps         = 12\nbase.cfg           = 3.4\nbase.sampler_name  = \"uni_pc\"\nbase.scheduler     = \"simple\"\nrefiner.prompt        = \"\"\nrefiner.negative      = \"(worst quality, low quality:1.8)\"\nrefiner.start_at_step = 6\nrefiner.steps         = 11\nrefiner.cfg           = 2.0\nrefiner.sampler_name  = \"deis\"\nrefiner.scheduler     = \"ddim_uniform\"\n\n[CUSTOM.2]\nbase.prompt        = \"\"\nbase.negative      = \"\"\nbase.start_at_step = 2\nbase.steps         = 12\nbase.cfg           = 3.4\nbase.sampler_name  = \"uni_pc\"\nbase.scheduler     = \"simple\"\nrefiner.prompt        = \"\"\nrefiner.negative      = \"(worst quality, low quality:1.8)\"\nrefiner.start_at_step = 6\nrefiner.steps         = 11\nrefiner.cfg           = 2.0\nrefiner.sampler_name  = \"deis\"\nrefiner.scheduler     = \"ddim_uniform\"\n"
-      ]
-    },
-    {
-      "id": 138,
-      "type": "SelectStyle //TinyBreaker",
-      "pos": [
-        80,
-        -120
-      ],
-      "size": [
-        280,
-        82
-      ],
-      "flags": {},
-      "order": 9,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "custom_definitions",
-          "type": "STRING",
-          "link": 367,
-          "widget": {
-            "name": "custom_definitions"
-          },
-          "shape": 7
-        }
-      ],
-      "outputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "links": [
-            368
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "SelectStyle //TinyBreaker"
-      },
-      "widgets_values": [
-        "CUTETOY",
-        "last",
-        "[CUSTOM.1]\nbase.prompt        = \"\"\nbase.negative      = \"\"\nbase.start_at_step = 2\nbase.steps         = 12\nbase.cfg           = 3.4\nbase.sampler_name  = \"uni_pc\"\nbase.scheduler     = \"simple\"\nrefiner.prompt        = \"\"\nrefiner.negative      = \"(worst quality, low quality:1.8)\"\nrefiner.start_at_step = 6\nrefiner.steps         = 11\nrefiner.cfg           = 2.0\nrefiner.sampler_name  = \"deis\"\nrefiner.scheduler     = \"ddim_uniform\"\n\n[CUSTOM.2]\nbase.prompt        = \"\"\nbase.negative      = \"\"\nbase.start_at_step = 2\nbase.steps         = 12\nbase.cfg           = 3.4\nbase.sampler_name  = \"uni_pc\"\nbase.scheduler     = \"simple\"\nrefiner.prompt        = \"\"\nrefiner.negative      = \"(worst quality, low quality:1.8)\"\nrefiner.start_at_step = 6\nrefiner.steps         = 11\nrefiner.cfg           = 2.0\nrefiner.sampler_name  = \"deis\"\nrefiner.scheduler     = \"ddim_uniform\"\n"
+        ""
       ]
     }
   ],
@@ -1815,22 +1823,6 @@
       "*"
     ],
     [
-      349,
-      27,
-      0,
-      130,
-      0,
-      "*"
-    ],
-    [
-      350,
-      130,
-      0,
-      18,
-      0,
-      "IMAGE"
-    ],
-    [
       366,
       137,
       0,
@@ -1839,20 +1831,44 @@
       "GENPARAMS"
     ],
     [
-      367,
-      139,
+      369,
+      27,
       0,
-      138,
+      130,
       0,
-      "STRING"
+      "*"
     ],
     [
-      368,
-      138,
+      370,
+      130,
+      0,
+      144,
+      0,
+      "IMAGE"
+    ],
+    [
+      371,
+      113,
+      0,
+      144,
+      1,
+      "GENPARAMS"
+    ],
+    [
+      375,
+      146,
       0,
       137,
       0,
       "GENPARAMS"
+    ],
+    [
+      376,
+      145,
+      0,
+      146,
+      0,
+      "STRING"
     ]
   ],
   "groups": [
@@ -1888,8 +1904,8 @@
     "ds": {
       "scale": 0.983125000000005,
       "offset": [
-        12.504838919716532,
-        245.19473995556677
+        15.857190885016362,
+        243.35822593466335
       ]
     }
   },
