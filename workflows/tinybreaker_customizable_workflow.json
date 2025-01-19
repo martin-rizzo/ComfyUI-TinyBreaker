@@ -1,6 +1,6 @@
 {
-  "last_node_id": 148,
-  "last_link_id": 378,
+  "last_node_id": 149,
+  "last_link_id": 380,
   "nodes": [
     {
       "id": 90,
@@ -395,7 +395,7 @@
       },
       "widgets_values": [
         true,
-        29959047642082,
+        233494344752401,
         "randomize",
         3.4
       ]
@@ -1264,128 +1264,6 @@
       ]
     },
     {
-      "id": 144,
-      "type": "SaveImage //TinyBreaker",
-      "pos": [
-        920,
-        -170
-      ],
-      "size": [
-        620,
-        670
-      ],
-      "flags": {},
-      "order": 32,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "images",
-          "type": "IMAGE",
-          "link": 370
-        },
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "link": 371,
-          "shape": 7
-        }
-      ],
-      "outputs": [],
-      "properties": {
-        "Node name for S&R": "SaveImage //TinyBreaker"
-      },
-      "widgets_values": [
-        "TinyBreaker/%date:yyyy_MM_dd%/TB"
-      ]
-    },
-    {
-      "id": 137,
-      "type": "SetImageCFGAndSeed //TinyBreaker",
-      "pos": [
-        80,
-        0
-      ],
-      "size": [
-        280,
-        180
-      ],
-      "flags": {},
-      "order": 12,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "link": 375
-        }
-      ],
-      "outputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "links": [
-            377
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "SetImageCFGAndSeed //TinyBreaker"
-      },
-      "widgets_values": [
-        "portrait",
-        "3:2  (photo)",
-        "large",
-        0,
-        1,
-        "fixed"
-      ]
-    },
-    {
-      "id": 146,
-      "type": "SelectStyle //TinyBreaker",
-      "pos": [
-        80,
-        -120
-      ],
-      "size": [
-        280,
-        82
-      ],
-      "flags": {},
-      "order": 9,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "custom_definitions",
-          "type": "STRING",
-          "link": 376,
-          "widget": {
-            "name": "custom_definitions"
-          },
-          "shape": 7
-        }
-      ],
-      "outputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "links": [
-            375
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "SelectStyle //TinyBreaker"
-      },
-      "widgets_values": [
-        "CUTETOY",
-        "last",
-        "[CUSTOM.1]\nbase.prompt        = \"\"\nbase.negative      = \"\"\nbase.steps         = 12\nbase.steps_start   = 2\nbase.cfg           = 3.4\nbase.sampler_name  = \"uni_pc\"\nbase.scheduler     = \"simple\"\nrefiner.prompt        = \"\"\nrefiner.negative      = \"(worst quality, low quality:1.8)\"\nrefiner.steps         = 11\nrefiner.steps_start   = 6\nrefiner.cfg           = 2.0\nrefiner.sampler_name  = \"deis\"\nrefiner.scheduler     = \"ddim_uniform\"\n\n[CUSTOM.2]\nbase.prompt        = \"\"\nbase.negative      = \"\"\nbase.steps         = 12\nbase.steps_start   = 2\nbase.cfg           = 3.4\nbase.sampler_name  = \"uni_pc\"\nbase.scheduler     = \"simple\"\nrefiner.prompt        = \"\"\nrefiner.negative      = \"(worst quality, low quality:1.8)\"\nrefiner.steps         = 11\nrefiner.steps_start   = 6\nrefiner.cfg           = 2.0\nrefiner.sampler_name  = \"deis\"\nrefiner.scheduler     = \"ddim_uniform\"\n"
-      ]
-    },
-    {
       "id": 145,
       "type": "PrimitiveNode",
       "pos": [
@@ -1422,15 +1300,59 @@
       ]
     },
     {
+      "id": 146,
+      "type": "SelectStyle //TinyBreaker",
+      "pos": [
+        80,
+        -120
+      ],
+      "size": [
+        280,
+        90
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "custom_definitions",
+          "type": "STRING",
+          "link": 376,
+          "widget": {
+            "name": "custom_definitions"
+          },
+          "shape": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "links": [
+            379
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "SelectStyle //TinyBreaker"
+      },
+      "widgets_values": [
+        "CUTETOY",
+        "last",
+        "[CUSTOM.1]\nbase.prompt        = \"\"\nbase.negative      = \"\"\nbase.steps         = 12\nbase.steps_start   = 2\nbase.cfg           = 3.4\nbase.sampler_name  = \"uni_pc\"\nbase.scheduler     = \"simple\"\nrefiner.prompt        = \"\"\nrefiner.negative      = \"(worst quality, low quality:1.8)\"\nrefiner.steps         = 11\nrefiner.steps_start   = 6\nrefiner.cfg           = 2.0\nrefiner.sampler_name  = \"deis\"\nrefiner.scheduler     = \"ddim_uniform\"\n\n[CUSTOM.2]\nbase.prompt        = \"\"\nbase.negative      = \"\"\nbase.steps         = 12\nbase.steps_start   = 2\nbase.cfg           = 3.4\nbase.sampler_name  = \"uni_pc\"\nbase.scheduler     = \"simple\"\nrefiner.prompt        = \"\"\nrefiner.negative      = \"(worst quality, low quality:1.8)\"\nrefiner.steps         = 11\nrefiner.steps_start   = 6\nrefiner.cfg           = 2.0\nrefiner.sampler_name  = \"deis\"\nrefiner.scheduler     = \"ddim_uniform\"\n"
+      ]
+    },
+    {
       "id": 148,
       "type": "SetImageTweaks //TinyBreaker",
       "pos": [
         80,
-        220
+        210
       ],
       "size": [
         280,
-        106
+        110
       ],
       "flags": {},
       "order": 13,
@@ -1439,7 +1361,7 @@
         {
           "name": "genparams",
           "type": "GENPARAMS",
-          "link": 377
+          "link": 380
         }
       ],
       "outputs": [
@@ -1456,8 +1378,84 @@
       },
       "widgets_values": [
         1,
-        "none",
+        "normal",
         0
+      ]
+    },
+    {
+      "id": 149,
+      "type": "SetImageSeed //TinyBreaker",
+      "pos": [
+        80,
+        10
+      ],
+      "size": [
+        280,
+        160
+      ],
+      "flags": {},
+      "order": 12,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 379
+        }
+      ],
+      "outputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "links": [
+            380
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "SetImageSeed //TinyBreaker"
+      },
+      "widgets_values": [
+        "portrait",
+        "3:2  (photo)",
+        "large",
+        1,
+        "fixed"
+      ]
+    },
+    {
+      "id": 144,
+      "type": "SaveImage //TinyBreaker",
+      "pos": [
+        920,
+        -170
+      ],
+      "size": [
+        640,
+        670
+      ],
+      "flags": {},
+      "order": 32,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 370
+        },
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 371,
+          "shape": 7
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "SaveImage //TinyBreaker"
+      },
+      "widgets_values": [
+        "TinyBreaker/%date:yyyy_MM_dd%/TB"
       ]
     }
   ],
@@ -1839,14 +1837,6 @@
       "GENPARAMS"
     ],
     [
-      375,
-      146,
-      0,
-      137,
-      0,
-      "GENPARAMS"
-    ],
-    [
       376,
       145,
       0,
@@ -1855,18 +1845,26 @@
       "STRING"
     ],
     [
-      377,
-      137,
-      0,
-      148,
-      0,
-      "GENPARAMS"
-    ],
-    [
       378,
       148,
       0,
       113,
+      0,
+      "GENPARAMS"
+    ],
+    [
+      379,
+      146,
+      0,
+      149,
+      0,
+      "GENPARAMS"
+    ],
+    [
+      380,
+      149,
+      0,
+      148,
       0,
       "GENPARAMS"
     ]
@@ -1902,10 +1900,10 @@
   "config": {},
   "extra": {
     "ds": {
-      "scale": 0.983125000000005,
+      "scale": 0.9831250000000052,
       "offset": [
-        63.66392960084595,
-        215.89478028939914
+        -4.192280100209144,
+        250.1803896714447
       ]
     }
   },

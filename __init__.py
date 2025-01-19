@@ -86,8 +86,8 @@ comfy_import_node(SetCFG)
 from .nodes.set_image import SetImage
 comfy_import_node(SetImage)
 
-from .nodes.set_image_cfg_and_seed import SetImageCFGAndSeed
-comfy_import_node(SetImageCFGAndSeed)
+from .nodes.set_image_seed import SetImageSeed
+comfy_import_node(SetImageSeed)
 
 from .nodes.set_noise_seed import SetNoiseSeed
 comfy_import_node(SetNoiseSeed)

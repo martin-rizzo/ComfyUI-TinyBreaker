@@ -28,7 +28,7 @@ _DEFAULT_REFINAMENT="normal"
 class SetImageTweaks:
     TITLE       = "💪TB | Set Image Tweaks"
     CATEGORY    = "TinyBreaker"
-    DESCRIPTION = "Fine-tune image parameters that achieve subtle improvements in the image."
+    DESCRIPTION = "Fine-tune generation parameters that achieve subtle improvements in the image."
 
     #__ PARAMETERS ________________________________________
     @classmethod
@@ -52,7 +52,7 @@ class SetImageTweaks:
     FUNCTION = "set_image_tweaks"
     RETURN_TYPES    = ("GENPARAMS",)
     RETURN_NAMES    = ("genparams",)
-    OUTPUT_TOOLTIPS = ("The generation parameters with the tweaks applied.",)
+    OUTPUT_TOOLTIPS = ("The generation parameters with the tweaks applied. You can use this output to chain to other genparams nodes.",)
 
     def set_image_tweaks(self,
                          genparams     : GenParams,
