@@ -15,7 +15,7 @@ import comfy.utils
 from .xcomfy.model               import Model
 from .xcomfy.clip                import CLIP
 from .xcomfy.transcoder          import Transcoder
-from .utils.directories          import PIXART_CHECKPOINTS_DIR
+from .utils.directories          import TINYBREAKER_CHECKPOINTS_DIR
 
 
 class LoadCheckpoint:
@@ -28,7 +28,7 @@ class LoadCheckpoint:
     def INPUT_TYPES(s):
         return {
             "required": {
-                "ckpt_name": (PIXART_CHECKPOINTS_DIR.get_filename_list(), {"tooltip": "The TinyBreaker checkpoint to load. (PixArt sigma checkpoints are also supported)"}),
+                "ckpt_name": (TINYBREAKER_CHECKPOINTS_DIR.get_filename_list(), {"tooltip": "The TinyBreaker checkpoint to load. (PixArt sigma checkpoints are also supported)"}),
                 }
             }
 
@@ -39,7 +39,7 @@ class LoadCheckpoint:
 
     def load_checkpoint(self, ckpt_name):
 
-        ckpt_path  = PIXART_CHECKPOINTS_DIR.get_full_path(ckpt_name)
+        ckpt_path  = TINYBREAKER_CHECKPOINTS_DIR.get_full_path(ckpt_name)
         state_dict = comfy.utils.load_torch_file(ckpt_path)
 
         metadata      = None  # Metadata.from_predefined("sigma", 2048)

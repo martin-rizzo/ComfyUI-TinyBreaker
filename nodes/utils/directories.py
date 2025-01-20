@@ -54,7 +54,7 @@ class _ComfyDirectory:
 
     def __init__(self,
                  folder_name : str,
-                 custom      : bool = True,
+                 custom      : bool = False,
                  read_only   : bool = False,
                  parent_dir  : str  = None,
                  supported_extensions: list = None,
@@ -63,9 +63,9 @@ class _ComfyDirectory:
         Args:
             folder_name    (str): The name of the directory.
             custom        (bool): If True, the directory is a custom directory created for this project.
-                                  If False, the directory is a standard directory provided by ComfyUI. 
+                                  If False, the directory is a standard directory provided by ComfyUI.
             read_only     (bool): If True, the directory would be considered read-only.
-            parent_dir     (str): The parent directory where the directory will be located if `create_folder` is True. 
+            parent_dir     (str): The parent directory where the directory will be located if `create_folder` is True.
             supported_extensions (list): A list of file extensions that are considered valid.
         """
         self._initialized = False
@@ -79,16 +79,20 @@ class _ComfyDirectory:
     @property
     def folder_name(self):
         """Returns the name of the directory."""
-        if self._custom and not self._initialized:
-            # create and initialize the custom directory
-            parent_dir           = self._parent_dir or folder_paths.models_dir
-            supported_extensions = self._supported_extensions or [".safetensors"]
-            full_path  = os.path.join(parent_dir, self._folder_name)
-            folder_paths.folder_names_and_paths[self._folder_name] = (
-                [full_path],
-                set(supported_extensions)
-                )
-            os.makedirs(full_path, exist_ok=True)
+
+        if self._custom:
+            # this code handles the initialization of custom directories:
+            #  - it adds the directory to ComfyUI's internal list of directories
+            #  - it also creates the directory if it doesn't already exist
+            if not self._initialized:
+                parent_dir           = self._parent_dir or folder_paths.models_dir
+                supported_extensions = self._supported_extensions or [".safetensors", ".sft"]
+                full_path  = os.path.join(parent_dir, self._folder_name)
+                folder_paths.folder_names_and_paths[self._folder_name] = (
+                    [full_path],
+                    set(supported_extensions)
+                    )
+                os.makedirs(full_path, exist_ok=True)
 
         self._initialized = True
         return self._folder_name
@@ -171,9 +175,11 @@ class _ComfyOutputDirectory(_ComfyDirectory):
 #//////////////////////////// DIRECTORY OBJECTS ////////////////////////////#
 #===========================================================================#
 
-PROJECT_DIR            = _ProjectDirectory(".")
-STYLES_DIR             = _ProjectDirectory("styles")
-CHECKPOINTS_DIR        = _ComfyModelDirectory("checkpoints")
-VAE_DIR                = _ComfyModelDirectory("vae")
-PIXART_CHECKPOINTS_DIR = _ComfyModelDirectory("pixart", custom=True)
+PROJECT_DIR                 = _ProjectDirectory(".")
+STYLES_DIR                  = _ProjectDirectory("styles")
+CHECKPOINTS_DIR             = _ComfyModelDirectory("checkpoints")
+VAE_DIR                     = _ComfyModelDirectory("vae")
+TRANSCODERS_DIR             = VAE_DIR
+TINYBREAKER_CHECKPOINTS_DIR = CHECKPOINTS_DIR
+#TINYBREAKER_CHECKPOINTS_DIR = _ComfyModelDirectory("tinybreaker", custom=True)
 

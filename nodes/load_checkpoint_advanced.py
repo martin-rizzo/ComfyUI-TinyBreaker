@@ -16,7 +16,7 @@ from .xcomfy.model       import Model
 from .xcomfy.clip        import CLIP
 from .xcomfy.transcoder  import Transcoder
 from .xcomfy.vae         import VAE
-from .utils.directories  import PIXART_CHECKPOINTS_DIR, CHECKPOINTS_DIR, VAE_DIR
+from .utils.directories  import TINYBREAKER_CHECKPOINTS_DIR, TRANSCODERS_DIR, CHECKPOINTS_DIR, VAE_DIR
 
 _PIXART_TYPES = [
     "sigma-512",
@@ -53,7 +53,7 @@ class LoadCheckpointAdvanced:
     def load_checkpoint(self, ckpt_name, vae, transcoder, refiner, pixart_type) -> tuple:
         use_sdxl_refiner = False
 
-        ckpt_path  = PIXART_CHECKPOINTS_DIR.get_full_path(ckpt_name)
+        ckpt_path  = TINYBREAKER_CHECKPOINTS_DIR.get_full_path(ckpt_name)
         state_dict = comfy.utils.load_torch_file(ckpt_path)
 
         metadata          = None  # Metadata.from_predefined("sigma", 2048)
@@ -70,7 +70,7 @@ class LoadCheckpointAdvanced:
 
     @staticmethod
     def model_list():
-        return PIXART_CHECKPOINTS_DIR.get_filename_list()
+        return TINYBREAKER_CHECKPOINTS_DIR.get_filename_list()
 
 
     @staticmethod
@@ -99,7 +99,7 @@ class LoadCheckpointAdvanced:
 
     @staticmethod
     def transcoder_list() -> list:
-        return ["default", *VAE_DIR.get_filename_list()]
+        return ["default", *TRANSCODERS_DIR.get_filename_list()]
 
     @staticmethod
     def transcoder_object(transcoder_name   : str,
@@ -115,7 +115,7 @@ class LoadCheckpointAdvanced:
             return Transcoder.from_state_dict(default_state_dict, prefix="transcoder", filename=default_ckpt_name)
 
         # load transcoder from file
-        transcoder_path = VAE_DIR.get_full_path(transcoder_name)
+        transcoder_path = TRANSCODERS_DIR.get_full_path(transcoder_name)
         state_dict      = comfy.utils.load_torch_file(transcoder_path)
         return Transcoder.from_state_dict(state_dict, filename=transcoder_name)
 
