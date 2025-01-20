@@ -1,0 +1,57 @@
+"""
+File    : unpack_sampler_params.py
+Desc    : Node that unpacks the sampling parameters from the `gparams` line.
+Author  : Martin Rizzo | <martinrizzo@gmail.com>
+Date    : Dec 19, 2024
+Repo    : https://github.com/martin-rizzo/ComfyUI-TinyBreaker
+License : MIT
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+                              ConfyUI-TinyBreaker
+ ComfyUI nodes for experimenting with the capabilities of the TinyBreaker model.
+  (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+"""
+from .common_sampler_params import SamplerParams
+
+
+class UpackSamplerParams:
+    TITLE = "💪TB | Unpack Sampler Params"
+    CATEGORY = "TinyBreaker"
+    DESCRIPTION = "Unpacks the generation parameters from a `genparams` line into separate output values."
+
+    #__ PARAMETERS ________________________________________
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "genparams": ("GENPARAMS", {"tooltip": "The generation parameters to unpack."}),
+                "prefix"   : ("STRING"   , {"tooltip": "The prefix used to identify the unpacked parameters."}),
+                "model"    : ("MODEL"    , {"tooltip": "The model to use for generation."}),
+                "clip"     : ("CLIP"     , {"tooltip": "The CLIP model used for encoding the prompts."})
+            },
+        }
+
+    #__ FUNCTION __________________________________________
+    FUNCTION = "unpack"
+    RETURN_TYPES = ("MODEL", "CONDITIONING", "CONDITIONING", "SAMPLER", "SIGMAS", "FLOAT", "INT"       )
+    RETURN_NAMES = ("model", "positive"    , "negative"    , "sampler", "sigmas", "cfg"  , "noise_seed")
+
+    def unpack(self, prefix, model, clip, genparams=None):
+        params = SamplerParams.from_genparams(genparams, prefix, model_to_sample=model)
+        positive, negative = self._encode(clip, params.positive, params.negative)
+        return (model, positive, negative, params.sampler, params.sigmas, params.cfg, params.noise_seed)
+
+
+    #__ internal functions ________________________________
+
+    @staticmethod
+    def _encode(clip, positive, negative):
+        if isinstance(positive,str):
+            tokens = clip.tokenize(positive)
+            positive = clip.encode_from_tokens_scheduled(tokens)
+        if isinstance(negative,str):
+            tokens = clip.tokenize(negative)
+            negative = clip.encode_from_tokens_scheduled(tokens)
+        return positive, negative
+
+

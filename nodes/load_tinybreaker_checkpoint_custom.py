@@ -1,5 +1,5 @@
 """
-File    : load_checkpoint_advanced.py
+File    : load_tinybreaker_checkpoint_custom.py
 Purpose : Node to load TinyBreaker checkpoints with customized parameters.
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
 Date    : Jan 7, 2025
@@ -13,35 +13,38 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import comfy.utils
 from .xcomfy.model       import Model
+from .xcomfy.vae         import VAE
 from .xcomfy.clip        import CLIP
 from .xcomfy.transcoder  import Transcoder
-from .xcomfy.vae         import VAE
-from .utils.directories  import TINYBREAKER_CHECKPOINTS_DIR, TRANSCODERS_DIR, CHECKPOINTS_DIR, VAE_DIR
+from .utils.directories  import TINYBREAKER_CHECKPOINTS_DIR, \
+                                CHECKPOINTS_DIR, \
+                                TRANSCODERS_DIR, \
+                                VAE_DIR
 
-_PIXART_TYPES = [
-    "sigma-512",
-    "sigma-1024",
-    "sigma-2K"
-]
-_DEFAULT_PIXART_TYPE = "sigma-1024"
+_RESOLUTIONS = ["automatic", "512", "1024", "2K", "4K" ]
+_VAE_OPTIONS = ["fast", "high quality"]
+_DEFAULT_RESOLUTION = "automatic"
+_DEFAULT_VAE_OPTION = "fast"
 
 
-class LoadCheckpointAdvanced:
-    TITLE       = "💪TB | Load Checkpoint Advanced"
+class LoadTinyBreakerCheckpointCustom:
+    TITLE       = "💪TB | Load TinyBreaker Checkpoint (custom)"
     CATEGORY    = "TinyBreaker"
     DESCRIPTION = "Load TinyBreaker checkpoints with customized parameters."
+
 
     #__ PARAMETERS ________________________________________
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "ckpt_name"  : (cls.model_list()      , {"tooltip": "The TinyBreaker checkpoint to load. (PixArt sigma checkpoints are also supported)"}),
-                "vae"        : (cls.vae_list()        , {"tooltip": "The VAE quality to use. (Leave empty for no VAE)"}),
-                "transcoder" : (cls.transcoder_list() , {"tooltip": "The TinyBreaker checkpoint to load. (PixArt sigma checkpoints are also supported)"}),
-                "refiner"    : (cls.refiner_list()    , {"tooltip": "The refiner checkpoint to load. (use 'default' for auto-selection of best alternative or 'none' for no refiner)"}),
-                "pixart_type": (_PIXART_TYPES         , {"tooltip": "The type and resolution of the core PixArt model in the TinyBreaker checkpoint.",
-                                                         "default": _DEFAULT_PIXART_TYPE}),
+                "ckpt_name" : (cls.checkpoint_list(), {"tooltip": "The TinyBreaker checkpoint to load."}),
+                "vae"       : (cls.vae_list()       , {"tooltip": "The VAE quality to use.",
+                                                       "default": _DEFAULT_VAE_OPTION}),
+                "transcoder": (cls.transcoder_list(), {"tooltip": "The TinyBreaker checkpoint to load. (PixArt sigma checkpoints are also supported)"}),
+                "refiner"   : (cls.refiner_list()   , {"tooltip": "The refiner checkpoint to load. (use 'default' for auto-selection of best alternative or 'none' for no refiner)"}),
+                "resolution": (_RESOLUTIONS         , {"tooltip": "The type and resolution of the core PixArt model in the TinyBreaker checkpoint.",
+                                                       "default": _DEFAULT_RESOLUTION}),
                 },
             }
 
@@ -50,7 +53,7 @@ class LoadCheckpointAdvanced:
     RETURN_TYPES = ("MODEL", "VAE", "TRANSCODER", "MODEL"        , "CLIP"        , "STRING"  )
     RETURN_NAMES = ("MODEL", "VAE", "TRANSCODER", "REFINER_MODEL", "REFINER_CLIP", "METADATA")
 
-    def load_checkpoint(self, ckpt_name, vae, transcoder, refiner, pixart_type) -> tuple:
+    def load_checkpoint(self, ckpt_name, vae, transcoder, refiner, resolution) -> tuple:
         use_sdxl_refiner = False
 
         ckpt_path  = TINYBREAKER_CHECKPOINTS_DIR.get_full_path(ckpt_name)
@@ -69,13 +72,13 @@ class LoadCheckpointAdvanced:
     #__ internal functions ________________________________
 
     @staticmethod
-    def model_list():
+    def checkpoint_list():
         return TINYBREAKER_CHECKPOINTS_DIR.get_filename_list()
 
 
     @staticmethod
     def vae_list() -> list:
-        return ["default", "high quality", *VAE_DIR.get_filename_list()]
+        return [ *_VAE_OPTIONS, *VAE_DIR.get_filename_list() ]
 
     @staticmethod
     def vae_object(vae_name: str,
@@ -83,8 +86,8 @@ class LoadCheckpointAdvanced:
                    default_state_dict: dict
                    ) -> VAE:
 
-        # use the vae stored in the default checkpoint
-        if vae_name == "default":
+        # use the fast vae stored in the default checkpoint
+        if vae_name == "fast":
             return VAE.from_state_dict(default_state_dict, prefix="first_stage_model", filename=default_ckpt_name)
 
         # use the high quality vae stored in the default checkpoint
@@ -99,7 +102,7 @@ class LoadCheckpointAdvanced:
 
     @staticmethod
     def transcoder_list() -> list:
-        return ["default", *TRANSCODERS_DIR.get_filename_list()]
+        return ["automatic", *TRANSCODERS_DIR.get_filename_list()]
 
     @staticmethod
     def transcoder_object(transcoder_name   : str,
@@ -111,7 +114,7 @@ class LoadCheckpointAdvanced:
         #    return Transcoder.identity()
 
         # use the transcoder stored in the default checkpoint
-        if transcoder_name == "default":
+        if transcoder_name == "automatic":
             return Transcoder.from_state_dict(default_state_dict, prefix="transcoder", filename=default_ckpt_name)
 
         # load transcoder from file
@@ -122,12 +125,14 @@ class LoadCheckpointAdvanced:
 
     @staticmethod
     def refiner_list():
-        return ["default", "none", *CHECKPOINTS_DIR.get_filename_list()]
+        return ["automatic", "none", *CHECKPOINTS_DIR.get_filename_list()]
 
     @staticmethod
     def refiner_object(name: str, state_dict: dict) -> Model:
-        if name == "default":
+        if name == "automatic":
             return Model.from_state_dict(state_dict, prefix="refiner.diffusion_model")
+        elif name == "none":
+            return None
         else:
             refiner_path = CHECKPOINTS_DIR.get_full_path(name)
             state_dict   = comfy.utils.load_torch_file(refiner_path)
@@ -135,8 +140,10 @@ class LoadCheckpointAdvanced:
 
     @staticmethod
     def refiner_clip_object(name: str, state_dict: dict) -> CLIP:
-        if name == "default":
+        if name == "automatic":
             return CLIP.from_state_dict(state_dict, prefix="refiner.conditioner", type="stable_diffusion")
+        elif name == "none":
+            return None
         else:
             refiner_path = CHECKPOINTS_DIR.get_full_path(name)
             state_dict   = comfy.utils.load_torch_file(refiner_path)

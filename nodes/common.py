@@ -92,8 +92,6 @@ def expand_variables(template  : str,
 LANDSCAPE_SIZES_BY_ASPECT_RATIO = {
     "1:1  (square)"      : (1024.0, 1024.0),
     "4:3  (tv)"          : (1182.4,  886.8),
-    "48:35  (35 mm)"     : (1199.2,  874.4),
-    "71:50  (~imax)"     : (1220.2,  859.3),
     "3:2  (photo)"       : (1254.1,  836.1),
     "16:10  (wide)"      : (1295.3,  809.5),
     "16:9  (hdtv)"       : (1365.3,  768.0),
@@ -102,6 +100,8 @@ LANDSCAPE_SIZES_BY_ASPECT_RATIO = {
     "12:5  (anamorphic)" : (1586.4,  661.0),
     "70:27  (cinerama)"  : (1648.8,  636.0),
     "32:9  (s.ultrawide)": (1930.9,  543.0),
+    # "48:35  (35 mm)"     : (1199.2,  874.4),
+    # "71:50  (~imax)"     : (1220.2,  859.3),
 }
 SCALES_BY_NAME = {
     "small"  : 0.82,
@@ -113,7 +113,7 @@ ORIENTATIONS = [
     "portrait"
 ]
 
-DEFAULT_ASPECT_RATIO = "1:1 square"
+DEFAULT_ASPECT_RATIO = "1:1  (square)"
 DEFAULT_SCALE_NAME   = "large"
 DEFAULT_ORIENTATION  = "landscape"
 

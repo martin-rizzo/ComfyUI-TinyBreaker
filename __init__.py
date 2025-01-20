@@ -51,11 +51,11 @@ def comfy_import_node(cls):
 
 # Loader/Builder Nodes
 
-from .nodes.load_checkpoint import LoadCheckpoint
+from .nodes.load_tinybreaker_checkpoint import LoadCheckpoint
 comfy_import_node(LoadCheckpoint)
 
-from .nodes.load_checkpoint_advanced import LoadCheckpointAdvanced
-comfy_import_node(LoadCheckpointAdvanced)
+from .nodes.load_tinybreaker_checkpoint_custom import LoadTinyBreakerCheckpointCustom
+comfy_import_node(LoadTinyBreakerCheckpointCustom)
 
 from .nodes.load_transcoder import LoadTranscoder
 comfy_import_node(LoadTranscoder)
@@ -86,8 +86,8 @@ comfy_import_node(SetCFG)
 from .nodes.set_image import SetImage
 comfy_import_node(SetImage)
 
-from .nodes.set_image_seed import SetImageSeed
-comfy_import_node(SetImageSeed)
+from .nodes.set_noisy_image import SetNoisyImage
+comfy_import_node(SetNoisyImage)
 
 from .nodes.set_noise_seed import SetNoiseSeed
 comfy_import_node(SetNoiseSeed)
@@ -103,14 +103,14 @@ comfy_import_node(EmptyLatentImage)
 from .nodes.encode_prompts import EncodePrompts
 comfy_import_node(EncodePrompts)
 
-from .nodes.gen_params_unpacker import GenParamsUnpacker
-comfy_import_node(GenParamsUnpacker)
+from .nodes.unpack_sampler_params import UpackSamplerParams
+comfy_import_node(UpackSamplerParams)
 
 from .nodes.placeholder_replacer import PlaceholderReplacer
 comfy_import_node(PlaceholderReplacer)
 
-from .nodes.prefixed_double_stage_sampler import PrefixedDoubleStageSampler
-comfy_import_node(PrefixedDoubleStageSampler)
+# from .nodes.double_stage_sampler import DoubleStageSampler
+# comfy_import_node(DoubleStageSampler)
 
 from .nodes.transcode_latent import TranscodeLatent
 comfy_import_node(TranscodeLatent)
