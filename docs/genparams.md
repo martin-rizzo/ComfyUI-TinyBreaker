@@ -4,8 +4,8 @@
 
 ## Important Notes
 
-All parameters within **GenParams** are optional. The code should gracefully handle cases where parameters are missing by:
-
+All parameters within **GenParams** are optional.  
+The code should gracefully handle cases where parameters are missing by:
 *   Assigning default values.
 *   Performing additional calculations to predict the missing parameter's value.
 
@@ -18,7 +18,7 @@ All parameters within **GenParams** are optional. The code should gracefully han
 *   `modelspec.title` (str): The title of the model, used for identification.
 *   `modelspec.date` (str): The date the model was created, in ISO 8601 format (e.g., YYYY-MM-DD).
 *   `modelspec.license` (str): The license under which the model is distributed.
-*   `modelspec.resolution` (str): The intended resolution for the model, formatted as `<width>x<height>` (e.g., "1920x1080").
+*   `modelspec.resolution` (str): The intended resolution for the model, formatted as `<width>x<height>` (e.g., "10240x1024").
 
 ### User-Provided Parameters
 
@@ -63,5 +63,7 @@ All parameters within **GenParams** are optional. The code should gracefully han
     *   `styles.<name>.refiner.negative` (str): The refiner negative prompt for a specific style named `<name>`.
     *   `...` (Indicates there may be additional refiner style-related parameters)
 
+## Final Notes
 
-
+* **GenParams** is used to pass information between different parts of the code during the generation process. It contains both user-provided and automatically calculated values.
+* As a dictionary, it can store any parameter that needs to be passed around, but the parameters mentioned here are the most important used in the project.
