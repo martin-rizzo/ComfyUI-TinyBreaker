@@ -11,22 +11,6 @@ License : MIT
   (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 
-Some common parameters stored in GenParams object:
-    "user.prompt"        (str): The prompt the user entered in the UI.
-    "user.negative"      (str): The negative prompt the user entered in the UI.
-    "base.prompt"        (str): The prompt used for the base model.
-    "base.negative"      (str): The negative prompt used for the base model.
-    "base.steps"         (int): The total number of steps the base model's sampler is prepared to execute.
-    "base.steps_start"   (int): [optional] The step at which the base model's sampler starts the diffusion process.
-    "base.steps_end"     (int): [optional] The step at which the base model's sampler stops the diffusion process.
-    "base.steps_nfactor" (int): [optional] The factor by which the base model's steps are expanded or reduced.
-    "base.cfg"         (float): The guidance scale used by the sampler of the base model.
-    "base.noise_seed"    (int): The seed used for initial noise by the sampler of the base model.
-    "base.sampler_name"  (str): The name of the sampler of the base model.
-    "base.scheduler"     (str): The name of the scheduler used by the sampler of the base model.
-    "refiner.prompt"     (str): The prompt used for the refiner model.
-    "refiner.negative"   (str): The negative prompt used for the refiner model.
-    ....
 """
 
 def _is_prompt(key: str):
