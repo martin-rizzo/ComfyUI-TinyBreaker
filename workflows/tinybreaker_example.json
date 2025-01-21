@@ -663,7 +663,8 @@
       ],
       "properties": {
         "Node name for S&R": "DoubleStageSampler //TinyBreaker"
-      }
+      },
+      "widgets_values": []
     }
   ],
   "links": [
@@ -862,10 +863,10 @@
   "config": {},
   "extra": {
     "ds": {
-      "scale": 0.6104432757325412,
+      "scale": 0.610443275732541,
       "offset": [
-        428.0864895360581,
-        276.6929446350446
+        362.3076987143602,
+        300.42663899791404
       ]
     }
   },

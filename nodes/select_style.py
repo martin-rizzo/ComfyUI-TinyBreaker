@@ -61,12 +61,11 @@ class SelectStyle:
 
         # load the pre-defined styles
         predefined_styles = _PREDEFINED_STYLES_BY_VERSION[version]
-        genparams = predefined_styles.get_genparams(style_name)
+        genparams.update( predefined_styles.get_genparams(style_name) )
 
         # try to load the user styles from string (if any)
         custom_styles = Styles.from_string(custom_definitions) if custom_definitions else None
         if custom_styles and style_name != "none":
-            genparams = genparams.copy()
             genparams.update( custom_styles.get_genparams(style_name) )
 
         return (genparams,)

@@ -56,7 +56,7 @@ class LoadCheckpoint:
         vae_prefix = "first_stage_hdmodel" if vae == "high quality" else "first_stage_model"
         state_dict = comfy.utils.load_torch_file(ckpt_path)
 
-        genparams      = GenParams()  # GenParams.from_metadata("sigma", 2048)
+        genparams      = GenParams.from_safetensors_metadata(ckpt_path)
         model_obj      = Model.from_state_dict(state_dict, prefix="base.diffusion_model", resolution=1024)
         vae_obj        = VAE.from_state_dict(state_dict, prefix=vae_prefix, filename=ckpt_name)
         transcoder_obj = Transcoder.from_state_dict(state_dict, prefix="transcoder", filename=ckpt_name)

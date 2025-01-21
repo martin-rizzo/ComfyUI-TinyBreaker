@@ -10,8 +10,10 @@ License : MIT
  ComfyUI nodes for experimenting with the capabilities of the TinyBreaker model.
   (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-
 """
+import os
+import json
+import struct
 
 def _is_prompt(key: str):
     """Returns True if the given key is used to specify prompts or negative prompts"""
@@ -119,6 +121,24 @@ class GenParams(dict):
         return genparams
 
 
+    @classmethod
+    def from_safetensors_metadata(cls, path: str) -> "GenParams":
+
+        # load the safetensors header from the file
+        try:
+            with open(path, "rb") as f:
+                header_length = struct.unpack('<Q', f.read(8))[0]
+                header_length = min(header_length, 10 * 1024 * 1024)
+                header        = json.loads( f.read(header_length) )
+        except Exception:
+            header = {}
+
+        # extract metadata from the header
+        metadata = header.get("__metadata__", {})
+        metadata["filename"] = os.path.basename(path)
+        return cls(metadata)
+
+
     def set(self, key: str, value, /) -> None:
         """
         Sets the value of a key in the GenParams object.
@@ -203,6 +223,13 @@ class GenParams(dict):
 
 
     def __str__(self):
-        return self.to_text()
-
+        """Return a string representation of the GenParams object."""
+        string = "GenParams(\n"
+        for key,value in self.items():
+            if isinstance(value, str):
+                value = value[:128] + '...' if len(value) > 130 else value
+                value = f'"{value}"'
+            string += f"    {key:13} = {value}\n"
+        string += ")"
+        return string
 
