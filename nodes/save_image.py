@@ -1,6 +1,6 @@
 """
 File    : save_image.py
-Purpose : Node for saving a generated images to disk with A1111/CivitAI embedded metadata.
+Purpose : Node for saving a generated images to disk including A1111/CivitAI embedded metadata.
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
 Date    : Jan 16, 2025
 Repo    : https://github.com/martin-rizzo/ComfyUI-TinyBreaker
@@ -13,11 +13,60 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import os
 import time
+import json
 import numpy as np
 import folder_paths
 from PIL                import Image
+from PIL.PngImagePlugin import PngInfo
 from .core.gen_params   import GenParams
-from .common            import create_a1111_params, create_png_info, expand_variables
+from .common            import expand_variables
+
+_A1111_SAMPLER_BY_COMFY_NAME = {
+    "euler"                    : "Euler",
+    "euler_cfg_pp"             : "Euler",
+    "euler_ancestral"          : "Euler a",
+    "euler_ancestral_cfg_pp"   : "Euler a",
+    "heun"                     : "Heun",
+    "heunpp2"                  : "Heun",
+    "dpm_2"                    : "DPM2",
+    "dpm_2_ancestral"          : "DPM2 a",
+    "lms"                      : "LMS",
+    "dpm_fast"                 : "DPM fast",
+    "dpm_adaptive"             : "DPM adaptive",
+    "dpmpp_2s_ancestral"       : "DPM++ 2S a",
+    "dpmpp_2s_ancestral_cfg_pp": "DPM++ 2S a",
+    "dpmpp_sde"                : "DPM++ SDE",
+    "dpmpp_sde_gpu"            : "DPM++ SDE",
+    "dpmpp_2m"                 : "DPM++ 2M",
+    "dpmpp_2m_cfg_pp"          : "DPM++ 2M",
+    "dpmpp_2m_sde"             : "DPM++ 2M SDE",
+    "dpmpp_2m_sde_gpu"         : "DPM++ 2M SDE",
+    "dpmpp_3m_sde"             : "DPM++ 3M SDE",
+    "dpmpp_3m_sde_gpu"         : "DPM++ 3M SDE",
+    "lcm"                      : "LCM",
+    "ddim"                     : "DDIM",
+    "uni_pc"                   : "UniPC",
+    "uni_pc_bh2"               : "UniPC",
+# unsupported samplers
+    "ddpm"                     : "!DDPM",
+    "ipndm"                    : "!iPNDM",
+    "ipndm_v"                  : "!iPNDM_v",
+    "deis"                     : "!DEIS",
+    "res_multistep"            : "!RES Multistep",
+    "res_multistep_cfg_pp"     : "!RES Multistep",
+}
+
+_A1111_SCHEDULER_BY_COMFY_NAME = {
+    "normal"          : "",
+    "karras"          : " Karras",
+    "exponential"     : " Exponential",
+#    "sgm_uniform"     : "",
+#    "simple"          : "",
+#    "ddim_uniform"    : "",
+#    "beta"            : "",
+#    "linear_quadratic": "",
+#    "kl_optimal"      : "",
+}
 
 
 class SaveImage:
@@ -57,12 +106,21 @@ class SaveImage:
 
         image_width  = images[0].shape[1]
         image_height = images[0].shape[0]
-        a1111_params = create_a1111_params(genparams, image_width, image_height)
-        pnginfo      = create_png_info(prompt        = prompt,
-                                       extra_pnginfo = extra_pnginfo,
-                                       a1111_params  = a1111_params)
+        a1111_params = self._create_a1111_params(genparams, image_width, image_height)
 
-        # resolve filename_prefix and get full path to save images
+        # create PNG info containing A1111/CivitAI+ComfyUI metadata
+        pnginfo = PngInfo()
+        if a1111_params:
+            pnginfo.add_text("parameters", a1111_params)
+        if prompt:
+            pnginfo.add_text("prompt", json.dumps(prompt))
+        if extra_pnginfo:
+            for key, content_dict in extra_pnginfo.items():
+                if key != "parameters":
+                    pnginfo.add_text(key, json.dumps(content_dict))
+
+        # resolve the `filename_prefix`` entered by the user
+        # and get the full path to save images
         filename_prefix = expand_variables(f"{filename_prefix}{self.extra_prefix}",
                                            time       = time.localtime(),
                                            extra_vars = genparams
@@ -98,7 +156,6 @@ class SaveImage:
         return { "ui": { "images": image_locations } }
 
 
-
     def __init__(self,
                  *,# keyword-only arguments #
                  output_dir  : str = folder_paths.get_output_directory(),
@@ -114,4 +171,83 @@ class SaveImage:
         self.extra_prefix   = extra_prefix
         self.compress_level = 4 if type == "output" else 0
 
+
+    #__ internal functions ________________________________
+
+    @staticmethod
+    def _create_a1111_params(genparams   : GenParams | None,
+                             image_width : int,
+                             image_height: int
+                             ) -> str:
+        """
+        Return a string containing generation parameters in A1111 format.
+        Args:
+            genparams   : A GenParams dictionary containing all the generation parameters.
+            image_width : The width of the generated image.
+            image_height: The height of the generated image.
+        """
+        if not genparams:
+            return ""
+
+
+        def a1111_normalized_string(text: str, /) -> str:
+            return text.strip().replace("\n", " ").replace("\r", " ").replace("\t", " ")
+
+
+        def a1111_sampler_name(comfy_sampler: str, comfy_scheduler: str, support_all_samplers: bool = False, /) -> str:
+            DEFAULT_SAMPLER = "Euler"
+            if not comfy_sampler:
+                return ""
+            a1111_sampler = _A1111_SAMPLER_BY_COMFY_NAME.get(comfy_sampler, DEFAULT_SAMPLER)
+            if not support_all_samplers and a1111_sampler.startswith("!"):
+                a1111_sampler = DEFAULT_SAMPLER
+            a1111_sampler = a1111_sampler.lstrip('!') + _A1111_SCHEDULER_BY_COMFY_NAME.get(comfy_scheduler or "normal", "")
+            return a1111_sampler
+
+
+        # extract and clean up parameters from the GenParams dictionary
+        positive            = a1111_normalized_string( genparams.get("user.prompt"  , "") )
+        negative            = a1111_normalized_string( genparams.get("user.negative", "") )
+        sampler             = a1111_sampler_name( genparams.get("base.sampler_name")   , genparams.get("base.scheduler") )
+        refiner_sampler     = a1111_sampler_name( genparams.get("refiner.sampler_name"), genparams.get("refiner.scheduler"), True )
+        base_cfg            = genparams.get("base.cfg")
+        refiner_cfg         = genparams.get("refiner.cfg", 0)
+        base_steps_start    = genparams.get("base.steps_start"   ,0)
+        refiner_steps_start = genparams.get("refiner.steps_start",0)
+        base_steps_end      = min( genparams.get("base.steps"   ,0), genparams.get("base.steps_end"   ,10000) )
+        refiner_steps_end   = min( genparams.get("refiner.steps",0), genparams.get("refiner.steps_end",10000) )
+        seed                = genparams.get("base.noise_seed")
+        width               = image_width
+        height              = image_height
+        base_checkpoint     = "TinyBreaker"
+        refiner_checkpoint  = None #f"{base_checkpoint}.refiner"
+        base_steps          = max(0, base_steps_end-base_steps_start)
+        refiner_steps       = max(0, refiner_steps_end-refiner_steps_start)
+        total_steps         = base_steps + refiner_steps
+
+        # build A1111 params string
+        a1111_params = f"{positive}\nNegative prompt: {negative}\nSteps: {total_steps}, "
+        if sampler:
+            a1111_params += f"Sampler: {sampler}, "
+        if base_cfg:
+            a1111_params += f"CFG scale: {base_cfg}, "
+        if seed:
+            a1111_params += f"Seed: {seed}, "
+        if width and height:
+            a1111_params += f"Size: {image_width}x{image_height}, "
+        if base_checkpoint:
+            a1111_params += f"Model: {base_checkpoint}, "
+        if refiner_checkpoint and refiner_sampler:
+            a1111_params += f"Denoising strength: {refiner_cfg}, "
+            a1111_params += f"Hires checkpoint: {refiner_checkpoint}, "
+            a1111_params += f"Hires upscaler: None, "
+            a1111_params += f"Hires resize: {image_width}x{image_height}, "
+            a1111_params += f"Hires sampler: {refiner_sampler}, "
+            a1111_params += f"Hires steps: {refiner_steps}, "
+        #if discard_penultimate_sigma:
+        #    a1111_params += "Discard penultimate sigma: True, "
+
+        # remove the trailing comma and return it
+        a1111_params = a1111_params.strip().rstrip(",")
+        return a1111_params
 
