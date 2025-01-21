@@ -109,8 +109,8 @@ comfy_import_node(UpackSamplerParams)
 from .nodes.placeholder_replacer import PlaceholderReplacer
 comfy_import_node(PlaceholderReplacer)
 
-# from .nodes.double_stage_sampler import DoubleStageSampler
-# comfy_import_node(DoubleStageSampler)
+from .nodes.double_stage_sampler import DoubleStageSampler
+comfy_import_node(DoubleStageSampler)
 
 from .nodes.transcode_latent import TranscodeLatent
 comfy_import_node(TranscodeLatent)
