@@ -29,22 +29,23 @@ class DoubleStageSampler:
     def INPUT_TYPES(cls):
         return {
             "required": {
+                "latent_input" : ("LATENT"      , {"tooltip": "The latent image to denoise."}),
                 "genparams"    : ("GENPARAMS"   , {"tooltip": "The generation parameters containing the sampler configuration."}),
-                "model"        : ("MODEL"       , {"tooltip": "The model to use for generation."}),
-                "clip"         : ("CLIP"        , {"tooltip": "The CLIP model used for encoding the prompts."}),
-                "transcoder"   : ("TRANSCODER"  , {"tooltip": "The transcoder to convert latent images from base to refiner."}),
-                "refiner_model": ("MODEL"       , {"tooltip": "The model to use for the refinement stage."}),
-                "refiner_clip" : ("CLIP"        , {"tooltip": "The CLIP model used for encoding the prompts in refinement stage."}),
-                "latent_image" : ("LATENT"      , {"tooltip": "The latent image to denoise."}),
+                "model"        : ("MODEL"       , {"tooltip": "The model used for denoising the latent images."}),
+                "clip"         : ("CLIP"        , {"tooltip": "The T5 encoder used for embedding the prompts."}),
+                "transcoder"   : ("TRANSCODER"  , {"tooltip": "The transcoder model used for converting latent images from base to refiner."}),
+                "refiner_model": ("MODEL"       , {"tooltip": "The model used for refining latent images."}),
+                "refiner_clip" : ("CLIP"        , {"tooltip": "The CLIP model used for embedding text prompts during refining."}),
             }
         }
 
     #__ FUNCTION __________________________________________
     FUNCTION = "double_sampling"
-    RETURN_TYPES = ("LATENT",)
+    RETURN_TYPES    = ("LATENT",)
+    RETURN_NAMES    = ("latent_output",)
+    OUTPUT_TOOLTIPS = ("Latent image after denoising.",)
 
-    def double_sampling(self, genparams, model, clip, transcoder, refiner_model, refiner_clip, latent_image):
-        latents = latent_image
+    def double_sampling(self, latent_input, genparams, model, clip, transcoder, refiner_model, refiner_clip):
 
         # first step: base model
         params = SamplerParams.from_genparams(genparams, "base", model_to_sample=model)
@@ -54,15 +55,15 @@ class DoubleStageSampler:
                                negative   = negative,
                                sampler    = params.sampler,
                                sigmas     = params.sigmas,
-                               latent     = latents,
+                               latent     = latent_input,
                                cfg        = params.cfg,
                                noise_seed = params.noise_seed,
                                add_noise  = True)
 
         # intermediate step: transcoder
         if transcoder is not None:
-            latents = transcoder( latents["samples"] )
-            latents = {"samples": latents}
+            latents["samples"] = transcoder( latents["samples"] )
+            #latents = {"samples": latents}
 
         # if not refiner, return the result of the base model
         if (refiner_model is None) or (refiner_clip is None):

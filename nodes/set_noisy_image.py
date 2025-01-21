@@ -31,7 +31,7 @@ class SetNoisyImage:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "genparams"  : ("GENPARAMS" , {"tooltip": "The original generation parameters which will be updated.",
+                "genparams"  : ("GENPARAMS" , {"tooltip": "The generation parameters which will be updated.",
                                                }),
                 "seed"       : ("INT"       , {"tooltip": "The pattern of the random noise to use as starting point for the image generation. (different seed numbers will generate totally different images)",
                                                "default": 1, "min": 1, "max": 0xffffffffffffffff
@@ -54,7 +54,7 @@ class SetNoisyImage:
     FUNCTION = "set_image_attributes"
     RETURN_TYPES    = ("GENPARAMS",)
     RETURN_NAMES    = ("genparams",)
-    OUTPUT_TOOLTIPS = ("The generation parameters with the new image attributes. You can use this output to chain to other genparams nodes.",)
+    OUTPUT_TOOLTIPS = ("The generation parameters updated with the new image attributes. (you can use this output to chain other genparams nodes)",)
 
     def set_image_attributes(self,
                              genparams  : GenParams,

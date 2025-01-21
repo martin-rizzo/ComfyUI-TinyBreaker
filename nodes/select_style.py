@@ -12,7 +12,9 @@ License : MIT
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 from .core.styles       import Styles, load_all_styles_versions
+from .core.gen_params   import GenParams
 from .utils.directories import PROJECT_DIR
+
 
 # load all versions of the pre-defined styles
 _PREDEFINED_STYLES_BY_VERSION, _LAST_VERSION = \
@@ -29,6 +31,7 @@ class SelectStyle:
     def INPUT_TYPES(cls):
         return {
             "required": {
+                "genparams" : ("GENPARAMS"      , {"tooltip": "The generation parameters which will be updated."}),
                 "style_name": (cls.style_names(), {"tooltip": "The name of the style to use."}),
                 "version"   : (cls.versions()   , {"tooltip": "The version of the styles file to use. By selecting a particular version, you're choosing a snapshot of the style at that point in time."}),
             },
@@ -40,12 +43,19 @@ class SelectStyle:
 
     #__ FUNCTION __________________________________________
     FUNCTION = "load_style"
-    RETURN_TYPES = ("GENPARAMS",)
-    RETURN_NAMES = ("genparams",)
-    OUTPUT_TOOLTIPS = ("The generation parameters with the selected style loaded.",)
+    RETURN_TYPES    = ("GENPARAMS",)
+    RETURN_NAMES    = ("genparams",)
+    OUTPUT_TOOLTIPS = ("The generation parameters updated with the selected style. (you can use this output to chain other genparams nodes)",)
 
+    def load_style(self,
+                   genparams         : GenParams,
+                   version           : str,
+                   style_name        : str,
+                   custom_definitions: str = None
+                   ):
+        genparams = genparams.copy()
 
-    def load_style(self, version: str, style_name: str, custom_definitions: str = None):
+        # replace "last" with the last available version
         if version == "last":
             version = _LAST_VERSION
 
