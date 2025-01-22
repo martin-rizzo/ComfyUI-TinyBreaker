@@ -11,78 +11,27 @@ License : MIT
   (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
-import time
 
-#--------------------------- VARIABLE EXPANSION ----------------------------#
-
-def find_next_variable(string: str) -> tuple[str, str, str]:
+def ireplace(text: str, old: str, new: str, count: int = -1) -> str:
     """
-    Finds the next variable in a string.
-
-    This function searches for the next variable in a string and returns a
-    tuple containing the text before, the variable name and the text after.
-    If the variable name returned is `END` then there are no more variables
-    and the parsing is complete.
-
-    Args:
-        string: The string to search for the next variable.
-    Returns:
-        A tuple containing the text before, the variable name and the text after.
+    Replaces all occurrences of `old` in `text` with `new`, case-insensitive.
+    If count is given, only the first `count` occurrences are replaced.
     """
-    text    , _ , remainder = string.partition("%")
-    var_name, ct, remainder = remainder.partition("%")
-    return (text, var_name, remainder) if ct else (string, "END", "")
+    lower_text , lower_old = text.lower(), old.lower()
+    index_start, index_end = 0, lower_text.find(lower_old, 0)
+    if index_end == -1 or len(lower_text) != len(text):
+        return text
 
-
-def expand_variables(template  : str,
-                     time      : time.struct_time = None,
-                     extra_vars: dict             = None
-                     ) -> str:
-    """
-    Returns a string that is the copy of `template` but with its variables expanded
-    Args:
-        template  : The string containing the variables to expand.
-        time      : The current time.
-        extra_vars: A dictionary of additional expandable variables with their values.
-    """
-    TIME_VARS = ("year", "month", "day", "hour", "minute", "second")
     output = ""
+    lower_old_length = len(lower_old)
+    while index_end != -1 and count != 0:
+        output += text[index_start:index_end] + new
+        index_start = index_end + lower_old_length
+        index_end   = lower_text.find(lower_old, index_start)
+        if count > 0:
+            count -= 1
+    return output + text[index_start:]
 
-    while True:
-        value = None
-        text, var, template = find_next_variable(template)
-
-        # if `%END%` (or no more text to parse) then exit the loop
-        if var == "END":
-            output += text
-            break
-        # try to resolve time variables
-        if (time is not None) and (var in TIME_VARS):
-            if   var == "year"  : value = str(time.tm_year)
-            elif var == "month" : value = str(time.tm_mon ).zfill(2)
-            elif var == "day"   : value = str(time.tm_mday).zfill(2)
-            elif var == "hour"  : value = str(time.tm_hour).zfill(2)
-            elif var == "minute": value = str(time.tm_min ).zfill(2)
-            elif var == "second": value = str(time.tm_sec ).zfill(2)
-        # try to resolve full date variable
-        elif (time is not None) and var.startswith("date:"):
-            value = var[5:]
-            value = value.replace("yyyy", str(time.tm_year))
-            value = value.replace("yy"  , str(time.tm_year)[-2:])
-            value = value.replace("MM"  , str(time.tm_mon ).zfill(2))
-            value = value.replace("dd"  , str(time.tm_mday).zfill(2))
-            value = value.replace("hh"  , str(time.tm_hour).zfill(2))
-            value = value.replace("mm"  , str(time.tm_min ).zfill(2))
-            value = value.replace("ss"  , str(time.tm_sec ).zfill(2))
-        # try to resolve extra variables
-        elif (extra_vars is not None) and (var in extra_vars):
-            value = str(extra_vars[var])[:16]
-
-        # if a value was found, add it to the output,
-        # otherwise add the variable name without modification
-        output += f"{text}{value}" if value is not None else f"{text}%{var}%"
-
-    return output
 
 #-------------------------- IMAGE SCALES & RATIOS --------------------------#
 

@@ -19,7 +19,7 @@ import folder_paths
 from PIL                import Image
 from PIL.PngImagePlugin import PngInfo
 from .core.gen_params   import GenParams
-from .common            import expand_variables
+from .common            import ireplace
 
 _A1111_SAMPLER_BY_COMFY_NAME = {
     "euler"                    : "Euler",
@@ -119,12 +119,9 @@ class SaveImage:
                 if key != "parameters":
                     pnginfo.add_text(key, json.dumps(content_dict))
 
-        # resolve the `filename_prefix`` entered by the user
-        # and get the full path to save images
-        filename_prefix = expand_variables(f"{filename_prefix}{self.extra_prefix}",
-                                           time       = time.localtime(),
-                                           extra_vars = genparams
-                                           )
+        # solve the `filename_prefix`` entered by the user and get the full path
+        filename_prefix = \
+            self._solve_filename_variables(f"{filename_prefix}{self.extra_prefix}", genparams=genparams)
         full_output_folder, filename, counter, subfolder, filename_prefix \
             = folder_paths.get_save_image_path(filename_prefix,
                                                self.output_dir,
@@ -251,4 +248,70 @@ class SaveImage:
         # remove the trailing comma and return it
         a1111_params = a1111_params.strip().rstrip(",")
         return a1111_params
+
+
+    def _solve_filename_variables(self,
+                                  filename : str,
+                                  *,# keyword-only args #
+                                  genparams: GenParams
+                                  ) -> str:
+        """
+        Solve the filename variables and return a string containing the solved filename.
+        Args:
+            filename    : The filename to solve.
+            genparams   : A GenParams dictionary containing all the generation parameters.
+        """
+        now: time.struct_time = time.localtime()
+
+        def get_var_value(name: str) -> str | None:
+                """Returns the value for a given variable name or None if the variable name is not defined."""
+                case_name = name
+                name      = case_name.lower()
+                if name == "":
+                    return "%"
+                # try to resolve time variables
+                elif name == "year"  : return str(now.tm_year)
+                elif name == "month" : return str(now.tm_mon ).zfill(2)
+                elif name == "day"   : return str(now.tm_mday).zfill(2)
+                elif name == "hour"  : return str(now.tm_hour).zfill(2)
+                elif name == "minute": return str(now.tm_min ).zfill(2)
+                elif name == "second": return str(now.tm_sec ).zfill(2)
+                # try to resolve full date variable
+                elif name.startswith("date:"):
+                    value = case_name[5:]
+                    value = ireplace(value, "yyyy", str(now.tm_year))
+                    value = ireplace(value, "yy"  , str(now.tm_year)[-2:])
+                    value = value.replace(  "MM"  , str(now.tm_mon ).zfill(2))
+                    value = ireplace(value, "dd"  , str(now.tm_mday).zfill(2))
+                    value = ireplace(value, "hh"  , str(now.tm_hour).zfill(2))
+                    value = value.replace(  "mm"  , str(now.tm_min ).zfill(2))
+                    value = ireplace(value, "ss"  , str(now.tm_sec ).zfill(2))
+                    return value
+                elif name in genparams:
+                    value = str(genparams[name])[:16]
+                return None
+
+        output = ""
+        next_token_is_var = False
+        for token in filename.split("%"):
+            current_token_is_var = next_token_is_var
+            last_token_was_text  = current_token_is_var
+
+            # if the token contains spaces then it's not a variable name
+            if ' ' in token:
+                current_token_is_var = False
+
+            var_value = get_var_value(token) if current_token_is_var else None
+            if var_value is not None:
+                # current token is a variable and the next token is text
+                output += var_value
+                next_token_is_var = False
+            else:
+                # current token is text, and the next token could be a variable
+                output += ("%" if last_token_was_text else "") + token
+                next_token_is_var = True
+
+        return output
+
+
 
