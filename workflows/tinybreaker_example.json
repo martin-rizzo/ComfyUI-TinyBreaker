@@ -1,31 +1,31 @@
 {
-  "last_node_id": 188,
-  "last_link_id": 489,
+  "last_node_id": 196,
+  "last_link_id": 509,
   "nodes": [
     {
       "id": 144,
       "type": "SaveImage //TinyBreaker",
       "pos": [
-        920,
-        -170
+        890,
+        -210
       ],
       "size": [
         640,
-        670
+        660
       ],
       "flags": {},
-      "order": 15,
+      "order": 18,
       "mode": 0,
       "inputs": [
         {
           "name": "images",
           "type": "IMAGE",
-          "link": 370
+          "link": 505
         },
         {
           "name": "genparams",
           "type": "GENPARAMS",
-          "link": 371,
+          "link": 503,
           "shape": 7
         }
       ],
@@ -38,350 +38,18 @@
       ]
     },
     {
-      "id": 113,
-      "type": "UnifiedPromptEditor //TinyBreaker",
-      "pos": [
-        370,
-        -120
-      ],
-      "size": [
-        530,
-        600
-      ],
-      "flags": {},
-      "order": 9,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "link": 407
-        }
-      ],
-      "outputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "links": [
-            371,
-            431
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "UnifiedPromptEditor //TinyBreaker"
-      },
-      "widgets_values": [
-        "A racing car parked in front of a sushi shop during the tumultuous night in Tokyo."
-      ]
-    },
-    {
-      "id": 130,
-      "type": "Reroute",
-      "pos": [
-        1670,
-        -160
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {},
-      "order": 14,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 432
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "IMAGE",
-          "links": [
-            370
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
-    },
-    {
-      "id": 3,
-      "type": "CLIPLoader",
-      "pos": [
-        480,
-        910
-      ],
-      "size": [
-        390,
-        82
-      ],
-      "flags": {},
-      "order": 0,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "CLIP",
-          "type": "CLIP",
-          "links": [
-            230
-          ],
-          "slot_index": 0
-        }
-      ],
-      "title": "Load T5",
-      "properties": {
-        "Node name for S&R": "CLIPLoader"
-      },
-      "widgets_values": [
-        "t5_xxl_encoder-FP8.safetensors",
-        "sd3",
-        "default"
-      ]
-    },
-    {
-      "id": 111,
-      "type": "EmptyLatentImage //TinyBreaker",
-      "pos": [
-        830,
-        560
-      ],
-      "size": [
-        270,
-        30
-      ],
-      "flags": {},
-      "order": 11,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "link": 427
-        }
-      ],
-      "outputs": [
-        {
-          "name": "LATENT",
-          "type": "LATENT",
-          "links": [
-            482
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "EmptyLatentImage //TinyBreaker"
-      },
-      "widgets_values": []
-    },
-    {
-      "id": 27,
-      "type": "VAEDecode",
-      "pos": [
-        1420,
-        640
-      ],
-      "size": [
-        180,
-        50
-      ],
-      "flags": {},
-      "order": 13,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "samples",
-          "type": "LATENT",
-          "link": 489
-        },
-        {
-          "name": "vae",
-          "type": "VAE",
-          "link": 341
-        }
-      ],
-      "outputs": [
-        {
-          "name": "IMAGE",
-          "type": "IMAGE",
-          "links": [
-            432
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "VAEDecode"
-      },
-      "widgets_values": []
-    },
-    {
-      "id": 167,
-      "type": "Reroute",
-      "pos": [
-        670,
-        560
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {},
-      "order": 10,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 431
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "GENPARAMS",
-          "links": [
-            427,
-            483
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
-    },
-    {
-      "id": 124,
-      "type": "Reroute",
-      "pos": [
-        1320,
-        820
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {},
-      "order": 5,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 340
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "VAE",
-          "links": [
-            341
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
-    },
-    {
-      "id": 56,
-      "type": "Reroute",
-      "pos": [
-        930,
-        820
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {},
-      "order": 3,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 468
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "VAE",
-          "links": [
-            340
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
-    },
-    {
-      "id": 91,
-      "type": "Reroute",
-      "pos": [
-        930,
-        700
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {},
-      "order": 2,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 230
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "CLIP",
-          "links": [
-            485
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
-    },
-    {
       "id": 164,
       "type": "SetNoisyImage //TinyBreaker",
       "pos": [
-        80,
-        20
+        50,
+        -50
       ],
       "size": [
         280,
         178
       ],
       "flags": {},
-      "order": 8,
+      "order": 7,
       "mode": 0,
       "inputs": [
         {
@@ -416,21 +84,21 @@
       "id": 177,
       "type": "SelectStyle //TinyBreaker",
       "pos": [
-        80,
-        -120
+        50,
+        -190
       ],
       "size": [
         280,
         102
       ],
       "flags": {},
-      "order": 7,
+      "order": 6,
       "mode": 0,
       "inputs": [
         {
           "name": "genparams",
           "type": "GENPARAMS",
-          "link": 473
+          "link": 509
         },
         {
           "name": "custom_definitions",
@@ -462,24 +130,63 @@
       ]
     },
     {
-      "id": 178,
+      "id": 113,
+      "type": "UnifiedPromptEditor //TinyBreaker",
+      "pos": [
+        340,
+        -190
+      ],
+      "size": [
+        530,
+        640
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 407
+        }
+      ],
+      "outputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "links": [
+            492,
+            503
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "UnifiedPromptEditor //TinyBreaker"
+      },
+      "widgets_values": [
+        "A racing car parked in front of a sushi shop during the tumultuous night in Tokyo."
+      ]
+    },
+    {
+      "id": 189,
       "type": "Reroute",
       "pos": [
-        -90,
-        780
+        810,
+        540
       ],
       "size": [
         75,
         26
       ],
       "flags": {},
-      "order": 4,
+      "order": 9,
       "mode": 0,
       "inputs": [
         {
           "name": "",
           "type": "*",
-          "link": 472
+          "link": 492
         }
       ],
       "outputs": [
@@ -487,7 +194,7 @@
           "name": "",
           "type": "GENPARAMS",
           "links": [
-            466
+            496
           ],
           "slot_index": 0
         }
@@ -498,24 +205,24 @@
       }
     },
     {
-      "id": 179,
+      "id": 191,
       "type": "Reroute",
       "pos": [
-        -80,
-        -120
+        -900,
+        540
       ],
       "size": [
         75,
         26
       ],
       "flags": {},
-      "order": 6,
+      "order": 10,
       "mode": 0,
       "inputs": [
         {
           "name": "",
           "type": "*",
-          "link": 466
+          "link": 496
         }
       ],
       "outputs": [
@@ -523,7 +230,439 @@
           "name": "",
           "type": "GENPARAMS",
           "links": [
-            473
+            502
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 3,
+      "type": "CLIPLoader",
+      "pos": [
+        -450,
+        -480
+      ],
+      "size": [
+        390,
+        82
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": [
+            230
+          ],
+          "slot_index": 0
+        }
+      ],
+      "title": "Load T5",
+      "properties": {
+        "Node name for S&R": "CLIPLoader"
+      },
+      "widgets_values": [
+        "t5_xxl_encoder-FP8.safetensors",
+        "sd3",
+        "default"
+      ]
+    },
+    {
+      "id": 111,
+      "type": "EmptyLatentImage //TinyBreaker",
+      "pos": [
+        -100,
+        -870
+      ],
+      "size": [
+        250,
+        50
+      ],
+      "flags": {},
+      "order": 13,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 427
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            482
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "EmptyLatentImage //TinyBreaker"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 91,
+      "type": "Reroute",
+      "pos": [
+        20,
+        -690
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 230
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "CLIP",
+          "links": [
+            485
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 190,
+      "type": "Reroute",
+      "pos": [
+        20,
+        -730
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 14,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 494
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "GENPARAMS",
+          "links": [
+            495
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 188,
+      "type": "DoubleStageSampler //TinyBreaker",
+      "pos": [
+        180,
+        -750
+      ],
+      "size": [
+        250,
+        160
+      ],
+      "flags": {},
+      "order": 15,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "latent_input",
+          "type": "LATENT",
+          "link": 482
+        },
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 495
+        },
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 484
+        },
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 485
+        },
+        {
+          "name": "transcoder",
+          "type": "TRANSCODER",
+          "link": 486
+        },
+        {
+          "name": "refiner_model",
+          "type": "MODEL",
+          "link": 487
+        },
+        {
+          "name": "refiner_clip",
+          "type": "CLIP",
+          "link": 488
+        }
+      ],
+      "outputs": [
+        {
+          "name": "latent_output",
+          "type": "LATENT",
+          "links": [
+            489
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "DoubleStageSampler //TinyBreaker"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 124,
+      "type": "Reroute",
+      "pos": [
+        360,
+        -570
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 340
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "VAE",
+          "links": [
+            341
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 56,
+      "type": "Reroute",
+      "pos": [
+        20,
+        -570
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 468
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "VAE",
+          "links": [
+            340
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 27,
+      "type": "VAEDecode",
+      "pos": [
+        460,
+        -750
+      ],
+      "size": [
+        150,
+        50
+      ],
+      "flags": {},
+      "order": 16,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 489
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 341
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            504
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 194,
+      "type": "Reroute",
+      "pos": [
+        640,
+        -750
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 17,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 504
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "IMAGE",
+          "links": [
+            505
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 193,
+      "type": "Reroute",
+      "pos": [
+        -850,
+        -870
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 11,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 502
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "GENPARAMS",
+          "links": [
+            501
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 167,
+      "type": "Reroute",
+      "pos": [
+        -460,
+        -870
+      ],
+      "size": [
+        170,
+        26
+      ],
+      "flags": {},
+      "order": 12,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 501,
+          "label": "Generation Parameters"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "GENPARAMS",
+          "links": [
+            427,
+            494
           ],
           "slot_index": 0
         }
@@ -537,8 +676,8 @@
       "id": 181,
       "type": "LoadCheckpoint //TinyBreaker",
       "pos": [
-        480,
-        680
+        -450,
+        -710
       ],
       "size": [
         390,
@@ -588,8 +727,9 @@
           "name": "GENPARAMS",
           "type": "GENPARAMS",
           "links": [
-            472
-          ]
+            508
+          ],
+          "slot_index": 5
         }
       ],
       "properties": {
@@ -601,70 +741,45 @@
       ]
     },
     {
-      "id": 188,
-      "type": "DoubleStageSampler //TinyBreaker",
+      "id": 196,
+      "type": "Reroute",
       "pos": [
-        1140,
-        640
+        -40,
+        -400
       ],
       "size": [
-        250,
-        170
+        75,
+        26
       ],
       "flags": {},
-      "order": 12,
+      "order": 4,
       "mode": 0,
       "inputs": [
         {
-          "name": "latent_input",
-          "type": "LATENT",
-          "link": 482
-        },
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "link": 483
-        },
-        {
-          "name": "model",
-          "type": "MODEL",
-          "link": 484
-        },
-        {
-          "name": "clip",
-          "type": "CLIP",
-          "link": 485
-        },
-        {
-          "name": "transcoder",
-          "type": "TRANSCODER",
-          "link": 486
-        },
-        {
-          "name": "refiner_model",
-          "type": "MODEL",
-          "link": 487
-        },
-        {
-          "name": "refiner_clip",
-          "type": "CLIP",
-          "link": 488
+          "name": "",
+          "type": "*",
+          "link": 508,
+          "pos": [
+            37.5,
+            0
+          ]
         }
       ],
       "outputs": [
         {
-          "name": "latent_output",
-          "type": "LATENT",
+          "name": "",
+          "type": "GENPARAMS",
           "links": [
-            489
+            509
           ],
+          "label": "Metadata",
           "slot_index": 0
         }
       ],
       "properties": {
-        "Node name for S&R": "DoubleStageSampler //TinyBreaker"
-      },
-      "widgets_values": []
+        "showOutputText": false,
+        "horizontal": true
+      }
     }
   ],
   "links": [
@@ -693,22 +808,6 @@
       "VAE"
     ],
     [
-      370,
-      130,
-      0,
-      144,
-      0,
-      "IMAGE"
-    ],
-    [
-      371,
-      113,
-      0,
-      144,
-      1,
-      "GENPARAMS"
-    ],
-    [
       407,
       164,
       0,
@@ -725,36 +824,12 @@
       "GENPARAMS"
     ],
     [
-      431,
-      113,
-      0,
-      167,
-      0,
-      "*"
-    ],
-    [
-      432,
-      27,
-      0,
-      130,
-      0,
-      "*"
-    ],
-    [
       464,
       177,
       0,
       164,
       0,
       "GENPARAMS"
-    ],
-    [
-      466,
-      178,
-      0,
-      179,
-      0,
-      "*"
     ],
     [
       468,
@@ -765,36 +840,12 @@
       "*"
     ],
     [
-      472,
-      181,
-      5,
-      178,
-      0,
-      "*"
-    ],
-    [
-      473,
-      179,
-      0,
-      177,
-      0,
-      "GENPARAMS"
-    ],
-    [
       482,
       111,
       0,
       188,
       0,
       "LATENT"
-    ],
-    [
-      483,
-      167,
-      0,
-      188,
-      1,
-      "GENPARAMS"
     ],
     [
       484,
@@ -843,6 +894,94 @@
       27,
       0,
       "LATENT"
+    ],
+    [
+      492,
+      113,
+      0,
+      189,
+      0,
+      "*"
+    ],
+    [
+      494,
+      167,
+      0,
+      190,
+      0,
+      "*"
+    ],
+    [
+      495,
+      190,
+      0,
+      188,
+      1,
+      "GENPARAMS"
+    ],
+    [
+      496,
+      189,
+      0,
+      191,
+      0,
+      "*"
+    ],
+    [
+      501,
+      193,
+      0,
+      167,
+      0,
+      "*"
+    ],
+    [
+      502,
+      191,
+      0,
+      193,
+      0,
+      "*"
+    ],
+    [
+      503,
+      113,
+      0,
+      144,
+      1,
+      "GENPARAMS"
+    ],
+    [
+      504,
+      27,
+      0,
+      194,
+      0,
+      "*"
+    ],
+    [
+      505,
+      194,
+      0,
+      144,
+      0,
+      "IMAGE"
+    ],
+    [
+      508,
+      181,
+      5,
+      196,
+      0,
+      "*"
+    ],
+    [
+      509,
+      196,
+      0,
+      177,
+      0,
+      "GENPARAMS"
     ]
   ],
   "groups": [
@@ -850,12 +989,25 @@
       "id": 3,
       "title": "Control Panel",
       "bounding": [
-        70,
-        -200,
-        840,
-        700
+        40,
+        -280,
+        1500,
+        740
       ],
       "color": "#b58b2a",
+      "font_size": 24,
+      "flags": {}
+    },
+    {
+      "id": 4,
+      "title": "Diffusion Process",
+      "bounding": [
+        -460,
+        -950,
+        1180,
+        570
+      ],
+      "color": "#3f789e",
       "font_size": 24,
       "flags": {}
     }
@@ -863,10 +1015,10 @@
   "config": {},
   "extra": {
     "ds": {
-      "scale": 0.610443275732541,
+      "scale": 0.9648157894736844,
       "offset": [
-        362.3076987143602,
-        300.42663899791404
+        54.91595440535775,
+        351.8602759036234
       ]
     }
   },
