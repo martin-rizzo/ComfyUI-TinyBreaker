@@ -16,6 +16,7 @@ from .xcomfy.model       import Model
 from .xcomfy.vae         import VAE
 from .xcomfy.clip        import CLIP
 from .xcomfy.transcoder  import Transcoder
+from .core.gen_params    import GenParams
 from .utils.directories  import TINYBREAKER_CHECKPOINTS_DIR, \
                                 CHECKPOINTS_DIR, \
                                 TRANSCODERS_DIR, \
@@ -39,34 +40,41 @@ class LoadTinyBreakerCheckpointCustom:
         return {
             "required": {
                 "ckpt_name" : (cls.checkpoint_list(), {"tooltip": "The TinyBreaker checkpoint to load."}),
-                "vae"       : (cls.vae_list()       , {"tooltip": "The VAE quality to use.",
+                "vae"       : (cls.vae_list()       , {"tooltip": "The VAE model used for encoding and decoding images to and from latent space.",
                                                        "default": _DEFAULT_VAE_OPTION}),
-                "transcoder": (cls.transcoder_list(), {"tooltip": "The TinyBreaker checkpoint to load. (PixArt sigma checkpoints are also supported)"}),
-                "refiner"   : (cls.refiner_list()   , {"tooltip": "The refiner checkpoint to load. (use 'default' for auto-selection of best alternative or 'none' for no refiner)"}),
-                "resolution": (_RESOLUTIONS         , {"tooltip": "The type and resolution of the core PixArt model in the TinyBreaker checkpoint.",
+                "transcoder": (cls.transcoder_list(), {"tooltip": 'The transcoder model used for converting latent images from base to refiner. (use "automatic" for auto-selection of best alternative)'}),
+                "refiner"   : (cls.refiner_list()   , {"tooltip": 'The refiner checkpoint to load. (use "automatic" for auto-selection of best alternative or "none" for no refiner)'}),
+                "resolution": (_RESOLUTIONS         , {"tooltip": 'The base resolution the model is intended to work at. (use "automatic" for auto-selection of best alternative)',
                                                        "default": _DEFAULT_RESOLUTION}),
                 },
             }
 
     #__ FUNCTION __________________________________________
     FUNCTION = "load_checkpoint"
-    RETURN_TYPES = ("MODEL", "VAE", "TRANSCODER", "MODEL"        , "CLIP"        , "STRING"  )
-    RETURN_NAMES = ("MODEL", "VAE", "TRANSCODER", "REFINER_MODEL", "REFINER_CLIP", "METADATA")
+    RETURN_TYPES = ("MODEL", "VAE", "TRANSCODER", "MODEL"        , "CLIP"        , "GENPARAMS")
+    RETURN_NAMES = ("MODEL", "VAE", "TRANSCODER", "REFINER_MODEL", "REFINER_CLIP", "GENPARAMS")
+    OUTPUT_TOOLTIPS = ("The model used for denoising latent images.",
+                       "The VAE model used for encoding and decoding images to and from latent space.",
+                       "The transcoder model used for converting latent images from base to refiner.",
+                       "The model used for refining latent images.",
+                       "The CLIP model used for embedding text prompts during refining.",
+                       "Generation parameters extracted from the metadata of the loaded checkpoint.",
+                       )
 
     def load_checkpoint(self, ckpt_name, vae, transcoder, refiner, resolution) -> tuple:
         use_sdxl_refiner = False
+        resolution = 1024
 
         ckpt_path  = TINYBREAKER_CHECKPOINTS_DIR.get_full_path(ckpt_name)
         state_dict = comfy.utils.load_torch_file(ckpt_path)
 
-        metadata          = None  # Metadata.from_predefined("sigma", 2048)
-
-        model             = Model.from_state_dict(state_dict, prefix="base.diffusion_model", resolution=1024)
-        vae_obj           = self.vae_object(vae, ckpt_name, state_dict)
-        transcoder_obj    = self.transcoder_object(transcoder, ckpt_name, state_dict, use_sdxl_refiner)
-        refiner_model_obj = self.refiner_object(refiner, state_dict)
-        refiner_clip_obj  = self.refiner_clip_object(refiner, state_dict)
-        return (model, vae_obj, transcoder_obj, refiner_model_obj, refiner_clip_obj, metadata)
+        genparams      = GenParams.from_safetensors_metadata(ckpt_path)
+        model_obj      = Model.from_state_dict(state_dict, prefix="base.diffusion_model", resolution=resolution)
+        vae_obj        = self.vae_object(vae, ckpt_name, state_dict)
+        transcoder_obj = self.transcoder_object(transcoder, ckpt_name, state_dict, use_sdxl_refiner)
+        refiner_model  = self.refiner_object(refiner, state_dict)
+        refiner_clip   = self.refiner_clip_object(refiner, state_dict)
+        return (model_obj, vae_obj, transcoder_obj, refiner_model, refiner_clip, genparams)
 
 
     #__ internal functions ________________________________
