@@ -66,34 +66,28 @@ comfy_import_node(LoadAnyVAE)
 from .nodes.load_partial_vae import LoadPartialVAE
 comfy_import_node(LoadPartialVAE)
 
-from .nodes.select_style import SelectStyle
-comfy_import_node(SelectStyle)
-
 from .nodes.build_custom_transcoder import BuildCustomTranscoder
 comfy_import_node(BuildCustomTranscoder)
 
-# GenParams Nodes
+# TinyBreaker/genparams
 
-from .nodes.unified_prompt_editor import UnifiedPromptEditor
-comfy_import_node(UnifiedPromptEditor)
+from .nodes.select_style import SelectStyle
+comfy_import_node(SelectStyle)
 
 from .nodes.set_float import SetFloat
 comfy_import_node(SetFloat)
 
-from .nodes.set_cfg import SetCFG
-comfy_import_node(SetCFG)
-
 from .nodes.set_image import SetImage
 comfy_import_node(SetImage)
 
-from .nodes.set_noisy_image import SetNoisyImage
-comfy_import_node(SetNoisyImage)
-
-from .nodes.set_noise_seed import SetNoiseSeed
-comfy_import_node(SetNoiseSeed)
-
 from .nodes.set_image_tweaks import SetImageTweaks
 comfy_import_node(SetImageTweaks)
+
+from .nodes.set_seed import SetSeed
+comfy_import_node(SetSeed)
+
+from .nodes.unified_prompt_input import UnifiedPromptInput
+comfy_import_node(UnifiedPromptInput)
 
 # Operator Nodes
 
@@ -105,9 +99,6 @@ comfy_import_node(EncodePrompts)
 
 from .nodes.unpack_sampler_params import UpackSamplerParams
 comfy_import_node(UpackSamplerParams)
-
-from .nodes.placeholder_replacer import PlaceholderReplacer
-comfy_import_node(PlaceholderReplacer)
 
 from .nodes.double_stage_sampler import DoubleStageSampler
 comfy_import_node(DoubleStageSampler)

@@ -1,6 +1,6 @@
 """
-File    : set_float.py
-Purpose : Node that sets a float value, packing it into the generation parameters.
+File    : set_seed.py
+Purpose : Node to set a seed number, packing it into the generation parameters.
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
 Date    : Dec 21, 2024
 Repo    : https://github.com/martin-rizzo/ComfyUI-TinyBreaker
@@ -13,34 +13,34 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 from .core.gen_params import GenParams
 
-class SetFloat:
-    TITLE       = "💪TB | Set Float"
+class SetSeed:
+    TITLE       = "💪TB | Set Seed"
     CATEGORY    = "TinyBreaker/genparams"
-    DESCRIPTION = "Allows to set a float value, packing it into GenParams."
+    DESCRIPTION = "Allows to set a seed number, packing it into GenParams."
 
     #__ PARAMETERS ________________________________________
     @classmethod
-    def INPUT_TYPES(s):
+    def INPUT_TYPES(cls):
         return {
         "required": {
-            "genparams":("GENPARAMS", {"tooltip": "The original generation parameters which will be updated."
+            "genparams":("GENPARAMS", {"tooltip": "The generation parameters to be updated.",
                                        }),
             "key"      :("STRING"   , {"tooltip": "The full key of the parameter to modify. This key must include the prefix if any.",
-                                       "default": "base.cfg"
+                                       "default": "base.noise_seed"
                                        }),
-            "value"    :("FLOAT"    , {"tooltip": "The float value to set.",
-                                       "default": 8.0, "step":0.1, "round": 0.01
+            "seed"     :("INT"      , {"tooltip": "The seed number to apply.",
+                                       "default": 1, "min": 1, "max": 0xffffffffffffffff,
                                        }),
-            }
+            },
         }
 
     #__ FUNCTION __________________________________________
-    FUNCTION = "set_float"
+    FUNCTION = "set_seed"
     RETURN_TYPES    = ("GENPARAMS",)
     RETURN_NAMES    = ("genparams",)
-    OUTPUT_TOOLTIPS = ("The generation parameters with the updated value. (you can use this output to chain other genparams nodes)",)
+    OUTPUT_TOOLTIPS = ("The generation parameters with the updated seed number. (you can use this output to chain other genparams nodes)",)
 
-    def set_float(self, genparams: GenParams, key: str, value: float):
+    def set_seed(self, genparams: GenParams, key: str, seed: int):
         genparams = genparams.copy()
-        genparams.set(key, float(value))
+        genparams.set(key, int(seed))
         return (genparams,)

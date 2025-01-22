@@ -1,6 +1,6 @@
 {
-  "last_node_id": 196,
-  "last_link_id": 509,
+  "last_node_id": 200,
+  "last_link_id": 515,
   "nodes": [
     {
       "id": 144,
@@ -25,7 +25,7 @@
         {
           "name": "genparams",
           "type": "GENPARAMS",
-          "link": 503,
+          "link": 515,
           "shape": 7
         }
       ],
@@ -35,137 +35,6 @@
       },
       "widgets_values": [
         "TinyBreaker/%date:yyyy_MM_dd%/TB"
-      ]
-    },
-    {
-      "id": 164,
-      "type": "SetNoisyImage //TinyBreaker",
-      "pos": [
-        50,
-        -50
-      ],
-      "size": [
-        280,
-        178
-      ],
-      "flags": {},
-      "order": 7,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "link": 464
-        }
-      ],
-      "outputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "links": [
-            407
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "SetNoisyImage //TinyBreaker"
-      },
-      "widgets_values": [
-        1,
-        "fixed",
-        "3:2  (photo)",
-        "portrait",
-        "large",
-        1
-      ]
-    },
-    {
-      "id": 177,
-      "type": "SelectStyle //TinyBreaker",
-      "pos": [
-        50,
-        -190
-      ],
-      "size": [
-        280,
-        102
-      ],
-      "flags": {},
-      "order": 6,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "link": 509
-        },
-        {
-          "name": "custom_definitions",
-          "type": "STRING",
-          "link": null,
-          "widget": {
-            "name": "custom_definitions"
-          },
-          "shape": 7
-        }
-      ],
-      "outputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "links": [
-            464
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "SelectStyle //TinyBreaker"
-      },
-      "widgets_values": [
-        "CUTETOY",
-        "last",
-        ""
-      ]
-    },
-    {
-      "id": 113,
-      "type": "UnifiedPromptEditor //TinyBreaker",
-      "pos": [
-        340,
-        -190
-      ],
-      "size": [
-        530,
-        640
-      ],
-      "flags": {},
-      "order": 8,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "link": 407
-        }
-      ],
-      "outputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "links": [
-            492,
-            503
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "UnifiedPromptEditor //TinyBreaker"
-      },
-      "widgets_values": [
-        "A racing car parked in front of a sushi shop during the tumultuous night in Tokyo."
       ]
     },
     {
@@ -186,7 +55,7 @@
         {
           "name": "",
           "type": "*",
-          "link": 492
+          "link": 514
         }
       ],
       "outputs": [
@@ -642,7 +511,7 @@
         -870
       ],
       "size": [
-        170,
+        75,
         26
       ],
       "flags": {},
@@ -772,14 +641,144 @@
           "links": [
             509
           ],
-          "label": "Metadata",
-          "slot_index": 0
+          "slot_index": 0,
+          "label": "Metadata"
         }
       ],
       "properties": {
         "showOutputText": false,
         "horizontal": true
       }
+    },
+    {
+      "id": 198,
+      "type": "UnifiedPromptInput //TinyBreaker",
+      "pos": [
+        340,
+        -190
+      ],
+      "size": [
+        540,
+        640
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 511
+        }
+      ],
+      "outputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "links": [
+            514,
+            515
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "UnifiedPromptInput //TinyBreaker"
+      },
+      "widgets_values": [
+        "A delicious burger with cheese, bacon, lettuce and tomatoes, on a wooden table. It is located inside a McDonald's and in the background you can see a very happy panda bear"
+      ]
+    },
+    {
+      "id": 197,
+      "type": "SetImage //TinyBreaker",
+      "pos": [
+        50,
+        -50
+      ],
+      "size": [
+        280,
+        180
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 510
+        }
+      ],
+      "outputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "links": [
+            511
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "SetImage //TinyBreaker"
+      },
+      "widgets_values": [
+        1,
+        "fixed",
+        "3:2  (photo)",
+        "portrait",
+        "large",
+        1
+      ]
+    },
+    {
+      "id": 177,
+      "type": "SelectStyle //TinyBreaker",
+      "pos": [
+        50,
+        -190
+      ],
+      "size": [
+        280,
+        102
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 509
+        },
+        {
+          "name": "custom_definitions",
+          "type": "STRING",
+          "link": null,
+          "widget": {
+            "name": "custom_definitions"
+          },
+          "shape": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "links": [
+            510
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "SelectStyle //TinyBreaker"
+      },
+      "widgets_values": [
+        "PHOTO",
+        "last",
+        ""
+      ]
     }
   ],
   "links": [
@@ -808,26 +807,10 @@
       "VAE"
     ],
     [
-      407,
-      164,
-      0,
-      113,
-      0,
-      "GENPARAMS"
-    ],
-    [
       427,
       167,
       0,
       111,
-      0,
-      "GENPARAMS"
-    ],
-    [
-      464,
-      177,
-      0,
-      164,
       0,
       "GENPARAMS"
     ],
@@ -896,14 +879,6 @@
       "LATENT"
     ],
     [
-      492,
-      113,
-      0,
-      189,
-      0,
-      "*"
-    ],
-    [
       494,
       167,
       0,
@@ -944,14 +919,6 @@
       "*"
     ],
     [
-      503,
-      113,
-      0,
-      144,
-      1,
-      "GENPARAMS"
-    ],
-    [
       504,
       27,
       0,
@@ -981,6 +948,38 @@
       0,
       177,
       0,
+      "GENPARAMS"
+    ],
+    [
+      510,
+      177,
+      0,
+      197,
+      0,
+      "GENPARAMS"
+    ],
+    [
+      511,
+      197,
+      0,
+      198,
+      0,
+      "GENPARAMS"
+    ],
+    [
+      514,
+      198,
+      0,
+      189,
+      0,
+      "*"
+    ],
+    [
+      515,
+      198,
+      0,
+      144,
+      1,
       "GENPARAMS"
     ]
   ],
@@ -1015,10 +1014,10 @@
   "config": {},
   "extra": {
     "ds": {
-      "scale": 0.9648157894736844,
+      "scale": 0.9648157894736895,
       "offset": [
-        54.91595440535775,
-        351.8602759036234
+        5.510650921585398,
+        311.09942221573857
       ]
     }
   },

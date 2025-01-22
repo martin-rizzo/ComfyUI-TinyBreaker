@@ -1,5 +1,5 @@
 """
-File    : unified_prompt_editor.py
+File    : unified_prompt_input.py
 Purpose : Node that unifies positive/negative prompts and parameters into a single text input.
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
 Date    : Dec 21, 2024
@@ -13,18 +13,21 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 from .core.gen_params import GenParams
 
-class UnifiedPromptEditor:
-    TITLE       = "💪TB | Unified Prompt Editor"
-    CATEGORY    = "TinyBreaker"
+class UnifiedPromptInput:
+    TITLE       = "💪TB | Unified Prompt Input"
+    CATEGORY    = "TinyBreaker/genparams"
     DESCRIPTION = "Allows to write positive/negative prompts and parameters in a single text input."
 
     #__ PARAMETERS ________________________________________
     @classmethod
     def INPUT_TYPES(cls):
         return {
-            "required": {
-                "genparams": ("GENPARAMS", {"tooltip": "The original generation parameters which will be updated."}),
-                "text"     : ("STRING"   , {"tooltip": "The text input containing positive/negative prompts and parameters.", "multiline": True, "dynamicPrompts": True}),
+        "required": {
+            "genparams":("GENPARAMS", {"tooltip": "The generation parameters to be updated."
+                                       }),
+            "text"     :("STRING"   , {"tooltip": "The text input containing positive/negative prompts and parameters.",
+                                       "multiline": True, "dynamicPrompts": True
+                                       }),
             },
         }
 
@@ -32,9 +35,9 @@ class UnifiedPromptEditor:
     FUNCTION = "parse_text"
     RETURN_TYPES    = ("GENPARAMS",)
     RETURN_NAMES    = ("genparams",)
-    OUTPUT_TOOLTIPS = ("The generation parameters with the updated values.",)
+    OUTPUT_TOOLTIPS = ("The generation parameters with the updated values. (you can use this output to chain other genparams nodes)",)
 
-    def parse_text(self, genparams, text):
+    def parse_text(self, genparams: GenParams, text: str):
         template_params = genparams
 
         prompt   = text

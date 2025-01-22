@@ -1,6 +1,6 @@
 {
-  "last_node_id": 164,
-  "last_link_id": 455,
+  "last_node_id": 166,
+  "last_link_id": 460,
   "nodes": [
     {
       "id": 70,
@@ -284,7 +284,7 @@
         {
           "name": "",
           "type": "*",
-          "link": 343
+          "link": 459
         }
       ],
       "outputs": [
@@ -450,45 +450,6 @@
         "showOutputText": false,
         "horizontal": false
       }
-    },
-    {
-      "id": 113,
-      "type": "UnifiedPromptEditor //TinyBreaker",
-      "pos": [
-        370,
-        -120
-      ],
-      "size": [
-        530,
-        600
-      ],
-      "flags": {},
-      "order": 17,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "link": 378
-        }
-      ],
-      "outputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "links": [
-            343,
-            371
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "UnifiedPromptEditor //TinyBreaker"
-      },
-      "widgets_values": [
-        "A racing car parked in front of a sushi shop during the tumultuous night in Tokyo."
-      ]
     },
     {
       "id": 89,
@@ -1042,7 +1003,7 @@
       },
       "widgets_values": [
         true,
-        745095090363413,
+        113619972596916,
         "randomize",
         3.4
       ]
@@ -1139,7 +1100,7 @@
         {
           "name": "genparams",
           "type": "GENPARAMS",
-          "link": 392
+          "link": 456
         }
       ],
       "outputs": [
@@ -1147,7 +1108,7 @@
           "name": "genparams",
           "type": "GENPARAMS",
           "links": [
-            378
+            458
           ]
         }
       ],
@@ -1195,7 +1156,7 @@
           "name": "genparams",
           "type": "GENPARAMS",
           "links": [
-            445
+            457
           ]
         }
       ],
@@ -1206,48 +1167,6 @@
         "CUTETOY",
         "last",
         "[CUSTOM.1]\nbase.prompt        = \"\"\nbase.negative      = \"\"\nbase.steps         = 12\nbase.steps_start   = 2\nbase.cfg           = 3.4\nbase.sampler_name  = \"uni_pc\"\nbase.scheduler     = \"simple\"\nrefiner.prompt        = \"\"\nrefiner.negative      = \"(worst quality, low quality:1.8)\"\nrefiner.steps         = 11\nrefiner.steps_start   = 6\nrefiner.cfg           = 2.0\nrefiner.sampler_name  = \"deis\"\nrefiner.scheduler     = \"ddim_uniform\"\n\n[CUSTOM.2]\nbase.prompt        = \"\"\nbase.negative      = \"\"\nbase.steps         = 12\nbase.steps_start   = 2\nbase.cfg           = 3.4\nbase.sampler_name  = \"uni_pc\"\nbase.scheduler     = \"simple\"\nrefiner.prompt        = \"\"\nrefiner.negative      = \"(worst quality, low quality:1.8)\"\nrefiner.steps         = 11\nrefiner.steps_start   = 6\nrefiner.cfg           = 2.0\nrefiner.sampler_name  = \"deis\"\nrefiner.scheduler     = \"ddim_uniform\"\n"
-      ]
-    },
-    {
-      "id": 152,
-      "type": "SetNoisyImage //TinyBreaker",
-      "pos": [
-        80,
-        20
-      ],
-      "size": [
-        280,
-        180
-      ],
-      "flags": {},
-      "order": 15,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "link": 445
-        }
-      ],
-      "outputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "links": [
-            392
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "SetNoisyImage //TinyBreaker"
-      },
-      "widgets_values": [
-        1,
-        "fixed",
-        "3:2  (photo)",
-        "portrait",
-        "large",
-        1
       ]
     },
     {
@@ -1524,7 +1443,7 @@
         {
           "name": "genparams",
           "type": "GENPARAMS",
-          "link": 371,
+          "link": 460,
           "shape": 7
         }
       ],
@@ -1605,6 +1524,86 @@
         "automatic",
         "automatic",
         "automatic"
+      ]
+    },
+    {
+      "id": 165,
+      "type": "SetImage //TinyBreaker",
+      "pos": [
+        80,
+        20
+      ],
+      "size": [
+        280,
+        180
+      ],
+      "flags": {},
+      "order": 15,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 457
+        }
+      ],
+      "outputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "links": [
+            456
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "SetImage //TinyBreaker"
+      },
+      "widgets_values": [
+        1,
+        "fixed",
+        "3:2  (photo)",
+        "portrait",
+        "large",
+        1
+      ]
+    },
+    {
+      "id": 166,
+      "type": "UnifiedPromptInput //TinyBreaker",
+      "pos": [
+        370,
+        -120
+      ],
+      "size": [
+        540,
+        610
+      ],
+      "flags": {},
+      "order": 17,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 458
+        }
+      ],
+      "outputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "links": [
+            459,
+            460
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "UnifiedPromptInput //TinyBreaker"
+      },
+      "widgets_values": [
+        "A racing car parked in front of a sushi shop during the tumultuous night in Tokyo."
       ]
     }
   ],
@@ -1722,14 +1721,6 @@
       "VAE"
     ],
     [
-      343,
-      113,
-      0,
-      126,
-      0,
-      "*"
-    ],
-    [
       344,
       126,
       0,
@@ -1776,30 +1767,6 @@
       144,
       0,
       "IMAGE"
-    ],
-    [
-      371,
-      113,
-      0,
-      144,
-      1,
-      "GENPARAMS"
-    ],
-    [
-      378,
-      148,
-      0,
-      113,
-      0,
-      "GENPARAMS"
-    ],
-    [
-      392,
-      152,
-      0,
-      148,
-      0,
-      "GENPARAMS"
     ],
     [
       408,
@@ -1970,14 +1937,6 @@
       "CLIP"
     ],
     [
-      445,
-      160,
-      0,
-      152,
-      0,
-      "GENPARAMS"
-    ],
-    [
       446,
       145,
       0,
@@ -2056,6 +2015,46 @@
       164,
       0,
       "*"
+    ],
+    [
+      456,
+      165,
+      0,
+      148,
+      0,
+      "GENPARAMS"
+    ],
+    [
+      457,
+      160,
+      0,
+      165,
+      0,
+      "GENPARAMS"
+    ],
+    [
+      458,
+      148,
+      0,
+      166,
+      0,
+      "GENPARAMS"
+    ],
+    [
+      459,
+      166,
+      0,
+      126,
+      0,
+      "*"
+    ],
+    [
+      460,
+      166,
+      0,
+      144,
+      1,
+      "GENPARAMS"
     ]
   ],
   "groups": [
@@ -2089,10 +2088,10 @@
   "config": {},
   "extra": {
     "ds": {
-      "scale": 0.964815789473689,
+      "scale": 0.9648157894736895,
       "offset": [
-        75.83700541114109,
-        249.6280372171195
+        13.6714503297886,
+        242.2877459484231
       ]
     }
   },

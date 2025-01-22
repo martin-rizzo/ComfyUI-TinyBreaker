@@ -23,21 +23,25 @@ _PREDEFINED_STYLES_BY_VERSION, _LAST_VERSION = \
 
 class SelectStyle:
     TITLE       = "💪TB | Select Style"
-    CATEGORY    = "TinyBreaker"
-    DESCRIPTION = "Select a predefined style from a list of available options and load it into the generation parameters. Additionally, you can also provide custom definitions to create your own unique styles."
+    CATEGORY    = "TinyBreaker/genparams"
+    DESCRIPTION = "Select a predefined style from a list of available options, packing it into GenParams. Additionally, you can also provide custom definitions to create your own unique styles."
 
     #__ PARAMETERS ________________________________________
     @classmethod
     def INPUT_TYPES(cls):
         return {
-            "required": {
-                "genparams" : ("GENPARAMS"      , {"tooltip": "The generation parameters which will be updated."}),
-                "style_name": (cls.style_names(), {"tooltip": "The name of the style to use."}),
-                "version"   : (cls.versions()   , {"tooltip": "The version of the styles file to use. By selecting a particular version, you're choosing a snapshot of the style at that point in time."}),
+        "required": {
+            "genparams" :("GENPARAMS"      , {"tooltip": "The generation parameters to be updated."
+                                              }),
+            "style_name":(cls.style_names(), {"tooltip": "The name of the style to use."
+                                              }),
+            "version"   :(cls.versions()   , {"tooltip": "The version of the styles file to use. By selecting a particular version, you're choosing a snapshot of the style at that point in time."
+                                              }),
             },
-            "optional": {
-                "custom_definitions": ("STRING", {"tooltip": "A string containing a list of custom styles that override the pre-defined styles.",
-                                                  "default": "", "multiline": True, "forceInput": True}),
+        "optional": {
+            "custom_definitions":("STRING", {"tooltip": "A string containing a list of custom styles that override the pre-defined styles.",
+                                             "default": "", "multiline": True, "forceInput": True
+                                             }),
             },
         }
 
