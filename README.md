@@ -13,7 +13,13 @@
 <!-- ![TinyBreaker Experimental Nodes](./demo_images/nodes.png) -->
 </div>
 
-**ConfyUI-TinyBreaker** is a collection of ComfyUI nodes designed to support the 'TinyBreaker' model. Currently, it remains in beta with limited functionality, but the goal is to provide a full set of nodes, enabling users to explore this awesome technology.
+**ConfyUI-TinyBreaker** is a collection of custom ComfyUI nodes specifically designed to work with the TinyBreaker model. It is currently under active development, so expect some rough edges and evolving functionality. The nodes are functional, allowing you to explore the potential of the model, but be aware that significant changes are likely between versions as nodes may be completely overhauled.
+
+
+## What is TinyBreaker?
+
+TinyBreaker is a hybrid model that combines the PixArt model for base image generation with Photon (or any SD1 model) for image refinement. The idea is to leverage both models' strengths in these tasks, enabling them to operate efficiently on mid and low-end hardware due to their minimal parameter count. Moreover, by sequentially executing both models, you can offload them to system RAM reducing the VRAM usage. Additionally, TinyBreaker employs Tiny Autoencoders for latent space conversion, optimizing performance and efficiency.
+
 
 ## Installation
 > [!IMPORTANT]
@@ -24,21 +30,10 @@
 
 Open a terminal and navigate to your ComfyUI directory:
 ```bash
-cd <your_comfyui_directory>/custom_nodes
+cd <your_comfyui_directory>
+cd custom_nodes
 git clone https://github.com/martin-rizzo/ComfyUI-TinyBreaker
 ```
-
-If ComfyUI is using a virtual environment, activate it before installing the dependencies:
-```bash
-# You might need to replace '.venv' with the path to your virtual environment
-source .venv/bin/activate
-```
-
-Then, install the required dependencies using pip:
-```bash
-python -m pip install -r ConfyUI-TinyBreaker/requirements.txt
-```
-
 
 ### Manually Installation on Windows
 
