@@ -15,7 +15,7 @@ from .core.gen_params import GenParams
 
 class SetSeed:
     TITLE       = "💪TB | Set Seed"
-    CATEGORY    = "TinyBreaker/genparams"
+    CATEGORY    = "TinyBreaker"
     DESCRIPTION = "Allows to set a seed number, packing it into GenParams."
 
     #__ PARAMETERS ________________________________________

@@ -23,7 +23,7 @@ from .common import LANDSCAPE_SIZES_BY_ASPECT_RATIO, \
 
 class SetImage:
     TITLE       = "💪TB | Set Image"
-    CATEGORY    = "TinyBreaker/genparams"
+    CATEGORY    = "TinyBreaker"
     DESCRIPTION = "Sets the attributes and seed for the initial noisy image, packing them into GenParams."
 
     #__ PARAMETERS ________________________________________

@@ -23,7 +23,7 @@ _VAE_OPTIONS        = ["fast", "high quality"]
 _DEFAULT_VAE_OPTION = "fast"
 
 
-class LoadCheckpoint:
+class LoadTinyBreakerCheckpoint:
     TITLE       = "💪TB | Load TinyBreaker Checkpoint"
     CATEGORY    = "TinyBreaker"
     DESCRIPTION = "Load TinyBreaker checkpoints."

@@ -15,7 +15,7 @@ from .core.gen_params import GenParams
 
 class SetFloat:
     TITLE       = "💪TB | Set Float"
-    CATEGORY    = "TinyBreaker/genparams"
+    CATEGORY    = "TinyBreaker"
     DESCRIPTION = "Allows to set a float value, packing it into GenParams."
 
     #__ PARAMETERS ________________________________________

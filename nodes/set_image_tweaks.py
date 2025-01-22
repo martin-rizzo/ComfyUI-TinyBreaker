@@ -27,7 +27,7 @@ _DEFAULT_REFINAMENT="normal"
 
 class SetImageTweaks:
     TITLE       = "💪TB | Set Image Tweaks"
-    CATEGORY    = "TinyBreaker/genparams"
+    CATEGORY    = "TinyBreaker"
     DESCRIPTION = "Fine-tune generation parameters that achieve subtle improvements in the image."
 
     #__ PARAMETERS ________________________________________

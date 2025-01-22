@@ -33,10 +33,12 @@ License : MIT
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 from .nodes.utils.system import logger
-
-PROJECT_ID                 ="//TinyBreaker"
 NODE_CLASS_MAPPINGS        = {}
 NODE_DISPLAY_NAME_MAPPINGS = {}
+
+_PROJECT_ID    = "//TinyBreaker"
+_PROJECT_EMOJI = "💪"
+_CATEGORY      = "TinyBreaker"
 
 def comfy_import_node(cls):
     global NODE_CLASS_MAPPINGS
@@ -44,32 +46,14 @@ def comfy_import_node(cls):
     if cls.__name__ in NODE_CLASS_MAPPINGS:
         logger.warning(f"Node class {cls.__name__} already exists, skipping import.")
         return
-    comfy_class_name = f"{cls.__name__} {PROJECT_ID}"
+    cls.CATEGORY = f"{_PROJECT_EMOJI}{_CATEGORY}"
+    comfy_class_name = f"{cls.__name__} {_PROJECT_ID}"
     NODE_CLASS_MAPPINGS[comfy_class_name]        = cls
     NODE_DISPLAY_NAME_MAPPINGS[comfy_class_name] = cls.TITLE
 
 
-# Loader/Builder Nodes
-
-from .nodes.load_tinybreaker_checkpoint import LoadCheckpoint
-comfy_import_node(LoadCheckpoint)
-
-from .nodes.load_tinybreaker_checkpoint_custom import LoadTinyBreakerCheckpointCustom
-comfy_import_node(LoadTinyBreakerCheckpointCustom)
-
-from .nodes.load_transcoder import LoadTranscoder
-comfy_import_node(LoadTranscoder)
-
-from .nodes.load_any_vae import LoadAnyVAE
-comfy_import_node(LoadAnyVAE)
-
-from .nodes.load_partial_vae import LoadPartialVAE
-comfy_import_node(LoadPartialVAE)
-
-from .nodes.build_custom_transcoder import BuildCustomTranscoder
-comfy_import_node(BuildCustomTranscoder)
-
 # TinyBreaker/genparams
+_CATEGORY = "TinyBreaker/genparams"
 
 from .nodes.select_style import SelectStyle
 comfy_import_node(SelectStyle)
@@ -89,19 +73,31 @@ comfy_import_node(SetSeed)
 from .nodes.unified_prompt_input import UnifiedPromptInput
 comfy_import_node(UnifiedPromptInput)
 
-# Operator Nodes
 
-from .nodes.empty_latent_image import EmptyLatentImage
-comfy_import_node(EmptyLatentImage)
+# TinyBreakers/loaders
+_CATEGORY = "TinyBreaker/loaders"
 
-from .nodes.encode_prompts import EncodePrompts
-comfy_import_node(EncodePrompts)
+from .nodes.load_tinybreaker_checkpoint import LoadTinyBreakerCheckpoint
+comfy_import_node(LoadTinyBreakerCheckpoint)
 
-from .nodes.unpack_sampler_params import UpackSamplerParams
-comfy_import_node(UpackSamplerParams)
+from .nodes.load_tinybreaker_checkpoint_custom import LoadTinyBreakerCheckpointCustom
+comfy_import_node(LoadTinyBreakerCheckpointCustom)
 
-from .nodes.double_stage_sampler import DoubleStageSampler
-comfy_import_node(DoubleStageSampler)
+from .nodes.load_any_vae import LoadAnyVAE
+comfy_import_node(LoadAnyVAE)
+
+from .nodes.load_partial_vae import LoadPartialVAE
+comfy_import_node(LoadPartialVAE)
+
+
+# TinyBreakers/transcoding
+_CATEGORY = "TinyBreaker/transcoding"
+
+from .nodes.load_transcoder import LoadTranscoder
+comfy_import_node(LoadTranscoder)
+
+from .nodes.build_custom_transcoder import BuildCustomTranscoder
+comfy_import_node(BuildCustomTranscoder)
 
 from .nodes.transcode_latent import TranscodeLatent
 comfy_import_node(TranscodeLatent)
@@ -109,11 +105,25 @@ comfy_import_node(TranscodeLatent)
 from .nodes.transcode_latent_two_steps import TranscodeLatentTwoSteps
 comfy_import_node(TranscodeLatentTwoSteps)
 
+
+# TinyBreaker
+_CATEGORY = "TinyBreaker"
+
+from .nodes.double_stage_sampler import DoubleStageSampler
+comfy_import_node(DoubleStageSampler)
+
+from .nodes.empty_latent_image import EmptyLatentImage
+comfy_import_node(EmptyLatentImage)
+
 from .nodes.save_image import SaveImage
 comfy_import_node(SaveImage)
 
-# Development Nodes
+from .nodes.unpack_sampler_params import UpackSamplerParams
+comfy_import_node(UpackSamplerParams)
 
+
+# TinyBreaker/__dev
+_CATEGORY = "TinyBreaker/__dev"
 
 
 

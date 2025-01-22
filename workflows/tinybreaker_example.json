@@ -1,6 +1,6 @@
 {
-  "last_node_id": 200,
-  "last_link_id": 515,
+  "last_node_id": 202,
+  "last_link_id": 527,
   "nodes": [
     {
       "id": 144,
@@ -280,7 +280,7 @@
         {
           "name": "model",
           "type": "MODEL",
-          "link": 484
+          "link": 522
         },
         {
           "name": "clip",
@@ -290,17 +290,17 @@
         {
           "name": "transcoder",
           "type": "TRANSCODER",
-          "link": 486
+          "link": 524
         },
         {
           "name": "refiner_model",
           "type": "MODEL",
-          "link": 487
+          "link": 525
         },
         {
           "name": "refiner_clip",
           "type": "CLIP",
-          "link": 488
+          "link": 526
         }
       ],
       "outputs": [
@@ -372,7 +372,7 @@
         {
           "name": "",
           "type": "*",
-          "link": 468
+          "link": 523
         }
       ],
       "outputs": [
@@ -542,74 +542,6 @@
       }
     },
     {
-      "id": 181,
-      "type": "LoadCheckpoint //TinyBreaker",
-      "pos": [
-        -450,
-        -710
-      ],
-      "size": [
-        390,
-        190
-      ],
-      "flags": {},
-      "order": 1,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "MODEL",
-          "type": "MODEL",
-          "links": [
-            484
-          ]
-        },
-        {
-          "name": "VAE",
-          "type": "VAE",
-          "links": [
-            468
-          ]
-        },
-        {
-          "name": "TRANSCODER",
-          "type": "TRANSCODER",
-          "links": [
-            486
-          ]
-        },
-        {
-          "name": "REFINER_MODEL",
-          "type": "MODEL",
-          "links": [
-            487
-          ]
-        },
-        {
-          "name": "REFINER_CLIP",
-          "type": "CLIP",
-          "links": [
-            488
-          ]
-        },
-        {
-          "name": "GENPARAMS",
-          "type": "GENPARAMS",
-          "links": [
-            508
-          ],
-          "slot_index": 5
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "LoadCheckpoint //TinyBreaker"
-      },
-      "widgets_values": [
-        "TinyBreaker_prototype0.safetensors",
-        "fast"
-      ]
-    },
-    {
       "id": 196,
       "type": "Reroute",
       "pos": [
@@ -627,7 +559,7 @@
         {
           "name": "",
           "type": "*",
-          "link": 508,
+          "link": 527,
           "pos": [
             37.5,
             0
@@ -779,6 +711,73 @@
         "last",
         ""
       ]
+    },
+    {
+      "id": 202,
+      "type": "LoadTinyBreakerCheckpoint //TinyBreaker",
+      "pos": [
+        -450,
+        -710
+      ],
+      "size": [
+        390,
+        190
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            522
+          ]
+        },
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [
+            523
+          ]
+        },
+        {
+          "name": "TRANSCODER",
+          "type": "TRANSCODER",
+          "links": [
+            524
+          ]
+        },
+        {
+          "name": "REFINER_MODEL",
+          "type": "MODEL",
+          "links": [
+            525
+          ]
+        },
+        {
+          "name": "REFINER_CLIP",
+          "type": "CLIP",
+          "links": [
+            526
+          ]
+        },
+        {
+          "name": "GENPARAMS",
+          "type": "GENPARAMS",
+          "links": [
+            527
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadTinyBreakerCheckpoint //TinyBreaker"
+      },
+      "widgets_values": [
+        "TinyBreaker_prototype0.safetensors",
+        "fast"
+      ]
     }
   ],
   "links": [
@@ -815,14 +814,6 @@
       "GENPARAMS"
     ],
     [
-      468,
-      181,
-      1,
-      56,
-      0,
-      "*"
-    ],
-    [
       482,
       111,
       0,
@@ -831,43 +822,11 @@
       "LATENT"
     ],
     [
-      484,
-      181,
-      0,
-      188,
-      2,
-      "MODEL"
-    ],
-    [
       485,
       91,
       0,
       188,
       3,
-      "CLIP"
-    ],
-    [
-      486,
-      181,
-      2,
-      188,
-      4,
-      "TRANSCODER"
-    ],
-    [
-      487,
-      181,
-      3,
-      188,
-      5,
-      "MODEL"
-    ],
-    [
-      488,
-      181,
-      4,
-      188,
-      6,
       "CLIP"
     ],
     [
@@ -935,14 +894,6 @@
       "IMAGE"
     ],
     [
-      508,
-      181,
-      5,
-      196,
-      0,
-      "*"
-    ],
-    [
       509,
       196,
       0,
@@ -981,6 +932,54 @@
       144,
       1,
       "GENPARAMS"
+    ],
+    [
+      522,
+      202,
+      0,
+      188,
+      2,
+      "MODEL"
+    ],
+    [
+      523,
+      202,
+      1,
+      56,
+      0,
+      "*"
+    ],
+    [
+      524,
+      202,
+      2,
+      188,
+      4,
+      "TRANSCODER"
+    ],
+    [
+      525,
+      202,
+      3,
+      188,
+      5,
+      "MODEL"
+    ],
+    [
+      526,
+      202,
+      4,
+      188,
+      6,
+      "CLIP"
+    ],
+    [
+      527,
+      202,
+      5,
+      196,
+      0,
+      "*"
     ]
   ],
   "groups": [
@@ -1014,10 +1013,10 @@
   "config": {},
   "extra": {
     "ds": {
-      "scale": 0.9648157894736895,
+      "scale": 0.9648157894736897,
       "offset": [
-        5.510650921585398,
-        311.09942221573857
+        0.047843406249650666,
+        317.6019337002303
       ]
     }
   },

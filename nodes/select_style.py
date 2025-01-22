@@ -23,7 +23,7 @@ _PREDEFINED_STYLES_BY_VERSION, _LAST_VERSION = \
 
 class SelectStyle:
     TITLE       = "💪TB | Select Style"
-    CATEGORY    = "TinyBreaker/genparams"
+    CATEGORY    = "TinyBreaker"
     DESCRIPTION = "Select a predefined style from a list of available options, packing it into GenParams. Additionally, you can also provide custom definitions to create your own unique styles."
 
     #__ PARAMETERS ________________________________________

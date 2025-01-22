@@ -15,7 +15,7 @@ from .core.gen_params import GenParams
 
 class UnifiedPromptInput:
     TITLE       = "💪TB | Unified Prompt Input"
-    CATEGORY    = "TinyBreaker/genparams"
+    CATEGORY    = "TinyBreaker"
     DESCRIPTION = "Allows to write positive/negative prompts and parameters in a single text input."
 
     #__ PARAMETERS ________________________________________
