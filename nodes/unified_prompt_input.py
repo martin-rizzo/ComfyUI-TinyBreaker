@@ -11,7 +11,13 @@ License : MIT
   (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
+import re
 from .core.genparams import GenParams
+
+# regular expression pattern to match arguments in the format "--key value"
+# the pattern supports not having a space between the key and value
+_ARGS_PATTERN = r"--([a-z]+)(.+?)(?=\s--|$)"
+
 
 class UnifiedPromptInput:
     TITLE       = "💪TB | Unified Prompt Input"
@@ -37,64 +43,64 @@ class UnifiedPromptInput:
     RETURN_NAMES    = ("genparams",)
     OUTPUT_TOOLTIPS = ("The generation parameters with the updated values. (you can use this output to chain other genparams nodes)",)
 
-    def parse_text(self, genparams: GenParams, text: str):
-        #template_params = genparams
-        user_prompt     = text
-        user_negative   = ""
+    def parse_text(self, genparams: GenParams, text: str) -> GenParams:
+        genparams_input = genparams
 
-        # p
-        prompt, args = self._split_prompt_and_args(user_prompt)
-        style        = self._get_style(args)
-        negative     = ""
+        # parse the arguments entered by the user
+        args = self._parse_args(text)
 
-        genparams = genparams.copy()
-        genparams.set_str("base.prompt"     , prompt  , use_template=True)
-        genparams.set_str("base.negative"   , negative, use_template=True)
-        genparams.set_str("refiner.prompt"  , prompt  , use_template=True)
-        genparams.set_str("refiner.negative", negative, use_template=True)
+        style = args.pop("style", None)
+        # if style is not None:
+        #     genparams_input = self._apply_style(style, genparams_input)
 
-        print("##>> base.prompt:"     , genparams["base.prompt"     ])
-        print("##>> base.negative:"   , genparams["base.negative"   ])
-        print("##>> refiner.prompt:"  , genparams["refiner.prompt"  ])
-        print("##>> refiner.negative:", genparams["refiner.negative"])
-
-        # before returning, store the original user's prompts for future reference
-        genparams.set_str("user.prompt"  , user_prompt)
-        genparams.set_str("user.negative", user_negative)
-        return (genparams,)
+        # build `genparams` from the parsed arguments (using the node input as template)
+        genparams_input["refiner.seed"] = 100
+        genparams_output = GenParams.from_arguments(args, template=genparams_input)
+        genparams_output.set_str("user.prompt"  , text)
+        genparams_output.set_str("user.negative", ""  )
+        return (genparams_output,)
 
 
     #__ internal functions ________________________________
 
     @staticmethod
-    def _split_prompt_and_args(text: str) -> tuple[str, list]:
-        """Parses the text input and returns a tuple with the prompt and a list of arguments."""
-        prompt, _, args_text = text.partition("--")
-        args = args_text.replace('\n', " ").replace('\r', " ").split(" --")
-        args = [a.strip() for a in args]
-        return prompt.strip(), ["--"+a for a in args if len(a) > 0]
+    def _parse_args(text: str) -> tuple[str, dict]:
+        prompt, _, str_args = text.partition("--")
+        matches = re.findall(_ARGS_PATTERN, "--"+str_args)
+        args    = {param.strip(): rest.strip() for param, rest in matches}
+        args["prompt"] = prompt.strip()
+        return args
 
 
-    @staticmethod
-    def _get_style(args: list) -> str:
-        for arg in args:
-            if arg.startswith("--style "):
-                return arg.split(' ',1)[1].upper()
-        return ""
+    # @staticmethod
+    # def _split_prompt_and_args(text: str) -> tuple[str, list]:
+    #     """Parses the text input and returns a tuple with the prompt and a list of arguments."""
+    #     prompt, _, args_text = text.partition("--")
+    #     args = args_text.replace('\n', " ").replace('\r', " ").split(" --")
+    #     args = [a.strip() for a in args]
+    #     return prompt.strip(), ["--"+a for a in args if len(a) > 0]
 
-    @staticmethod
-    def _apply_args_to_genparams(genparams: GenParams,
-                                 args: list,
-                                 *,# keyword-only args #
-                                 prompt: str = ""
-                                 ):
-        genparams.set_str("base.prompt"     , prompt  )
-        genparams.set_str("refiner.prompt"  , prompt  )
 
-        for arg in args:
-            if arg.startswith("--style "): continue
-            if arg.startswith("--no "):
-                _negative = arg.split(' ',1)[1].strip()
-                genparams.set_str("base.negative"   , _negative)
-                genparams.set_str("refiner.negative", _negative)
+    # @staticmethod
+    # def _get_style(args: list) -> str:
+    #     for arg in args:
+    #         if arg.startswith("--style "):
+    #             return arg.split(' ',1)[1].upper()
+    #     return ""
+
+    # @staticmethod
+    # def _apply_args_to_genparams(genparams: GenParams,
+    #                              args: list,
+    #                              *,# keyword-only args #
+    #                              prompt: str = ""
+    #                              ):
+    #     genparams.set_str("base.prompt"     , prompt  )
+    #     genparams.set_str("refiner.prompt"  , prompt  )
+
+    #     for arg in args:
+    #         if arg.startswith("--style "): continue
+    #         if arg.startswith("--no "):
+    #             _negative = arg.split(' ',1)[1].strip()
+    #             genparams.set_str("base.negative"   , _negative)
+    #             genparams.set_str("refiner.negative", _negative)
 
