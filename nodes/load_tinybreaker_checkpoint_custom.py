@@ -16,7 +16,7 @@ from .xcomfy.model       import Model
 from .xcomfy.vae         import VAE
 from .xcomfy.clip        import CLIP
 from .xcomfy.transcoder  import Transcoder
-from .core.gen_params    import GenParams
+from .core.genparams     import GenParams
 from .utils.directories  import TINYBREAKER_CHECKPOINTS_DIR, \
                                 CHECKPOINTS_DIR, \
                                 TRANSCODERS_DIR, \

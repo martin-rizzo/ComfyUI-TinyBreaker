@@ -11,7 +11,7 @@ License : MIT
   (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
-from .core.gen_params import GenParams
+from .core.genparams import GenParams
 
 _NFACTORS_BY_REFINAMENT = {
     "disabled": -10000,
@@ -62,9 +62,9 @@ class SetImageTweaks:
                              cfg_fixing: float,
                              ):
         genparams = genparams.copy()
-        genparams.add("base.cfg"             ,float( cfg_fixing                          ))
-        genparams.set("refiner.noise_seed"   ,int(   variant                             ))
-        genparams.set("refiner.steps_nfactor",int(   _NFACTORS_BY_REFINAMENT[refinement] ))
+        genparams.set_float("base.cfg"             , cfg_fixing, as_delta = True         )
+        genparams.set_int  ("refiner.noise_seed"   , variant                             )
+        genparams.set_int  ("refiner.steps_nfactor", _NFACTORS_BY_REFINAMENT[refinement] )
         return (genparams,)
 
 

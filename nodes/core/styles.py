@@ -13,7 +13,7 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import os
 import configparser
-from .gen_params import GenParams
+from .genparams import GenParams
 
 
 class Styles:

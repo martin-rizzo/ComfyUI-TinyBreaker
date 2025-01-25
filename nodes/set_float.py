@@ -11,7 +11,7 @@ License : MIT
   (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
-from .core.gen_params import GenParams
+from .core.genparams import GenParams
 
 class SetFloat:
     TITLE       = "💪TB | Set Float"
@@ -42,5 +42,5 @@ class SetFloat:
 
     def set_float(self, genparams: GenParams, key: str, value: float):
         genparams = genparams.copy()
-        genparams.set(key, float(value))
+        genparams.set_float(key, value)
         return (genparams,)

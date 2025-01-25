@@ -14,8 +14,8 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 import math
 import torch
 import comfy
-from   .utils.system import logger
-from   .core.gen_params import GenParams
+from   .utils.system   import logger
+from   .core.genparams import GenParams, normalize_prefix
 MAX_RESOLUTION=16384
 LATENT_SCALE_FACTOR=8
 
@@ -54,13 +54,13 @@ class EmptyLatentImage:
 
 
     def generate_latents(self, genparams: GenParams):
-        PREFIX = "image"
+        prefix = normalize_prefix("image")
 
         resolution  = 1024
-        scale       = genparams.get_prefixed(PREFIX, "scale"       , _DEFAULT_SCALE       )
-        ratio       = genparams.get_prefixed(PREFIX, "aspect_ratio", _DEFAULT_ASPECT_RATIO)
-        batch_size  = genparams.get_prefixed(PREFIX, "batch_size"  , _DEFAULT_BATCH_SIZE  )
-        orientation = genparams.get_prefixed(PREFIX, "orientation" , None                 )
+        scale       = genparams.get( f"{prefix}scale"        , _DEFAULT_SCALE       )
+        ratio       = genparams.get( f"{prefix}aspect_ratio" , _DEFAULT_ASPECT_RATIO)
+        batch_size  = genparams.get( f"{prefix}batch_size"   , _DEFAULT_BATCH_SIZE  )
+        orientation = genparams.get( f"{prefix}orientation"  , None                 )
 
         scale                              = self._parse_scale(scale)
         ratio_numerator, ratio_denominator = self._parse_ratio(ratio)

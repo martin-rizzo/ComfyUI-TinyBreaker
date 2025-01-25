@@ -17,7 +17,7 @@ from .xcomfy.vae        import VAE
 from .xcomfy.clip       import CLIP
 from .xcomfy.transcoder import Transcoder
 from .utils.directories import TINYBREAKER_CHECKPOINTS_DIR
-from .core.gen_params   import GenParams
+from .core.genparams    import GenParams
 
 _VAE_OPTIONS        = ["fast", "high quality"]
 _DEFAULT_VAE_OPTION = "fast"

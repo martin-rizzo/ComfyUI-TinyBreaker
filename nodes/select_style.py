@@ -12,7 +12,7 @@ License : MIT
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 from .core.styles       import Styles, load_all_styles_versions
-from .core.gen_params   import GenParams
+from .core.genparams    import GenParams
 from .utils.directories import PROJECT_DIR
 
 

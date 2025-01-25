@@ -11,7 +11,7 @@ License : MIT
   (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
-from .core.gen_params import GenParams
+from .core.genparams import GenParams
 
 class SetSeed:
     TITLE       = "💪TB | Set Seed"
@@ -42,5 +42,5 @@ class SetSeed:
 
     def set_seed(self, genparams: GenParams, key: str, seed: int):
         genparams = genparams.copy()
-        genparams.set(key, int(seed))
+        genparams.set_int(key, seed)
         return (genparams,)

@@ -18,7 +18,7 @@ import numpy as np
 import folder_paths
 from PIL                import Image
 from PIL.PngImagePlugin import PngInfo
-from .core.gen_params   import GenParams
+from .core.genparams    import GenParams
 from .common            import ireplace
 
 _A1111_SAMPLER_BY_COMFY_NAME = {

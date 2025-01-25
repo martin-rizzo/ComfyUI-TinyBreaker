@@ -13,8 +13,8 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import torch
 import comfy.samplers
-from .core.gen_params import GenParams
-from .utils.system    import logger
+from .core.genparams import GenParams, normalize_prefix
+from .utils.system   import logger
 _DISCARD_PENULTIMATE_SIGMA_SAMPLERS = comfy.samplers.KSampler.DISCARD_PENULTIMATE_SIGMA_SAMPLERS
 
 
@@ -114,9 +114,7 @@ class SamplerParams:
             prefix         : The prefix to use to access the information in `genparams`.
             model_to_sample: The model that will be used for image generation.
         """
-        # ensure that prefix always ends with a period '.'
-        if prefix and not prefix.endswith('.'):
-            prefix += '.'
+        prefix = normalize_prefix(prefix)
         return cls(positive      = genparams.get( f"{prefix}prompt"        ),
                    negative      = genparams.get( f"{prefix}negative"      ),
                    sampler_name  = genparams.get( f"{prefix}sampler_name"  ),

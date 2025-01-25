@@ -11,7 +11,7 @@ License : MIT
   (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
-from .core.gen_params import GenParams
+from .core.genparams import GenParams
 from .common import LANDSCAPE_SIZES_BY_ASPECT_RATIO, \
                     SCALES_BY_NAME,                  \
                     ORIENTATIONS,                    \
@@ -67,10 +67,10 @@ class SetImage:
                              ):
         genparams = genparams.copy()
         ratio = normalize_aspect_ratio(ratio, orientation=orientation)
-        genparams.set("image.aspect_ratio", str(   ratio                         ))
-        genparams.set("image.scale"       , float( SCALES_BY_NAME.get(size, 1.0) ))
-        genparams.set("image.batch_size"  , int(   batch_size                    ))
-        genparams.set("base.noise_seed"   , int(   seed                          ))
+        genparams.set_str  ( "image.aspect_ratio", ratio                         )
+        genparams.set_float( "image.scale"       , SCALES_BY_NAME.get(size, 1.0) )
+        genparams.set_int  ( "image.batch_size"  , batch_size                    )
+        genparams.set_int  ( "base.noise_seed"   , seed                          )
         return (genparams,)
 
 
