@@ -33,6 +33,7 @@ License : MIT
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 from .nodes.utils.system import logger
+WEB_DIRECTORY              = "./web"
 NODE_CLASS_MAPPINGS        = {}
 NODE_DISPLAY_NAME_MAPPINGS = {}
 
@@ -128,3 +129,4 @@ _CATEGORY = "TinyBreaker/__dev"
 
 
 logger.info(f"Imported {len(NODE_CLASS_MAPPINGS)} nodes")
+__all__ = ["NODE_CLASS_MAPPINGS", "NODE_DISPLAY_NAME_MAPPINGS", "WEB_DIRECTORY"]
