@@ -1,5 +1,5 @@
 /**
- * File    : colorizeUnifiedPrompt.js
+ * File    : unifiedPromptHighlighter.js
  * Purpose : Colorizes the text entered by the user in the unified prompt node.
  * Author  : Martin Rizzo | <martinrizzo@gmail.com>
  * Date    : Jan 25, 2025
@@ -133,7 +133,7 @@ function findTextareaWidget(node) {
 
 app.registerExtension({
 
-	name: "TinyBreaker.colorizeUnifiedPrompt",
+	name: "TinyBreaker.unifiedPromptHighlighter",
 
 	/**
 	 * Called every time ComfyUI creates a new node.
