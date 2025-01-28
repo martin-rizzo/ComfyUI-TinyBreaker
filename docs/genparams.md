@@ -11,9 +11,13 @@ The code should gracefully handle cases where parameters are missing by:
 
 ## Parameters
 
+### File Parameters
+
+*   `file.name` (str): The name of the file containing the main model parameters (only the name and extension, without path)
+*   `file.date` (str): The date when the file was generated, in ISO 8601 format (e.g., YYYY-MM-DD).
+
 ### Model Parameters
 
-*   `filename` (str): The name of the file containing the model parameters (only the name and extension, without path)
 *   `modelspec.architecture` (str): The name of the architecture used by the model.
 *   `modelspec.title` (str): The title of the model, used for identification.
 *   `modelspec.date` (str): The date the model was created, in ISO 8601 format (e.g., YYYY-MM-DD).

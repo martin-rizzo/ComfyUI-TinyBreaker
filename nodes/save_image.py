@@ -216,7 +216,7 @@ class SaveImage:
         seed                = genparams.get("base.noise_seed")
         width               = image_width
         height              = image_height
-        base_checkpoint     = genparams.get("filename", "TinyBreaker.safetensors")
+        base_checkpoint     = genparams.get("file.name", "TinyBreaker.safetensors")
         base_checkpoint     = os.path.splitext(base_checkpoint)[0]
         refiner_checkpoint  = None #f"{base_checkpoint}.refiner"
         base_steps          = max(0, base_steps_end-base_steps_start)

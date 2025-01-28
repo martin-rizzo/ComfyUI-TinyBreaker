@@ -15,6 +15,7 @@ import os
 import re
 import json
 import struct
+from datetime import datetime
 _PLACEHOLDER = "$@"
 
 
@@ -73,7 +74,7 @@ class GenParams(dict):
 
     **Alternative Constructors:**
       - `from_raw_options(cls, raw_options)`: Creates a new GenParams object from the given raw options.
-      - `from_safetensors_metadata(cls, path)`: Creates a new GenParams object from the given safetensors metadata.
+      - `from_safetensors_metadata(cls, file_path)`: Creates a new GenParams object from the given safetensors metadata.
       - `from_args(cls, args)`: Creates a new GenParams object from the given command arguments.
     """
 
@@ -112,7 +113,7 @@ class GenParams(dict):
 
 
     @classmethod
-    def from_safetensors_metadata(cls, path: str) -> "GenParams":
+    def from_safetensors_metadata(cls, file_path: str) -> "GenParams":
         """
         Creates a new GenParams object by extracting metadata from the given safetensors file.
 
@@ -122,16 +123,23 @@ class GenParams(dict):
         """
         # load the safetensors header from the file
         try:
-            with open(path, "rb") as f:
+            with open(file_path, "rb") as f:
                 header_length = struct.unpack('<Q', f.read(8))[0]
                 header_length = min(header_length, 10 * 1024 * 1024)
                 header        = json.loads( f.read(header_length) )
         except Exception:
             header = {}
 
-        # extract metadata from the header
+        # get the date the file was created
+        try:
+            file_date = datetime.fromtimestamp( os.path.getctime(file_path) )
+        except Exception:
+            file_date = datetime.now()
+
+        # extract metadata from the header and inject file name and date
         metadata = header.get("__metadata__", {})
-        metadata["filename"] = os.path.basename(path)
+        metadata["file.name"] = os.path.basename(file_path)
+        metadata["file.date"] = file_date.strftime("%Y-%m-%d")
         return cls(metadata)
 
 
