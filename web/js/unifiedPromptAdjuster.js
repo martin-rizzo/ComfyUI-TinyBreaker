@@ -11,12 +11,15 @@
  *  (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
  *_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 
+ The comfy js extension documentation is located at:
+  - https://docs.comfy.org/custom-nodes/javascript_overview
+
  The original native ComfyUI extension for adjusting prompts is located at:
   - https://github.com/Comfy-Org/ComfyUI_frontend/blob/main/src/extensions/core/editAttention.ts
 
- Since the native ComfyUI extension cannot be disabled and unifiedPromptAdjuster
- uses the same keys (CTRL+UP/DOWN) as ComfyUI, the code in this file employs
- some 'creative' solutions to address this issue.
+ Since the native ComfyUI extension for adjusting prompts cannot be disabled
+ and `unifiedPromptAdjuster` uses the same keys (CTRL+UP/DOWN) as ComfyUI,
+ the code implemented here employs some 'creative' workarounds to address this issue.
 
  2024/01/27: The code was tested in Chrome version 132.0.6834.110
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
@@ -69,6 +72,26 @@ const IMAGE_FORMATS = [
     "--large-portrait",
     "--large-landscape",
 ]
+
+/*------------------------------- HELPERS -------------------------------*/
+
+/**
+ * Finds the first widget with tagName.
+ * @param {ComfyNode} node   : The ComfyUI node to search in.
+ * @param {String}    tagName: The tag name to search for. e.g. "TEXTAREA" or "INPUT".
+ * @returns 
+ *     The first widget with the given tag name, or `null` if not found.
+ */
+function findWidgetInComfyNode(node, tagName) {
+	if ( node?.widgets?.length ) {
+		for (const widget of node.widgets) {
+			if (widget.inputEl?.tagName === tagName) {
+				return widget;
+			}
+		}
+	}
+    return null;
+}
 
 /**
  * Removes emphasis weights from a string.
@@ -150,6 +173,8 @@ function adjustOption(name, value, offset, options) {
     return name ? `${name} ${new_value} ` : `${new_value} `;
 }
 
+/*-------------------------- ADJUSTMENT PROCESS ---------------------------*/
+
 /**
  * The main function that adjusts the value of an argument based on its type.
  * @param {String} name  : The name of the argument to be adjusted.
@@ -188,7 +213,11 @@ function onKeyDown(event) {
     // check if the pressed key is an arrow key and if it's being held down with Ctrl or Cmd
     if( !event.ctrlKey          && !event.metaKey            ) { return; }
     if( event.key !== 'ArrowUp' && event.key !== 'ArrowDown' ) { return; }
+
+    // check if the target element is a textarea for unified prompts
     if( textarea.tagName !== 'TEXTAREA' ) { return; }
+    if( !textarea.isUnifiedPrompt       ) { return; }
+
     event.preventDefault()
 
     // extracts the argument quickly and provisionally (only 8 characters)
@@ -249,11 +278,31 @@ app.registerExtension({
 
     name: "TinyBreaker.unifiedPromptAjuster",
 
+    /**
+     * Called when the extension is loaded.
+     */
     init() {
         if (!ENABLED) return;
         console.log("##>> Unified Prompt Adjuster extension loaded.")
         window.addEventListener('keydown', onKeyDown)
     },
+
+	/**
+	 * Called every time ComfyUI creates a new node.
+	 * @param {ConfyNode} node - The node that was created.
+	 */
+	async nodeCreated(node) {
+		if (!ENABLED) return;
+
+        // only applies to "Unified Prompt" nodes with a textarea
+		if( !node?.comfyClass?.startsWith("UnifiedPromptInput")  ) { return; }
+        const widget = findWidgetInComfyNode(node, 'TEXTAREA');
+        if( !widget?.inputEl ) { return; }
+
+        // mark the textarea as a unified prompt
+        widget.inputEl.isUnifiedPrompt = true;
+	},
+
 
 })
 
