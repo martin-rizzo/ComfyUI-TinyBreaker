@@ -44,18 +44,17 @@ class UnifiedPromptInput:
     OUTPUT_TOOLTIPS = ("The generation parameters with the updated values. (you can use this output to chain other genparams nodes)",)
 
     def parse_text(self, genparams: GenParams, text: str) -> GenParams:
-        genparams_input = genparams
 
         # parse the arguments entered by the user
         args = self._parse_args(text)
 
-        style = args.pop("style", None)
-        # if style is not None:
-        #     genparams_input = self._apply_style(style, genparams_input)
+        style_name = args.pop("style", None)
+        if style_name is not None:
+            genparams = genparams.copy()
+            genparams.update_from_group( f"styles.{style_name}", valid_subgroups=["base", "refiner"] )
 
         # build `genparams` from the parsed arguments (using the node input as template)
-        genparams_input["refiner.seed"] = 100
-        genparams_output = GenParams.from_arguments(args, template=genparams_input)
+        genparams_output = GenParams.from_arguments(args, template=genparams)
         genparams_output.set_str("user.prompt"  , text)
         genparams_output.set_str("user.negative", ""  )
         return (genparams_output,)

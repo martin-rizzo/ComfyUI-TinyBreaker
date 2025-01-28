@@ -20,9 +20,7 @@ _PLACEHOLDER = "$@"
 
 def normalize_prefix(prefix: str) -> str:
     """Normalizes the given key prefix to ensure it is valid"""
-
-    # remove whitespaces and ensure that the prefix ends with a period '.' 
-    prefix = prefix.strip()
+    prefix = str(prefix if prefix is not None else "").strip()
     if prefix and not prefix.endswith('.'):
         return prefix + '.'
     return prefix
@@ -245,6 +243,59 @@ class GenParams(dict):
     def copy(self) -> "GenParams":
         """Returns a copy of the GenParams object."""
         return GenParams(self)
+
+
+    def update(self,
+               other: "GenParams",
+               *,# keyword-only arguments #
+               prefix_to_add: str = None
+               ) -> None:
+        """
+        Updates the GenParams object with values from another GenParams object or dictionary.
+        If a key is present in both objects, the value from the `other` object will overwrite it.
+        The optional `prefix_to_add` parameter can be used to add a prefix to all keys before updating.
+        """
+        prefix_to_add = normalize_prefix(prefix_to_add)
+        if not prefix_to_add:
+            super().update(other)
+            return
+        for key, value in other.items():
+            self[prefix_to_add+key] = value
+
+
+    def update_from_group(self,
+                          group_name: str,
+                          *,# keyword-only arguments #
+                          valid_subgroups: list[str] = None
+                          ) -> None:
+        """
+        Updates the GenParams root with values from the specified internal group.
+        The optional `valid_subgroups` parameter can be used to specify a list of valid subgroups for the group.
+        """
+        group_name     = normalize_prefix(group_name)
+        group_name_len = len(group_name)
+
+        if valid_subgroups:
+            # when `valid_subgroups` is not empty,
+            # the key prefix must match one of the formats: "<group_name>.<valid_subgroup_name>";
+            # for example, if group_name is 'maingroup' and  valid_subgroups is ['sub1', 'sub2'],
+            # then valid prefixes would be 'maingroup.sub1.' and 'maingroup.sub2.'
+            valid_prefixes = [ f"{group_name}{normalize_prefix(subgroup_name)}" for subgroup_name in valid_subgroups ]
+            group = {
+                key[group_name_len:]: value
+                for key,value in self.items()
+                if any(key.startswith(valid_prefix) for valid_prefix in valid_prefixes)
+                }
+        else:
+            # when `valid_subgroups` is empty,
+            # the key prefix must match group_name.
+            group = {
+                key[group_name_len:]: value
+                for key,value in self.items()
+                if key.startswith(group_name) }
+
+        # update the root with the group
+        self.update(group)
 
 
     def __str__(self):

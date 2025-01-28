@@ -12,6 +12,8 @@ License : MIT
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 
+#----------------------- STRING MANIPULATION --------------------------#
+
 def ireplace(text: str, old: str, new: str, count: int = -1) -> str:
     """
     Replaces all occurrences of `old` in `text` with `new`, case-insensitive.

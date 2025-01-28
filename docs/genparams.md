@@ -26,6 +26,13 @@ The code should gracefully handle cases where parameters are missing by:
 *   `user.prompt` (str): The prompt entered by the user in the UI.
 *   `user.negative` (str): The negative prompt entered by the user in the UI.
 
+### Image Parameters
+
+*   `image.scale` (float): The scaling factor applied to the image size, based in the original resolution of the model (e.g., 1.22).
+*   `image.orientation` (str): The orientation of the image (e.g., "landscape", "portrait").
+*   `image.aspect_ratio` (str): The aspect ratio of the image (e.g., "16:9").
+*   `image.batch_size` (int): The number of images that are generated in each batch (e.g., 1).
+
 ### Sampler Parameters
 
 *   `base.prompt` (str): The prompt used for the base model.

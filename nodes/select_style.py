@@ -63,15 +63,17 @@ class SelectStyle:
         if version == "last":
             version = _LAST_VERSION
 
-        # load the pre-defined styles
+        # load the pre-defined styles in `genparams` using the keys "styles.<style_name>"
         predefined_styles = _PREDEFINED_STYLES_BY_VERSION[version]
-        genparams.update( predefined_styles.get_genparams(style_name) )
+        genparams.update( predefined_styles.to_genparams(prefix_to_add="styles") )
 
         # try to load the user styles from string (if any)
         custom_styles = Styles.from_string(custom_definitions) if custom_definitions else None
-        if custom_styles and style_name != "none":
-            genparams.update( custom_styles.get_genparams(style_name) )
+        if custom_styles:
+            genparams.update( custom_styles.to_genparams(prefix_to_add="styles") )
 
+        # copy the parameter group "styles.<style_name>" into genparams root
+        genparams.update_from_group( f"styles.{style_name}", valid_subgroups=["base", "refiner"] )
         return (genparams,)
 
 

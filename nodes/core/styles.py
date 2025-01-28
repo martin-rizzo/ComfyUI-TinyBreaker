@@ -76,7 +76,7 @@ class Styles:
         del self.styles[style_name]
 
 
-    def get_genparams(self, style_name):
+    def get_genparams_for_style(self, style_name):
         """Returns the generation parameters for a given style or an empty `GenParams` if the style is not found."""
         return self.styles.get(style_name) or GenParams()
 
@@ -91,6 +91,25 @@ class Styles:
         To obtain a static list of style names, use `list( styles.names() )`.
         """
         return self.styles.keys()
+
+
+    def to_genparams(self, *,
+                     prefix_to_add: str = ""
+                     ) -> GenParams:
+        """
+        Converts all styles in this object into a single `GenParams` instance.
+        Args:
+            prefix_to_add (str): A string to be prepended to each style name.
+        Returns:
+            A GenParams instance containing all styles.
+        """
+        if prefix_to_add and not prefix_to_add.endswith('.'):
+            prefix_to_add += '.'
+
+        output = GenParams()
+        for style_name, genparams in self.styles.items():
+            output.update( genparams, prefix_to_add = f"{prefix_to_add}{style_name}")
+        return output
 
 
 #---------------------------------------------------------------------------#
