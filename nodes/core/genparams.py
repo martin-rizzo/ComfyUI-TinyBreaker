@@ -308,14 +308,67 @@ class GenParams(dict):
 
     def __str__(self):
         """Return a string representation of the GenParams object."""
-        string = "GenParams(\n"
-        for key,value in self.items():
+        return self.to_string(indent=4, width=90)
+
+
+    def to_string(self, *, indent: int=4, width: int=-1) -> str:
+        """Return a string representation of the GenParams object."""
+        genparams = dict(self)
+        string = "GenParams({\n"
+        string += "# FILE\n"
+        string += self.__pop_group_as_string("file."     , source=genparams, indent=indent, width=width)
+        string += "# MODEL\n"
+        string += self.__pop_group_as_string("modelspec.", source=genparams, indent=indent, width=width)
+        string += "# IMAGE\n"
+        string += self.__pop_group_as_string("image."    , source=genparams, indent=indent, width=width)
+        string += "# SAMPLER\n"
+        string += self.__pop_group_as_string("base."     , source=genparams, indent=indent, width=width)
+        string += self.__pop_group_as_string("refiner."  , source=genparams, indent=indent, width=width)
+        string += "# USER\n"
+        string += self.__pop_group_as_string("user."     , source=genparams, indent=indent, width=width)
+        string += "# STYLES\n"
+        string += self.__pop_all_styles_as_string(         source=genparams, indent=indent             )
+        string += "# OTHERS\n"
+        string += self.__pop_group_as_string(""          , source=genparams, indent=indent, width=width)
+        string += "})"
+        return string
+
+    @staticmethod
+    def __pop_group_as_string(group_name: str, *, source: dict,
+                              indent: int=4, width: int=-1
+                              ) -> str:
+        """Return a string representation of the specified group in the GenParams object."""
+        width -= (indent + 22 + 2)
+        group  = {key: value for key, value in source.items() if key.startswith(group_name)}
+        string = ""
+        for key, value in group.items():
             if isinstance(value, str):
                 value = value.replace("\n", "\\n").replace("\r", "\\r").replace('"', '\\"')
-                value = value[:96] + '...' if len(value) > 130 else value
+                value = value[:width-3] + '...' if width>0 and len(value) > width else value
                 value = f'"{value}"'
-            string += f"    {key:16}: {value}\n"
-        string += ")"
+            string += f"{' ' * indent}{key:22}: {value},\n"
+            del source[key]
+        return string
+
+    @staticmethod
+    def __pop_all_styles_as_string(source: dict,
+                                   indent: int=4) -> str:
+        """Return a string representation of all styles in the GenParams object."""
+        styles_names  = set()
+        key_to_remove = []
+
+        for key in source.keys():
+            if key.startswith("styles."):
+                style_name = key.split(".",2)[1]
+                styles_names.add(style_name)
+                key_to_remove.append(key)
+        for key in key_to_remove:
+            del source[key]
+
+        string = ""
+        for style_name in styles_names:
+            key = f"styles.{style_name}.*"
+            string += f"{' ' * indent}{key:22}: ...,\n"
         return string
 
 
