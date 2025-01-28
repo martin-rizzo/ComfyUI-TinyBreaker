@@ -39,29 +39,29 @@ The code should gracefully handle cases where parameters are missing by:
 
 ### Sampler Parameters
 
-*   `base.prompt` (str): The prompt used for the base model.
-*   `base.negative` (str): The negative prompt used for the base model.
-*   `base.steps` (int): The total number of steps for the base model.
-*   `base.steps_start` (int): The step at which the base model's sampler begins the diffusion process.
-*   `base.steps_end` (int): The step at which the base model's sampler terminates the diffusion process.
-*   `base.steps_nfactor` (int): A factor used to expand or reduce the number of steps for the base model.
-*   `base.cfg` (float): The guidance scale used by the base model's sampler.
-*   `base.noise_seed` (int): The seed used for generating initial noise used by the base model.
-*   `base.sampler_name` (str): The name of the sampler used by the base model.
-*   `base.scheduler` (str): The name of the scheduler used by the base model.
+*   `sampler.base.prompt` (str): The prompt used for the base model.
+*   `sampler.base.negative` (str): The negative prompt used for the base model.
+*   `sampler.base.steps` (int): The total number of steps for the base model.
+*   `sampler.base.steps_start` (int): The step at which the base model's sampler begins the diffusion process.
+*   `sampler.base.steps_end` (int): The step at which the base model's sampler terminates the diffusion process.
+*   `sampler.base.steps_nfactor` (int): A factor used to expand or reduce the number of steps for the base model.
+*   `sampler.base.cfg` (float): The guidance scale used by the base model's sampler.
+*   `sampler.base.noise_seed` (int): The seed used for generating initial noise used by the base model.
+*   `sampler.base.sampler` (str): The name of the sampler used by the base model.
+*   `sampler.base.scheduler` (str): The name of the scheduler used by the base model.
 
 ### Sampler Parameters (Refiner)
 
-*   `refiner.prompt` (str): The prompt used for the refiner model.
-*   `refiner.negative` (str): The negative prompt used for the refiner model.
-*   `refiner.steps` (int): The total number of steps for the refiner model.
-*   `refiner.steps_start` (int): The step at which the refiner model's sampler begins the diffusion process.
-*   `refiner.steps_end` (int): The step at which the refiner model's sampler terminates the diffusion process.
-*   `refiner.steps_nfactor` (int): A factor used to expand or reduce the number of steps for the refiner model.
-*   `refiner.cfg` (float): The guidance scale used by the refiner model's sampler.
-*   `refiner.noise_seed` (int): The seed used for generating initial noise used by the refiner model.
-*   `refiner.sampler_name` (str): The name of the sampler used by the refiner model.
-*   `refiner.scheduler` (str): The name of the scheduler used by the refiner model.
+*   `sampler.refiner.prompt` (str): The prompt used for the refiner model.
+*   `sampler.refiner.negative` (str): The negative prompt used for the refiner model.
+*   `sampler.refiner.steps` (int): The total number of steps for the refiner model.
+*   `sampler.refiner.steps_start` (int): The step at which the refiner model's sampler begins the diffusion process.
+*   `sampler.refiner.steps_end` (int): The step at which the refiner model's sampler terminates the diffusion process.
+*   `sampler.refiner.steps_nfactor` (int): A factor used to expand or reduce the number of steps for the refiner model.
+*   `sampler.refiner.cfg` (float): The guidance scale used by the refiner model's sampler.
+*   `sampler.refiner.noise_seed` (int): The seed used for generating initial noise used by the refiner model.
+*   `sampler.refiner.sampler` (str): The name of the sampler used by the refiner model.
+*   `sampler.refiner.scheduler` (str): The name of the scheduler used by the refiner model.
 
 ### Style Parameters
 

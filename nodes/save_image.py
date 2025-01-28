@@ -202,18 +202,22 @@ class SaveImage:
             return a1111_sampler
 
 
+        # base/refiner prefixes
+        BASE = "sampler.base."
+        REFI = "sampler.refiner."
+
         # extract and clean up parameters from the GenParams dictionary
         positive            = a1111_normalized_string( genparams.get("user.prompt"  , "") )
         negative            = a1111_normalized_string( genparams.get("user.negative", "") )
-        sampler             = a1111_sampler_name( genparams.get("base.sampler_name")   , genparams.get("base.scheduler") )
-        refiner_sampler     = a1111_sampler_name( genparams.get("refiner.sampler_name"), genparams.get("refiner.scheduler"), True )
-        base_cfg            = genparams.get("base.cfg")
-        refiner_cfg         = genparams.get("refiner.cfg", 0)
-        base_steps_start    = genparams.get("base.steps_start"   ,0)
-        refiner_steps_start = genparams.get("refiner.steps_start",0)
-        base_steps_end      = min( genparams.get("base.steps"   ,0), genparams.get("base.steps_end"   ,10000) )
-        refiner_steps_end   = min( genparams.get("refiner.steps",0), genparams.get("refiner.steps_end",10000) )
-        seed                = genparams.get("base.noise_seed")
+        sampler             = a1111_sampler_name( genparams.get(f"{BASE}sampler"), genparams.get(f"{BASE}scheduler") )
+        refiner_sampler     = a1111_sampler_name( genparams.get(f"{REFI}sampler"), genparams.get(f"{REFI}scheduler"), True )
+        base_cfg            = genparams.get(f"{BASE}cfg")
+        refiner_cfg         = genparams.get(f"{REFI}cfg", 0)
+        base_steps_start    = genparams.get(f"{BASE}steps_start"   ,0)
+        refiner_steps_start = genparams.get(f"{REFI}steps_start",0)
+        base_steps_end      = min( genparams.get(f"{BASE}steps",0), genparams.get(f"{BASE}steps_end",10000) )
+        refiner_steps_end   = min( genparams.get(f"{REFI}steps",0), genparams.get(f"{REFI}steps_end",10000) )
+        seed                = genparams.get(f"{BASE}noise_seed")
         width               = image_width
         height              = image_height
         base_checkpoint     = genparams.get("file.name", "TinyBreaker.safetensors")

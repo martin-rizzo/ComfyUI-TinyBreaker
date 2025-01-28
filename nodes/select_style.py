@@ -72,8 +72,8 @@ class SelectStyle:
         if custom_styles:
             genparams.update( custom_styles.to_genparams(prefix_to_add="styles") )
 
-        # copy the parameter group "styles.<style_name>" into genparams root
-        genparams.update_from_group( f"styles.{style_name}", valid_subgroups=["base", "refiner"] )
+        # copy the parameter group "styles.<style_name>" into "sampler."
+        count = genparams.copy_parameters( target="sampler", source=f"styles.{style_name}", valid_subkeys=["base", "refiner"])
         return (genparams,)
 
 

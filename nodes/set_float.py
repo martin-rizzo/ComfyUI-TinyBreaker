@@ -23,7 +23,7 @@ class SetFloat:
     def INPUT_TYPES(s):
         return {
         "required": {
-            "genparams":("GENPARAMS", {"tooltip": "The original generation parameters which will be updated."
+            "genparams":("GENPARAMS", {"tooltip": "The generation parameters to be updated.",
                                        }),
             "key"      :("STRING"   , {"tooltip": "The full key of the parameter to modify. This key must include the prefix if any.",
                                        "default": "base.cfg"
@@ -42,5 +42,5 @@ class SetFloat:
 
     def set_float(self, genparams: GenParams, key: str, value: float):
         genparams = genparams.copy()
-        genparams.set_float(key, value)
+        genparams.set_float(f"sampler.{key}", value)
         return (genparams,)

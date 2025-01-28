@@ -48,10 +48,11 @@ class UnifiedPromptInput:
         # parse the arguments entered by the user
         args = self._parse_args(text)
 
+        # 
         style_name = args.pop("style", None)
         if style_name is not None:
             genparams = genparams.copy()
-            genparams.update_from_group( f"styles.{style_name}", valid_subgroups=["base", "refiner"] )
+            count = genparams.copy_parameters( target="sampler", source=f"styles.{style_name}", valid_subkeys=["base", "refiner"])
 
         # build `genparams` from the parsed arguments (using the node input as template)
         genparams_output = GenParams.from_arguments(args, template=genparams)
@@ -69,37 +70,4 @@ class UnifiedPromptInput:
         args    = {param.strip(): rest.strip() for param, rest in matches}
         args["prompt"] = prompt.strip()
         return args
-
-
-    # @staticmethod
-    # def _split_prompt_and_args(text: str) -> tuple[str, list]:
-    #     """Parses the text input and returns a tuple with the prompt and a list of arguments."""
-    #     prompt, _, args_text = text.partition("--")
-    #     args = args_text.replace('\n', " ").replace('\r', " ").split(" --")
-    #     args = [a.strip() for a in args]
-    #     return prompt.strip(), ["--"+a for a in args if len(a) > 0]
-
-
-    # @staticmethod
-    # def _get_style(args: list) -> str:
-    #     for arg in args:
-    #         if arg.startswith("--style "):
-    #             return arg.split(' ',1)[1].upper()
-    #     return ""
-
-    # @staticmethod
-    # def _apply_args_to_genparams(genparams: GenParams,
-    #                              args: list,
-    #                              *,# keyword-only args #
-    #                              prompt: str = ""
-    #                              ):
-    #     genparams.set_str("base.prompt"     , prompt  )
-    #     genparams.set_str("refiner.prompt"  , prompt  )
-
-    #     for arg in args:
-    #         if arg.startswith("--style "): continue
-    #         if arg.startswith("--no "):
-    #             _negative = arg.split(' ',1)[1].strip()
-    #             genparams.set_str("base.negative"   , _negative)
-    #             genparams.set_str("refiner.negative", _negative)
 

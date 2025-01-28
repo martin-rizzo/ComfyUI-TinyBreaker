@@ -23,12 +23,17 @@ class UpackSamplerParams:
     @classmethod
     def INPUT_TYPES(cls):
         return {
-            "required": {
-                "genparams": ("GENPARAMS", {"tooltip": "The generation parameters to unpack."}),
-                "prefix"   : ("STRING"   , {"tooltip": "The prefix used to identify the unpacked parameters."}),
-                "model"    : ("MODEL"    , {"tooltip": "The model to use for generation."}),
-                "clip"     : ("CLIP"     , {"tooltip": "The CLIP model used for encoding the prompts."})
-            },
+        "required": {
+            "genparams":("GENPARAMS", {"tooltip": "The generation parameters to be updated.",
+                                       }),
+            "prefix"   :("STRING"   , {"tooltip": "The prefix used to identify the unpacked parameters.",
+                                       "default": "base"
+                                       }),
+            "model"    :("MODEL"    , {"tooltip": "The model to use for generation."
+                                       }),
+            "clip"     :("CLIP"     , {"tooltip": "The CLIP model used for encoding the prompts."
+                                       }),
+            }
         }
 
     #__ FUNCTION __________________________________________
@@ -37,9 +42,9 @@ class UpackSamplerParams:
     RETURN_NAMES = ("model", "positive"    , "negative"    , "sampler", "sigmas", "cfg"  , "noise_seed")
 
     def unpack(self, prefix, model, clip, genparams=None):
-        params = SamplerParams.from_genparams(genparams, prefix, model_to_sample=model)
+        params = SamplerParams.from_genparams(genparams, f"sampler.{prefix}", model_to_sample=model)
         positive, negative = self._encode(clip, params.positive, params.negative)
-        return (model, positive, negative, params.sampler, params.sigmas, params.cfg, params.noise_seed)
+        return (model, positive, negative, params.sampler_object, params.sigmas, params.cfg, params.noise_seed)
 
 
     #__ internal functions ________________________________

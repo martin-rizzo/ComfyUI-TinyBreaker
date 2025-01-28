@@ -157,37 +157,41 @@ class GenParams(dict):
         """
         genparams = template.copy() if template else GenParams()
 
+        # base/refiner prefixes
+        BASE = "sampler.base."
+        REFI = "sampler.refiner."
+
         # --prompt <text>
         # "base.prompt", "refiner.prompt"
         value = _get_str_value(args, "prompt")
         if value is not None:
-            genparams.set_str("base.prompt"     , value, use_template=True)
-            genparams.set_str("refiner.prompt"  , value, use_template=True)
+            genparams.set_str(f"{BASE}prompt", value, use_template=True)
+            genparams.set_str(f"{REFI}prompt", value, use_template=True)
 
         # --n, --no, --negative <text>
         # "base.negative", "refiner.negative"
         value = _get_str_value(args, "n", "no", "negative")
         if value is not None:
-            genparams.set_str("base.negative"   , value, use_template=True)
-            genparams.set_str("refiner.negative", value, use_template=True)
+            genparams.set_str(f"{BASE}negative", value, use_template=True)
+            genparams.set_str(f"{REFI}negative", value, use_template=True)
 
         # --c, --cfg <float>
         # "base.cfg"
         value, as_delta = _get_float_value(args, "c", "cfg")
         if value is not None:
-            genparams.set_float("base.cfg", value, as_delta=as_delta)
+            genparams.set_float(f"{BASE}cfg", value, as_delta=as_delta)
 
         # --s, --seed <int>
         # "base.noise_seed"
         value, as_delta = _get_int_value(args, "s", "seed")
         if value is not None:
-            genparams.set_int("base.noise_seed", value, as_delta=as_delta)
+            genparams.set_int(f"{BASE}noise_seed", value, as_delta=as_delta)
 
         # --v, --variant <int>
         # "refiner.noise_seed"
         value, as_delta = _get_int_value(args, "v", "variant")
         if value is not None:
-            genparams.set_int("refiner.noise_seed", value, as_delta=as_delta)
+            genparams.set_int(f"{REFI}noise_seed", value, as_delta=as_delta)
 
         # --b, --batch <int>
         # "image.batch_size"
@@ -271,44 +275,56 @@ class GenParams(dict):
             self[prefix_to_add+key] = value
 
 
-    def update_from_group(self,
-                          group_name: str,
-                          *,# keyword-only arguments #
-                          valid_subgroups: list[str] = None
-                          ) -> None:
+    def copy_parameters(self,
+                        *,# keyword-only arguments #
+                        source: str,
+                        target: str,
+                        valid_subkeys: list[str] = None
+                        ) -> int:
         """
-        Updates the GenParams root with values from the specified internal group.
-        The optional `valid_subgroups` parameter can be used to specify a list of valid subgroups for the group.
+        Copies parameters from one prefix to another, with optional validation of the subkeys.
+        The `valid_subkeys` parameter can be used to specify a list of allowed subkeys.
+        Args:
+            - `source`: The prefix of the parameters to copy from.
+            - `target`: The prefix of the parameters to copy to.
+            - `valid_subkeys` (optional): A list of allowed subkeys. If provided, only keys with matching subkeys will be copied.
+        Returns:
+            int: The number of parameters that were successfully copied.
         """
-        group_name     = normalize_prefix(group_name)
-        group_name_len = len(group_name)
+        assert isinstance(source, str)
+        assert isinstance(target, str)
+        target     = normalize_prefix(target)
+        source     = normalize_prefix(source)
+        source_len = len(source)
+        if source == target:
+            return
 
-        if valid_subgroups:
-            # when `valid_subgroups` is not empty,
-            # the key prefix must match one of the formats: "<group_name>.<valid_subgroup_name>";
-            # for example, if group_name is 'maingroup' and  valid_subgroups is ['sub1', 'sub2'],
-            # then valid prefixes would be 'maingroup.sub1.' and 'maingroup.sub2.'
-            valid_prefixes = [ f"{group_name}{normalize_prefix(subgroup_name)}" for subgroup_name in valid_subgroups ]
-            group = {
-                key[group_name_len:]: value
+        if valid_subkeys:
+            # when `valid_subkeys` is not empty,
+            # the key prefix must match one with the formats: "<source>.<valid_subkey>";
+            # for example, if source is 'maingroup' and  valid_subkeys is ['subkey1', 'subkey2'],
+            # then valid prefixes would be 'maingroup.subkey1.' and 'maingroup.subkey2.'
+            valid_prefixes = [ f"{source}{normalize_prefix(subkey)}" for subkey in valid_subkeys ]
+            new_parameters = {
+                target+key[source_len:]: value
                 for key,value in self.items()
-                if any(key.startswith(valid_prefix) for valid_prefix in valid_prefixes)
-                }
+                if any(key.startswith(valid_prefix) for valid_prefix in valid_prefixes) }
         else:
-            # when `valid_subgroups` is empty,
-            # the key prefix must match group_name.
-            group = {
-                key[group_name_len:]: value
+            # when `valid_subkeys` is empty,
+            # the key prefix must match source
+            new_parameters = {
+                target+key[source_len:]: value
                 for key,value in self.items()
-                if key.startswith(group_name) }
+                if key.startswith(source) }
 
-        # update the root with the group
-        self.update(group)
+        # update current parameters with the new ones
+        self.update(new_parameters)
+        return len(new_parameters)
 
 
     def __str__(self):
         """Return a string representation of the GenParams object."""
-        return self.to_string(indent=4, width=90)
+        return self.to_string(indent=4, width=94)
 
 
     def to_string(self, *, indent: int=4, width: int=-1) -> str:
@@ -322,8 +338,7 @@ class GenParams(dict):
         string += "# IMAGE\n"
         string += self.__pop_group_as_string("image."    , source=genparams, indent=indent, width=width)
         string += "# SAMPLER\n"
-        string += self.__pop_group_as_string("base."     , source=genparams, indent=indent, width=width)
-        string += self.__pop_group_as_string("refiner."  , source=genparams, indent=indent, width=width)
+        string += self.__pop_group_as_string("sampler."  , source=genparams, indent=indent, width=width)
         string += "# USER\n"
         string += self.__pop_group_as_string("user."     , source=genparams, indent=indent, width=width)
         string += "# STYLES\n"
@@ -338,7 +353,7 @@ class GenParams(dict):
                               indent: int=4, width: int=-1
                               ) -> str:
         """Return a string representation of the specified group in the GenParams object."""
-        width -= (indent + 22 + 2)
+        width -= (indent + 27 + 2)
         group  = {key: value for key, value in source.items() if key.startswith(group_name)}
         string = ""
         for key, value in group.items():
@@ -346,7 +361,7 @@ class GenParams(dict):
                 value = value.replace("\n", "\\n").replace("\r", "\\r").replace('"', '\\"')
                 value = value[:width-3] + '...' if width>0 and len(value) > width else value
                 value = f'"{value}"'
-            string += f"{' ' * indent}{key:22}: {value},\n"
+            string += f"{' ' * indent}{key:27}: {value},\n"
             del source[key]
         return string
 
@@ -368,7 +383,7 @@ class GenParams(dict):
         string = ""
         for style_name in styles_names:
             key = f"styles.{style_name}.*"
-            string += f"{' ' * indent}{key:22}: ...,\n"
+            string += f"{' ' * indent}{key:27}: ...,\n"
         return string
 
 

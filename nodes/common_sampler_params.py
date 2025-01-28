@@ -30,7 +30,7 @@ class SamplerParams:
     Args:
         positive        (str): The positive prompt.
         negative        (str): The negative prompt.
-        sampler_name    (str): The name of the sampler to use.
+        sampler         (str): The name of the sampler to use.
         scheduler       (str): The scheduler to use.
         steps           (int): The number of denoising steps.
         steps_start     (int): The starting step for denoising.
@@ -46,7 +46,7 @@ class SamplerParams:
                  *,# keyword-only arguments #
                  positive     : str          = None,
                  negative     : str          = None,
-                 sampler_name : str          = None,
+                 sampler      : str          = None,
                  scheduler    : str          = None,
                  steps        : int          = None,
                  steps_start  : int          = None,
@@ -64,7 +64,7 @@ class SamplerParams:
         # sanitize inputs
         positive      = str(positive)      if positive      is not None else ""
         negative      = str(negative)      if negative      is not None else ""
-        sampler_name  = str(sampler_name)  if sampler_name  is not None else "euler"
+        sampler       = str(sampler)       if sampler       is not None else "euler"
         scheduler     = str(scheduler)     if scheduler     is not None else "normal"
         steps         = int(steps)         if steps         is not None else 12
         steps_start   = int(steps_start)   if steps_start   is not None else 0
@@ -75,7 +75,7 @@ class SamplerParams:
         if discard_penultimate_sigma is not None:
             discard_penultimate_sigma = bool(discard_penultimate_sigma)
         else:
-            discard_penultimate_sigma = sampler_name in _DISCARD_PENULTIMATE_SIGMA_SAMPLERS
+            discard_penultimate_sigma = sampler in _DISCARD_PENULTIMATE_SIGMA_SAMPLERS
 
         # if sigmas is not provided, calculate it from the model
         if not isinstance(sigmas, torch.Tensor):
@@ -86,18 +86,18 @@ class SamplerParams:
                 sigmas = torch.tensor([1.0])
 
         # set all attributes of this object
-        self.positive      = positive
-        self.negative      = negative
-        self.sampler_name  = sampler_name
-        self.sampler       = comfy.samplers.sampler_object(sampler_name)
-        self.scheduler     = scheduler
-        self.steps         = steps
-        self.steps_start   = steps_start
-        self.steps_end     = steps_end
-        self.steps_nfactor = steps_nfactor
-        self.sigmas        = sigmas
-        self.cfg           = cfg
-        self.noise_seed    = noise_seed
+        self.positive       = positive
+        self.negative       = negative
+        self.sampler        = sampler
+        self.sampler_object = comfy.samplers.sampler_object(sampler)
+        self.scheduler      = scheduler
+        self.steps          = steps
+        self.steps_start    = steps_start
+        self.steps_end      = steps_end
+        self.steps_nfactor  = steps_nfactor
+        self.sigmas         = sigmas
+        self.cfg            = cfg
+        self.noise_seed     = noise_seed
         self.discard_penultimate_sigma = discard_penultimate_sigma
 
 
@@ -117,7 +117,7 @@ class SamplerParams:
         prefix = normalize_prefix(prefix)
         return cls(positive      = genparams.get( f"{prefix}prompt"        ),
                    negative      = genparams.get( f"{prefix}negative"      ),
-                   sampler_name  = genparams.get( f"{prefix}sampler_name"  ),
+                   sampler       = genparams.get( f"{prefix}sampler"       ),
                    scheduler     = genparams.get( f"{prefix}scheduler"     ),
                    steps         = genparams.get( f"{prefix}steps"         ),
                    steps_start   = genparams.get( f"{prefix}steps_start"   ),

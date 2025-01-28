@@ -42,5 +42,5 @@ class SetSeed:
 
     def set_seed(self, genparams: GenParams, key: str, seed: int):
         genparams = genparams.copy()
-        genparams.set_int(key, seed)
+        genparams.set_int(f"sampler.{key}", seed)
         return (genparams,)
