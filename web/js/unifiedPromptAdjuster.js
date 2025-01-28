@@ -143,8 +143,6 @@ function adjustFloat(name, value, offset) {
  */
 function adjustOption(name, value, offset, options) {
     const index = options.indexOf( value.trim() );
-    console.log(`##>> value: '${value.trim()}'`)
-    console.log(`##>> index: ${index}`)
     let new_index = index>=0 ? index : 0;
     if     ( offset>0 ) { new_index += 1; }
     else if( offset<0 ) { new_index += options.length - 1; }
@@ -188,8 +186,9 @@ function onKeyDown(event) {
     const textarea = event.composedPath()[0];
 
     // check if the pressed key is an arrow key and if it's being held down with Ctrl or Cmd
+    if( !event.ctrlKey          && !event.metaKey            ) { return; }
+    if( event.key !== 'ArrowUp' && event.key !== 'ArrowDown' ) { return; }
     if( textarea.tagName !== 'TEXTAREA' ) { return; }
-    if( !event.ctrlKey && !event.metaKey && event.key !== 'ArrowUp' && event.key !== 'ArrowDown' ) { return; }
     event.preventDefault()
 
     // extracts the argument quickly and provisionally (only 8 characters)
