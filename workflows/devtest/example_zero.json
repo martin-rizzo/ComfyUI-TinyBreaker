@@ -1,0 +1,606 @@
+{
+  "last_node_id": 13,
+  "last_link_id": 24,
+  "nodes": [
+    {
+      "id": 2,
+      "type": "DoubleStageSampler //TinyBreaker",
+      "pos": [
+        840,
+        -170
+      ],
+      "size": [
+        342.5999755859375,
+        146
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "latent_input",
+          "type": "LATENT",
+          "link": 17
+        },
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 24
+        },
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 6
+        },
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 22
+        },
+        {
+          "name": "transcoder",
+          "type": "TRANSCODER",
+          "link": 13
+        },
+        {
+          "name": "refiner_model",
+          "type": "MODEL",
+          "link": 3
+        },
+        {
+          "name": "refiner_clip",
+          "type": "CLIP",
+          "link": 2
+        }
+      ],
+      "outputs": [
+        {
+          "name": "latent_output",
+          "type": "LATENT",
+          "links": [
+            9
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "DoubleStageSampler //TinyBreaker"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 1,
+      "type": "LoadTinyBreakerCheckpoint //TinyBreaker",
+      "pos": [
+        0,
+        -130
+      ],
+      "size": [
+        428.4000244140625,
+        182
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            6
+          ],
+          "slot_index": 0
+        },
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [
+            14
+          ],
+          "slot_index": 1
+        },
+        {
+          "name": "TRANSCODER",
+          "type": "TRANSCODER",
+          "links": [
+            13
+          ],
+          "slot_index": 2
+        },
+        {
+          "name": "REFINER_MODEL",
+          "type": "MODEL",
+          "links": [
+            3
+          ],
+          "slot_index": 3
+        },
+        {
+          "name": "REFINER_CLIP",
+          "type": "CLIP",
+          "links": [
+            2
+          ],
+          "slot_index": 4
+        },
+        {
+          "name": "GENPARAMS",
+          "type": "GENPARAMS",
+          "links": [
+            18
+          ],
+          "slot_index": 5
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadTinyBreakerCheckpoint //TinyBreaker"
+      },
+      "widgets_values": [
+        "TinyBreaker_prototype0.safetensors",
+        "fast"
+      ]
+    },
+    {
+      "id": 12,
+      "type": "Reroute",
+      "pos": [
+        590,
+        -110
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 21
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "CLIP",
+          "links": [
+            22
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 4,
+      "type": "CLIPLoader",
+      "pos": [
+        0,
+        100
+      ],
+      "size": [
+        430,
+        82
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": [
+            21
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CLIPLoader"
+      },
+      "widgets_values": [
+        "t5_xxl_encoder-FP8.safetensors",
+        "sd3",
+        "default"
+      ]
+    },
+    {
+      "id": 5,
+      "type": "EmptyLatentImage //TinyBreaker",
+      "pos": [
+        600,
+        -280
+      ],
+      "size": [
+        230,
+        26
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 19
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            17
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "EmptyLatentImage //TinyBreaker"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 11,
+      "type": "Reroute",
+      "pos": [
+        470,
+        -280
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 18
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "GENPARAMS",
+          "links": [
+            19,
+            23
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 13,
+      "type": "Reroute",
+      "pos": [
+        590,
+        -150
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 23
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "GENPARAMS",
+          "links": [
+            24
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 10,
+      "type": "Reroute",
+      "pos": [
+        590,
+        -20
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 14
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "VAE",
+          "links": [
+            15
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 6,
+      "type": "VAEDecode",
+      "pos": [
+        1270,
+        -170
+      ],
+      "size": [
+        210,
+        46
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 9
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 16
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            11
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 7,
+      "type": "PreviewImage",
+      "pos": [
+        1510,
+        -170
+      ],
+      "size": [
+        460,
+        450
+      ],
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 11
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "PreviewImage"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 9,
+      "type": "Reroute",
+      "pos": [
+        1100,
+        -20
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 15
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "VAE",
+          "links": [
+            16
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    }
+  ],
+  "links": [
+    [
+      2,
+      1,
+      4,
+      2,
+      6,
+      "CLIP"
+    ],
+    [
+      3,
+      1,
+      3,
+      2,
+      5,
+      "MODEL"
+    ],
+    [
+      6,
+      1,
+      0,
+      2,
+      2,
+      "MODEL"
+    ],
+    [
+      9,
+      2,
+      0,
+      6,
+      0,
+      "LATENT"
+    ],
+    [
+      11,
+      6,
+      0,
+      7,
+      0,
+      "IMAGE"
+    ],
+    [
+      13,
+      1,
+      2,
+      2,
+      4,
+      "TRANSCODER"
+    ],
+    [
+      14,
+      1,
+      1,
+      10,
+      0,
+      "*"
+    ],
+    [
+      15,
+      10,
+      0,
+      9,
+      0,
+      "*"
+    ],
+    [
+      16,
+      9,
+      0,
+      6,
+      1,
+      "VAE"
+    ],
+    [
+      17,
+      5,
+      0,
+      2,
+      0,
+      "LATENT"
+    ],
+    [
+      18,
+      1,
+      5,
+      11,
+      0,
+      "*"
+    ],
+    [
+      19,
+      11,
+      0,
+      5,
+      0,
+      "GENPARAMS"
+    ],
+    [
+      21,
+      4,
+      0,
+      12,
+      0,
+      "*"
+    ],
+    [
+      22,
+      12,
+      0,
+      2,
+      3,
+      "CLIP"
+    ],
+    [
+      23,
+      11,
+      0,
+      13,
+      0,
+      "*"
+    ],
+    [
+      24,
+      13,
+      0,
+      2,
+      1,
+      "GENPARAMS"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.7248803827751243,
+      "offset": [
+        145.73525107106536,
+        514.6450986767387
+      ]
+    }
+  },
+  "version": 0.4
+}
