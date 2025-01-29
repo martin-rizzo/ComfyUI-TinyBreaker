@@ -57,10 +57,10 @@ class EmptyLatentImage:
         prefix = normalize_prefix("image")
 
         resolution  = 1024
-        scale       = genparams.get( f"{prefix}scale"        , _DEFAULT_SCALE       )
-        ratio       = genparams.get( f"{prefix}aspect_ratio" , _DEFAULT_ASPECT_RATIO)
-        batch_size  = genparams.get( f"{prefix}batch_size"   , _DEFAULT_BATCH_SIZE  )
-        orientation = genparams.get( f"{prefix}orientation"  , None                 )
+        scale       = genparams.get    ( f"{prefix}scale"        , _DEFAULT_SCALE       )
+        ratio       = genparams.get    ( f"{prefix}aspect_ratio" , _DEFAULT_ASPECT_RATIO)
+        batch_size  = genparams.get_int( f"{prefix}batch_size"   , _DEFAULT_BATCH_SIZE  )
+        orientation = genparams.get    ( f"{prefix}orientation"  , None                 )
 
         scale                              = self._parse_scale(scale)
         ratio_numerator, ratio_denominator = self._parse_ratio(ratio)
