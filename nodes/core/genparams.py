@@ -146,7 +146,7 @@ class GenParams(dict):
     @classmethod
     def from_arguments(cls,
                        args: dict,
-                       *,
+                       *,# keyword-only arguments #
                        template: "GenParams" = None
                        ) -> "GenParams":
         """
@@ -163,17 +163,15 @@ class GenParams(dict):
 
         # --prompt <text>
         # "base.prompt", "refiner.prompt"
-        value = _get_str_value(args, "prompt")
-        if value is not None:
-            genparams.set_str(f"{BASE}prompt", value, use_template=True)
-            genparams.set_str(f"{REFI}prompt", value, use_template=True)
+        value = _get_str_value(args, "prompt") or ""
+        genparams.set_str(f"{BASE}prompt", value, use_template=True)
+        genparams.set_str(f"{REFI}prompt", value, use_template=True)
 
         # --n, --no, --negative <text>
         # "base.negative", "refiner.negative"
-        value = _get_str_value(args, "n", "no", "negative")
-        if value is not None:
-            genparams.set_str(f"{BASE}negative", value, use_template=True)
-            genparams.set_str(f"{REFI}negative", value, use_template=True)
+        value = _get_str_value(args, "n", "no", "negative") or ""
+        genparams.set_str(f"{BASE}negative", value, use_template=True)
+        genparams.set_str(f"{REFI}negative", value, use_template=True)
 
         # --c, --cfg <float>
         # "base.cfg"

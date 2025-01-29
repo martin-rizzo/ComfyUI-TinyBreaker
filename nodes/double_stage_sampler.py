@@ -47,9 +47,6 @@ class DoubleStageSampler:
 
     def double_sampling(self, latent_input, genparams, model, clip, transcoder, refiner_model, refiner_clip):
 
-        print("##>> genparams:")
-        print(genparams)
-
         # first step: base model
         params = SamplerParams.from_genparams(genparams, "sampler.base", model_to_sample=model)
         encoded_positive, encoded_negative = self._encode(clip, params.positive, params.negative)
