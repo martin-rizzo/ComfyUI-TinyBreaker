@@ -122,7 +122,7 @@ class VAE(comfy.sd.VAE):
     """
 
     def __init__(self,
-                 state_dict: dict = None,
+                 state_dict: dict,
                  *,
                  config        : dict         = None,
                  filename      : str          = "",
@@ -143,6 +143,8 @@ class VAE(comfy.sd.VAE):
             dtype           (torch.dtype): The data type to which the tensors of the model will be converted.
             offload_device (torch.device): The device where the model will be offloaded when it's not active.
         """
+        assert state_dict, "state_dict is required in the constructor of the VAE class"
+
         # ATTENTION!:
         # this arguments must be in the same order as in `comfy.sd.VAE.__init__(...)`
         super_args = [state_dict, device, config, dtype]
@@ -202,6 +204,7 @@ class VAE(comfy.sd.VAE):
             device    : The device on which the VAE should be loaded. Defaults to None.
             dtype     : The data type of the tensors in the VAE model. Defaults to None.
         """
+        assert state_dict, "state_dict is required in VAE.from_state_dict(..)"
 
         # always ensure that `prefix` is normalized
         prefix = normalize_safetensors_prefix(prefix)
