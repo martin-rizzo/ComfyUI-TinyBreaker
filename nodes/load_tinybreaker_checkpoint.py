@@ -53,7 +53,7 @@ class LoadTinyBreakerCheckpoint:
 
     def load_checkpoint(self, ckpt_name, vae):
         ckpt_path  = TINYBREAKER_CHECKPOINTS_DIR.get_full_path(ckpt_name)
-        vae_prefix = "first_stage_hdmodel" if vae == "high quality" else "first_stage_model"
+        vae_prefix = "first_stage_hqmodel" if vae == "high quality" else "first_stage_model"
         state_dict = comfy.utils.load_torch_file(ckpt_path)
 
         genparams      = GenParams.from_safetensors_metadata(ckpt_path)
