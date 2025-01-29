@@ -239,6 +239,40 @@ class GenParams(dict):
         self[key] = int(new_value)
 
 
+    def get_float(self, key: str, default: float = None, /) -> float | None:
+        """
+        Returns the floating-point value stored under the given key.
+        If no such value is found, returns `default` (or None if `default` is not specified).
+        """
+        value = self.get(key)
+        if isinstance(value, (int,float)):
+            return float(value)
+        elif isinstance(value, str):
+            try:
+                value = float(value)
+                return value
+            except ValueError:
+                pass
+        return default
+
+
+    def get_int(self, key: str, default: int = None, /) -> int | None:
+        """
+        Returns the integer value stored under the given key.
+        If no such value is found, returns `default` (or None if `default` is not specified).
+        """
+        value = self.get(key)
+        if isinstance(value, (int,float)):
+            return int(value)
+        elif isinstance(value, str):
+            try:
+                value = int(value)
+                return value
+            except ValueError:
+                pass
+        return default
+
+
     def get_all_prefixed_keys(self, prefix: str) -> list[str]:
         """
         Returns a list of all keys with the given prefix in the GenParams object.
