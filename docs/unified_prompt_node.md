@@ -2,7 +2,19 @@
 
 The **Unified Prompt Input** node allows you to generate images using a text description. This description includes the prompt itself, followed by a series of parameters. These parameters, identified by names starting with a double hyphen (--), modify the generated image. 
 
-The following sections detail each available parameter.
+- Parameters for Minor Adjustments
+  - [`--no`](#--no-elements)
+  - [`--refine`](#--refine-description)
+  - [`--variant`](#--variant-number)
+  - [`--cfg-adjust`](#--cfg-adjust-value)
+  - [`--detail`](#--detail-level)
+- Parameters for Major Changes
+  - [`--seed`](#--seed-number)
+  - [`--aspect`](#--aspect-ratio)
+  - [`--landscape` / `--portrait`](#--landscape----portrait)
+  - [`--small` / `--medium` / `--large`](#--small----medium----large)
+  - [`--style`](#--style-style)
+  - [`--batch-size`](#--batch-size-number)
 
 ## Minor Adjustments
 
