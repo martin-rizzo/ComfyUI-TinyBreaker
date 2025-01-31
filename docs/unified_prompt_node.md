@@ -48,9 +48,9 @@ These parameters allow for subtle modifications and fine-tuning of the generated
 
 ### `--detail <level>`
 
-*   **Description:** Controls the level of detail in the generated image.
+*   **Description:** The intensity of the refiner.
 *   **Example:** `--detail normal`
-*   **Usage:** Allows adjusting the amount of detail and textures in the image.
+*   **Usage:** Adjusts the level of detail added during the refinement process.
 *   **Options:**
     *   `none`: Disables the refinement process
     *   `minimal`: Minimal detail.

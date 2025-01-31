@@ -1,6 +1,6 @@
 /**
  * File    : unifiedPromptAdjuster.js
- * Purpose : Allows to use the Ctrl+UP/DOWN keys to adjust parameter values
+ * Purpose : Allows to use the Ctrl+LEFT/RIGHT/UP/DOWN keys to adjust parameter values
  * Author  : Martin Rizzo | <martinrizzo@gmail.com>
  * Date    : Jan 26, 2025
  * Repo    : https://github.com/martin-rizzo/ComfyUI-TinyBreaker
@@ -21,56 +21,46 @@
  and `unifiedPromptAdjuster` uses the same keys (CTRL+UP/DOWN) as ComfyUI,
  the code implemented here employs some 'creative' workarounds to address this issue.
 
- 2024/01/27: The code was tested in Chrome version 132.0.6834.110
+ 2024/01/31 The code was tested in Chrome version 132.0.6834.110
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 */
 import { app } from "../../../scripts/app.js"
 const ENABLED = true;
 
 /**
- * List of aspect ratios that can be used as value for --ratio argument.
+ * List of detail levels that can be used as value for `--detail` parameter.
+ */
+const DETAIL_LEVELS = [
+    "none", "minimal", "low", "normal", "high", "veryhigh", "maximum",
+ ]
+
+/**
+ * List of aspect ratios that can be used as value for `--ratio` parameter.
  */
 const ASPECT_RATIOS = [
-    "1:1",
-    "4:3",
-    "3:2",
-    "16:10",
-    "16:9",
-    "2:1",
-    "21:9",
-    "12:5",
-    "70:27",
-    "32:9",
+    "1:1", "4:3", "3:2", "16:10", "16:9", "2:1", "21:9", "12:5", "70:27", "32:9",
 ]
 
 /**
- * List of image sizes that can be used as an argument.
+ * List of image sizes that can be used as parameters within a prompt.
  */
 const IMAGE_SIZES = [
-    "--small",
-    "--medium",
-    "--large",
+    "--small", "--medium", "--large",
 ]
 
 /**
- * List of image orientations that can be used as an argument.
+ * List of image orientations that can be used as parameters within a prompt.
  */
 const IMAGE_ORIENTATIONS = [
-    "--portrait",
-    "--landscape"
+    "--portrait", "--landscape"
 ]
 
 /**
- * List of image formats that can be used as an argument.
- * (formats are a combination of image size and orientation)
+ * List of all options that can be used as parameters within a prompt.
  */
-const IMAGE_FORMATS = [
-    "--small-portrait",
-    "--small-landscape",
-    "--medium-portrait",
-    "--medium-landscape",
-    "--large-portrait",
-    "--large-landscape",
+const OPTIONS = [
+    "--no", "--refine", "--variant", "--cfg-adjust", "--detail",
+    "--seed", "--aspect", "--landscape", "--large", "--style", "--batch-size"
 ]
 
 /*------------------------------- HELPERS -------------------------------*/
@@ -121,13 +111,17 @@ function removeEmphasis(str) {
  * @param {Number} end  : The end position of the range.
  * @param {String} text : A string with the text to be inserted.
  */
-function insertText(textarea, start, end, text) {
+function insertText(textarea, text, start, end) {
     // ATTENTION: intentional use of the execCommand() method to modify textarea content
     // (the method is deprecated but still works in modern browsers)
     // https://developer.mozilla.org/docs/Web/API/Document/execCommand#using_inserttext
-    textarea.setSelectionRange(start, end)
+    if (start !== undefined && end !== undefined) {
+        textarea.setSelectionRange(start, end)
+    }
     document.execCommand('insertText', false, text)
 }
+
+/*-------------------------- ADJUSTMENT PROCESS ---------------------------*/
 
 /**
  * Adjusts the value of an integer argument.
@@ -156,24 +150,20 @@ function adjustFloat(name, value, offset) {
 }
 
 /**
- * Adjusts the value of an argument that can be one of a set of predefined values.
- * @param {String}        name   : The name of the argument to be adjusted.
- * @param {String}        value  : The current value of the argument.
- * @param {Number}        offset : The amount by which the argument's value will be adjusted.
- * @param {Array<String>} options: An array of possible values for the argument.
- * @returns
- *   The full argument string with the adjusted value (including the argument's name)
+ * Adjusts the value of a multiple choice argument.
+ * @param {String} name  : The name of the argument to be adjusted.
+ * @param {String} value : The current value of the argument. e.g "a" or "b".
+ * @param {Number} offset: The amount by which the argument's value will be adjusted. e.g. +1 or -1.
+ * @param {Array<String>} choices: An array with all possible choices for this multiple choice argument. e.g ["a", "b"].
  */
-function adjustOption(name, value, offset, options) {
-    const index = options.indexOf( value.trim() );
+function adjustMultipleChoice(name, value, offset, choices) {
+    const index = choices.indexOf( value.trim() );
     let new_index = index>=0 ? index : 0;
     if     ( offset>0 ) { new_index += 1; }
-    else if( offset<0 ) { new_index += options.length - 1; }
-    const new_value = options[new_index % options.length];
+    else if( offset<0 ) { new_index += choices.length - 1; }
+    const new_value = choices[new_index % choices.length];
     return name ? `${name} ${new_value} ` : `${new_value} `;
 }
-
-/*-------------------------- ADJUSTMENT PROCESS ---------------------------*/
 
 /**
  * The main function that adjusts the value of an argument based on its type.
@@ -185,39 +175,91 @@ function adjustOption(name, value, offset, options) {
  */
 function adjustArgument(name, value, offset) {
     switch(name) {
-        case '--cfg':
-            return adjustFloat(name, value, offset*0.1);
-        case '--seed':
-            return adjustInt(name, value, offset);
         case '--variant':
             return adjustInt(name, value, offset)
-        case '--batch':
+        case '--cfg-adjust':
+            return adjustFloat(name, value, offset*0.1);
+        case '--detail':
+            return adjustMultipleChoice(name, value, offset, DETAIL_LEVELS);
+        case '--seed':
+            return adjustInt(name, value, offset);
+        case '--aspect':
+            return adjustMultipleChoice(name, value, offset, ASPECT_RATIOS)
+        case '--batch-size':
             return adjustInt(name, value, offset)
-        case '--ratio':
-            return adjustOption(name, value, offset, ASPECT_RATIOS)
     }
-    if( IMAGE_FORMATS.includes(name) ) {
-        return adjustOption("", name, offset, IMAGE_FORMATS)
+    if( IMAGE_ORIENTATIONS.includes(name) ) {
+        return adjustMultipleChoice("", name, offset, IMAGE_ORIENTATIONS)
+    }
+    if( IMAGE_SIZES.includes(name) ) {
+        return adjustMultipleChoice("", name, offset, IMAGE_SIZES)
     }
     return null;
 }
 
+/*------------------------------ KEY EVENTS -------------------------------*/
+
 /**
- * Function to be called every time a key is pressed.
- * @param {KeyboardEvent} event: The keyboard event object.
+ * Function to handle left/right arrow key presses.
+ * @param {Boolean}        isMovingRight: Indicates whether the key press was a right arrow.
+ * @param {KeyboardEvent}       event   : The keyboard event object.
+ * @param {HTMLTextAreaElement} textarea: The textarea element where text will be modified.
  */
-function onKeyDown(event) {
-    /** @type {HTMLTextAreaElement} */
-    const textarea = event.composedPath()[0];
+function onLeftOrRight(isMovingRight, event, textarea) {
 
-    // check if the pressed key is an arrow key and if it's being held down with Ctrl or Cmd
-    if( !event.ctrlKey          && !event.metaKey            ) { return; }
-    if( event.key !== 'ArrowUp' && event.key !== 'ArrowDown' ) { return; }
+    let selectionStart = textarea.selectionStart;
+    let selectionEnd   = textarea.selectionEnd;
+    const text         = textarea.value;
+    const before       = text.substring(selectionStart-3, selectionStart).padStart(3,' ');
+    const after        = text.substring(selectionEnd, selectionEnd+3).padEnd(3,' ');
+    const selectedText = text.substring(selectionStart, selectionEnd);
 
-    // check if the target element is a textarea for unified prompts
-    if( textarea.tagName !== 'TEXTAREA' ) { return; }
-    if( !textarea.isUnifiedPrompt       ) { return; }
+    let new_option = null;
 
+    // if nothing is selected and the cursor if between '--' and a space
+    // then the new option will be the first/last option from the list
+    if( selectionStart==selectionEnd &&
+        before.charAt(0).trim()==='' && before.charAt(1)==='-' && before.charAt(2)==='-' &&
+        after.charAt(0).trim()==='' )
+    {
+        let index
+        if ( isMovingRight ) { index = 0; }
+        else                 { index = OPTIONS.length - 1; }
+        new_option = OPTIONS[index % OPTIONS.length];
+        selectionStart -= 2
+    }
+    // if the selected text is '--'
+    // then the new option will be the next/previous option from the list
+    else if( selectedText==="--" )
+    {
+        selectionEnd = text.indexOf(/\s/, selectionEnd)
+        if( selectionEnd<0 ) { selectionEnd = text.length }
+
+        const option = text.substring(selectionStart, selectionEnd)
+        let index = OPTIONS.indexOf(option)
+        if( index<0 ) { return }
+
+        if( isMovingRight ) { index += 1; }
+        else                { index += OPTIONS.length - 1; }
+        new_option = OPTIONS[index % OPTIONS.length];
+    }
+
+    // if a new option was selected by the above logic
+    // then insert it into the textarea
+    if( new_option ) {
+        insertText(textarea, new_option, selectionStart, selectionEnd);
+        textarea.setSelectionRange(selectionStart, selectionStart+2);
+        event.preventDefault();
+    }
+}
+
+/**
+ * Function to handle up/down arrow key presses.
+ * @param {Boolean}         isMovingDown: Indicates whether the key press was a down arrow.
+ * @param {KeyboardEvent}       event   : The keyboard event object.
+ * @param {HTMLTextAreaElement} textarea: The textarea element where text will be modified.
+ */
+function onUpOrDown(isMovingDown, event, textarea) {
     event.preventDefault()
 
     // extracts the argument quickly and provisionally (only 8 characters)
@@ -241,12 +283,12 @@ function onKeyDown(event) {
     let selectedText        = textarea.value.substring(selectionStart, selectionEnd)
     let textWithoutEmphasis = removeEmphasis(selectedText)
     if( textWithoutEmphasis !== selectedText ) {
-        insertText(textarea, selectionStart, selectionEnd, textWithoutEmphasis)
+        insertText(textarea, textWithoutEmphasis, selectionStart, selectionEnd)
         argumentStart  = textarea.value.lastIndexOf("--", selectionStart + 2);
     }
 
     // re-extract the complete argument,
-    // this time correctly since there is no emphasis in the selected text
+    // (this time correctly since there is no emphasis in the selected text)
     let argumentEnd = textarea.value.indexOf("--", argumentStart + 2)
     if( argumentEnd === -1) { argumentEnd = textarea.value.length; }
     argument = textarea.value.substring(argumentStart, argumentEnd);
@@ -258,9 +300,9 @@ function onKeyDown(event) {
     let argumentValue = argument.substring(nameLength);
 
     // adjust the value of the argument based on the key pressed
-    argument = adjustArgument(argumentName, argumentValue, event.key === 'ArrowUp' ? 1 : -1);
+    argument = adjustArgument(argumentName, argumentValue, isMovingDown ? 1 : -1);
     if (argument !== null) {
-        insertText(textarea, argumentStart, argumentEnd, argument)
+        insertText(textarea, argument, argumentStart, argumentEnd)
         nameLength = argument.indexOf(" ");
         if( nameLength === -1 ) { nameLength = argument.length; }
     }
@@ -269,13 +311,36 @@ function onKeyDown(event) {
     textarea.setSelectionRange(argumentStart, argumentStart+nameLength)
 }
 
+/**
+ * Function to be called every time a key is pressed.
+ * @param {KeyboardEvent} event: The keyboard event object.
+ */
+function onKeyDown(event) {
+    /** @type {HTMLTextAreaElement} */
+    const textarea = event.composedPath()[0];
+
+    // check if Ctrl or Cmd is being held down
+    if( !event.ctrlKey && !event.metaKey ) { return; }
+
+    // check if the target element is a textarea for unified prompts
+    if( textarea.tagName !== 'TEXTAREA' ) { return; }
+    if( !textarea.isUnifiedPrompt       ) { return; }
+
+    if( event.key === 'ArrowUp' || event.key === 'ArrowDown' ) {
+        onUpOrDown(event.key === 'ArrowDown', event, textarea)
+    }
+    else if( event.key === 'ArrowLeft' || event.key === 'ArrowRight' ) {
+        onLeftOrRight(event.key === 'ArrowRight', event, textarea);
+    }
+    return
+}
+
 
 //#=========================================================================#
 //#////////////////////////// REGISTER EXTENSION ///////////////////////////#
 //#=========================================================================#
 
 app.registerExtension({
-
     name: "TinyBreaker.unifiedPromptAjuster",
 
     /**
