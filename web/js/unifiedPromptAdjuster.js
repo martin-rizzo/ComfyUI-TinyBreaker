@@ -31,8 +31,8 @@ const ENABLED = true;
  * List of detail levels that can be used as value for `--detail` parameter.
  */
 const DETAIL_LEVELS = [
-    "none", "minimal", "low", "normal", "high", "veryhigh", "maximum",
- ]
+    "none", "minimal", "low", "normal", "high", "veryhigh", "maximum", ]
+const DEFAULT_DETAIL_LEVEL = "normal";
 
 /**
  * List of aspect ratios that can be used as value for `--ratio` parameter.
@@ -125,28 +125,52 @@ function insertText(textarea, text, start, end) {
 
 /**
  * Adjusts the value of an integer argument.
- * @param {String} name  : The name of the argument to be adjusted.
- * @param {String} value : The current value of the argument.
- * @param {Number} offset: The amount by which the argument's value will be adjusted.
+ * @param {String} name   : The name of the argument to be adjusted.
+ * @param {String} value  : The current value of the argument.
+ * @param {Number} offset : The value to be added (positive) or subtracted (negative).
+ * @param {Number} [defaultValue] : The default value of the argument when `value` is invalid.
+ * @param {Number} [minValue]     : The minimum value that the argument can have.
+ * @param {Number} [maxValue]     : The maximum value that the argument can have.
  * @returns
- *   The full argument string with the adjusted value (including the argument's name)
+ *   The full argument string (including the argument's name) with the adjusted value.
  */
-function adjustInt(name, value, offset) {
-    const new_value = parseInt(value) + offset;
-    return `${name} ${new_value} `;
+function adjustInt(name, value, offset, defaultValue, minValue, maxValue) {
+    const number     = parseInt(value);
+    let   new_number = 0;
+    if( !isNaN(number) ) {
+        new_number = number + offset;
+        if( minValue !== undefined && new_number < minValue ) { new_number = minValue; }
+        if( maxValue !== undefined && new_number > maxValue ) { new_number = maxValue; }
+    }
+    else if( defaultValue !== undefined ) {
+        new_number = defaultValue;
+    }
+    return `${name} ${new_number} `;
 }
 
 /**
  * Adjusts the value of a float argument.
- * @param {String} name  : The name of the argument to be adjusted.
- * @param {String} value : The current value of the argument.
- * @param {Number} offset: The amount by which the argument's value will be adjusted.
+ * @param {String} name   : The name of the argument to be adjusted.
+ * @param {String} value  : The current value of the argument.
+ * @param {Number} offset : The value to be added (positive) or subtracted (negative).
+ * @param {Number} [defaultValue] : The default value of the argument when `value` is invalid.
+ * @param {Number} [minValue]     : The minimum value that the argument can have.
+ * @param {Number} [maxValue]     : The maximum value that the argument can have.
  * @returns
- *   The full argument string with the adjusted value (including the argument's name)
+ *   The full argument string (including the argument's name) with the adjusted value.
  */
-function adjustFloat(name, value, offset) {
-    const new_value = parseFloat(value) + offset;
-    return `${name} ${new_value.toFixed(1)} `;
+function adjustFloat(name, value, offset, defaultValue, min, max) {
+    const number     = parseFloat(value);
+    let   new_number = 0.0;
+    if( !isNaN(number) ) {
+        new_number = number + offset;
+        if( min !== undefined && new_number < min ) { new_number = min; }
+        if( max !== undefined && new_number > max ) { new_number = max; }
+    }
+    else if( defaultValue !== undefined ) {
+        new_number = defaultValue;
+    }
+    return `${name} ${new_number.toFixed(1)} `;
 }
 
 /**
@@ -154,13 +178,19 @@ function adjustFloat(name, value, offset) {
  * @param {String} name  : The name of the argument to be adjusted.
  * @param {String} value : The current value of the argument. e.g "a" or "b".
  * @param {Number} offset: The amount by which the argument's value will be adjusted. e.g. +1 or -1.
- * @param {Array<String>} choices: An array with all possible choices for this multiple choice argument. e.g ["a", "b"].
+ * @param {Array<String>} choices  : An array with all possible choices for this multiple choice argument. e.g ["a", "b"].
+ * @param {String} [defaultChoice] : The default choice of the argument when `value` is not a valid choice.
  */
-function adjustMultipleChoice(name, value, offset, choices) {
-    const index = choices.indexOf( value.trim() );
-    let new_index = index>=0 ? index : 0;
-    if     ( offset>0 ) { new_index += 1; }
-    else if( offset<0 ) { new_index += choices.length - 1; }
+function adjustMultipleChoice(name, value, offset, choices, defaultChoise) {
+    const index     = choices.indexOf( value.trim() );
+    let   new_index = 0
+    if( index>=0 ) {
+        if     ( offset>0 ) { new_index = index + 1; }
+        else if( offset<0 ) { new_index = index + choices.length - 1; }
+    }
+    else if( defaultChoise ) {
+        new_index = Math.max( 0, choices.indexOf(defaultChoise) )
+    }
     const new_value = choices[new_index % choices.length];
     return name ? `${name} ${new_value} ` : `${new_value} `;
 }
@@ -176,17 +206,17 @@ function adjustMultipleChoice(name, value, offset, choices) {
 function adjustArgument(name, value, offset) {
     switch(name) {
         case '--variant':
-            return adjustInt(name, value, offset)
+            return adjustInt(name, value, offset, 1, 1)
         case '--cfg-adjust':
-            return adjustFloat(name, value, offset*0.1);
+            return adjustFloat(name, value, offset*0.1, 0.0, -4.0, 4.0);
         case '--detail':
-            return adjustMultipleChoice(name, value, offset, DETAIL_LEVELS);
+            return adjustMultipleChoice(name, value, offset, DETAIL_LEVELS, DEFAULT_DETAIL_LEVEL);
         case '--seed':
-            return adjustInt(name, value, offset);
+            return adjustInt(name, value, offset, 1, 1);
         case '--aspect':
             return adjustMultipleChoice(name, value, offset, ASPECT_RATIOS)
         case '--batch-size':
-            return adjustInt(name, value, offset)
+            return adjustInt(name, value, offset, 1, 1)
     }
     if( IMAGE_ORIENTATIONS.includes(name) ) {
         return adjustMultipleChoice("", name, offset, IMAGE_ORIENTATIONS)
@@ -300,7 +330,7 @@ function onUpOrDown(isMovingDown, event, textarea) {
     let argumentValue = argument.substring(nameLength);
 
     // adjust the value of the argument based on the key pressed
-    argument = adjustArgument(argumentName, argumentValue, isMovingDown ? 1 : -1);
+    argument = adjustArgument(argumentName, argumentValue, isMovingDown ? -1 : 1);
     if (argument !== null) {
         insertText(textarea, argument, argumentStart, argumentEnd)
         nameLength = argument.indexOf(" ");
