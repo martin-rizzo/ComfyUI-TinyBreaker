@@ -1,6 +1,6 @@
 {
-  "last_node_id": 15,
-  "last_link_id": 12,
+  "last_node_id": 21,
+  "last_link_id": 17,
   "nodes": [
     {
       "id": 2,
@@ -20,7 +20,7 @@
         {
           "name": "genparams",
           "type": "GENPARAMS",
-          "link": 11
+          "link": 17
         },
         {
           "name": "custom_definitions",
@@ -95,15 +95,15 @@
       ]
     },
     {
-      "id": 14,
+      "id": 21,
       "type": "GenParamsDebugLogger //TinyBreaker",
       "pos": [
-        290,
+        320,
         160
       ],
       "size": [
-        290,
-        82
+        260,
+        110
       ],
       "flags": {},
       "order": 0,
@@ -121,7 +121,7 @@
           "name": "genparams",
           "type": "GENPARAMS",
           "links": [
-            11
+            17
           ],
           "slot_index": 0
         }
@@ -130,46 +130,9 @@
         "Node name for S&R": "GenParamsDebugLogger //TinyBreaker"
       },
       "widgets_values": [
+        "no logging",
         "",
-        "quiet"
-      ]
-    },
-    {
-      "id": 15,
-      "type": "GenParamsDebugLogger //TinyBreaker",
-      "pos": [
-        1740,
-        160
-      ],
-      "size": [
-        290,
-        82
-      ],
-      "flags": {},
-      "order": 4,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "link": 12,
-          "shape": 7
-        }
-      ],
-      "outputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "links": [],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "GenParamsDebugLogger //TinyBreaker"
-      },
-      "widgets_values": [
-        "unified prompt",
-        "user parameters only"
+        ""
       ]
     },
     {
@@ -181,7 +144,7 @@
       ],
       "size": [
         540,
-        640
+        270
       ],
       "flags": {},
       "order": 3,
@@ -198,7 +161,7 @@
           "name": "genparams",
           "type": "GENPARAMS",
           "links": [
-            12
+            16
           ],
           "slot_index": 0
         }
@@ -208,6 +171,44 @@
       },
       "widgets_values": [
         "An astronaut enjoying fries in a diner, with a cinematic touch.\n"
+      ]
+    },
+    {
+      "id": 20,
+      "type": "GenParamsDebugLogger //TinyBreaker",
+      "pos": [
+        1740,
+        160
+      ],
+      "size": [
+        290,
+        106
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 16,
+          "shape": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "GenParamsDebugLogger //TinyBreaker"
+      },
+      "widgets_values": [
+        "short text values",
+        "unified prompt",
+        "sampler.base.prompt"
       ]
     }
   ],
@@ -229,18 +230,18 @@
       "GENPARAMS"
     ],
     [
-      11,
-      14,
+      16,
+      4,
       0,
-      2,
+      20,
       0,
       "GENPARAMS"
     ],
     [
-      12,
-      4,
+      17,
+      21,
       0,
-      15,
+      2,
       0,
       "GENPARAMS"
     ]
@@ -251,12 +252,12 @@
     "ds": {
       "scale": 0.8264462809917354,
       "offset": [
-        -167.75369970365068,
-        -18.689472866472954
+        -231.2236551906342,
+        36.45973029940163
       ]
     },
     "node_versions": {
-      "ComfyUI-TinyBreaker": "30b6c5057c7565cf25881c98a7d39c772e988b54"
+      "ComfyUI-TinyBreaker": "2b18eb3b6ab9cdc5afb04c07ec18227cbdf2d472"
     }
   },
   "version": 0.4

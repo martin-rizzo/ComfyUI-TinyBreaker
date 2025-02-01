@@ -14,11 +14,11 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 from .core.genparams import GenParams
 
 _MODES = [
-    "quiet",
-    "user parameters only",
-    "short values",
-    "long values",
-    "all keys with long values",
+    "no logging",
+    "user parameters",
+    "short text values",
+    "long text values",
+    "key/value pairs",
 ]
 _DEFAULT_MODE = "user parameters"
 
@@ -67,12 +67,15 @@ class GenParamsDebugLogger:
     def INPUT_TYPES(cls):
         return {
         "required": {
-            "flag"     :("STRING"   , {"tooltip": "Flag to mark the logging.",
-                                       "multiline": False
-                                       }),
-            "mode"     :(_MODES     , {"tooltip": "Select the logging mode.",
-                                       "default": _DEFAULT_MODE
-                                       }),
+            "mode"     :(_MODES  , {"tooltip": "Select the logging mode.",
+                                    "default": _DEFAULT_MODE
+                                    }),
+            "flag"     :("STRING", {"tooltip": "Flag to mark the logging.",
+                                    "multiline": False
+                                    }),
+            "filter"   :("STRING", {"tooltip": "The prefix of the parameter to be logged, empty to log all parameters. e.g. image.aspect_ratio",
+                                    "default": ""
+                                    }),
             },
         "optional": {
             "genparams":("GENPARAMS", {"tooltip": "The generation parameters to be logged.",
@@ -86,26 +89,31 @@ class GenParamsDebugLogger:
     RETURN_NAMES    = ("genparams",)
     OUTPUT_TOOLTIPS = ("The same input genparams. (you can use this output to chain other genparams nodes)",)
 
-    def log(self, flag: str, mode: str, genparams: GenParams = None) -> GenParams:
+    def log(self, flag: str, mode: str, filter: str = "", genparams: GenParams = None) -> GenParams:
+        original_genparams = genparams or GenParams(_DEFAULT_PARAMS)
 
-        if not genparams:
-            genparams = GenParams(_DEFAULT_PARAMS)
+        # if a filter is provided,
+        # filter out all keys that do not start with the filter prefix
+        if filter:
+            genparams = GenParams({key: value for key, value in genparams.items() if key.startswith(filter)})
 
-        if mode == "quiet":
-            return (genparams,)
-
+        # if flag is provided, add a separator banner to the console output
         if flag:
-            print(f"-- 🚩{flag} -------------------------------------")
+            print(f"-[ 🚩 {flag.upper()} ]------------------------------------")
 
-        if   mode == "user parameters only":
+        # log the selected parameters based on the chosen logging mode
+        if   mode == "no logging":
+            pass
+        elif mode == "user parameters":
             print( genparams.to_string(filter_prefixes=["image","sampler","user"]) )
-        elif mode == "short values":
-            print( genparams )
-        elif mode == "long values":
-            print( genparams.to_string() )
-        elif mode == "all keys with long values":
+        elif mode == "short text values":
+            print( genparams.to_string(width=94) )
+        elif mode == "long text values":
+            print( genparams.to_string(width=-1) )
+        elif mode == "key/value pairs":
             for key, value in genparams.items():
                 print(f"{key}: {value}")
 
-        return (genparams,)
+        # return the original genparams making the node a pass-through
+        return (original_genparams,)
 
