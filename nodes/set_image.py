@@ -13,10 +13,10 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 from .core.genparams import GenParams
 from ._common import LANDSCAPE_SIZES_BY_ASPECT_RATIO, \
-                     SCALES_BY_NAME,                  \
+                     SCALES_BY_SIZE,                  \
                      ORIENTATIONS,                    \
                      DEFAULT_ASPECT_RATIO,            \
-                     DEFAULT_SCALE_NAME,              \
+                     DEFAULT_SIZE,                    \
                      DEFAULT_ORIENTATION,             \
                      normalize_aspect_ratio
 
@@ -42,8 +42,8 @@ class SetImage:
             "orientation":(ORIENTATIONS, {"tooltip": "The orientation of the image. (landscape or portrait)",
                                           "default": DEFAULT_ORIENTATION
                                           }),
-            "size"       :(cls.scales(), {"tooltip": 'The relative size for the image. ("medium" is the size the model was trained on, but "large" is recommended)',
-                                          "default": DEFAULT_SCALE_NAME
+            "size"       :(cls.sizes() , {"tooltip": 'The relative size for the image. ("medium" is the size the model was trained on, but "large" is recommended)',
+                                          "default": DEFAULT_SIZE
                                           }),
             "batch_size" :("INT"       , {"tooltip": "The number of images to generate in a single batch.",
                                           "default": 1, "min": 1, "max": 4096
@@ -68,7 +68,7 @@ class SetImage:
         genparams = genparams.copy()
         genparams.set_str  ( "image.aspect_ratio"       , normalize_aspect_ratio(ratio) )
         genparams.set_str  ( "image.orientation"        , orientation                   )
-        genparams.set_float( "image.scale"              , SCALES_BY_NAME.get(size, 1.0) )
+        genparams.set_float( "image.scale"              , SCALES_BY_SIZE.get(size, 1.0) )
         genparams.set_int  ( "image.batch_size"         , batch_size                    )
         genparams.set_int  ( "denoising.base.noise_seed", seed                          )
         return (genparams,)
@@ -81,5 +81,5 @@ class SetImage:
         return list(LANDSCAPE_SIZES_BY_ASPECT_RATIO.keys())
 
     @staticmethod
-    def scales():
-        return list(SCALES_BY_NAME.keys())
+    def sizes():
+        return list(SCALES_BY_SIZE.keys())

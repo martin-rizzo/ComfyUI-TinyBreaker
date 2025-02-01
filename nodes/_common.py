@@ -54,7 +54,7 @@ LANDSCAPE_SIZES_BY_ASPECT_RATIO = {
     # "48:35  (35 mm)"     : (1199.2,  874.4),
     # "71:50  (~imax)"     : (1220.2,  859.3),
 }
-SCALES_BY_NAME = {
+SCALES_BY_SIZE = {
     "small"  : 0.82,
     "medium" : 1.0,
     "large"  : 1.22,
@@ -74,7 +74,7 @@ NFACTORS_BY_DETAIL_LEVEL = {
 }
 
 DEFAULT_ASPECT_RATIO = "1:1  (square)"
-DEFAULT_SCALE_NAME   = "large"
+DEFAULT_SIZE         = "large"
 DEFAULT_ORIENTATION  = "landscape"
 DEFAULT_DETAIL_LEVEL = "normal"
 
@@ -187,17 +187,17 @@ def genparams_from_arguments(args: dict,
         ratio = normalize_aspect_ratio(value)
         genparams.set_str(f"image.aspect_ratio", ratio)
 
-
     # --landscape / --portrait
     # "image.orientation"
-
-    # TODO: implement this
+    value = _pop_option(args, "landscape", "portrait")
+    if value:
+        genparams.set_str(f"image.orientation", value)
 
     # --small / --medium / --large
     # "image.scale"
-
-    # TODO: implement this
-
+    value = _pop_option(args, "small", "medium", "large")
+    if value:
+        genparams.set_float(f"image.scale", SCALES_BY_SIZE[value])
 
     # --b, --batch <int>
     # "image.batch_size"
@@ -213,6 +213,14 @@ def _pop_str_value(args: dict, *keys) -> str:
         if value is not None:
             return str(value)
     return None
+
+def _pop_option(args: dict, *keys) -> str | None:
+    option = None
+    for key in keys:
+        value = args.pop(key, None)
+        if value is not None:
+            option = key
+    return option
 
 def _pop_int_value(args: dict, *keys) -> tuple[int | None, bool]:
     str_value = _pop_str_value(args, *keys)
