@@ -1,0 +1,263 @@
+{
+  "last_node_id": 15,
+  "last_link_id": 12,
+  "nodes": [
+    {
+      "id": 2,
+      "type": "SelectStyle //TinyBreaker",
+      "pos": [
+        600,
+        160
+      ],
+      "size": [
+        260,
+        110
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 11
+        },
+        {
+          "name": "custom_definitions",
+          "type": "STRING",
+          "link": null,
+          "widget": {
+            "name": "custom_definitions"
+          },
+          "shape": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "links": [
+            1
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "SelectStyle //TinyBreaker"
+      },
+      "widgets_values": [
+        "1GIRLZ",
+        "last",
+        "[1GIRL]\nbase.prompt      = \"An iPhone photo{. $@}. (144p photo:1.1) with JPEG artifacts.\"\nbase.negative    = \"macrophoto, bokeh, out of focus{, $@}\"\nbase.sampler     = \"dpmpp_2m_sde\"\nbase.scheduler   = \"beta\"\nbase.steps       = 14\nbase.steps_start = 2\nrefiner.prompt      = \"(argentine social woman:1.1){, $@}\"\nrefiner.negative    = \"(worst quality, low quality:1.8){, $@}\"\nrefiner.sampler     = \"dpmpp_2m\"\nrefiner.scheduler   = \"normal\"\nrefiner.steps       = 24\nrefiner.steps_start = 12\nrefiner.cfg         = 2.0\n\n[2GIRL]\nbase.prompt      = \"An iPhone photo{. $@}. (144p photo:1.1) with JPEG artifacts.\"\nbase.negative    = \"macrophoto, bokeh, out of focus{, $@}\"\nbase.sampler     = \"dpmpp_2m_sde\"\nbase.scheduler   = \"karras\"\nbase.steps       = 14\nbase.steps_start = 2\nrefiner.prompt      = \"(argentine social woman:1.1){, $@}\"\nrefiner.negative    = \"(worst quality, low quality:1.8){, $@}\"\nrefiner.sampler     = \"dpmpp_2m\"\nrefiner.scheduler   = \"normal\"\nrefiner.steps       = 25\nrefiner.steps_start = 14\nrefiner.cfg         = 2.0\n"
+      ]
+    },
+    {
+      "id": 3,
+      "type": "SetImage //TinyBreaker",
+      "pos": [
+        880,
+        160
+      ],
+      "size": [
+        280,
+        180
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 1
+        }
+      ],
+      "outputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "links": [
+            2
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "SetImage //TinyBreaker"
+      },
+      "widgets_values": [
+        1,
+        "fixed",
+        "3:2  (photo)",
+        "portrait",
+        "large",
+        1
+      ]
+    },
+    {
+      "id": 14,
+      "type": "GenParamsDebugLogger //TinyBreaker",
+      "pos": [
+        290,
+        160
+      ],
+      "size": [
+        290,
+        82
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": null,
+          "shape": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "links": [
+            11
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "GenParamsDebugLogger //TinyBreaker"
+      },
+      "widgets_values": [
+        "",
+        "quiet"
+      ]
+    },
+    {
+      "id": 15,
+      "type": "GenParamsDebugLogger //TinyBreaker",
+      "pos": [
+        1740,
+        160
+      ],
+      "size": [
+        290,
+        82
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 12,
+          "shape": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "links": [],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "GenParamsDebugLogger //TinyBreaker"
+      },
+      "widgets_values": [
+        "unified prompt",
+        "user parameters only"
+      ]
+    },
+    {
+      "id": 4,
+      "type": "UnifiedPromptInput //TinyBreaker",
+      "pos": [
+        1180,
+        160
+      ],
+      "size": [
+        540,
+        640
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 2
+        }
+      ],
+      "outputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "links": [
+            12
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "UnifiedPromptInput //TinyBreaker"
+      },
+      "widgets_values": [
+        "An astronaut enjoying fries in a diner, with a cinematic touch.\n"
+      ]
+    }
+  ],
+  "links": [
+    [
+      1,
+      2,
+      0,
+      3,
+      0,
+      "GENPARAMS"
+    ],
+    [
+      2,
+      3,
+      0,
+      4,
+      0,
+      "GENPARAMS"
+    ],
+    [
+      11,
+      14,
+      0,
+      2,
+      0,
+      "GENPARAMS"
+    ],
+    [
+      12,
+      4,
+      0,
+      15,
+      0,
+      "GENPARAMS"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.8264462809917354,
+      "offset": [
+        -167.75369970365068,
+        -18.689472866472954
+      ]
+    },
+    "node_versions": {
+      "ComfyUI-TinyBreaker": "30b6c5057c7565cf25881c98a7d39c772e988b54"
+    }
+  },
+  "version": 0.4
+}

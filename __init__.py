@@ -126,6 +126,9 @@ comfy_import_node(UpackSamplerParams)
 # TinyBreaker/__dev
 _CATEGORY = "TinyBreaker/__dev"
 
+from .nodes.genparams_debug_logger import GenParamsDebugLogger
+comfy_import_node(GenParamsDebugLogger)
+
 
 
 logger.info(f"Imported {len(NODE_CLASS_MAPPINGS)} nodes")

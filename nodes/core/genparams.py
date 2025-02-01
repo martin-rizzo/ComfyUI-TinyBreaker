@@ -159,23 +159,38 @@ class GenParams(dict):
 
         # base/refiner prefixes
         BASE = "sampler.base."
-        REFI = "sampler.refiner."
+        REF_ = "sampler.refiner."
 
         # --prompt <text>
-        # "base.prompt", "refiner.prompt"
-        value = _get_str_value(args, "prompt") or ""
-        genparams.set_str(f"{BASE}prompt", value, use_template=True)
-        genparams.set_str(f"{REFI}prompt", value, use_template=True)
+        # "base.prompt", << "refiner.prompt" >>
+        prompt = _get_str_value(args, "prompt") or ""
+        genparams.set_str(f"{BASE}prompt", prompt, use_template=True)
 
-        # --n, --no, --negative <text>
+        # --refine <text>
+        # << "refiner.prompt" >>
+        value = _get_str_value(args, "refine") or ""
+        if value and not value.endswith('.'):
+            value += '.'
+        if value.startswith('!'):
+            genparams.set_str(f"{REF_}prompt", f"{value[1:]}", use_template=True)
+        else:
+            genparams.set_str(f"{REF_}prompt", f"{value}{prompt}", use_template=True)
+
+        # --no, --negative <text>
         # "base.negative", "refiner.negative"
-        value = _get_str_value(args, "n", "no", "negative") or ""
+        value = _get_str_value(args, "no", "negative") or ""
         genparams.set_str(f"{BASE}negative", value, use_template=True)
-        genparams.set_str(f"{REFI}negative", value, use_template=True)
+        genparams.set_str(f"{REF_}negative", value, use_template=True)
 
-        # --c, --cfg <float>
+        # --v, --variant <int>
+        # "refiner.noise_seed"
+        value, as_delta = _get_int_value(args, "v", "variant")
+        if value is not None:
+            genparams.set_int(f"{REF_}noise_seed", value, as_delta=as_delta)
+
+        # --c, --cfg-adjust <float>
         # "base.cfg"
-        value, as_delta = _get_float_value(args, "c", "cfg")
+        value, as_delta = _get_float_value(args, "c", "cfg-adjust")
         if value is not None:
             genparams.set_float(f"{BASE}cfg", value, as_delta=as_delta)
 
@@ -185,11 +200,6 @@ class GenParams(dict):
         if value is not None:
             genparams.set_int(f"{BASE}noise_seed", value, as_delta=as_delta)
 
-        # --v, --variant <int>
-        # "refiner.noise_seed"
-        value, as_delta = _get_int_value(args, "v", "variant")
-        if value is not None:
-            genparams.set_int(f"{REFI}noise_seed", value, as_delta=as_delta)
 
         # --b, --batch <int>
         # "image.batch_size"
@@ -359,24 +369,43 @@ class GenParams(dict):
         return self.to_string(indent=4, width=94)
 
 
-    def to_string(self, *, indent: int=4, width: int=-1) -> str:
+    def to_string(self, *, indent: int=4, width: int=-1, filter_prefixes: list[str] = None) -> str:
         """Return a string representation of the GenParams object."""
-        genparams = dict(self)
+
+        # filter the keys based on the filter_prefixes argument (if provided)
+        if filter_prefixes is None:
+            genparams = dict(self)
+        else:
+            filter_prefixes = [normalize_prefix(prefix) for prefix in filter_prefixes]
+            genparams = { key: value for key,value in self.items() if any(key.startswith(prefix) for prefix in filter_prefixes)}
+
+        # build the string representation of the GenParams object
+        # spliting the keys into groups based on their prefix
         string = "GenParams({\n"
-        string += "# FILE\n"
-        string += self.__pop_group_as_string("file."     , source=genparams, indent=indent, width=width)
-        string += "# MODEL\n"
-        string += self.__pop_group_as_string("modelspec.", source=genparams, indent=indent, width=width)
-        string += "# IMAGE\n"
-        string += self.__pop_group_as_string("image."    , source=genparams, indent=indent, width=width)
-        string += "# SAMPLER\n"
-        string += self.__pop_group_as_string("sampler."  , source=genparams, indent=indent, width=width)
-        string += "# USER\n"
-        string += self.__pop_group_as_string("user."     , source=genparams, indent=indent, width=width)
-        string += "# STYLES\n"
-        string += self.__pop_all_styles_as_string(         source=genparams, indent=indent             )
-        string += "# OTHERS\n"
-        string += self.__pop_group_as_string(""          , source=genparams, indent=indent, width=width)
+
+        keys = self.__pop_group_as_string("file."     , source=genparams, indent=indent, width=width)
+        if keys: string += f"# FILE\n{keys}"
+
+        keys = self.__pop_group_as_string("modelspec.", source=genparams, indent=indent, width=width)
+        if keys: string += f"# MODEL\n{keys}"
+
+        keys = self.__pop_group_as_string("image."    , source=genparams, indent=indent, width=width)
+        if keys: string += f"# IMAGE\n{keys}"
+
+        refkeys = self.__pop_group_as_string("sampler.refiner", source=genparams, indent=indent, width=width)
+        keys    = self.__pop_group_as_string("sampler"        , source=genparams, indent=indent, width=width)
+        if keys   : string += f"# SAMPLER\n{keys}"
+        if refkeys: string += f"# SAMPLER (refiner)\n{refkeys}"
+
+        keys = self.__pop_group_as_string("user."     , source=genparams, indent=indent, width=width)
+        if keys: string += f"# USER\n{keys}"
+
+        keys = self.__pop_all_styles_as_string(         source=genparams, indent=indent             )
+        if keys: string += f"# STYLES\n{keys}"
+
+        keys = self.__pop_group_as_string(""          , source=genparams, indent=indent, width=width)
+        if keys: string += f"# OTHERS\n{keys}"
+
         string += "})"
         return string
 
