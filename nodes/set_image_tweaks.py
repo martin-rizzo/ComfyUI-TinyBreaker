@@ -12,17 +12,7 @@ License : MIT
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 from .core.genparams import GenParams
-
-_NFACTORS_BY_REFINAMENT = {
-    "disabled": -10000,
-    "minimal" : -2,
-    "low"     : -1,
-    "normal"  : 0,
-    "high"    : +1,
-    "intense" : +2,
-    "extreme" : +3,
-}
-_DEFAULT_REFINAMENT="normal"
+from ._common        import NFACTORS_BY_DETAIL_LEVEL, DEFAULT_DETAIL_LEVEL
 
 
 class SetImageTweaks:
@@ -35,17 +25,17 @@ class SetImageTweaks:
     def INPUT_TYPES(cls):
         return {
         "required": {
-            "genparams" :("GENPARAMS", {"tooltip": "The generation parameters to be updated."
-                                        }),
-            "variant"   :("INT"      , {"tooltip": "The variant of the image to generate. This parameter allows you to choose between different versions of the same image.",
-                                        "default": 1, "min": 1, "max": 0xffffffffffffffff
-                                        }),
-            "refinement":(cls.refis(), {"tooltip": "The level of refinement for the image.",
-                                        "default": _DEFAULT_REFINAMENT
-                                        }),
-            "cfg_fixing":("FLOAT"    , {"tooltip": "An adjustment applied to the classifier-free guidance value. Positive values increase prompt adherence; negative values allow more model freedom. A value of 0.0 uses the default setting.",
-                                        "default": 0.0, "min": -4.0, "max": 4.0, "step": 0.2, "round": 0.01
-                                        }),
+            "genparams"   :("GENPARAMS" , {"tooltip": "The generation parameters to be updated."
+                                           }),
+            "variant"     :("INT"       , {"tooltip": "The variant of the image to generate. This parameter allows you to choose between different versions of the same image.",
+                                           "default": 1, "min": 1, "max": 0xffffffffffffffff
+                                           }),
+            "detail_level":(cls.levels(), {"tooltip": "The level of detail in the final image induced by the refiner.",
+                                           "default": DEFAULT_DETAIL_LEVEL,
+                                           }),
+            "cfg_adjust"  :("FLOAT"     , {"tooltip": "An adjustment applied to the classifier-free guidance value. Positive values increase prompt adherence; negative values allow more model freedom. A value of 0.0 uses the default setting.",
+                                           "default": 0.0, "min": -4.0, "max": 4.0, "step": 0.2, "round": 0.01
+                                           }),
             },
         }
 
@@ -58,18 +48,19 @@ class SetImageTweaks:
     def set_image_attributes(self,
                              genparams : GenParams,
                              variant   : int,
-                             refinement: str,
-                             cfg_fixing: float,
+                             detail    : str,
+                             cfg_adjust: float,
                              ):
         genparams = genparams.copy()
-        genparams.set_float("denoising.base.cfg"             , cfg_fixing, as_delta = True         )
-        genparams.set_int  ("denoising.refiner.noise_seed"   , variant                             )
-        genparams.set_int  ("denoising.refiner.steps_nfactor", _NFACTORS_BY_REFINAMENT[refinement] )
+        genparams.set_float("denoising.base.cfg"             , cfg_adjust, as_delta = True      )
+        genparams.set_int  ("denoising.refiner.noise_seed"   , variant                          )
+        genparams.set_int  ("denoising.refiner.steps_nfactor", NFACTORS_BY_DETAIL_LEVEL[detail] )
         return (genparams,)
 
 
     #__ internal functions ________________________________
 
     @staticmethod
-    def refis():
-        return list(_NFACTORS_BY_REFINAMENT.keys())
+    def levels():
+        return list(NFACTORS_BY_DETAIL_LEVEL.keys())
+

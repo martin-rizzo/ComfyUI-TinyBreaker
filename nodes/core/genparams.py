@@ -75,7 +75,6 @@ class GenParams(dict):
     **Alternative Constructors:**
       - `from_raw_options(cls, raw_options)`: Creates a new GenParams object from the given raw options.
       - `from_safetensors_metadata(cls, file_path)`: Creates a new GenParams object from the given safetensors metadata.
-      - `from_args(cls, args)`: Creates a new GenParams object from the given command arguments.
     """
 
     @classmethod
@@ -143,73 +142,6 @@ class GenParams(dict):
         return cls(metadata)
 
 
-    @classmethod
-    def from_arguments(cls,
-                       args: dict,
-                       *,# keyword-only arguments #
-                       template: "GenParams" = None
-                       ) -> "GenParams":
-        """
-        Create a GenParams object from the given arguments.
-        Args:
-            args          (dict): A dictionary of argument names and their values.
-            template (GenParams): A template GenParams object to be used as a base for the new GenParams object.
-        """
-        genparams = template.copy() if template else GenParams()
-
-        # base/refiner prefixes
-        BASE = "denoising.base."
-        REF_ = "denoising.refiner."
-
-        # --prompt <text>
-        # "base.prompt", << "refiner.prompt" >>
-        prompt = _get_str_value(args, "prompt") or ""
-        genparams.set_str(f"{BASE}prompt", prompt, use_template=True)
-
-        # --refine <text>
-        # << "refiner.prompt" >>
-        value = _get_str_value(args, "refine") or ""
-        if value and not value.endswith('.'):
-            value += '.'
-        if value.startswith('!'):
-            genparams.set_str(f"{REF_}prompt", f"{value[1:]}", use_template=True)
-        else:
-            genparams.set_str(f"{REF_}prompt", f"{value}{prompt}", use_template=True)
-
-        # --no, --negative <text>
-        # "base.negative", "refiner.negative"
-        value = _get_str_value(args, "no", "negative") or ""
-        genparams.set_str(f"{BASE}negative", value, use_template=True)
-        genparams.set_str(f"{REF_}negative", value, use_template=True)
-
-        # --v, --variant <int>
-        # "refiner.noise_seed"
-        value, as_delta = _get_int_value(args, "v", "variant")
-        if value is not None:
-            genparams.set_int(f"{REF_}noise_seed", value, as_delta=as_delta)
-
-        # --c, --cfg-adjust <float>
-        # "base.cfg"
-        value, as_delta = _get_float_value(args, "c", "cfg-adjust")
-        if value is not None:
-            genparams.set_float(f"{BASE}cfg", value, as_delta=as_delta)
-
-        # --s, --seed <int>
-        # "base.noise_seed"
-        value, as_delta = _get_int_value(args, "s", "seed")
-        if value is not None:
-            genparams.set_int(f"{BASE}noise_seed", value, as_delta=as_delta)
-
-
-        # --b, --batch <int>
-        # "image.batch_size"
-        value, as_delta = _get_int_value(args, "b", "batch")
-        if value is not None:
-            genparams.set_int("image.batch_size", value, as_delta=as_delta)
-
-        return genparams
-
-
     def set_str(self, key: str, new_value: str, /, use_template: bool = False) -> None:
         """
         Stores a string value under the given key.
@@ -247,6 +179,17 @@ class GenParams(dict):
                 self[key] = int(old_value) + int(new_value)
                 return
         self[key] = int(new_value)
+
+
+    def get_str(self, key: str, default: str = None, /) -> str | None:
+        """
+        Returns the string value stored under the given key.
+        If no such value is found, returns `default` (or None if `default` is not specified).
+        """
+        value = self.get(key)
+        if value:
+            return str(value)
+        return default
 
 
     def get_float(self, key: str, default: float = None, /) -> float | None:
@@ -448,138 +391,4 @@ class GenParams(dict):
         return string
 
 
-#---------------------------- ARGUMENT PARSING -----------------------------#
-
-def _get_str_value(args: dict, *keys) -> str:
-    for key in keys:
-        value = args.pop(key, None)
-        if value is not None:
-            return str(value)
-    return None
-
-def _get_int_value(args: dict, *keys) -> tuple[int | None, bool]:
-    str_value = _get_str_value(args, *keys)
-    if str_value is None:
-        return None, False
-    value, as_delta = _parse_int(str_value)
-    if value is None:
-        return None, False
-    return value, as_delta
-
-def _get_float_value(args: dict, *keys) -> tuple[float | None, bool]:
-    str_value = _get_str_value(args, *keys)
-    if str_value is None:
-        return None, False
-    value, as_delta = _parse_float(str_value)
-    if value is None:
-        return None, False
-    return value, as_delta
-
-
-def _parse_float(str_value: str,
-                 *,
-                 step     : float =  0.1,
-                 min_value: float = -float('inf'),
-                 max_value: float =  float('inf'),
-                 ) -> tuple[float | None, bool]:
-    """
-    Parses a float value from a string with the format <number><brackets>.
-
-    The number part is a standard float representation.
-    The brackets part consists of '[' and ']' characters which increment
-    and decrement the number by the given step, respectively.
-
-    Args:
-        str_value: The string to parse.
-        step     : The increment/decrement value for each bracket.
-        min_value: The minimum allowed value.
-        max_value: The maximum allowed value.
-
-    Returns:
-        A tuple containing:
-        - The parsed float value, or None if parsing fails.
-        - A boolean indicating if the parsed value is a delta value.
-    """
-    if not str_value:
-        return None, False
-
-    # extract the number and the rest of the string
-    match = re.match(r"^([-+]?\d*\.\d+?|)(.*)$", str_value.strip())
-    if not match:
-        return None, False
-
-    number_str, remaining = match.groups()
-    number   = float(number_str) if number_str else 0.0
-    as_delta = not bool(number_str)
-
-    # adjust the number based in the number of brackets in the remaining string
-    for char in remaining.strip():
-        if   char == "[":  number += step
-        elif char == "]":  number -= step
-        else:
-            return None, False
-
-    # if everything is OK,
-    # return the number and a flag indicating if it's an offset
-    number = max(min_value, min(number, max_value))
-    return number, as_delta
-
-
-def _parse_int(str_value: str,
-               *,
-               step       : int  =    1,
-               min_value  : int  = None,
-               max_value  : int  = None,
-               should_wrap: bool = False,
-               ) -> tuple[int | None, bool]:
-    """
-    Parses an integer value from a string with the format <number><brackets>.
-
-    The number part is a standard integer representation.
-    The brackets part consists of '[' and ']' characters which increment
-    and decrement the number by the given step, respectively.
-
-    Args:
-        str_value  : The string to parse.
-        step       : The increment/decrement value for each bracket.
-        min_value  : The minimum allowed value.
-        max_value  : The maximum allowed value.
-        should_wrap: Whether to wrap around when reaching the minimum or maximum value.
-
-    Returns:
-        A tuple containing:
-        - The parsed integer value, or None if parsing fails.
-        - A boolean indicating if the parsed value is a delta value.
-    """
-    if not str_value:
-        return None, False
-    if min_value is None or max_value is None:
-        should_wrap = False
-
-    # extract the number and the rest of the string
-    match = re.match(r"^([-+]?\d*)(.*)$", str_value.strip())
-    if not match:
-        return None, False
-
-    number_str, remaining = match.groups()
-    number   = int(number_str) if number_str else 0
-    as_delta = not bool(number_str)
-
-    # adjust the number based in the number of brackets in the remaining string
-    for char in remaining.strip():
-        if   char == "[":  number += int(step)
-        elif char == "]":  number -= int(step)
-        else:
-            return None, False
-
-    # ajust the value to be within min/max limits
-    # if `should_wrap` is True then wrap around min/max limits
-    if min_value is not None and number < min_value:
-        number = (max_value + (number-min_value) + 1) if should_wrap else min_value
-    if max_value is not None and number > max_value:
-        number = (min_value + (number-max_value) - 1) if should_wrap else max_value
-
-    # if everything is OK,
-    # return the number and a flag indicating if it's an offset
-    return number, as_delta
 

@@ -13,12 +13,12 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 from .core.genparams import GenParams
 from ._common import LANDSCAPE_SIZES_BY_ASPECT_RATIO, \
-                    SCALES_BY_NAME,                  \
-                    ORIENTATIONS,                    \
-                    DEFAULT_ASPECT_RATIO,            \
-                    DEFAULT_SCALE_NAME,              \
-                    DEFAULT_ORIENTATION,             \
-                    normalize_aspect_ratio
+                     SCALES_BY_NAME,                  \
+                     ORIENTATIONS,                    \
+                     DEFAULT_ASPECT_RATIO,            \
+                     DEFAULT_SCALE_NAME,              \
+                     DEFAULT_ORIENTATION,             \
+                     normalize_aspect_ratio
 
 
 class SetImage:
@@ -66,8 +66,8 @@ class SetImage:
                              batch_size : int
                              ):
         genparams = genparams.copy()
-        ratio = normalize_aspect_ratio(ratio, orientation=orientation)
-        genparams.set_str  ( "image.aspect_ratio"       , ratio                         )
+        genparams.set_str  ( "image.aspect_ratio"       , normalize_aspect_ratio(ratio) )
+        genparams.set_str  ( "image.orientation"        , orientation                   )
         genparams.set_float( "image.scale"              , SCALES_BY_NAME.get(size, 1.0) )
         genparams.set_int  ( "image.batch_size"         , batch_size                    )
         genparams.set_int  ( "denoising.base.noise_seed", seed                          )

@@ -11,6 +11,9 @@ License : MIT
   (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
+import re
+from .core.genparams import GenParams
+
 
 #----------------------- STRING MANIPULATION --------------------------#
 
@@ -60,35 +63,280 @@ ORIENTATIONS = [
     "landscape",
     "portrait"
 ]
+NFACTORS_BY_DETAIL_LEVEL = {
+    "none"     : -10000,
+    "minimal"  : -2,
+    "low"      : -1,
+    "normal"   :  0,
+    "high"     : +1,
+    "veryhigh" : +2,
+    "maximum"  : +3,
+}
 
 DEFAULT_ASPECT_RATIO = "1:1  (square)"
 DEFAULT_SCALE_NAME   = "large"
 DEFAULT_ORIENTATION  = "landscape"
+DEFAULT_DETAIL_LEVEL = "normal"
 
 
-def normalize_aspect_ratio(aspect_ratio: str, *, orientation: str = DEFAULT_ORIENTATION) -> str:
+def normalize_aspect_ratio(aspect_ratio: str, *, force_orientation: str = None) -> str:
     """
     Normalize aspect ratio to a string of the form 'width:height'.
     Args:
-      aspect_ratio (str): The landscape aspect ratio to normalize.
-      portrait    (bool): If True, swap the width and height.
+      aspect_ratio      (str): The landscape aspect ratio to normalize.
+      force_orientation (str): The orientation to force the aspect ratio to. ("landscape" or "portrait")
     """
     width, height = 1, 1
 
     # handle aspect ratio as a string of the form 'width:height <some text>'
     if isinstance(aspect_ratio, str) and ':' in aspect_ratio:
-      ratio, _, _      = aspect_ratio.strip().partition(' ')
-      width, _, height = ratio.partition(':')
-      if not width.isdigit() or not height.isdigit():
-         width, height = 1, 1
+        ratio    , _, _          = aspect_ratio.strip().partition(' ')
+        width_str, _, height_str = ratio.partition(':')
+        if width_str.isdigit() and height_str.isdigit():
+            width, height  = int(width_str), int(height_str)
 
     # handle aspect ratio as a tuple/list of two integers
     elif (isinstance(aspect_ratio, tuple) or isinstance(aspect_ratio, list)) and len(aspect_ratio) == 2:
-      width, height = str[aspect_ratio[0]], str[aspect_ratio[1]]
+        if isinstance(aspect_ratio[0], int) and isinstance(aspect_ratio[1], int):
+            width, height = aspect_ratio[0], aspect_ratio[1]
 
-    # if portrait mode, swap the width and height
-    if orientation.lower() == "portrait":
-        width, height = height, width
+    # don't allow infinite and negative aspect ratios
+    if width < 1 or height <= 1:
+        width, height = 1, 1
+
+    # don't allow ratios greater than 6 between width/height
+    width  = min(width , 6 * height)
+    height = min(height, 6 * width )
+
+    # if orientation is forced, make sure it is respected
+    if force_orientation:
+        orientation = force_orientation.lower()
+        if (orientation == "landscape" and width < height) or (orientation == "portrait" and width > height):
+            width, height = height, width
 
     return f"{width}:{height}"
+
+
+#--------------------------- GENPARAMS FROM ARGS ---------------------------#
+
+def genparams_from_arguments(args: dict,
+                             *,# keyword-only arguments #
+                             template: GenParams = None
+                             ) -> GenParams:
+    """
+    Create a GenParams object from the given arguments.
+    Args:
+        args          (dict): A dictionary of argument names and their values.
+        template (GenParams): A template GenParams object to be used as a base for the new GenParams object.
+    """
+    genparams = template.copy() if template else GenParams()
+
+    # base/refiner prefixes
+    BASE = "denoising.base."
+    RE__ = "denoising.refiner."
+
+    # --prompt <text>
+    # "base.prompt", << "refiner.prompt" >>
+    prompt = _pop_str_value(args, "prompt") or ""
+    genparams.set_str(f"{BASE}prompt", prompt, use_template=True)
+
+    # --refine <text>
+    # << "refiner.prompt" >>
+    value = _pop_str_value(args, "refine") or ""
+    if value and not value.endswith('.'):
+        value += '.'
+    if value.startswith('!'):
+        genparams.set_str(f"{RE__}prompt", f"{value[1:]}", use_template=True)
+    else:
+        genparams.set_str(f"{RE__}prompt", f"{value}{prompt}", use_template=True)
+
+    # --no, --negative <text>
+    # "base.negative", "refiner.negative"
+    value = _pop_str_value(args, "no", "negative") or ""
+    genparams.set_str(f"{BASE}negative", value, use_template=True)
+    genparams.set_str(f"{RE__}negative", value, use_template=True)
+
+    # --v, --variant <int>
+    # "refiner.noise_seed"
+    value, as_delta = _pop_int_value(args, "v", "variant")
+    if value is not None:
+        genparams.set_int(f"{RE__}noise_seed", value, as_delta=as_delta)
+
+    # --c, --cfg-adjust <float>
+    # "base.cfg"
+    value, as_delta = _pop_float_value(args, "c", "cfg-adjust")
+    if value is not None:
+        genparams.set_float(f"{BASE}cfg", value, as_delta=as_delta)
+
+    # --d, --detail <level>
+    # "refiner.steps_nfactor"
+    value = _pop_str_value(args, "d", "detail")
+    if value in NFACTORS_BY_DETAIL_LEVEL:
+        genparams.set_int(f"{RE__}steps_nfactor", NFACTORS_BY_DETAIL_LEVEL[value] )
+
+    # --s, --seed <int>
+    # "base.noise_seed"
+    value, as_delta = _pop_int_value(args, "s", "seed")
+    if value is not None:
+        genparams.set_int(f"{BASE}noise_seed", value, as_delta=as_delta)
+
+    # --a, --aspect <width:height>
+    # "image.aspect_ratio"
+    value = _pop_str_value(args, "a", "aspect")
+    if value:
+        ratio = normalize_aspect_ratio(value)
+        genparams.set_str(f"image.aspect_ratio", ratio)
+
+
+    # --landscape / --portrait
+    # "image.orientation"
+
+    # TODO: implement this
+
+    # --small / --medium / --large
+    # "image.scale"
+
+    # TODO: implement this
+
+
+    # --b, --batch <int>
+    # "image.batch_size"
+    value, as_delta = _pop_int_value(args, "b", "batch")
+    if value is not None:
+        genparams.set_int("image.batch_size", value, as_delta=as_delta)
+
+    return genparams
+
+def _pop_str_value(args: dict, *keys) -> str:
+    for key in keys:
+        value = args.pop(key, None)
+        if value is not None:
+            return str(value)
+    return None
+
+def _pop_int_value(args: dict, *keys) -> tuple[int | None, bool]:
+    str_value = _pop_str_value(args, *keys)
+    if str_value is None:
+        return None, False
+    value, as_delta = _parse_int(str_value)
+    if value is None:
+        return None, False
+    return value, as_delta
+
+def _pop_float_value(args: dict, *keys) -> tuple[float | None, bool]:
+    str_value = _pop_str_value(args, *keys)
+    if str_value is None:
+        return None, False
+    value, as_delta = _parse_float(str_value)
+    if value is None:
+        return None, False
+    return value, as_delta
+
+
+def _parse_float(str_value: str,
+                 *,
+                 step     : float =  0.1,
+                 min_value: float = -float('inf'),
+                 max_value: float =  float('inf'),
+                 ) -> tuple[float | None, bool]:
+    """
+    Parses a float value from a string with the format <number><brackets>.
+
+    The number part is a standard float representation.
+    The brackets part consists of '[' and ']' characters which increment
+    and decrement the number by the given step, respectively.
+
+    Args:
+        str_value: The string to parse.
+        step     : The increment/decrement value for each bracket.
+        min_value: The minimum allowed value.
+        max_value: The maximum allowed value.
+
+    Returns:
+        A tuple containing:
+        - The parsed float value, or None if parsing fails.
+        - A boolean indicating if the parsed value is a delta value.
+    """
+    if not str_value:
+        return None, False
+
+    # extract the number and the rest of the string
+    match = re.match(r"^([-+]?\d*\.\d+?|)(.*)$", str_value.strip())
+    if not match:
+        return None, False
+
+    number_str, remaining = match.groups()
+    number   = float(number_str) if number_str else 0.0
+    as_delta = not bool(number_str)
+
+    # adjust the number based in the number of brackets in the remaining string
+    for char in remaining.strip():
+        if   char == "[":  number += step
+        elif char == "]":  number -= step
+        else:
+            return None, False
+
+    # if everything is OK,
+    # return the number and a flag indicating if it's an offset
+    number = max(min_value, min(number, max_value))
+    return number, as_delta
+
+
+def _parse_int(str_value: str,
+               *,
+               step       : int  =    1,
+               min_value  : int  = None,
+               max_value  : int  = None,
+               should_wrap: bool = False,
+               ) -> tuple[int | None, bool]:
+    """
+    Parses an integer value from a string with the format <number><brackets>.
+
+    The number part is a standard integer representation.
+    The brackets part consists of '[' and ']' characters which increment
+    and decrement the number by the given step, respectively.
+
+    Args:
+        str_value  : The string to parse.
+        step       : The increment/decrement value for each bracket.
+        min_value  : The minimum allowed value.
+        max_value  : The maximum allowed value.
+        should_wrap: Whether to wrap around when reaching the minimum or maximum value.
+
+    Returns:
+        A tuple containing:
+        - The parsed integer value, or None if parsing fails.
+        - A boolean indicating if the parsed value is a delta value.
+    """
+    if not str_value:
+        return None, False
+    if min_value is None or max_value is None:
+        should_wrap = False
+
+    # extract the number and the rest of the string
+    match = re.match(r"^([-+]?\d*)(.*)$", str_value.strip())
+    if not match:
+        return None, False
+
+    number_str, remaining = match.groups()
+    number   = int(number_str) if number_str else 0
+    as_delta = not bool(number_str)
+
+    # adjust the number based in the number of brackets in the remaining string
+    for char in remaining.strip():
+        if   char == "[":  number += int(step)
+        elif char == "]":  number -= int(step)
+        else:
+            return None, False
+
+    # ajust the value to be within min/max limits
+    # if `should_wrap` is True then wrap around min/max limits
+    if min_value is not None and number < min_value:
+        number = (max_value + (number-min_value) + 1) if should_wrap else min_value
+    if max_value is not None and number > max_value:
+        number = (min_value + (number-max_value) - 1) if should_wrap else max_value
+
+    # if everything is OK,
+    # return the number and a flag indicating if it's an offset
+    return number, as_delta
 

@@ -16,6 +16,7 @@ import torch
 import comfy
 from   .utils.system   import logger
 from   .core.genparams import GenParams, normalize_prefix
+from   ._common        import normalize_aspect_ratio
 MAX_RESOLUTION=16384
 LATENT_SCALE_FACTOR=8
 
@@ -58,21 +59,19 @@ class EmptyLatentImage:
 
         resolution  = 1024
         scale       = genparams.get    ( f"{prefix}scale"        , _DEFAULT_SCALE       )
-        ratio       = genparams.get    ( f"{prefix}aspect_ratio" , _DEFAULT_ASPECT_RATIO)
+        ratio       = genparams.get_str( f"{prefix}aspect_ratio" , _DEFAULT_ASPECT_RATIO)
         batch_size  = genparams.get_int( f"{prefix}batch_size"   , _DEFAULT_BATCH_SIZE  )
-        orientation = genparams.get    ( f"{prefix}orientation"  , None                 )
+        orientation = genparams.get_str( f"{prefix}orientation"  , None                 )
 
+        # if orientation is defined, then normalize the aspect ratio to match it
+        if isinstance(orientation, str):
+            ratio = normalize_aspect_ratio(ratio, force_orientation=orientation)
+
+        # parse the input parameters into usable values
         scale                              = self._parse_scale(scale)
         ratio_numerator, ratio_denominator = self._parse_ratio(ratio)
 
-        # orientation overrides the aspect ratio dimensions
-        if isinstance(orientation, str):
-            orientation = orientation.lower()
-            if   orientation == "portrait"  and ratio_numerator > ratio_denominator:
-                ratio_numerator, ratio_denominator = ratio_denominator, ratio_numerator
-            elif orientation == "landscape" and ratio_numerator < ratio_denominator:
-                ratio_numerator, ratio_denominator = ratio_denominator, ratio_numerator
-
+        # generate the empty latent image(s)
         latents = self._generate_latents(resolution, scale, ratio_numerator, ratio_denominator, batch_size, device=self.device)
         return ({"samples":latents}, )
 

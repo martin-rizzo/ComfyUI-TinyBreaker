@@ -13,10 +13,7 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import re
 from .core.genparams import GenParams
-
-# regular expression pattern to match arguments in the format "--key value"
-# the pattern supports not having a space between the key and value
-_ARGS_PATTERN = r"--([a-z]+)(.+?)(?=\s--|$)"
+from ._common        import genparams_from_arguments
 
 
 class UnifiedPromptInput:
@@ -58,7 +55,7 @@ class UnifiedPromptInput:
                 genparams.set_str("user.style", style_name)
 
         # build `genparams` from the parsed arguments (using the node input as template)
-        genparams_output = GenParams.from_arguments(args, template=genparams)
+        genparams_output = genparams_from_arguments(args, template=genparams)
         genparams_output.set_str("user.prompt"  , text)
         genparams_output.set_str("user.negative", ""  )
         return (genparams_output,)
@@ -67,10 +64,27 @@ class UnifiedPromptInput:
     #__ internal functions ________________________________
 
     @staticmethod
-    def _parse_args(text: str) -> tuple[str, dict]:
-        prompt, _, str_args = text.partition("--")
-        matches = re.findall(_ARGS_PATTERN, "--"+str_args)
-        args    = {param.strip(): rest.strip() for param, rest in matches}
-        args["prompt"] = prompt.strip()
-        return args
+    def _parse_args(text: str) -> dict[str, str]:
+        """Parse the text input into a dictionary of arguments."""
+        prompt = ""
+
+        # split the text into arguments by "--"
+        arg_list = text.split("--")
+
+        # the first element is the positive prompt, the rest are arguments
+        if len(arg_list) > 0:
+            prompt = arg_list.pop(0).strip()
+
+        # parse the arguments into a dictionary
+        # each argument is of the form "key value" or just "key" (for boolean values)
+        arg_dict = {}
+        for arg in arg_list:
+            key, _, value = arg.partition(' ')
+            key   = key.lower().strip()
+            value = value.strip()
+            if key:
+                arg_dict[key] = value
+
+        arg_dict["prompt"] = prompt
+        return arg_dict
 
