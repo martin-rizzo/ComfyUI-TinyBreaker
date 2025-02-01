@@ -37,22 +37,22 @@ _DEFAULT_PARAMS = {
     "image.aspect_ratio"         : "1:1",
     "image.scale"                : 1.22,
     "image.batch_size"           : 1,
-    "sampler.base.prompt"        : "A detailed iPhone photo. A cute corgi, smiling with great joy, flying high above the river bank in Yosemite National Park, wearing a Superman cape. Bokeh",
-    "sampler.base.negative"      : "macrophoto, bokeh, out of focus, draw",
-    "sampler.base.sampler"       : "uni_pc",
-    "sampler.base.scheduler"     : "simple",
-    "sampler.base.steps"         : 12,
-    "sampler.base.steps_start"   : 2,
-    "sampler.base.cfg"           : 3.4,
-    "sampler.base.noise_seed"    : 1,
-    "sampler.refiner.prompt"     : "A cute corgi, smiling with great joy, flying high above the river bank in Yosemite National Park, wearing a Superman cape. Bokeh",
-    "sampler.refiner.negative"   : "(draw, worst quality, low quality:1.8)",
-    "sampler.refiner.sampler"    : "deis",
-    "sampler.refiner.scheduler"  : "ddim_uniform",
-    "sampler.refiner.steps"      : 11,
-    "sampler.refiner.steps_start": 6,
-    "sampler.refiner.cfg"        : 2.0,
-    "sampler.refiner.noise_seed" : 1,
+    "denoising.base.prompt"        : "A detailed iPhone photo. A cute corgi, smiling with great joy, flying high above the river bank in Yosemite National Park, wearing a Superman cape. Bokeh",
+    "denoising.base.negative"      : "macrophoto, bokeh, out of focus, draw",
+    "denoising.base.sampler"       : "uni_pc",
+    "denoising.base.scheduler"     : "simple",
+    "denoising.base.steps"         : 12,
+    "denoising.base.steps_start"   : 2,
+    "denoising.base.cfg"           : 3.4,
+    "denoising.base.noise_seed"    : 1,
+    "denoising.refiner.prompt"     : "A cute corgi, smiling with great joy, flying high above the river bank in Yosemite National Park, wearing a Superman cape. Bokeh",
+    "denoising.refiner.negative"   : "(draw, worst quality, low quality:1.8)",
+    "denoising.refiner.sampler"    : "deis",
+    "denoising.refiner.scheduler"  : "ddim_uniform",
+    "denoising.refiner.steps"      : 11,
+    "denoising.refiner.steps_start": 6,
+    "denoising.refiner.cfg"        : 2.0,
+    "denoising.refiner.noise_seed" : 1,
 }
 
 
@@ -105,7 +105,7 @@ class GenParamsDebugLogger:
         if   mode == "no logging":
             pass
         elif mode == "user parameters":
-            print( genparams.to_string(filter_prefixes=["image","sampler","user"]) )
+            print( genparams.to_string(filter_prefixes=["user","image","denoising"]) )
         elif mode == "short text values":
             print( genparams.to_string(width=94) )
         elif mode == "long text values":

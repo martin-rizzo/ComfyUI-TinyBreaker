@@ -62,9 +62,9 @@ class SetImageTweaks:
                              cfg_fixing: float,
                              ):
         genparams = genparams.copy()
-        genparams.set_float("sampler.base.cfg"             , cfg_fixing, as_delta = True         )
-        genparams.set_int  ("sampler.refiner.noise_seed"   , variant                             )
-        genparams.set_int  ("sampler.refiner.steps_nfactor", _NFACTORS_BY_REFINAMENT[refinement] )
+        genparams.set_float("denoising.base.cfg"             , cfg_fixing, as_delta = True         )
+        genparams.set_int  ("denoising.refiner.noise_seed"   , variant                             )
+        genparams.set_int  ("denoising.refiner.steps_nfactor", _NFACTORS_BY_REFINAMENT[refinement] )
         return (genparams,)
 
 

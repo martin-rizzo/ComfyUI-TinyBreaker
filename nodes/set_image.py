@@ -12,7 +12,7 @@ License : MIT
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 from .core.genparams import GenParams
-from .common import LANDSCAPE_SIZES_BY_ASPECT_RATIO, \
+from ._common import LANDSCAPE_SIZES_BY_ASPECT_RATIO, \
                     SCALES_BY_NAME,                  \
                     ORIENTATIONS,                    \
                     DEFAULT_ASPECT_RATIO,            \
@@ -67,10 +67,10 @@ class SetImage:
                              ):
         genparams = genparams.copy()
         ratio = normalize_aspect_ratio(ratio, orientation=orientation)
-        genparams.set_str  ( "image.aspect_ratio"     , ratio                         )
-        genparams.set_float( "image.scale"            , SCALES_BY_NAME.get(size, 1.0) )
-        genparams.set_int  ( "image.batch_size"       , batch_size                    )
-        genparams.set_int  ( "sampler.base.noise_seed", seed                          )
+        genparams.set_str  ( "image.aspect_ratio"       , ratio                         )
+        genparams.set_float( "image.scale"              , SCALES_BY_NAME.get(size, 1.0) )
+        genparams.set_int  ( "image.batch_size"         , batch_size                    )
+        genparams.set_int  ( "denoising.base.noise_seed", seed                          )
         return (genparams,)
 
 

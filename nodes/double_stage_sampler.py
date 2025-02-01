@@ -16,7 +16,7 @@ import comfy.utils
 import comfy.sample
 import comfy.samplers
 import latent_preview
-from .common_sampler_params import SamplerParams
+from ._denoising_params import DenoisingParams
 
 
 class DoubleStageSampler:
@@ -48,14 +48,15 @@ class DoubleStageSampler:
     def double_sampling(self, latent_input, genparams, model, clip, transcoder, refiner_model, refiner_clip):
 
         # first step: base model
-        params = SamplerParams.from_genparams(genparams, "sampler.base", model_to_sample=model)
-        encoded_positive, encoded_negative = self._encode(clip, params.positive, params.negative)
-        latents = self._sample(model, params.sampler_object,
+        denoising = DenoisingParams.from_genparams(genparams, "denoising.base", model_to_sample = model)
+        encoded_positive, encoded_negative = self._encode(clip, denoising.positive, denoising.negative)
+        latents = self._sample(model,
                                positive   = encoded_positive,
                                negative   = encoded_negative,
-                               sigmas     = params.sigmas,
-                               cfg        = params.cfg,
-                               noise_seed = params.noise_seed,
+                               sampler    = denoising.sampler_object,
+                               sigmas     = denoising.sigmas,
+                               cfg        = denoising.cfg,
+                               noise_seed = denoising.noise_seed,
                                latent     = latent_input,
                                add_noise  = True)
 
@@ -69,14 +70,15 @@ class DoubleStageSampler:
             return (latents, )
 
         # second step: refiner model
-        params = SamplerParams.from_genparams(genparams, "sampler.refiner", model_to_sample=refiner_model)
-        encoded_positive, encoded_negative = self._encode(refiner_clip, params.positive, params.negative)
-        latents = self._sample(refiner_model, params.sampler_object,
+        denoising = DenoisingParams.from_genparams(genparams, "denoising.refiner", model_to_sample = refiner_model)
+        encoded_positive, encoded_negative = self._encode(refiner_clip, denoising.positive, denoising.negative)
+        latents = self._sample(refiner_model,
                                positive   = encoded_positive,
                                negative   = encoded_negative,
-                               sigmas     = params.sigmas,
-                               cfg        = params.cfg,
-                               noise_seed = params.noise_seed,
+                               sampler    = denoising.sampler_object,
+                               sigmas     = denoising.sigmas,
+                               cfg        = denoising.cfg,
+                               noise_seed = denoising.noise_seed,
                                latent     = latents,
                                add_noise  = True)
 
@@ -98,29 +100,29 @@ class DoubleStageSampler:
 
     @staticmethod
     def _sample(model,
-                sampler_object: comfy.samplers.KSAMPLER,
-                positive      : torch.Tensor,
-                negative      : torch.Tensor,
-                sigmas        : torch.Tensor,
-                cfg           : float,
-                noise_seed    : int,
-                latent        : torch.Tensor,
-                add_noise     : bool
+                positive  : torch.Tensor,
+                negative  : torch.Tensor,
+                sampler   : comfy.samplers.KSAMPLER,
+                sigmas    : torch.Tensor,
+                cfg       : float,
+                noise_seed: int,
+                latent    : torch.Tensor,
+                add_noise : bool
                 ) -> tuple[torch.Tensor, torch.Tensor]:
         """
         A custom version of the `sample` function from the node `SamplerCustom` from ComfyUI.
         https://github.com/comfyanonymous/ComfyUI/blob/v0.3.12/comfy_extras/nodes_custom_sampler.py#L474
 
         Args:
-            model         : The model to use for sampling.
-            sampler_object: The `KSAMPLER` object.
-            positive      : The positive embedding to use for sampling.
-            negative      : The negative embedding to use for sampling.
-            sigmas        : The sigmas to use in each step.
-            latent        : The initial latent image.
-            cfg           : The classifier-free guidance scale.
-            noise_seed    : The seed used to generate the noise.
-            add_noise     : Whether to add noise to the provided latent image.
+            model     : The model to use for sampling.
+            positive  : The positive embedding to use for sampling.
+            negative  : The negative embedding to use for sampling.
+            sampler   : The `KSAMPLER` object.
+            sigmas    : The sigmas to use in each step.
+            cfg       : The classifier-free guidance scale.
+            noise_seed: The seed used to generate the noise.
+            latent    : The initial latent image.
+            add_noise : Whether to add noise to the provided latent image.
         """
         batch_inds   = latent.get("batch_index")
         noise_mask   = latent.get("noise_mask")
@@ -136,7 +138,7 @@ class DoubleStageSampler:
         samples   = comfy.sample.sample_custom(model,
                                                noise,
                                                cfg,
-                                               sampler_object,
+                                               sampler,
                                                sigmas,
                                                positive,
                                                negative,

@@ -158,8 +158,8 @@ class GenParams(dict):
         genparams = template.copy() if template else GenParams()
 
         # base/refiner prefixes
-        BASE = "sampler.base."
-        REF_ = "sampler.refiner."
+        BASE = "denoising.base."
+        REF_ = "denoising.refiner."
 
         # --prompt <text>
         # "base.prompt", << "refiner.prompt" >>
@@ -392,10 +392,10 @@ class GenParams(dict):
         keys = self.__pop_group_as_string("image."    , source=genparams, indent=indent, width=width)
         if keys: string += f"# IMAGE\n{keys}"
 
-        refkeys = self.__pop_group_as_string("sampler.refiner", source=genparams, indent=indent, width=width)
-        keys    = self.__pop_group_as_string("sampler"        , source=genparams, indent=indent, width=width)
-        if keys   : string += f"# SAMPLER\n{keys}"
-        if refkeys: string += f"# SAMPLER (refiner)\n{refkeys}"
+        refkeys = self.__pop_group_as_string("denoising.refiner", source=genparams, indent=indent, width=width)
+        keys    = self.__pop_group_as_string("denoising"        , source=genparams, indent=indent, width=width)
+        if keys   : string += f"# DENOISING\n{keys}"
+        if refkeys: string += f"# DENOISING (refiner)\n{refkeys}"
 
         keys = self.__pop_group_as_string("user."     , source=genparams, indent=indent, width=width)
         if keys: string += f"# USER\n{keys}"

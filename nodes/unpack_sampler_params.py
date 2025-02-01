@@ -11,7 +11,7 @@ License : MIT
   (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
-from .common_sampler_params import SamplerParams
+from ._denoising_params import DenoisingParams
 
 
 class UpackSamplerParams:
@@ -42,9 +42,9 @@ class UpackSamplerParams:
     RETURN_NAMES = ("model", "positive"    , "negative"    , "sampler", "sigmas", "cfg"  , "noise_seed")
 
     def unpack(self, prefix, model, clip, genparams=None):
-        params = SamplerParams.from_genparams(genparams, f"sampler.{prefix}", model_to_sample=model)
-        positive, negative = self._encode(clip, params.positive, params.negative)
-        return (model, positive, negative, params.sampler_object, params.sigmas, params.cfg, params.noise_seed)
+        denoising = DenoisingParams.from_genparams(genparams, f"denoising.{prefix}", model_to_sample=model)
+        positive, negative = self._encode(clip, denoising.positive, denoising.negative)
+        return (model, positive, negative, denoising.sampler_object, denoising.sigmas, denoising.cfg, denoising.noise_seed)
 
 
     #__ internal functions ________________________________

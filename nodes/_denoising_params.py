@@ -1,5 +1,5 @@
 """
-File    : common_sampler_params.py
+File    : _denoising_params.py
 Purpose : A class representing all the parameters required for denoising an image.
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
 Date    : Jan 20, 2025
@@ -18,7 +18,7 @@ from .utils.system   import logger
 _DISCARD_PENULTIMATE_SIGMA_SAMPLERS = comfy.samplers.KSampler.DISCARD_PENULTIMATE_SIGMA_SAMPLERS
 
 
-class SamplerParams:
+class DenoisingParams:
     """
     A class representing all the parameters required for denoising an image.
 
@@ -59,7 +59,7 @@ class SamplerParams:
                  discard_penultimate_sigma: bool = None,
                  ):
         """
-        Initialize a SamplerParams object with the given parameters.
+        Initialize a DenoisingParams object with the given parameters.
         """
         # sanitize inputs
         positive      = str(positive)      if positive      is not None else ""
@@ -106,9 +106,9 @@ class SamplerParams:
                        genparams      : GenParams,
                        prefix         : str,
                        model_to_sample: object
-                       ) -> 'SamplerParams':
+                       ) -> 'DenoisingParams':
         """
-        Create a SamplerParams object from the information contained in a `GenParams` instance.
+        Create a DenoisingParams object from the information contained in a `GenParams` instance.
         Args:
             genparams      : The GenParams instance to extract the information from.
             prefix         : The prefix to use to access the information in `genparams`.
@@ -184,8 +184,8 @@ class SamplerParams:
 
 
     def __str__(self):
-        """Return a string representation of the SamplerParams object."""
-        string = "SamplerParams(\n"
+        """Return a string representation of the DenoisingParams object."""
+        string = "DenoisingParams(\n"
         for key, value in self.__dict__.items():
             if isinstance(value, str):
                 value = f'"{value}"'

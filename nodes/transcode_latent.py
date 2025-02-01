@@ -41,13 +41,7 @@ class TranscodeLatent:
         if transcoder is None:
             return samples
 
-        # `unet_compatible_latents=False` specifies that the latent images
-        # passed to the transcoder are in their raw, unnormalized form.
-        # This follows ComfyUI's convention where scaling and shifting
-        # (using `scale_factor`/`shift_factor`) are applied by the
-        # samplers **immediately before** the UNet processes the latents.
         latents = samples["samples"]
         latents = transcoder( latents )
-        # latents = transcoder( latents, unet_compatible_latents=False )
         return ({"samples": latents}, )
 

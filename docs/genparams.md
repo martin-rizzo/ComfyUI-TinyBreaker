@@ -37,31 +37,31 @@ The code should gracefully handle cases where parameters are missing by:
 *   `image.aspect_ratio` (str): The aspect ratio of the image (e.g., "16:9").
 *   `image.batch_size` (int): The number of images that are generated in each batch (e.g., 1).
 
-### Sampler Parameters
+### Denoising Parameters
 
-*   `sampler.base.prompt` (str): The prompt used for the base model.
-*   `sampler.base.negative` (str): The negative prompt used for the base model.
-*   `sampler.base.steps` (int): The total number of steps for the base model.
-*   `sampler.base.steps_start` (int): The step at which the base model's sampler begins the diffusion process.
-*   `sampler.base.steps_end` (int): The step at which the base model's sampler terminates the diffusion process.
-*   `sampler.base.steps_nfactor` (int): A factor used to expand or reduce the number of steps for the base model.
-*   `sampler.base.cfg` (float): The guidance scale used by the base model's sampler.
-*   `sampler.base.noise_seed` (int): The seed used for generating initial noise used by the base model.
-*   `sampler.base.sampler` (str): The name of the sampler used by the base model.
-*   `sampler.base.scheduler` (str): The name of the scheduler used by the base model.
+*   `denoising.base.prompt` (str): The prompt used for the base model.
+*   `denoising.base.negative` (str): The negative prompt used for the base model.
+*   `denoising.base.steps` (int): The total number of steps for the base model.
+*   `denoising.base.steps_start` (int): The step at which the base model's sampler begins the diffusion process.
+*   `denoising.base.steps_end` (int): The step at which the base model's sampler terminates the diffusion process.
+*   `denoising.base.steps_nfactor` (int): A factor used to expand or reduce the number of steps for the base model.
+*   `denoising.base.cfg` (float): The guidance scale used by the base model's sampler.
+*   `denoising.base.noise_seed` (int): The seed used for generating initial noise used by the base model.
+*   `denoising.base.sampler` (str): The name of the sampler used by the base model.
+*   `denoising.base.scheduler` (str): The name of the scheduler used by the base model.
 
-### Sampler Parameters (Refiner)
+### Denoising Parameters (Refiner)
 
-*   `sampler.refiner.prompt` (str): The prompt used for the refiner model.
-*   `sampler.refiner.negative` (str): The negative prompt used for the refiner model.
-*   `sampler.refiner.steps` (int): The total number of steps for the refiner model.
-*   `sampler.refiner.steps_start` (int): The step at which the refiner model's sampler begins the diffusion process.
-*   `sampler.refiner.steps_end` (int): The step at which the refiner model's sampler terminates the diffusion process.
-*   `sampler.refiner.steps_nfactor` (int): A factor used to expand or reduce the number of steps for the refiner model.
-*   `sampler.refiner.cfg` (float): The guidance scale used by the refiner model's sampler.
-*   `sampler.refiner.noise_seed` (int): The seed used for generating initial noise used by the refiner model.
-*   `sampler.refiner.sampler` (str): The name of the sampler used by the refiner model.
-*   `sampler.refiner.scheduler` (str): The name of the scheduler used by the refiner model.
+*   `denoising.refiner.prompt` (str): The prompt used for the refiner model.
+*   `denoising.refiner.negative` (str): The negative prompt used for the refiner model.
+*   `denoising.refiner.steps` (int): The total number of steps for the refiner model.
+*   `denoising.refiner.steps_start` (int): The step at which the refiner model's sampler begins the diffusion process.
+*   `denoising.refiner.steps_end` (int): The step at which the refiner model's sampler terminates the diffusion process.
+*   `denoising.refiner.steps_nfactor` (int): A factor used to expand or reduce the number of steps for the refiner model.
+*   `denoising.refiner.cfg` (float): The guidance scale used by the refiner model's sampler.
+*   `denoising.refiner.noise_seed` (int): The seed used for generating initial noise used by the refiner model.
+*   `denoising.refiner.sampler` (str): The name of the sampler used by the refiner model.
+*   `denoising.refiner.scheduler` (str): The name of the scheduler used by the refiner model.
 
 ### Style Parameters
 

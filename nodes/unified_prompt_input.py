@@ -48,11 +48,14 @@ class UnifiedPromptInput:
         # parse the arguments entered by the user
         args = self._parse_args(text)
 
-        # 
+        # extract the style name from the arguments and apply it to `genparams`
         style_name = args.pop("style", None)
         if style_name is not None:
             genparams = genparams.copy()
-            count = genparams.copy_parameters( target="sampler", source=f"styles.{style_name}", valid_subkeys=["base", "refiner"])
+            # copy parameters from "styles.<style_name>.*" -> "denoising.*"
+            count = genparams.copy_parameters( target="denoising", source=f"styles.{style_name}", valid_subkeys=["base", "refiner"])
+            if count > 0:
+                genparams.set_str("user.style", style_name)
 
         # build `genparams` from the parsed arguments (using the node input as template)
         genparams_output = GenParams.from_arguments(args, template=genparams)

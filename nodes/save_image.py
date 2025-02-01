@@ -19,7 +19,7 @@ import folder_paths
 from PIL                import Image
 from PIL.PngImagePlugin import PngInfo
 from .core.genparams    import GenParams
-from .common            import ireplace
+from ._common            import ireplace
 
 _A1111_SAMPLER_BY_COMFY_NAME = {
     "euler"                    : "Euler",
@@ -203,20 +203,20 @@ class SaveImage:
 
 
         # base/refiner prefixes
-        BASE = "sampler.base."
-        REFI = "sampler.refiner."
+        BASE = "denoising.base."
+        RE__ = "denoising.refiner."
 
         # extract and clean up parameters from the GenParams dictionary
         positive            = a1111_normalized_string( genparams.get("user.prompt"  , "") )
         negative            = a1111_normalized_string( genparams.get("user.negative", "") )
         sampler             = a1111_sampler_name( genparams.get(f"{BASE}sampler"), genparams.get(f"{BASE}scheduler") )
-        refiner_sampler     = a1111_sampler_name( genparams.get(f"{REFI}sampler"), genparams.get(f"{REFI}scheduler"), True )
+        refiner_sampler     = a1111_sampler_name( genparams.get(f"{RE__}sampler"), genparams.get(f"{RE__}scheduler"), True )
         base_cfg            = genparams.get_float(f"{BASE}cfg")
-        refiner_cfg         = genparams.get_float(f"{REFI}cfg", 0)
+        refiner_cfg         = genparams.get_float(f"{RE__}cfg", 0)
         base_steps_start    = genparams.get_int(f"{BASE}steps_start",0)
-        refiner_steps_start = genparams.get_int(f"{REFI}steps_start",0)
+        refiner_steps_start = genparams.get_int(f"{RE__}steps_start",0)
         base_steps_end      = min( genparams.get_int(f"{BASE}steps",0), genparams.get_int(f"{BASE}steps_end",10000) )
-        refiner_steps_end   = min( genparams.get_int(f"{REFI}steps",0), genparams.get_int(f"{REFI}steps_end",10000) )
+        refiner_steps_end   = min( genparams.get_int(f"{RE__}steps",0), genparams.get_int(f"{RE__}steps_end",10000) )
         seed                = genparams.get_int(f"{BASE}noise_seed")
         width               = image_width
         height              = image_height

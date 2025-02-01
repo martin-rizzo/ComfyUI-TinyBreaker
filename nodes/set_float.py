@@ -42,5 +42,5 @@ class SetFloat:
 
     def set_float(self, genparams: GenParams, key: str, value: float):
         genparams = genparams.copy()
-        genparams.set_float(f"sampler.{key}", value)
+        genparams.set_float(f"denoising.{key}", value)
         return (genparams,)
