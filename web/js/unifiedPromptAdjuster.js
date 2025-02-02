@@ -312,16 +312,11 @@ function onUpOrDown(isMovingDown, event, textarea) {
     const selectionEnd   = textarea.selectionEnd;
     let   text           = textarea.value;
     let   argumentStart  = text.lastIndexOf("--", selectionStart + 2);
-    let   argument       = text.substring(argumentStart, argumentStart+8)
+    let   argument       = text.substring(argumentStart, argumentStart+9)
 
-    // if the argument that is being modified does not start with "--",
-    // this means it's the main prompt and we should keep the modification that ComfyUI already made
-    if( !argument.startsWith("--") ) {
-        return;
-    }
-    // if the argument that is being modified starts with "--no ",
-    // this means it's the negative prompt and we should keep the modification that ComfyUI already made
-    if( argument.startsWith("--no ") ) {
+    // if the argument that is being modified is some of the "prompt" arguments
+    // (prompt, negative prompt, refine prompt) then we should keep the modification that ComfyUI already made.
+    if( !argument.startsWith("--") || argument.startsWith("--no ") || argument.startsWith("--refine ") ) {
         return;
     }
 
