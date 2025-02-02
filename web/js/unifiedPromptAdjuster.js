@@ -56,11 +56,23 @@ const IMAGE_ORIENTATIONS = [
 ]
 
 /**
- * List of all options that can be used as parameters within a prompt.
+ * List of all options that the user can cycle through by pressing CTRL+LEFT/RIGHT
  */
-const OPTIONS = [
+const NAVIGABLE_OPTIONS = [
     "--no", "--refine", "--variant", "--cfg-adjust", "--detail",
     "--seed", "--aspect", "--landscape", "--large", "--style", "--batch-size"
+]
+
+/**
+ * List of options that can be automatically completed when pressing CTRL+RIGHT
+ */
+const AUTOCOMPLETE_LIST = [
+    "--no", "--refine",
+    "--variant", "--cfg-adjust", "--detail",
+    "--seed", "--aspect",
+    "--landscape", "--portrait", 
+    "--small", "--medium", "--large",
+    "--style", "--batch-size"
 ]
 
 /*------------------------------- HELPERS -------------------------------*/
@@ -244,6 +256,22 @@ function adjustArgument(name, value, offset) {
     return null;
 }
 
+/**
+ * Returns the string that is closest to `partialString` in a list of available strings.
+ * @param {String}        partialString          : The string that the user has typed so far.
+ * @param {Array<String>} listOfAvailableStrings : An array with all possible strings available to choose from.
+ * @returns
+ *   The string that is closest to `partialString`, or `null` if no such string was found.
+ */
+function Autocomplete(partialString, listOfAvailableStrings) {
+    if( !partialString ) { return null; }
+    const partialLowercase = partialString.toLowerCase();
+    for( const available of listOfAvailableStrings ) {
+        if( available.startsWith(partialLowercase) ) { return available }
+    }
+    return null;
+}
+
 /*------------------------------ KEY EVENTS -------------------------------*/
 
 /**
@@ -261,7 +289,26 @@ function onLeftOrRight(isMovingRight, event, textarea) {
     const after        = text.substring(selectionEnd, selectionEnd+3).padEnd(3,' ');
     const selectedText = text.substring(selectionStart, selectionEnd);
 
-    let new_option = null;
+    let new_option     = null;
+    let cursorPosition = -1;
+
+    //-- AUTOCOMPLETE THE OPTION --------------------------
+
+    // if CTRL+RIGHT and no text selected and not after a '--',
+    // try to autocomplete the argument's name behind the cursor
+    if( isMovingRight && selectionStart==selectionEnd && before.charAt(2) != '-' ) {
+        selectionStart    = text.lastIndexOf("--", selectionStart + 2);
+        const argumentEnd = selectionStart>=0 ? searchSubstring(text, /\s/, selectionStart, text.length) : -1;
+        if( selectionEnd === argumentEnd ) {
+            const partion_option = text.substring(selectionStart, selectionEnd);
+            new_option = Autocomplete(partion_option, AUTOCOMPLETE_LIST)
+            if( new_option ) {
+                cursorPosition = selectionStart + new_option.length;
+            }
+        }
+    }
+
+    //-- SELECTION THROUGH `NAVIGABLE_OPTIONS` ------------
 
     // if nothing is selected and the cursor if between '--' and a space
     // then the new option will be the first/last option from the list
@@ -271,8 +318,8 @@ function onLeftOrRight(isMovingRight, event, textarea) {
     {
         let index
         if ( isMovingRight ) { index = 0; }
-        else                 { index = OPTIONS.length - 1; }
-        new_option = OPTIONS[index % OPTIONS.length];
+        else                 { index = NAVIGABLE_OPTIONS.length - 1; }
+        new_option = NAVIGABLE_OPTIONS[index % NAVIGABLE_OPTIONS.length];
         selectionStart -= 2
     }
     // if the selected text is '--'
@@ -281,19 +328,22 @@ function onLeftOrRight(isMovingRight, event, textarea) {
     {
         selectionEnd = searchSubstring(text, /\s/, selectionEnd, text.length);
         const option = text.substring(selectionStart, selectionEnd)
-        let index = OPTIONS.indexOf(option)
+        let index = NAVIGABLE_OPTIONS.indexOf(option)
         if( index<0 ) { return }
 
         if( isMovingRight ) { index += 1; }
-        else                { index += OPTIONS.length - 1; }
-        new_option = OPTIONS[index % OPTIONS.length];
+        else                { index += NAVIGABLE_OPTIONS.length - 1; }
+        new_option = NAVIGABLE_OPTIONS[index % NAVIGABLE_OPTIONS.length];
     }
 
-    // if a new option was selected by the above logic
-    // then insert it into the textarea
+    //-- FINAL SUBSTITUTION -------------------------------
+
+    // if a new option was selected by the above logic,
+    // insert it into the textarea
     if( new_option ) {
         insertText(textarea, new_option, selectionStart, selectionEnd);
-        textarea.setSelectionRange(selectionStart, selectionStart+2);
+        if( cursorPosition >= 0 ) { textarea.setSelectionRange(cursorPosition, cursorPosition);   }
+        else                      { textarea.setSelectionRange(selectionStart, selectionStart+2); }
         event.preventDefault();
     }
 }
