@@ -84,6 +84,21 @@ function findWidgetInComfyNode(node, tagName) {
 }
 
 /**
+ * Finds the first space character in the given string
+ * @param {String} str             : The string to search in.
+ * @param {Number} initialPosition : The position to start searching from.
+ * @param {Number} defaultResult   : The value to return if no space was found.
+ * @returns
+ *   The index of the first space character found, or -1 if no space was found.
+ */
+function findFirstSpace(str, initialPosition = 0, defaultResult = -1) {
+    if( initialPosition < 0 ) { initialPosition = 0; }
+    const result = str.slice(initialPosition).search(/\s/);
+    if (result < 0) { return defaultResult; }
+    return result + initialPosition;
+}
+
+/**
  * Removes emphasis weights from a string.
  * ConfyUI forcefully intercepts CTRL+UP/DOWN and adds emphasis/weights,
  * this function is responsible for removing this extra emphasis from text,
@@ -219,6 +234,7 @@ function adjustArgument(name, value, offset) {
             return adjustInt(name, value, offset, 1, 1)
     }
     if( IMAGE_ORIENTATIONS.includes(name) ) {
+        console.log("##>> name:", name)
         return adjustMultipleChoice("", name, offset, IMAGE_ORIENTATIONS)
     }
     if( IMAGE_SIZES.includes(name) ) {
@@ -262,9 +278,7 @@ function onLeftOrRight(isMovingRight, event, textarea) {
     // then the new option will be the next/previous option from the list
     else if( selectedText==="--" )
     {
-        selectionEnd = text.indexOf(/\s/, selectionEnd)
-        if( selectionEnd<0 ) { selectionEnd = text.length }
-
+        selectionEnd = findFirstSpace(text, selectionEnd, text.length);
         const option = text.substring(selectionStart, selectionEnd)
         let index = OPTIONS.indexOf(option)
         if( index<0 ) { return }
