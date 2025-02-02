@@ -84,16 +84,17 @@ function findWidgetInComfyNode(node, tagName) {
 }
 
 /**
- * Finds the first space character in the given string
+ * Finds the first substring that matches the given regular expression in the given string
  * @param {String} str             : The string to search in.
+ * @param {RegExp} regex           : The regular expression to search for. e.g. /--detail\s*([^ ]+)/
  * @param {Number} initialPosition : The position to start searching from.
- * @param {Number} defaultResult   : The value to return if no space was found.
+ * @param {Number} defaultResult   : The value to return if no match was found.
  * @returns
- *   The index of the first space character found, or -1 if no space was found.
+ *   The index of the first substring that matches the given regular expression, or -1 if no match was found.
  */
-function findFirstSpace(str, initialPosition = 0, defaultResult = -1) {
-    if( initialPosition < 0 ) { initialPosition = 0; }
-    const result = str.slice(initialPosition).search(/\s/);
+function searchSubstring(str, regex, initialPosition = 0, defaultResult = -1) {
+    if (initialPosition < 0) { initialPosition = 0; }
+    const result = str.slice(initialPosition).search(regex);
     if (result < 0) { return defaultResult; }
     return result + initialPosition;
 }
@@ -278,7 +279,7 @@ function onLeftOrRight(isMovingRight, event, textarea) {
     // then the new option will be the next/previous option from the list
     else if( selectedText==="--" )
     {
-        selectionEnd = findFirstSpace(text, selectionEnd, text.length);
+        selectionEnd = searchSubstring(text, /\s/, selectionEnd, text.length);
         const option = text.substring(selectionStart, selectionEnd)
         let index = OPTIONS.indexOf(option)
         if( index<0 ) { return }
@@ -307,35 +308,39 @@ function onUpOrDown(isMovingDown, event, textarea) {
     event.preventDefault()
 
     // extracts the argument quickly and provisionally (only 8 characters)
-    let selectionStart = textarea.selectionStart
-    let selectionEnd   = textarea.selectionEnd
-    let argumentStart  = textarea.value.lastIndexOf("--", selectionStart + 2);
-    let argument = textarea.value.substring(argumentStart, argumentStart+8)
+    const selectionStart = textarea.selectionStart;
+    const selectionEnd   = textarea.selectionEnd;
+    let   text           = textarea.value;
+    let   argumentStart  = text.lastIndexOf("--", selectionStart + 2);
+    let   argument       = text.substring(argumentStart, argumentStart+8)
 
     // if the argument that is being modified does not start with "--",
     // this means it's the main prompt and we should keep the modification that ComfyUI already made
     if( !argument.startsWith("--") ) {
-        return
+        return;
     }
     // if the argument that is being modified starts with "--no ",
     // this means it's the negative prompt and we should keep the modification that ComfyUI already made
     if( argument.startsWith("--no ") ) {
-        return
+        return;
     }
 
     // remove any emphasis weights added by the native ComfyUI extension
-    let selectedText        = textarea.value.substring(selectionStart, selectionEnd)
-    let textWithoutEmphasis = removeEmphasis(selectedText)
+    let selectedText        = text.substring(selectionStart, selectionEnd);
+    let textWithoutEmphasis = removeEmphasis(selectedText);
     if( textWithoutEmphasis !== selectedText ) {
-        insertText(textarea, textWithoutEmphasis, selectionStart, selectionEnd)
-        argumentStart  = textarea.value.lastIndexOf("--", selectionStart + 2);
+        insertText(textarea, textWithoutEmphasis, selectionStart, selectionEnd);
+        text           = textarea.value;
+        argumentStart  = text.lastIndexOf("--", selectionStart + 2);
     }
 
     // re-extract the complete argument,
     // (this time correctly since there is no emphasis in the selected text)
-    let argumentEnd = textarea.value.indexOf("--", argumentStart + 2)
-    if( argumentEnd === -1) { argumentEnd = textarea.value.length; }
-    argument = textarea.value.substring(argumentStart, argumentEnd);
+    const argumentEnd = Math.min(
+        searchSubstring(text, "--"        , argumentStart+2, text.length),
+        searchSubstring(text, /[\r\n\f\v]/, argumentStart+2, text.length)
+    );
+    argument = text.substring(argumentStart, argumentEnd);
 
     // split the argument into name and value
     let nameLength = argument.indexOf(" ");
@@ -346,13 +351,13 @@ function onUpOrDown(isMovingDown, event, textarea) {
     // adjust the value of the argument based on the key pressed
     argument = adjustArgument(argumentName, argumentValue, isMovingDown ? -1 : 1);
     if (argument !== null) {
-        insertText(textarea, argument, argumentStart, argumentEnd)
+        insertText(textarea, argument, argumentStart, argumentEnd);
         nameLength = argument.indexOf(" ");
         if( nameLength === -1 ) { nameLength = argument.length; }
     }
 
     // select the name of the argument
-    textarea.setSelectionRange(argumentStart, argumentStart+nameLength)
+    textarea.setSelectionRange(argumentStart, argumentStart+nameLength);
 }
 
 /**
