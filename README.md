@@ -2,15 +2,14 @@
 
 # ConfyUI-TinyBreaker
 
+![TinyBreaker Experimental Nodes](./docs/img/banner_nodes.jpg)
+
 <p>
 <img alt="Platform" src="https://img.shields.io/badge/platform-ComfyUI-33F">
 <img alt="License"  src="https://img.shields.io/github/license/martin-rizzo/ConfyUI-TinyBreaker?color=11D">
 <img alt="Version"  src="https://img.shields.io/github/v/tag/martin-rizzo/ConfyUI-TinyBreaker?label=version">
 <img alt="Last"     src="https://img.shields.io/github/last-commit/martin-rizzo/ConfyUI-TinyBreaker?color=33F">
 </p>
-
-<!-- Image -->
-<!-- ![TinyBreaker Experimental Nodes](./demo_images/nodes.png) -->
 </div>
 
 **ConfyUI-TinyBreaker** is a collection of custom ComfyUI nodes specifically designed to work with the TinyBreaker model. It is currently under active development, so expect some rough edges and evolving functionality. The nodes are functional, allowing you to explore the potential of the model, but be aware that significant changes are likely between versions as nodes may be completely overhauled.
@@ -18,7 +17,7 @@
 
 ## What is TinyBreaker?
 
-TinyBreaker is a hybrid model that combines the PixArt model for base image generation with Photon (or any SD1 model) for image refinement. The idea is to leverage both models' strengths in these tasks, enabling them to operate efficiently on mid and low-end hardware due to their minimal parameter count. Moreover, by sequentially executing both models, you can offload them to system RAM reducing the VRAM usage. Additionally, TinyBreaker employs Tiny Autoencoders for latent space conversion, optimizing performance and efficiency.
+**TinyBreaker** is a hybrid model that combines the [PixArt model](https://github.com/PixArt-alpha/PixArt-sigma) for base image generation with [Photon model](https://civitai.com/models/84728/photon) (or any SD1 model) for image refinement. The idea is to leverage both models' strengths in these tasks, enabling them to operate efficiently on mid and low-end hardware due to their minimal parameter count. Moreover, by sequentially executing both models, you can offload them to system RAM reducing the VRAM usage. Additionally, TinyBreaker employs [Tiny Autoencoders](https://github.com/madebyollin/taesd) for latent space conversion, optimizing performance and efficiency.
 
 
 ## Installation
@@ -43,7 +42,6 @@ in the "ComfyUI_windows_portable" folder (the one containing the "run_nvidia_gpu
 From that folder, execute the following commands:
 ```bash
 git clone https://github.com/martin-rizzo/ComfyUI-TinyBreaker ComfyUI\custom_nodes\ConfyUI-TinyBreaker
-.\python_embedded\python.exe -m pip install -r ComfyUI\custom_nodes\ConfyUI-TinyBreaker\requirements.txt
 ```
 
 
