@@ -13,8 +13,10 @@
         75,
         26
       ],
-      "flags": {},
-      "order": 6,
+      "flags": {
+        "pinned": true
+      },
+      "order": 5,
       "mode": 0,
       "inputs": [
         {
@@ -49,7 +51,9 @@
         270,
         200
       ],
-      "flags": {},
+      "flags": {
+        "pinned": true
+      },
       "order": 26,
       "mode": 0,
       "inputs": [
@@ -135,7 +139,9 @@
         75,
         26
       ],
-      "flags": {},
+      "flags": {
+        "pinned": true
+      },
       "order": 29,
       "mode": 0,
       "inputs": [
@@ -169,7 +175,9 @@
         75,
         26
       ],
-      "flags": {},
+      "flags": {
+        "pinned": true
+      },
       "order": 28,
       "mode": 0,
       "inputs": [
@@ -205,7 +213,9 @@
         75,
         26
       ],
-      "flags": {},
+      "flags": {
+        "pinned": true
+      },
       "order": 27,
       "mode": 0,
       "inputs": [
@@ -241,7 +251,9 @@
         75,
         26
       ],
-      "flags": {},
+      "flags": {
+        "pinned": true
+      },
       "order": 18,
       "mode": 0,
       "inputs": [
@@ -277,7 +289,9 @@
         250,
         180
       ],
-      "flags": {},
+      "flags": {
+        "pinned": true
+      },
       "order": 23,
       "mode": 0,
       "inputs": [
@@ -366,7 +380,9 @@
         250,
         50
       ],
-      "flags": {},
+      "flags": {
+        "pinned": true
+      },
       "order": 25,
       "mode": 0,
       "inputs": [
@@ -408,7 +424,9 @@
         75,
         26
       ],
-      "flags": {},
+      "flags": {
+        "pinned": true
+      },
       "order": 10,
       "mode": 0,
       "inputs": [
@@ -444,7 +462,9 @@
         270,
         30
       ],
-      "flags": {},
+      "flags": {
+        "pinned": true
+      },
       "order": 20,
       "mode": 0,
       "inputs": [
@@ -469,6 +489,931 @@
       "widgets_values": []
     },
     {
+      "id": 76,
+      "type": "SamplerCustom",
+      "pos": [
+        -420,
+        -810
+      ],
+      "size": [
+        270,
+        198
+      ],
+      "flags": {
+        "pinned": true
+      },
+      "order": 24,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 420
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 421
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 422
+        },
+        {
+          "name": "sampler",
+          "type": "SAMPLER",
+          "link": 423
+        },
+        {
+          "name": "sigmas",
+          "type": "SIGMAS",
+          "link": 424
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 305
+        },
+        {
+          "name": "cfg",
+          "type": "FLOAT",
+          "link": 425,
+          "widget": {
+            "name": "cfg"
+          }
+        },
+        {
+          "name": "noise_seed",
+          "type": "INT",
+          "link": 426,
+          "widget": {
+            "name": "noise_seed"
+          }
+        }
+      ],
+      "outputs": [
+        {
+          "name": "output",
+          "type": "LATENT",
+          "links": [
+            317
+          ]
+        },
+        {
+          "name": "denoised_output",
+          "type": "LATENT",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "SamplerCustom"
+      },
+      "widgets_values": [
+        true,
+        97609112229079,
+        "randomize",
+        3.4
+      ]
+    },
+    {
+      "id": 155,
+      "type": "Reroute",
+      "pos": [
+        -730,
+        -1030
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {
+        "pinned": true
+      },
+      "order": 21,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 408
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "GENPARAMS",
+          "links": [
+            437
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 93,
+      "type": "Reroute",
+      "pos": [
+        -840,
+        -640
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {
+        "pinned": true
+      },
+      "order": 19,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 348
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "GENPARAMS",
+          "links": [
+            314,
+            408,
+            427
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 161,
+      "type": "Reroute",
+      "pos": [
+        -120,
+        -210
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {
+        "pinned": true
+      },
+      "order": 11,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 454
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "GENPARAMS",
+          "links": [
+            447
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 145,
+      "type": "PrimitiveNode",
+      "pos": [
+        -460,
+        -100
+      ],
+      "size": [
+        510,
+        620
+      ],
+      "flags": {
+        "pinned": true
+      },
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": [
+            446
+          ],
+          "slot_index": 0,
+          "widget": {
+            "name": "custom_definitions"
+          }
+        }
+      ],
+      "title": "Custom Styles",
+      "properties": {
+        "Run widget replace on values": false
+      },
+      "widgets_values": [
+        "[CUSTOM1]\nbase.prompt        = \"\"\nbase.negative      = \"\"\nbase.steps         = 12\nbase.steps_start   = 2\nbase.cfg           = 3.4\nbase.sampler       = \"uni_pc\"\nbase.scheduler     = \"simple\"\nrefiner.prompt        = \"\"\nrefiner.negative      = \"(worst quality, low quality:1.8)\"\nrefiner.steps         = 11\nrefiner.steps_start   = 6\nrefiner.cfg           = 2.0\nrefiner.sampler       = \"deis\"\nrefiner.scheduler     = \"ddim_uniform\"\n\n[CUSTOM2]\nbase.prompt        = \"\"\nbase.negative      = \"\"\nbase.steps         = 12\nbase.steps_start   = 2\nbase.cfg           = 3.4\nbase.sampler       = \"uni_pc\"\nbase.scheduler     = \"simple\"\nrefiner.prompt        = \"\"\nrefiner.negative      = \"(worst quality, low quality:1.8)\"\nrefiner.steps         = 11\nrefiner.steps_start   = 6\nrefiner.cfg           = 2.0\nrefiner.sampler       = \"deis\"\nrefiner.scheduler     = \"ddim_uniform\"\n"
+      ]
+    },
+    {
+      "id": 27,
+      "type": "VAEDecode",
+      "pos": [
+        590,
+        -500
+      ],
+      "size": [
+        180,
+        50
+      ],
+      "flags": {
+        "pinned": true
+      },
+      "order": 30,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 332
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 462
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            461
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 126,
+      "type": "Reroute",
+      "pos": [
+        1030,
+        530
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {
+        "pinned": true
+      },
+      "order": 16,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 459
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "GENPARAMS",
+          "links": [
+            344
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 144,
+      "type": "SaveImage //TinyBreaker",
+      "pos": [
+        940,
+        -110
+      ],
+      "size": [
+        580,
+        610
+      ],
+      "flags": {
+        "pinned": true
+      },
+      "order": 31,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 461
+        },
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 460,
+          "shape": 7
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "SaveImage //TinyBreaker"
+      },
+      "widgets_values": [
+        "TinyBreaker/%date:yyyy_MM_dd%/TB"
+      ],
+      "color": "#323",
+      "bgcolor": "#535"
+    },
+    {
+      "id": 120,
+      "type": "Reroute",
+      "pos": [
+        -1320,
+        530
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {
+        "pinned": true
+      },
+      "order": 17,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 344
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "GENPARAMS",
+          "links": [
+            464
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 164,
+      "type": "Reroute",
+      "pos": [
+        -950,
+        -210
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {
+        "pinned": true
+      },
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 463
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "GENPARAMS",
+          "links": [
+            454
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 88,
+      "type": "Reroute",
+      "pos": [
+        -840,
+        -990
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {
+        "pinned": true
+      },
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 452
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "CLIP",
+          "links": [
+            439
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 89,
+      "type": "Reroute",
+      "pos": [
+        -840,
+        -1010
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {
+        "pinned": true
+      },
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 451
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "MODEL",
+          "links": [
+            438
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 162,
+      "type": "LoadTinyBreakerCheckpointCustom //TinyBreaker",
+      "pos": [
+        -1410,
+        -1070
+      ],
+      "size": [
+        390,
+        260
+      ],
+      "flags": {
+        "pinned": true
+      },
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            448
+          ]
+        },
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [
+            449
+          ]
+        },
+        {
+          "name": "TRANSCODER",
+          "type": "TRANSCODER",
+          "links": [
+            450
+          ]
+        },
+        {
+          "name": "REFINER_MODEL",
+          "type": "MODEL",
+          "links": [
+            451
+          ]
+        },
+        {
+          "name": "REFINER_CLIP",
+          "type": "CLIP",
+          "links": [
+            452
+          ]
+        },
+        {
+          "name": "GENPARAMS",
+          "type": "GENPARAMS",
+          "links": [
+            463
+          ],
+          "slot_index": 5
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadTinyBreakerCheckpointCustom //TinyBreaker"
+      },
+      "widgets_values": [
+        "TinyBreaker_prototype0.safetensors",
+        "fast",
+        "automatic",
+        "automatic",
+        "automatic"
+      ],
+      "color": "#322",
+      "bgcolor": "#533"
+    },
+    {
+      "id": 91,
+      "type": "Reroute",
+      "pos": [
+        -840,
+        -770
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {
+        "pinned": true
+      },
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 230
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "CLIP",
+          "links": [
+            429
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 90,
+      "type": "Reroute",
+      "pos": [
+        -840,
+        -810
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {
+        "pinned": true
+      },
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 448
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "MODEL",
+          "links": [
+            428
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 166,
+      "type": "UnifiedPromptInput //TinyBreaker",
+      "pos": [
+        390,
+        -110
+      ],
+      "size": [
+        540,
+        610
+      ],
+      "flags": {
+        "pinned": true
+      },
+      "order": 15,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 458
+        }
+      ],
+      "outputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "links": [
+            459,
+            460
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "UnifiedPromptInput //TinyBreaker"
+      },
+      "widgets_values": [
+        "A cute corgi, smiling with great joy, soaring high over the river bank in Yosemite National Park, wearing a Superman cape. Bokeh and selective focus"
+      ],
+      "color": "#232",
+      "bgcolor": "#353"
+    },
+    {
+      "id": 160,
+      "type": "SelectStyle //TinyBreaker",
+      "pos": [
+        100,
+        -110
+      ],
+      "size": [
+        280,
+        102
+      ],
+      "flags": {
+        "pinned": true
+      },
+      "order": 12,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 447
+        },
+        {
+          "name": "custom_definitions",
+          "type": "STRING",
+          "link": 446,
+          "widget": {
+            "name": "custom_definitions"
+          },
+          "shape": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "links": [
+            457
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "SelectStyle //TinyBreaker"
+      },
+      "widgets_values": [
+        "PHOTO",
+        "last",
+        "[CUSTOM1]\nbase.prompt        = \"\"\nbase.negative      = \"\"\nbase.steps         = 12\nbase.steps_start   = 2\nbase.cfg           = 3.4\nbase.sampler       = \"uni_pc\"\nbase.scheduler     = \"simple\"\nrefiner.prompt        = \"\"\nrefiner.negative      = \"(worst quality, low quality:1.8)\"\nrefiner.steps         = 11\nrefiner.steps_start   = 6\nrefiner.cfg           = 2.0\nrefiner.sampler       = \"deis\"\nrefiner.scheduler     = \"ddim_uniform\"\n\n[CUSTOM2]\nbase.prompt        = \"\"\nbase.negative      = \"\"\nbase.steps         = 12\nbase.steps_start   = 2\nbase.cfg           = 3.4\nbase.sampler       = \"uni_pc\"\nbase.scheduler     = \"simple\"\nrefiner.prompt        = \"\"\nrefiner.negative      = \"(worst quality, low quality:1.8)\"\nrefiner.steps         = 11\nrefiner.steps_start   = 6\nrefiner.cfg           = 2.0\nrefiner.sampler       = \"deis\"\nrefiner.scheduler     = \"ddim_uniform\"\n"
+      ],
+      "color": "#2a363b",
+      "bgcolor": "#3f5159"
+    },
+    {
+      "id": 165,
+      "type": "SetImage //TinyBreaker",
+      "pos": [
+        100,
+        40
+      ],
+      "size": [
+        280,
+        180
+      ],
+      "flags": {
+        "pinned": true
+      },
+      "order": 13,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 457
+        }
+      ],
+      "outputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "links": [
+            456
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "SetImage //TinyBreaker"
+      },
+      "widgets_values": [
+        1,
+        "fixed",
+        "3:2  (photo)",
+        "portrait",
+        "large",
+        1
+      ],
+      "color": "#2a363b",
+      "bgcolor": "#3f5159"
+    },
+    {
+      "id": 148,
+      "type": "SetImageTweaks //TinyBreaker",
+      "pos": [
+        100,
+        270
+      ],
+      "size": [
+        280,
+        110
+      ],
+      "flags": {
+        "pinned": true
+      },
+      "order": 14,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 456
+        }
+      ],
+      "outputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "links": [
+            458
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "SetImageTweaks //TinyBreaker"
+      },
+      "widgets_values": [
+        1,
+        "normal",
+        0
+      ],
+      "color": "#2a363b",
+      "bgcolor": "#3f5159"
+    },
+    {
+      "id": 56,
+      "type": "Reroute",
+      "pos": [
+        -860,
+        -480
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {
+        "pinned": true
+      },
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 449
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "VAE",
+          "links": [
+            462
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 3,
+      "type": "CLIPLoader",
+      "pos": [
+        -1410,
+        -770
+      ],
+      "size": [
+        390,
+        82
+      ],
+      "flags": {
+        "pinned": true
+      },
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": [
+            230
+          ],
+          "slot_index": 0
+        }
+      ],
+      "title": "Load T5 Text Encoder",
+      "properties": {
+        "Node name for S&R": "CLIPLoader"
+      },
+      "widgets_values": [
+        "t5xxl_fp8_e4m3fn.safetensors",
+        "sd3",
+        "default"
+      ],
+      "color": "#322",
+      "bgcolor": "#533"
+    },
+    {
       "id": 157,
       "type": "UpackSamplerParams //TinyBreaker",
       "pos": [
@@ -479,7 +1424,9 @@
         270,
         180
       ],
-      "flags": {},
+      "flags": {
+        "pinned": true
+      },
       "order": 22,
       "mode": 0,
       "inputs": [
@@ -556,885 +1503,6 @@
       "widgets_values": [
         "base"
       ]
-    },
-    {
-      "id": 76,
-      "type": "SamplerCustom",
-      "pos": [
-        -420,
-        -810
-      ],
-      "size": [
-        270,
-        198
-      ],
-      "flags": {},
-      "order": 24,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "model",
-          "type": "MODEL",
-          "link": 420
-        },
-        {
-          "name": "positive",
-          "type": "CONDITIONING",
-          "link": 421
-        },
-        {
-          "name": "negative",
-          "type": "CONDITIONING",
-          "link": 422
-        },
-        {
-          "name": "sampler",
-          "type": "SAMPLER",
-          "link": 423
-        },
-        {
-          "name": "sigmas",
-          "type": "SIGMAS",
-          "link": 424
-        },
-        {
-          "name": "latent_image",
-          "type": "LATENT",
-          "link": 305
-        },
-        {
-          "name": "cfg",
-          "type": "FLOAT",
-          "link": 425,
-          "widget": {
-            "name": "cfg"
-          }
-        },
-        {
-          "name": "noise_seed",
-          "type": "INT",
-          "link": 426,
-          "widget": {
-            "name": "noise_seed"
-          }
-        }
-      ],
-      "outputs": [
-        {
-          "name": "output",
-          "type": "LATENT",
-          "links": [
-            317
-          ]
-        },
-        {
-          "name": "denoised_output",
-          "type": "LATENT",
-          "links": null
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "SamplerCustom"
-      },
-      "widgets_values": [
-        true,
-        117527250626183,
-        "randomize",
-        3.4
-      ]
-    },
-    {
-      "id": 155,
-      "type": "Reroute",
-      "pos": [
-        -730,
-        -1030
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {},
-      "order": 21,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 408
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "GENPARAMS",
-          "links": [
-            437
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
-    },
-    {
-      "id": 93,
-      "type": "Reroute",
-      "pos": [
-        -840,
-        -640
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {},
-      "order": 19,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 348
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "GENPARAMS",
-          "links": [
-            314,
-            408,
-            427
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
-    },
-    {
-      "id": 161,
-      "type": "Reroute",
-      "pos": [
-        -120,
-        -210
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {},
-      "order": 11,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 454
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "GENPARAMS",
-          "links": [
-            447
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
-    },
-    {
-      "id": 145,
-      "type": "PrimitiveNode",
-      "pos": [
-        -460,
-        -100
-      ],
-      "size": [
-        510,
-        620
-      ],
-      "flags": {},
-      "order": 0,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "STRING",
-          "type": "STRING",
-          "links": [
-            446
-          ],
-          "slot_index": 0,
-          "widget": {
-            "name": "custom_definitions"
-          }
-        }
-      ],
-      "title": "Custom Styles",
-      "properties": {
-        "Run widget replace on values": false
-      },
-      "widgets_values": [
-        "[CUSTOM1]\nbase.prompt        = \"\"\nbase.negative      = \"\"\nbase.steps         = 12\nbase.steps_start   = 2\nbase.cfg           = 3.4\nbase.sampler       = \"uni_pc\"\nbase.scheduler     = \"simple\"\nrefiner.prompt        = \"\"\nrefiner.negative      = \"(worst quality, low quality:1.8)\"\nrefiner.steps         = 11\nrefiner.steps_start   = 6\nrefiner.cfg           = 2.0\nrefiner.sampler       = \"deis\"\nrefiner.scheduler     = \"ddim_uniform\"\n\n[CUSTOM2]\nbase.prompt        = \"\"\nbase.negative      = \"\"\nbase.steps         = 12\nbase.steps_start   = 2\nbase.cfg           = 3.4\nbase.sampler       = \"uni_pc\"\nbase.scheduler     = \"simple\"\nrefiner.prompt        = \"\"\nrefiner.negative      = \"(worst quality, low quality:1.8)\"\nrefiner.steps         = 11\nrefiner.steps_start   = 6\nrefiner.cfg           = 2.0\nrefiner.sampler       = \"deis\"\nrefiner.scheduler     = \"ddim_uniform\"\n"
-      ]
-    },
-    {
-      "id": 27,
-      "type": "VAEDecode",
-      "pos": [
-        590,
-        -500
-      ],
-      "size": [
-        180,
-        50
-      ],
-      "flags": {},
-      "order": 30,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "samples",
-          "type": "LATENT",
-          "link": 332
-        },
-        {
-          "name": "vae",
-          "type": "VAE",
-          "link": 462
-        }
-      ],
-      "outputs": [
-        {
-          "name": "IMAGE",
-          "type": "IMAGE",
-          "links": [
-            461
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "VAEDecode"
-      },
-      "widgets_values": []
-    },
-    {
-      "id": 126,
-      "type": "Reroute",
-      "pos": [
-        1030,
-        530
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {},
-      "order": 16,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 459
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "GENPARAMS",
-          "links": [
-            344
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
-    },
-    {
-      "id": 144,
-      "type": "SaveImage //TinyBreaker",
-      "pos": [
-        940,
-        -110
-      ],
-      "size": [
-        580,
-        610
-      ],
-      "flags": {},
-      "order": 31,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "images",
-          "type": "IMAGE",
-          "link": 461
-        },
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "link": 460,
-          "shape": 7
-        }
-      ],
-      "outputs": [],
-      "properties": {
-        "Node name for S&R": "SaveImage //TinyBreaker"
-      },
-      "widgets_values": [
-        "TinyBreaker/%date:yyyy_MM_dd%/TB"
-      ],
-      "color": "#323",
-      "bgcolor": "#535"
-    },
-    {
-      "id": 120,
-      "type": "Reroute",
-      "pos": [
-        -1320,
-        530
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {},
-      "order": 17,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 344
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "GENPARAMS",
-          "links": [
-            464
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
-    },
-    {
-      "id": 164,
-      "type": "Reroute",
-      "pos": [
-        -950,
-        -210
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {},
-      "order": 9,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 463
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "GENPARAMS",
-          "links": [
-            454
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
-    },
-    {
-      "id": 88,
-      "type": "Reroute",
-      "pos": [
-        -840,
-        -990
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {},
-      "order": 8,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 452
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "CLIP",
-          "links": [
-            439
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
-    },
-    {
-      "id": 89,
-      "type": "Reroute",
-      "pos": [
-        -840,
-        -1010
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {},
-      "order": 7,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 451
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "MODEL",
-          "links": [
-            438
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
-    },
-    {
-      "id": 3,
-      "type": "CLIPLoader",
-      "pos": [
-        -1410,
-        -770
-      ],
-      "size": [
-        390,
-        82
-      ],
-      "flags": {},
-      "order": 1,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "CLIP",
-          "type": "CLIP",
-          "links": [
-            230
-          ],
-          "slot_index": 0
-        }
-      ],
-      "title": "Load T5",
-      "properties": {
-        "Node name for S&R": "CLIPLoader"
-      },
-      "widgets_values": [
-        "t5_xxl_encoder-FP8.safetensors",
-        "sd3",
-        "default"
-      ]
-    },
-    {
-      "id": 162,
-      "type": "LoadTinyBreakerCheckpointCustom //TinyBreaker",
-      "pos": [
-        -1410,
-        -1070
-      ],
-      "size": [
-        390,
-        260
-      ],
-      "flags": {},
-      "order": 2,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "MODEL",
-          "type": "MODEL",
-          "links": [
-            448
-          ]
-        },
-        {
-          "name": "VAE",
-          "type": "VAE",
-          "links": [
-            449
-          ]
-        },
-        {
-          "name": "TRANSCODER",
-          "type": "TRANSCODER",
-          "links": [
-            450
-          ]
-        },
-        {
-          "name": "REFINER_MODEL",
-          "type": "MODEL",
-          "links": [
-            451
-          ]
-        },
-        {
-          "name": "REFINER_CLIP",
-          "type": "CLIP",
-          "links": [
-            452
-          ]
-        },
-        {
-          "name": "GENPARAMS",
-          "type": "GENPARAMS",
-          "links": [
-            463
-          ],
-          "slot_index": 5
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "LoadTinyBreakerCheckpointCustom //TinyBreaker"
-      },
-      "widgets_values": [
-        "TinyBreaker_prototype0.safetensors",
-        "fast",
-        "automatic",
-        "automatic",
-        "automatic"
-      ]
-    },
-    {
-      "id": 91,
-      "type": "Reroute",
-      "pos": [
-        -840,
-        -770
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {},
-      "order": 3,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 230
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "CLIP",
-          "links": [
-            429
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
-    },
-    {
-      "id": 90,
-      "type": "Reroute",
-      "pos": [
-        -840,
-        -810
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {},
-      "order": 4,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 448
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "MODEL",
-          "links": [
-            428
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
-    },
-    {
-      "id": 166,
-      "type": "UnifiedPromptInput //TinyBreaker",
-      "pos": [
-        390,
-        -110
-      ],
-      "size": [
-        540,
-        610
-      ],
-      "flags": {},
-      "order": 15,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "link": 458
-        }
-      ],
-      "outputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "links": [
-            459,
-            460
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "UnifiedPromptInput //TinyBreaker"
-      },
-      "widgets_values": [
-        "A cute corgi, smiling with great joy, soaring high over the river bank in Yosemite National Park, wearing a Superman cape. Bokeh and selective focus"
-      ],
-      "color": "#232",
-      "bgcolor": "#353"
-    },
-    {
-      "id": 160,
-      "type": "SelectStyle //TinyBreaker",
-      "pos": [
-        100,
-        -110
-      ],
-      "size": [
-        280,
-        102
-      ],
-      "flags": {},
-      "order": 12,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "link": 447
-        },
-        {
-          "name": "custom_definitions",
-          "type": "STRING",
-          "link": 446,
-          "widget": {
-            "name": "custom_definitions"
-          },
-          "shape": 7
-        }
-      ],
-      "outputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "links": [
-            457
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "SelectStyle //TinyBreaker"
-      },
-      "widgets_values": [
-        "PHOTO",
-        "last",
-        "[CUSTOM1]\nbase.prompt        = \"\"\nbase.negative      = \"\"\nbase.steps         = 12\nbase.steps_start   = 2\nbase.cfg           = 3.4\nbase.sampler       = \"uni_pc\"\nbase.scheduler     = \"simple\"\nrefiner.prompt        = \"\"\nrefiner.negative      = \"(worst quality, low quality:1.8)\"\nrefiner.steps         = 11\nrefiner.steps_start   = 6\nrefiner.cfg           = 2.0\nrefiner.sampler       = \"deis\"\nrefiner.scheduler     = \"ddim_uniform\"\n\n[CUSTOM2]\nbase.prompt        = \"\"\nbase.negative      = \"\"\nbase.steps         = 12\nbase.steps_start   = 2\nbase.cfg           = 3.4\nbase.sampler       = \"uni_pc\"\nbase.scheduler     = \"simple\"\nrefiner.prompt        = \"\"\nrefiner.negative      = \"(worst quality, low quality:1.8)\"\nrefiner.steps         = 11\nrefiner.steps_start   = 6\nrefiner.cfg           = 2.0\nrefiner.sampler       = \"deis\"\nrefiner.scheduler     = \"ddim_uniform\"\n"
-      ],
-      "color": "#322",
-      "bgcolor": "#533"
-    },
-    {
-      "id": 165,
-      "type": "SetImage //TinyBreaker",
-      "pos": [
-        100,
-        40
-      ],
-      "size": [
-        280,
-        180
-      ],
-      "flags": {},
-      "order": 13,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "link": 457
-        }
-      ],
-      "outputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "links": [
-            456
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "SetImage //TinyBreaker"
-      },
-      "widgets_values": [
-        1,
-        "fixed",
-        "3:2  (photo)",
-        "portrait",
-        "large",
-        1
-      ],
-      "color": "#322",
-      "bgcolor": "#533"
-    },
-    {
-      "id": 148,
-      "type": "SetImageTweaks //TinyBreaker",
-      "pos": [
-        100,
-        270
-      ],
-      "size": [
-        280,
-        110
-      ],
-      "flags": {},
-      "order": 14,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "link": 456
-        }
-      ],
-      "outputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "links": [
-            458
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "SetImageTweaks //TinyBreaker"
-      },
-      "widgets_values": [
-        1,
-        "normal",
-        0
-      ],
-      "color": "#2a363b",
-      "bgcolor": "#3f5159"
-    },
-    {
-      "id": 56,
-      "type": "Reroute",
-      "pos": [
-        -860,
-        -480
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {},
-      "order": 5,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 449
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "VAE",
-          "links": [
-            462
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
     }
   ],
   "links": [
@@ -1859,7 +1927,9 @@
       ],
       "color": "#3f789e",
       "font_size": 24,
-      "flags": {}
+      "flags": {
+        "pinned": true
+      }
     },
     {
       "id": 3,
@@ -1872,16 +1942,18 @@
       ],
       "color": "#b58b2a",
       "font_size": 24,
-      "flags": {}
+      "flags": {
+        "pinned": true
+      }
     }
   ],
   "config": {},
   "extra": {
     "ds": {
-      "scale": 0.9090909090909091,
+      "scale": 0.7413221567382815,
       "offset": [
-        131.96361215658695,
-        311.5168752684701
+        505.7133821913796,
+        371.8744661677188
       ]
     }
   },

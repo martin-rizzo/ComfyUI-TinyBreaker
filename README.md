@@ -20,7 +20,15 @@
 **TinyBreaker** is a hybrid model that combines the [PixArt model](https://github.com/PixArt-alpha/PixArt-sigma) for base image generation with [Photon model](https://civitai.com/models/84728/photon) (or any SD1 model) for image refinement. The idea is to leverage both models' strengths in these tasks, enabling them to operate efficiently on mid and low-end hardware due to their minimal parameter count. Moreover, by sequentially executing both models, you can offload them to system RAM reducing the VRAM usage. Additionally, TinyBreaker employs [Tiny Autoencoders](https://github.com/madebyollin/taesd) for latent space conversion, optimizing performance and efficiency.
 
 
-## Installation
+## Models Required
+
+You need to have the following files copied in your ComfyUI application:
+
+- **TinyBreaker_prototype0.safetensors**: Place this file in the `ComfyUI/models/checkpoints` folder.
+- **[t5xxl_fp8_e4m3fn.safetensors](https://huggingface.co/Comfy-Org/stable-diffusion-3.5-fp8/blob/main/text_encoders/t5xxl_fp8_e4m3fn.safetensors)**: This text encoder, used for FLUX and SD3.5 as well, should be installed in the `ComfyUI/models/clip` folder (or alternatively in `ComfyUI/models/text_encoders`).
+
+
+## Installing TB Custom Nodes
 > [!IMPORTANT]
 > Ensure you have the latest version of [ComfyUi](https://github.com/comfyanonymous/ComfyUI) installed.
 
@@ -50,13 +58,6 @@ For those using the standalone ComfyUI release on Windows:
    ```bash
    git clone https://github.com/martin-rizzo/ComfyUI-TinyBreaker ComfyUI\custom_nodes\ConfyUI-TinyBreaker
    ```
-
-## Models Required
-
-You need to have the following files installed in your ComfyUI application:
-
-- **TinyBreaker_prototype0.safetensors**: Place this file in the `ComfyUI/models/checkpoints` folder.
-- **[t5xxl_fp8_e4m3fn.safetensors](https://huggingface.co/Comfy-Org/stable-diffusion-3.5-fp8/blob/main/text_encoders/t5xxl_fp8_e4m3fn.safetensors)**: This text encoder, used for FLUX and SD3.5 as well, should be installed in the `ComfyUI/models/clip` folder (or alternatively in `ComfyUI/models/text_encoders`).
 
 
 ## Acknowledgments

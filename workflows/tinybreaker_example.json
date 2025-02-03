@@ -79,43 +79,6 @@
       }
     },
     {
-      "id": 3,
-      "type": "CLIPLoader",
-      "pos": [
-        -520,
-        -310
-      ],
-      "size": [
-        390,
-        82
-      ],
-      "flags": {
-        "pinned": true
-      },
-      "order": 0,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "CLIP",
-          "type": "CLIP",
-          "links": [
-            230
-          ],
-          "slot_index": 0
-        }
-      ],
-      "title": "Load T5",
-      "properties": {
-        "Node name for S&R": "CLIPLoader"
-      },
-      "widgets_values": [
-        "t5_xxl_encoder-FP8.safetensors",
-        "sd3",
-        "default"
-      ]
-    },
-    {
       "id": 111,
       "type": "EmptyLatentImage //TinyBreaker",
       "pos": [
@@ -457,118 +420,6 @@
       }
     },
     {
-      "id": 196,
-      "type": "Reroute",
-      "pos": [
-        -110,
-        -230
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {
-        "pinned": true
-      },
-      "order": 6,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 527,
-          "pos": [
-            37.5,
-            0
-          ]
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "GENPARAMS",
-          "links": [
-            509
-          ],
-          "slot_index": 0,
-          "label": "Metadata"
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": true
-      }
-    },
-    {
-      "id": 202,
-      "type": "LoadTinyBreakerCheckpoint //TinyBreaker",
-      "pos": [
-        -520,
-        -540
-      ],
-      "size": [
-        390,
-        190
-      ],
-      "flags": {
-        "pinned": true
-      },
-      "order": 1,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "MODEL",
-          "type": "MODEL",
-          "links": [
-            522
-          ]
-        },
-        {
-          "name": "VAE",
-          "type": "VAE",
-          "links": [
-            523
-          ]
-        },
-        {
-          "name": "TRANSCODER",
-          "type": "TRANSCODER",
-          "links": [
-            524
-          ]
-        },
-        {
-          "name": "REFINER_MODEL",
-          "type": "MODEL",
-          "links": [
-            525
-          ]
-        },
-        {
-          "name": "REFINER_CLIP",
-          "type": "CLIP",
-          "links": [
-            526
-          ]
-        },
-        {
-          "name": "GENPARAMS",
-          "type": "GENPARAMS",
-          "links": [
-            527
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "LoadTinyBreakerCheckpoint //TinyBreaker"
-      },
-      "widgets_values": [
-        "TinyBreaker_prototype0.safetensors",
-        "fast"
-      ]
-    },
-    {
       "id": 177,
       "type": "SelectStyle //TinyBreaker",
       "pos": [
@@ -635,7 +486,7 @@
       "flags": {
         "pinned": true
       },
-      "order": 2,
+      "order": 0,
       "mode": 0,
       "inputs": [],
       "outputs": [],
@@ -700,7 +551,7 @@
       "flags": {
         "pinned": true
       },
-      "order": 3,
+      "order": 1,
       "mode": 0,
       "inputs": [],
       "outputs": [],
@@ -829,6 +680,159 @@
       ],
       "color": "#232",
       "bgcolor": "#353"
+    },
+    {
+      "id": 196,
+      "type": "Reroute",
+      "pos": [
+        -110,
+        -180
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {
+        "pinned": true
+      },
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 527,
+          "pos": [
+            37.5,
+            0
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "GENPARAMS",
+          "links": [
+            509
+          ],
+          "slot_index": 0,
+          "label": "Metadata"
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": true
+      }
+    },
+    {
+      "id": 3,
+      "type": "CLIPLoader",
+      "pos": [
+        -520,
+        -250
+      ],
+      "size": [
+        390,
+        82
+      ],
+      "flags": {
+        "pinned": true
+      },
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": [
+            230
+          ],
+          "slot_index": 0
+        }
+      ],
+      "title": "Load T5 Text Encoder",
+      "properties": {
+        "Node name for S&R": "CLIPLoader"
+      },
+      "widgets_values": [
+        "t5xxl_fp8_e4m3fn.safetensors",
+        "sd3",
+        "default"
+      ],
+      "color": "#322",
+      "bgcolor": "#533"
+    },
+    {
+      "id": 202,
+      "type": "LoadTinyBreakerCheckpoint //TinyBreaker",
+      "pos": [
+        -520,
+        -540
+      ],
+      "size": [
+        390,
+        190
+      ],
+      "flags": {
+        "pinned": true
+      },
+      "order": 3,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            522
+          ]
+        },
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [
+            523
+          ]
+        },
+        {
+          "name": "TRANSCODER",
+          "type": "TRANSCODER",
+          "links": [
+            524
+          ]
+        },
+        {
+          "name": "REFINER_MODEL",
+          "type": "MODEL",
+          "links": [
+            525
+          ]
+        },
+        {
+          "name": "REFINER_CLIP",
+          "type": "CLIP",
+          "links": [
+            526
+          ]
+        },
+        {
+          "name": "GENPARAMS",
+          "type": "GENPARAMS",
+          "links": [
+            527
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadTinyBreakerCheckpoint //TinyBreaker"
+      },
+      "widgets_values": [
+        "TinyBreaker_prototype0.safetensors",
+        "fast"
+      ],
+      "color": "#322",
+      "bgcolor": "#533"
     }
   ],
   "links": [
@@ -1048,7 +1052,7 @@
         -530,
         -780,
         1180,
-        570
+        630
       ],
       "color": "#3f789e",
       "font_size": 24,
@@ -1060,10 +1064,10 @@
   "config": {},
   "extra": {
     "ds": {
-      "scale": 0.9090909090909091,
+      "scale": 0.8969998096533207,
       "offset": [
-        111.0946910437961,
-        148.38798723354222
+        135.41843181856555,
+        188.09895336832216
       ]
     }
   },
