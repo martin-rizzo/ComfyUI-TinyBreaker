@@ -25,17 +25,17 @@ class SetImageTweaks:
     def INPUT_TYPES(cls):
         return {
         "required": {
-            "genparams"   :("GENPARAMS" , {"tooltip": "The generation parameters to be updated."
-                                           }),
-            "variant"     :("INT"       , {"tooltip": "The variant of the image to generate. This parameter allows you to choose between different versions of the same image.",
-                                           "default": 1, "min": 1, "max": 0xffffffffffffffff
-                                           }),
-            "detail_level":(cls.levels(), {"tooltip": "The level of detail in the final image induced by the refiner.",
-                                           "default": DEFAULT_DETAIL_LEVEL,
-                                           }),
-            "cfg_adjust"  :("FLOAT"     , {"tooltip": "An adjustment applied to the classifier-free guidance value. Positive values increase prompt adherence; negative values allow more model freedom. A value of 0.0 uses the default setting.",
-                                           "default": 0.0, "min": -4.0, "max": 4.0, "step": 0.2, "round": 0.01
-                                           }),
+            "genparams" :("GENPARAMS" , {"tooltip": "The generation parameters to be updated."
+                                         }),
+            "variant"   :("INT"       , {"tooltip": "The variant of the image to generate. This parameter allows you to choose between different versions of the same image.",
+                                         "default": 1, "min": 1, "max": 0xffffffffffffffff
+                                         }),
+            "detail"    :(cls.levels(), {"tooltip": "The level of detail in the final image induced by the refiner.",
+                                         "default": DEFAULT_DETAIL_LEVEL,
+                                         }),
+            "cfg_adjust":("FLOAT"     , {"tooltip": "An adjustment applied to the classifier-free guidance value. Positive values increase prompt adherence; negative values allow more model freedom. A value of 0.0 uses the default setting.",
+                                         "default": 0.0, "min": -4.0, "max": 4.0, "step": 0.2, "round": 0.01
+                                         }),
             },
         }
 
