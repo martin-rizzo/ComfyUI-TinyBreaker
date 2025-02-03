@@ -27,29 +27,36 @@
 
 ### Manual Installation on Linux
 
-Open a terminal and navigate to your ComfyUI directory:
-```bash
-cd <your_comfyui_directory>
-cd custom_nodes
-git clone https://github.com/martin-rizzo/ComfyUI-TinyBreaker
-```
+To install on a Linux system, follow these steps:
+
+1. Open your terminal.
+2. Navigate to your ComfyUI directory:
+   ```bash
+   cd <your_comfyui_directory>
+   ```
+3. Move into the `custom_nodes` folder and clone the repository:
+   ```bash
+   cd custom_nodes
+   git clone https://github.com/martin-rizzo/ComfyUI-TinyBreaker
+   ```
 
 ### Manually Installation on Windows
 
-If you are using the standalone ComfyUI release on Windows, open a command prompt (CMD)
-in the "ComfyUI_windows_portable" folder (the one containing the "run_nvidia_gpu.bat" file).
+For those using the standalone ComfyUI release on Windows:
 
-From that folder, execute the following commands:
-```bash
-git clone https://github.com/martin-rizzo/ComfyUI-TinyBreaker ComfyUI\custom_nodes\ConfyUI-TinyBreaker
-```
+1. Open a command prompt (CMD).
+2. Navigate to the "ComfyUI_windows_portable" folder, which contains the `run_nvidia_gpu.bat` file.
+3. Execute the following command:
+   ```bash
+   git clone https://github.com/martin-rizzo/ComfyUI-TinyBreaker ComfyUI\custom_nodes\ConfyUI-TinyBreaker
+   ```
 
+## Models Required
 
-## Minimum Files Required
+You need to have the following files installed in your ComfyUI application:
 
-* You also need to have the following files:
-  * TinyBreaker_prototype0.safetensors
-  * t5_xxl_encoder-FP8.safetensors
+- **TinyBreaker_prototype0.safetensors**: Place this file in the `ComfyUI/models/checkpoints` folder.
+- **[t5xxl_fp8_e4m3fn.safetensors](https://huggingface.co/Comfy-Org/stable-diffusion-3.5-fp8/blob/main/text_encoders/t5xxl_fp8_e4m3fn.safetensors)**: This text encoder, used for FLUX and SD3.5 as well, should be installed in the `ComfyUI/models/clip` folder (or alternatively in `ComfyUI/models/text_encoders`).
 
 
 ## Acknowledgments
