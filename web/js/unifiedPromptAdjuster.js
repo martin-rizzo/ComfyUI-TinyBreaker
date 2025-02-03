@@ -21,7 +21,7 @@
  and `unifiedPromptAdjuster` uses the same keys (CTRL+UP/DOWN) as ComfyUI,
  the code implemented here employs some 'creative' workarounds to address this issue.
 
- 2024/01/31 The code was tested in Chrome version 132.0.6834.110
+ 2025.01.31 The code was tested in Chrome version 132.0.6834.110
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 */
 import { app } from "../../../scripts/app.js"

@@ -67,7 +67,7 @@ Additional thanks to Ollin Boer Bohan for the Tiny AutoEncoder models. These mod
 
 ## License
 
-Copyright (c) 2024 Martin Rizzo  
+Copyright (c) 2024-2025 Martin Rizzo  
 This project is licensed under the MIT license.  
 See the ["LICENSE"](LICENSE) file for details.
   
