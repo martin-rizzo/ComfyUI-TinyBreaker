@@ -24,7 +24,7 @@
 
 You need to have the following files copied in your ComfyUI application:
 
-- **TinyBreaker_prototype0.safetensors**: Place this file in the `ComfyUI/models/checkpoints` folder.
+- **[tinybreaker_prototype0.safetensors](https://civitai.com/models/1213728)**: Place this file in the `ComfyUI/models/checkpoints` folder.
 - **[t5xxl_fp8_e4m3fn.safetensors](https://huggingface.co/Comfy-Org/stable-diffusion-3.5-fp8/blob/main/text_encoders/t5xxl_fp8_e4m3fn.safetensors)**: This text encoder, used for FLUX and SD3.5 as well, should be installed in the `ComfyUI/models/clip` folder (or alternatively in `ComfyUI/models/text_encoders`).
 
 

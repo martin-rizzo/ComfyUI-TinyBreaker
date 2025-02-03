@@ -1,5 +1,5 @@
 {
-  "last_node_id": 204,
+  "last_node_id": 205,
   "last_link_id": 528,
   "nodes": [
     {
@@ -16,7 +16,7 @@
       "flags": {
         "pinned": true
       },
-      "order": 10,
+      "order": 11,
       "mode": 0,
       "inputs": [
         {
@@ -41,44 +41,6 @@
       }
     },
     {
-      "id": 191,
-      "type": "Reroute",
-      "pos": [
-        -870,
-        710
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {
-        "pinned": true
-      },
-      "order": 11,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 496
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "GENPARAMS",
-          "links": [
-            502
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
-    },
-    {
       "id": 111,
       "type": "EmptyLatentImage //TinyBreaker",
       "pos": [
@@ -92,7 +54,7 @@
       "flags": {
         "pinned": true
       },
-      "order": 14,
+      "order": 15,
       "mode": 0,
       "inputs": [
         {
@@ -130,7 +92,7 @@
       "flags": {
         "pinned": true
       },
-      "order": 4,
+      "order": 7,
       "mode": 0,
       "inputs": [
         {
@@ -168,7 +130,7 @@
       "flags": {
         "pinned": true
       },
-      "order": 15,
+      "order": 16,
       "mode": 0,
       "inputs": [
         {
@@ -206,7 +168,7 @@
       "flags": {
         "pinned": true
       },
-      "order": 16,
+      "order": 17,
       "mode": 0,
       "inputs": [
         {
@@ -274,7 +236,7 @@
       "flags": {
         "pinned": true
       },
-      "order": 17,
+      "order": 18,
       "mode": 0,
       "inputs": [
         {
@@ -317,7 +279,7 @@
       "flags": {
         "pinned": true
       },
-      "order": 18,
+      "order": 19,
       "mode": 0,
       "inputs": [
         {
@@ -342,44 +304,6 @@
       }
     },
     {
-      "id": 193,
-      "type": "Reroute",
-      "pos": [
-        -820,
-        -700
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {
-        "pinned": true
-      },
-      "order": 12,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 502
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "GENPARAMS",
-          "links": [
-            501
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
-    },
-    {
       "id": 167,
       "type": "Reroute",
       "pos": [
@@ -393,7 +317,7 @@
       "flags": {
         "pinned": true
       },
-      "order": 13,
+      "order": 14,
       "mode": 0,
       "inputs": [
         {
@@ -433,7 +357,7 @@
       "flags": {
         "pinned": true
       },
-      "order": 8,
+      "order": 9,
       "mode": 0,
       "inputs": [
         {
@@ -512,7 +436,7 @@
       "flags": {
         "pinned": true
       },
-      "order": 19,
+      "order": 20,
       "mode": 0,
       "inputs": [
         {
@@ -577,7 +501,7 @@
       "flags": {
         "pinned": true
       },
-      "order": 7,
+      "order": 8,
       "mode": 0,
       "inputs": [
         {
@@ -653,7 +577,7 @@
       "flags": {
         "pinned": true
       },
-      "order": 9,
+      "order": 10,
       "mode": 0,
       "inputs": [
         {
@@ -682,88 +606,6 @@
       "bgcolor": "#353"
     },
     {
-      "id": 196,
-      "type": "Reroute",
-      "pos": [
-        -110,
-        -180
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {
-        "pinned": true
-      },
-      "order": 6,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 527,
-          "pos": [
-            37.5,
-            0
-          ]
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "GENPARAMS",
-          "links": [
-            509
-          ],
-          "slot_index": 0,
-          "label": "Metadata"
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": true
-      }
-    },
-    {
-      "id": 3,
-      "type": "CLIPLoader",
-      "pos": [
-        -520,
-        -250
-      ],
-      "size": [
-        390,
-        82
-      ],
-      "flags": {
-        "pinned": true
-      },
-      "order": 2,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "CLIP",
-          "type": "CLIP",
-          "links": [
-            230
-          ],
-          "slot_index": 0
-        }
-      ],
-      "title": "Load T5 Text Encoder",
-      "properties": {
-        "Node name for S&R": "CLIPLoader"
-      },
-      "widgets_values": [
-        "t5xxl_fp8_e4m3fn.safetensors",
-        "sd3",
-        "default"
-      ],
-      "color": "#322",
-      "bgcolor": "#533"
-    },
-    {
       "id": 202,
       "type": "LoadTinyBreakerCheckpoint //TinyBreaker",
       "pos": [
@@ -777,7 +619,7 @@
       "flags": {
         "pinned": true
       },
-      "order": 3,
+      "order": 2,
       "mode": 0,
       "inputs": [],
       "outputs": [
@@ -828,8 +670,192 @@
         "Node name for S&R": "LoadTinyBreakerCheckpoint //TinyBreaker"
       },
       "widgets_values": [
-        "TinyBreaker_prototype0.safetensors",
+        "tinybreaker_prototype0.safetensors",
         "fast"
+      ],
+      "color": "#322",
+      "bgcolor": "#533"
+    },
+    {
+      "id": 193,
+      "type": "Reroute",
+      "pos": [
+        -960,
+        -700
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {
+        "pinned": true
+      },
+      "order": 13,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 502
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "GENPARAMS",
+          "links": [
+            501
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 191,
+      "type": "Reroute",
+      "pos": [
+        -1010,
+        710
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {
+        "pinned": true
+      },
+      "order": 12,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 496
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "GENPARAMS",
+          "links": [
+            502
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 196,
+      "type": "Reroute",
+      "pos": [
+        -70,
+        -180
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {
+        "pinned": true
+      },
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 527,
+          "pos": [
+            37.5,
+            0
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "GENPARAMS",
+          "links": [
+            509
+          ],
+          "slot_index": 0,
+          "label": "Metadata"
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": true
+      }
+    },
+    {
+      "id": 3,
+      "type": "CLIPLoader",
+      "pos": [
+        -520,
+        -310
+      ],
+      "size": [
+        390,
+        82
+      ],
+      "flags": {
+        "pinned": true
+      },
+      "order": 3,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": [
+            230
+          ],
+          "slot_index": 0
+        }
+      ],
+      "title": "Load T5 Text Encoder",
+      "properties": {
+        "Node name for S&R": "CLIPLoader"
+      },
+      "widgets_values": [
+        "t5xxl_fp8_e4m3fn.safetensors",
+        "sd3",
+        "default"
+      ],
+      "color": "#322",
+      "bgcolor": "#533"
+    },
+    {
+      "id": 205,
+      "type": "Note",
+      "pos": [
+        -880,
+        -190
+      ],
+      "size": [
+        750,
+        200
+      ],
+      "flags": {
+        "pinned": true
+      },
+      "order": 4,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "title": "NOTE: INSTALLATION",
+      "properties": {},
+      "widgets_values": [
+        "\n The TinyBreaker model can be downloaded from:\n   https://civitai.com/models/1213728\n\n The T5 Text Encoder is available at:\n   https://huggingface.co/Comfy-Org/stable-diffusion-3.5-fp8/blob/main/text_encoders/t5xxl_fp8_e4m3fn.safetensors\n\n The custom nodes used in this workflow are implemented in:\n   https://github.com/martin-rizzo/ComfyUI-TinyBreaker\n"
       ],
       "color": "#322",
       "bgcolor": "#533"
@@ -1066,8 +1092,8 @@
     "ds": {
       "scale": 0.8969998096533207,
       "offset": [
-        135.41843181856555,
-        188.09895336832216
+        147.9105761538472,
+        174.93667825335797
       ]
     }
   },

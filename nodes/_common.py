@@ -160,13 +160,13 @@ def genparams_from_arguments(args: dict,
     # "refiner.noise_seed"
     value, as_delta = _pop_int_value(args, "v", "variant")
     if value is not None:
-        genparams.set_int(f"{RE__}noise_seed", value, as_delta=as_delta)
+        genparams.set_int(f"{RE__}noise_seed", value, as_delta=False)
 
     # --c, --cfg-adjust <float>
     # "base.cfg"
     value, as_delta = _pop_float_value(args, "c", "cfg-adjust")
     if value is not None:
-        genparams.set_float(f"{BASE}cfg", value, as_delta=as_delta)
+        genparams.set_float(f"{BASE}cfg", value, as_delta=True)
 
     # --d, --detail <level>
     # "refiner.steps_nfactor"
@@ -178,7 +178,7 @@ def genparams_from_arguments(args: dict,
     # "base.noise_seed"
     value, as_delta = _pop_int_value(args, "s", "seed")
     if value is not None:
-        genparams.set_int(f"{BASE}noise_seed", value, as_delta=as_delta)
+        genparams.set_int(f"{BASE}noise_seed", value, as_delta=False)
 
     # --a, --aspect <width:height>
     # "image.aspect_ratio"
@@ -203,7 +203,7 @@ def genparams_from_arguments(args: dict,
     # "image.batch_size"
     value, as_delta = _pop_int_value(args, "b", "batch")
     if value is not None:
-        genparams.set_int("image.batch_size", value, as_delta=as_delta)
+        genparams.set_int("image.batch_size", value, as_delta=False)
 
     return genparams
 
