@@ -3,6 +3,85 @@
   "last_link_id": 17,
   "nodes": [
     {
+      "id": 21,
+      "type": "GenParamsDebugLogger //TinyBreaker",
+      "pos": [
+        320,
+        160
+      ],
+      "size": [
+        260,
+        110
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": null,
+          "shape": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "links": [
+            17
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "GenParamsDebugLogger //TinyBreaker"
+      },
+      "widgets_values": [
+        "no logging",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": 20,
+      "type": "GenParamsDebugLogger //TinyBreaker",
+      "pos": [
+        1740,
+        160
+      ],
+      "size": [
+        290,
+        106
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 16,
+          "shape": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "GenParamsDebugLogger //TinyBreaker"
+      },
+      "widgets_values": [
+        "short text values",
+        "unified prompt",
+        ""
+      ]
+    },
+    {
       "id": 2,
       "type": "SelectStyle //TinyBreaker",
       "pos": [
@@ -46,7 +125,7 @@
         "Node name for S&R": "SelectStyle //TinyBreaker"
       },
       "widgets_values": [
-        "1GIRLZ",
+        "none",
         "last",
         "[1GIRL]\nbase.prompt      = \"An iPhone photo{. $@}. (144p photo:1.1) with JPEG artifacts.\"\nbase.negative    = \"macrophoto, bokeh, out of focus{, $@}\"\nbase.sampler     = \"dpmpp_2m_sde\"\nbase.scheduler   = \"beta\"\nbase.steps       = 14\nbase.steps_start = 2\nrefiner.prompt      = \"(argentine social woman:1.1){, $@}\"\nrefiner.negative    = \"(worst quality, low quality:1.8){, $@}\"\nrefiner.sampler     = \"dpmpp_2m\"\nrefiner.scheduler   = \"normal\"\nrefiner.steps       = 24\nrefiner.steps_start = 12\nrefiner.cfg         = 2.0\n\n[2GIRL]\nbase.prompt      = \"An iPhone photo{. $@}. (144p photo:1.1) with JPEG artifacts.\"\nbase.negative    = \"macrophoto, bokeh, out of focus{, $@}\"\nbase.sampler     = \"dpmpp_2m_sde\"\nbase.scheduler   = \"karras\"\nbase.steps       = 14\nbase.steps_start = 2\nrefiner.prompt      = \"(argentine social woman:1.1){, $@}\"\nrefiner.negative    = \"(worst quality, low quality:1.8){, $@}\"\nrefiner.sampler     = \"dpmpp_2m\"\nrefiner.scheduler   = \"normal\"\nrefiner.steps       = 25\nrefiner.steps_start = 14\nrefiner.cfg         = 2.0\n"
       ]
@@ -88,51 +167,10 @@
       "widgets_values": [
         1,
         "fixed",
-        "3:2  (photo)",
-        "portrait",
+        "16:10  (wide)",
+        "landscape",
         "large",
         1
-      ]
-    },
-    {
-      "id": 21,
-      "type": "GenParamsDebugLogger //TinyBreaker",
-      "pos": [
-        320,
-        160
-      ],
-      "size": [
-        260,
-        110
-      ],
-      "flags": {},
-      "order": 0,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "link": null,
-          "shape": 7
-        }
-      ],
-      "outputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "links": [
-            17
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "GenParamsDebugLogger //TinyBreaker"
-      },
-      "widgets_values": [
-        "no logging",
-        "",
-        ""
       ]
     },
     {
@@ -171,44 +209,6 @@
       },
       "widgets_values": [
         "An astronaut enjoying fries in a diner, with a cinematic touch.\n"
-      ]
-    },
-    {
-      "id": 20,
-      "type": "GenParamsDebugLogger //TinyBreaker",
-      "pos": [
-        1740,
-        160
-      ],
-      "size": [
-        290,
-        106
-      ],
-      "flags": {},
-      "order": 4,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "link": 16,
-          "shape": 7
-        }
-      ],
-      "outputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "links": null
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "GenParamsDebugLogger //TinyBreaker"
-      },
-      "widgets_values": [
-        "short text values",
-        "unified prompt",
-        "sampler.base.prompt"
       ]
     }
   ],
@@ -252,8 +252,8 @@
     "ds": {
       "scale": 0.8264462809917354,
       "offset": [
-        -231.2236551906342,
-        36.45973029940163
+        -205.2086551906337,
+        48.59273029940159
       ]
     },
     "node_versions": {
