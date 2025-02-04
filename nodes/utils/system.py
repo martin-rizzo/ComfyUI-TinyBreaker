@@ -1,12 +1,12 @@
 """
 File    : system.py
-Purpose : System-level functions for the ConfyUI-TinyBreaker project.
+Purpose : System-level functions for the ComfyUI-TinyBreaker project.
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
 Date    : Nov 14, 2024
 Repo    : https://github.com/martin-rizzo/ComfyUI-TinyBreaker
 License : MIT
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                              ConfyUI-TinyBreaker
+                              ComfyUI-TinyBreaker
  ComfyUI nodes for experimenting with the capabilities of the TinyBreaker model.
   (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _

@@ -1,18 +1,18 @@
 <div align="center">
 
-# ConfyUI-TinyBreaker
+# ComfyUI-TinyBreaker
 
 ![TinyBreaker Experimental Nodes](./docs/img/banner_nodes.jpg)
 
 <p>
 <img alt="Platform" src="https://img.shields.io/badge/platform-ComfyUI-33F">
-<img alt="License"  src="https://img.shields.io/github/license/martin-rizzo/ConfyUI-TinyBreaker?color=11D">
-<img alt="Version"  src="https://img.shields.io/github/v/tag/martin-rizzo/ConfyUI-TinyBreaker?label=version">
-<img alt="Last"     src="https://img.shields.io/github/last-commit/martin-rizzo/ConfyUI-TinyBreaker?color=33F">
+<img alt="License"  src="https://img.shields.io/github/license/martin-rizzo/ComfyUI-TinyBreaker?color=11D">
+<img alt="Version"  src="https://img.shields.io/github/v/tag/martin-rizzo/ComfyUI-TinyBreaker?label=version">
+<img alt="Last"     src="https://img.shields.io/github/last-commit/martin-rizzo/ComfyUI-TinyBreaker?color=33F">
 </p>
 </div>
 
-**ConfyUI-TinyBreaker** is a collection of custom ComfyUI nodes specifically designed to work with the TinyBreaker model. It is currently under active development, so expect some rough edges and evolving functionality. The nodes are functional, allowing you to explore the potential of the model, but be aware that significant changes are likely between versions as nodes may be completely overhauled.
+**ComfyUI-TinyBreaker** is a collection of custom nodes specifically designed to generate images using the TinyBreaker model. It's actively developed with ongoing improvements. Although still in progress, these nodes are functional and allow you to explore the potential of the model.
 
 
 ## What is TinyBreaker?
@@ -56,7 +56,7 @@ For those using the standalone ComfyUI release on Windows:
 2. Navigate to the "ComfyUI_windows_portable" folder, which contains the `run_nvidia_gpu.bat` file.
 3. Execute the following command:
    ```bash
-   git clone https://github.com/martin-rizzo/ComfyUI-TinyBreaker ComfyUI\custom_nodes\ConfyUI-TinyBreaker
+   git clone https://github.com/martin-rizzo/ComfyUI-TinyBreaker ComfyUI\custom_nodes\ComfyUI-TinyBreaker
    ```
 
 

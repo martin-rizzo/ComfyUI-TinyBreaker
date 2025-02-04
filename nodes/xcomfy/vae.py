@@ -1,12 +1,12 @@
 """
-File    : xconfy/vae.py
+File    : xcomfy/vae.py
 Purpose : The standard VAE object transmitted through ComfyUI's node system.
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
 Date    : May 10, 2024
 Repo    : https://github.com/martin-rizzo/ComfyUI-TinyBreaker
 License : MIT
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                              ConfyUI-TinyBreaker
+                              ComfyUI-TinyBreaker
  ComfyUI nodes for experimenting with the capabilities of the TinyBreaker model.
   (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
@@ -86,7 +86,7 @@ def _should_use_custom_code(state_dict, config):
     The primary purpose of this check is to quickly filter out models that are
     known to be incompatible with this project, avoiding possible mismatches.
     """
-    CONFYUI_STANDARD_TENSOR_NAMES = [
+    COMFYUI_STANDARD_TENSOR_NAMES = [
         "decoder.mid.block_1.mix_factor",                     # <- VIDEO (?)
         "vquantizer.codebook.weight",                         # <- VQGan (Stage A of stable cascade)
         "backbone.1.0.block.0.1.num_batches_tracked",         # <- effnet (encoder for Stage C of stable cascade)
@@ -98,7 +98,7 @@ def _should_use_custom_code(state_dict, config):
         # custom code doesn´t handle config files
         return False
 
-    if any( tensor_name in state_dict for tensor_name in CONFYUI_STANDARD_TENSOR_NAMES ):
+    if any( tensor_name in state_dict for tensor_name in COMFYUI_STANDARD_TENSOR_NAMES ):
         # these models are evidently not custom models
         return False
 

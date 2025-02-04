@@ -1,12 +1,12 @@
 """
-File    : xconfy/model.py
+File    : xcomfy/model.py
 Purpose : The standard MODEL object transmitted through ComfyUI's node system.
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
 Date    : May 10, 2024
 Repo    : https://github.com/martin-rizzo/ComfyUI-TinyBreaker
 License : MIT
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                              ConfyUI-TinyBreaker
+                              ComfyUI-TinyBreaker
  ComfyUI nodes for experimenting with the capabilities of the TinyBreaker model.
   (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _

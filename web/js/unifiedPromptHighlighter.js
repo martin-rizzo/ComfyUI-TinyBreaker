@@ -6,7 +6,7 @@
  * Repo    : https://github.com/martin-rizzo/ComfyUI-TinyBreaker
  * License : MIT
  *- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- *                              ConfyUI-TinyBreaker
+ *                              ComfyUI-TinyBreaker
  * ComfyUI nodes for experimenting with the capabilities of the TinyBreaker model.
  *  (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
  *_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
@@ -137,7 +137,7 @@ app.registerExtension({
 
 	/**
 	 * Called every time ComfyUI creates a new node.
-	 * @param {ConfyNode} node - The node that was created.
+	 * @param {ComfyNode} node - The node that was created.
 	 */
 	async nodeCreated(node) {
 		if (!ENABLED) return;

@@ -1,12 +1,12 @@
 """
-File    : xconfy/clip.py
+File    : xcomfy/clip.py
 Purpose : The standard CLIP object transmitted through ComfyUI's node system.
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
 Date    : Jan 3, 2025
 Repo    : https://github.com/martin-rizzo/ComfyUI-TinyBreaker
 License : MIT
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                              ConfyUI-TinyBreaker
+                              ComfyUI-TinyBreaker
  ComfyUI nodes for experimenting with the capabilities of the TinyBreaker model.
   (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
