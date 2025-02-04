@@ -8,12 +8,12 @@ To use these workflows, ensure you have the custom nodes from this project insta
 - **[t5xxl_fp8_e4m3fn.safetensors](https://huggingface.co/Comfy-Org/stable-diffusion-3.5-fp8/blob/main/text_encoders/t5xxl_fp8_e4m3fn.safetensors)**: This text encoder, used for FLUX and SD3.5 as well, should be installed in the `ComfyUI/models/clip` folder (or alternatively in `ComfyUI/models/text_encoders`).
 
 
-## TinyBreaker
+## TinyBreaker Workflow
 
 > [!NOTE]
-> You can save these image file and drag or load them into ComfyUI to get the workflow.
+> You can save this image file and drag it into ComfyUI to get the workflow.
 
-![Example](tinybreaker_example.png)
+<img src="tinybreaker_example.png" width="50%">
 
 This is a simple yet powerful workflow that allows you to adjust parameters within the prompt text box. After entering your initial prompt, you can add any of the following parameters:
 
@@ -29,11 +29,11 @@ This is a simple yet powerful workflow that allows you to adjust parameters with
 - `--batch-size <number>`: Set batch processing size.
 
 
-## TinyBreaker Fully Customizable (Advanced)
+## TinyBreaker Fully Customizable Workflow (Advanced)
 
 > [!NOTE]
-> You can save these image file and drag or load them into ComfyUI to get the workflow.
+> You can save this image file and drag it into ComfyUI to get the workflow.
 
-![Fully Customizable Example](tinybreaker_fully_customizable_example.png)
+<img src="tinybreaker_fully_customizable_example.png" width="50%">
 
 This workflow allows you to customize all elements and alter node connections entirely, enabling full experimentation with the model as desired.
