@@ -19,6 +19,10 @@
 
 **TinyBreaker** is a hybrid model that combines the [PixArt model](https://github.com/PixArt-alpha/PixArt-sigma) for base image generation with [Photon model](https://civitai.com/models/84728/photon) (or any SD1 model) for image refinement. The idea is to leverage both models' strengths in these tasks, enabling them to operate efficiently on mid and low-end hardware due to their minimal parameter count. Moreover, by sequentially executing both models, you can offload them to system RAM reducing the VRAM usage. Additionally, TinyBreaker employs [Tiny Autoencoders](https://github.com/madebyollin/taesd) for latent space conversion, optimizing performance and efficiency.
 
+**TinyBreaker** is the natural evolution of my two previous developments:
+- **Photon Model**: A fine-tuning of SD1.5 aimed at generating photorealistic and visually appealing images effortlessly.
+- **The Abominable Workflows**: A set of workflows for ComfyUI that emulated, through a spaghetti nightmare, what TinyBreaker currently achieves.
+
 
 ## Models Required
 
@@ -28,7 +32,7 @@ You need to have the following files copied in your ComfyUI application:
 - **[t5xxl_fp8_e4m3fn.safetensors](https://huggingface.co/Comfy-Org/stable-diffusion-3.5-fp8/blob/main/text_encoders/t5xxl_fp8_e4m3fn.safetensors)**: This text encoder, used for FLUX and SD3.5 as well, should be installed in the `ComfyUI/models/clip` folder (or alternatively in `ComfyUI/models/text_encoders`).
 
 
-## Installing TB Custom Nodes
+## Installing the Nodes
 > [!IMPORTANT]
 > Ensure you have the latest version of [ComfyUi](https://github.com/comfyanonymous/ComfyUI) installed.
 
