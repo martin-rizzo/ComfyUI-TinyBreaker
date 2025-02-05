@@ -1,6 +1,6 @@
-# Unified Prompt Input Node
+# Prompt Parameters
 
-The **Unified Prompt Input** node allows you to generate images using a text description. This description includes the prompt itself, followed by a series of parameters. These parameters, identified by names starting with a double hyphen (--), modify the generated image. 
+One of the advantages of the **Unified Prompt Input** is that it allows parameters to be appended after the prompt, facilitating modifications in image generation. These parameters always start with two hyphens (`--`), offering an easy way to adjust the final output.
 
 - Parameters for Minor Adjustments
   - [`--no`](#--no-elements)
