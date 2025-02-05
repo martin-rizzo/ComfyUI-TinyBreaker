@@ -17,11 +17,11 @@
 
 ## What is TinyBreaker?
 
-**TinyBreaker** is a hybrid model that combines the [PixArt model](https://github.com/PixArt-alpha/PixArt-sigma) for base image generation with [Photon model](https://civitai.com/models/84728/photon) (or any SD1 model) for image refinement. The idea is to leverage both models' strengths in these tasks, enabling them to operate efficiently on mid and low-end hardware due to their minimal parameter count. Moreover, by sequentially executing both models, you can offload them to system RAM reducing the VRAM usage. Additionally, TinyBreaker employs [Tiny Autoencoders](https://github.com/madebyollin/taesd) for latent space conversion, optimizing performance and efficiency.
+**TinyBreaker** is a hybrid model that combines the [PixArt model](https://github.com/PixArt-alpha/PixArt-sigma) for base image generation with Photon model (or any SD1 model) for image refinement. The idea is to leverage both models' strengths in these tasks, enabling them to operate efficiently on mid and low-end hardware due to their minimal parameter count. Moreover, by sequentially executing both models, you can offload them to system RAM reducing the VRAM usage. Additionally, TinyBreaker employs [Tiny Autoencoders](https://github.com/madebyollin/taesd) for latent space conversion, optimizing performance and efficiency.
 
 **TinyBreaker** is the natural evolution of my two previous developments:
-- **Photon Model**: A fine-tuning of SD1.5 aimed at generating photorealistic and visually appealing images effortlessly.
-- **The Abominable Workflows**: A set of workflows for ComfyUI that emulated, through a spaghetti nightmare, what TinyBreaker currently achieves.
+- **[Photon Model](https://civitai.com/models/84728/photon)**: A fine-tuning of SD1.5 aimed at generating photorealistic and visually appealing images effortlessly.
+- **[The Abominable Workflows](https://civitai.com/models/420163)**: A set of workflows for ComfyUI that emulated, through a spaghetti nightmare, what TinyBreaker currently achieves.
 
 
 ## Models Required
@@ -32,35 +32,43 @@ You need to have the following files copied in your ComfyUI application:
 - **[t5xxl_fp8_e4m3fn.safetensors](https://huggingface.co/Comfy-Org/stable-diffusion-3.5-fp8/blob/main/text_encoders/t5xxl_fp8_e4m3fn.safetensors)**: This text encoder, used for FLUX and SD3.5 as well, should be installed in the `ComfyUI/models/clip` folder (or alternatively in `ComfyUI/models/text_encoders`).
 
 
-## Installing the Nodes
+## Installation
 > [!IMPORTANT]
 > Ensure you have the latest version of [ComfyUi](https://github.com/comfyanonymous/ComfyUI) installed.
 
+### Installation via ComfyUI Manager
 
-### Manual Installation on Linux
+1. Access the Manager within ComfyUI.
+2. Click "Install via GIT URL" and write:
+   ```
+   https://github.com/martin-rizzo/ComfyUI-TinyBreaker
+   ```
+3. After installation, restart the ComfyUI application.
 
-To install on a Linux system, follow these steps:
+### Manual Installation
 
-1. Open your terminal.
+To manually install the nodes, follow these steps:
+
+1. Open your preferred file explorer or terminal application.
 2. Navigate to your ComfyUI directory:
    ```bash
    cd <your_comfyui_directory>
    ```
-3. Move into the `custom_nodes` folder and clone the repository:
+3. Move into the **custom_nodes** folder and clone the repository:
    ```bash
    cd custom_nodes
    git clone https://github.com/martin-rizzo/ComfyUI-TinyBreaker
    ```
 
-### Manually Installation on Windows
+### Manual Installation (Windows Portable Version)
 
 For those using the standalone ComfyUI release on Windows:
 
-1. Open a command prompt (CMD).
-2. Navigate to the "ComfyUI_windows_portable" folder, which contains the `run_nvidia_gpu.bat` file.
-3. Execute the following command:
-   ```bash
-   git clone https://github.com/martin-rizzo/ComfyUI-TinyBreaker ComfyUI\custom_nodes\ComfyUI-TinyBreaker
+1. Go to where you unpacked **ComfyUI_windows_portable**. You'll find your `run_nvidia_gpu.bat` file here, confirming the correct location.
+2. Press **CTRL+SHIFT+Right click** in an empty space and select "Open PowerShell window here".
+3. Clone the repository into your custom nodes folder using:
+   ```
+   git clone https://github.com/martin-rizzo/ComfyUI-TinyBreaker .\ComfyUI\custom_nodes\ComfyUI-TinyBreaker
    ```
 
 ## Prompt Parameters
