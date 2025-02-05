@@ -63,6 +63,32 @@ For those using the standalone ComfyUI release on Windows:
    git clone https://github.com/martin-rizzo/ComfyUI-TinyBreaker ComfyUI\custom_nodes\ComfyUI-TinyBreaker
    ```
 
+## Prompt Parameters
+> [!NOTE]
+> You can adjust these parameters by placing the cursor over them and using `CTRL+UP` to increase or `CTRL+DOWN` to decrease the values.
+
+### **Minor Adjustments**
+
+| Parameter                                  | Description                                                                  | Example               |
+|--------------------------------------------|------------------------------------------------------------------------------|-----------------------|
+| **`--no <text>`**                          | Specifies elements that should not appear in the image. (negative prompt)    | `--no trees, clouds`  |
+| **`--refine <text>`**                      | Provides a textual description of what elements should be refined.           | `--refine cats ears`  |
+| **`--variant <number>`**                   | Specifies variants of the refinement without changing composition.           | `--variant 2`         |
+| **`--cfg-adjust <decimal>`**               | Adjusts the value of the Classifier-Free Guidance (CFG).                     | `--cfg-adjust -0.2`   |
+| **`--detail <level>`**                     | Sets the intensity level for detail refinement.                              | `--detail normal`     |
+
+### **Major Changes**
+
+| Parameter                                      | Description                                                              | Example               |
+|------------------------------------------------|--------------------------------------------------------------------------|-----------------------|
+| **`--seed <number>`**                          | Defines a number for initializing the random generator.                  | `--seed 42`           |
+| **`--aspect <ratio>`**                         | Specifies the aspect ratio of the image.                                 | `--aspect 16:9`       |
+| **`--landscape`** / **`--portrait`**           | Specifies orientation of the image (horizontal or vertical).             | `--portrait`          |
+| **`--small`** / **`--medium`** / **`--large`** | Controls generated image size.                                           | `--medium`            |
+| **`--batch-size <number>`**                    | Specifies number of images to generate in a batch.                       | `--batch-size 4`      |
+| **`--style <style>`**                          | Defines the artistic style of the image.                                 | `--style PIXEL_ART`   |
+
+*For more details on these parameters, see [docs/prompt_parameters.md](docs/prompt_parameters.md).*
 
 ## Acknowledgments
 
