@@ -20,6 +20,21 @@
 While still in the prototype stage, the TinyBreaker model stands out for its unique features. To learn more about its strengths and discover upcoming improvements, check out ["What is TinyBreaker?"](docs/tinybreaker.md)
 
 
+## Table of Contents
+
+1. [Required Files](#required-files)
+2. [Node Installation](#node-installation)
+   - [Installation via ComfyUI Manager](#installation-via-comfui-manager)
+   - [Manual Installation](#manual-installation)
+   - [Manual Installation (Windows Portable Version)](#manual-installation-windows-portable-version)
+3. [Prompt Parameters](#prompt-parameters)
+   - [Minor Adjustments](#minor-adjustments)
+   - [Major Changes](#major-changes)
+   - [Examples](#examples)
+4. [Acknowledgments](#acknowledgments)
+5. [License](#license)
+
+
 ## Required Files
 
 You need to have these two models copied into your ComfyUI application:
