@@ -8,15 +8,19 @@
 <img alt="Platform" src="https://img.shields.io/badge/platform-ComfyUI-33F">
 <img alt="License"  src="https://img.shields.io/github/license/martin-rizzo/ComfyUI-TinyBreaker?color=11D">
 <img alt="Version"  src="https://img.shields.io/github/v/tag/martin-rizzo/ComfyUI-TinyBreaker?label=version">
-<img alt="Last"     src="https://img.shields.io/github/last-commit/martin-rizzo/ComfyUI-TinyBreaker?color=33F">
+<img alt="Last"     src="https://img.shields.io/github/last-commit/martin-rizzo/ComfyUI-TinyBreaker?color=33F"> |
+<a href="https://civitai.com/models/1213728/tinybreaker">
+   <img alt="CivitAI"      src="https://img.shields.io/badge/page-CivitAI-00F"></a>
+<!--
+<a href="https://huggingface.co/martin-rizzo/tinybreaker">
+   <img alt="Hugging Face" src="https://img.shields.io/badge/models-HuggingFace-yellow"></a>
+-->
 </p>
 </div>
 
 **ComfyUI-TinyBreaker** is a collection of custom nodes specifically designed to generate images using the TinyBreaker model. It's actively developed with ongoing improvements. Although still in progress, these nodes are functional and allow you to explore the potential of the model.
 
-
-### TinyBreaker model
-
+**TinyBreaker model**  
 While still in the prototype stage, the TinyBreaker model stands out for its unique features. To learn more about its strengths and discover upcoming improvements, check out ["What is TinyBreaker?"](docs/tinybreaker.md)
 
 
@@ -24,7 +28,7 @@ While still in the prototype stage, the TinyBreaker model stands out for its uni
 
 1. [Required Files](#required-files)
 2. [Node Installation](#node-installation)
-   - [Installation via ComfyUI Manager](#installation-via-comfui-manager)
+   - [Installation via ComfyUI Manager](#installation-via-comfyui-manager)
    - [Manual Installation](#manual-installation)
    - [Manual Installation (Windows Portable Version)](#manual-installation-windows-portable-version)
 3. [Prompt Parameters](#prompt-parameters)
