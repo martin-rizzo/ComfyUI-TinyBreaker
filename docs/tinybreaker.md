@@ -13,10 +13,16 @@
 TinyBreaker is notable for its low parameter count, featuring just 0.6 billion parameters in the base model. This efficiency means that high-quality image generation requires significantly fewer computational resources compared to heavier models.
 
 **Quick Performance:**
-Currently, TinyBreaker can produce an image of size 1536×1024 within approximately 10 to 15 seconds using an NVIDIA RTX 3080 GPU. Efforts are ongoing to enhance the model's speed further, aiming for even faster performance without sacrificing quality.
+TinyBreaker currently generates images of size 1536×1024 in approximately 10 to 15 seconds using a NVIDIA RTX 3080 GPU. Initially, my goal was always to achieve image generation in under 10 seconds, and I continue striving towards this target. By exploring new optimizations, there is potential to meet this objective while maintaining high quality.
 
 **High Prompt Adherence:**
 Thanks to the PixArt model integration, TinyBreaker achieves impressive adherence to prompts despite its minimal parameter count. This ensures that the generated images closely align with user instructions and expectations.
+
+
+## Limitations of TinyBreaker
+
+**Text Generation Challenges:**
+Currently, TinyBreaker faces significant challenges in producing legible text within images. Given that its underlying PixArt model was not specifically trained on tasks involving detailed text generation, achieving high-quality lettering is problematic. As a result, enhancing this capability may be difficult or nearly impossible without substantial retraining beyond simple fine-tuning.
 
 
 ## The Technical Edge

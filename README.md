@@ -15,18 +15,14 @@
 **ComfyUI-TinyBreaker** is a collection of custom nodes specifically designed to generate images using the TinyBreaker model. It's actively developed with ongoing improvements. Although still in progress, these nodes are functional and allow you to explore the potential of the model.
 
 
-## What is TinyBreaker?
+### TinyBreaker model
 
-**TinyBreaker** is a hybrid model that combines the [PixArt model](https://github.com/PixArt-alpha/PixArt-sigma) for base image generation with Photon model (or any SD1 model) for image refinement. The idea is to leverage both models' strengths in these tasks, enabling them to operate efficiently on mid and low-end hardware due to their minimal parameter count. Moreover, by sequentially executing both models, you can offload them to system RAM reducing the VRAM usage. Additionally, TinyBreaker employs [Tiny Autoencoders](https://github.com/madebyollin/taesd) for latent space conversion, optimizing performance and efficiency.
-
-**TinyBreaker** is the natural evolution of my two previous developments:
-- **[Photon Model](https://civitai.com/models/84728/photon)**: A fine-tuning of SD1.5 aimed at generating photorealistic and visually appealing images effortlessly.
-- **[The Abominable Workflows](https://civitai.com/models/420163)**: A set of workflows for ComfyUI that emulated, through a spaghetti nightmare, what TinyBreaker currently achieves.
+While still in the prototype stage, the TinyBreaker model stands out for its unique features. To learn more about its strengths and discover upcoming improvements, check out ["What is TinyBreaker?"](docs/tinybreaker.md)
 
 
-## Models Required
+## Required Files
 
-You need to have two models copied into your ComfyUI application:
+You need to have these two models copied into your ComfyUI application:
 
 - **[tinybreaker_prototype0.safetensors](https://civitai.com/models/1213728) (3.0 GB)**:
     - place the file in the `'ComfyUI/models/checkpoints'` folder.
@@ -35,7 +31,7 @@ You need to have two models copied into your ComfyUI application:
     - this model is a versatile text encoder used by FLUX and SD3.5 as well.
 
 
-## Installation
+## Node Installation
 _Ensure you have the latest version of [ComfyUi](https://github.com/comfyanonymous/ComfyUI)._
 
 ### Installation via ComfyUI Manager
