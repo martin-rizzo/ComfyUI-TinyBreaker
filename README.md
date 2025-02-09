@@ -88,10 +88,18 @@ For those using the standalone ComfyUI release on Windows:
    git clone https://github.com/martin-rizzo/ComfyUI-TinyBreaker .\ComfyUI\custom_nodes\ComfyUI-TinyBreaker
    ```
 
-## Prompt Parameters
+## Experimental Features
+
+This section describes the experimental features included in ComfyUI-TinyBreaker.
+
+### Unified Prompt
+
+ComfyUI-TinyBreaker introduces a custom node that allows you to input the prompt and parameters all together in a single text area, streamlining the workflow.  The prompt is entered as usual, followed by a series of parameters, each prefixed with `--`.
+
+#### Prompt Parameters
 _For more details on these parameters, see [docs/prompt_parameters.md](docs/prompt_parameters.md)._
 
-### **Minor Adjustments**
+##### **Minor Adjustments**
 
 | Parameter                                      | Description                                                                |
 |------------------------------------------------|----------------------------------------------------------------------------|
@@ -101,7 +109,7 @@ _For more details on these parameters, see [docs/prompt_parameters.md](docs/prom
 | **`--cfg-adjust <decimal>`**                   | Adjusts the value of the Classifier-Free Guidance (CFG).                   |
 | **`--detail <level>`**                         | Sets the intensity level for detail refinement.                            |
 
-### **Major Changes**
+##### **Major Changes**
 
 | Parameter                                      | Description                                                                |
 |------------------------------------------------|----------------------------------------------------------------------------|
@@ -112,10 +120,30 @@ _For more details on these parameters, see [docs/prompt_parameters.md](docs/prom
 | **`--batch-size <number>`**                    | Specifies number of images to generate in a batch.                         |
 | **`--style <style>`**                          | Defines the artistic style of the image.                                   |
 
-### Examples
+##### Examples
 
 `--no trees, clouds` `--refine cats ears` `--variant 2` `--cfg-adjust -0.2` `--detail normal`  
 `--seed 42` `--aspect 16:9` `--portrait` `--medium` `--batch-size 4` `--style PIXEL_ART`
+
+
+#### Special Keys
+
+The Unified Prompt text area supports special keys to simplify parameter input:
+
+*   **`--` CTRL+RIGHT:**  Auto-completes available parameters one by one. Use CTRL+RIGHT/LEFT to navigate the list of available parameters.
+*   **`--<letter>` CTRL+RIGHT:** If you type `--` followed by the beginning of a parameter name (e.g., `--d`), pressing CTRL+RIGHT will auto-complete the full parameter name (e.g., `--detail`).
+*   **CTRL+UP/DOWN (over a parameter value):**  Increments or decrements the numerical value associated with the parameter. For example, placing the cursor over `--seed 20` and pressing CTRL+UP will change the text to `--seed 21`.
+
+### Stylos
+
+The `Stylos` custom node allows you to select an image style. This node injects text into the prompt and modifies sampler parameters to influence the image generation.
+
+### CivitAI/A1111 Compatible Image Embedding
+
+ComfyUI-TinyBreaker includes a custom node that embeds the workflow into the generated image (as is standard in ComfyUI).  In addition, it embeds prompt and parameter information compatible with CivitAI and A1111. This enables:
+
+*   CivitAI to read the prompt information when the image is uploaded.
+*   A wide range of A1111-compatible applications to read the prompt used to generate the image.
 
 
 ## Acknowledgments
