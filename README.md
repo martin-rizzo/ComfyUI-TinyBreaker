@@ -90,11 +90,11 @@ For those using the standalone ComfyUI release on Windows:
 
 ## Workflow Example
 
-This image contains a simple workflow for utilizing the TinyBreaker model. To execute this workflow, simply drag and drop the  image into ComfyUI.
+This image contains a simple workflow for testing the TinyBreaker model. To load this workflow, simply drag and drop the image into ComfyUI.
 
 <img src="workflows/tinybreaker_example.png" width="100px">
 
-For further information and additional workflow examples, please consult the [workflows folder](workflows). 
+_For further information and additional workflow examples, please consult the [workflows folder](workflows)._
 
 
 ## Features
