@@ -31,10 +31,11 @@ While still in the prototype stage, the TinyBreaker model stands out for its uni
    - [Installation via ComfyUI Manager](#installation-via-comfyui-manager)
    - [Manual Installation](#manual-installation)
    - [Manual Installation (Windows Portable Version)](#manual-installation-windows-portable-version)
-3. [Prompt Parameters](#prompt-parameters)
-   - [Minor Adjustments](#minor-adjustments)
-   - [Major Changes](#major-changes)
-   - [Examples](#examples)
+3. [Features](#features)
+   - [Unified Prompt](#unified-prompt)
+   - [Special Ctrl Keys](#special-ctrl-keys)
+   - [Styles](#styles)]
+   - [CivitAI/A1111 Image Compatibility](#civitaia1111-image-compatibility)
 4. [Acknowledgments](#acknowledgments)
 5. [License](#license)
 
@@ -132,11 +133,11 @@ When using the Unified Prompt node:
 _For more details on these parameters, see [docs/prompt_parameters.md](docs/prompt_parameters.md)._
 
 
-### Special CTRL Keys
+### Special Ctrl Keys
 
 The __'Unified Prompt'__ node offers special control keys for simplifying parameter input and modification:
 
-- **CTRL+RIGHT after `--<letter>`:**  Initiate a parameter name by typing `--` followed by its beginning (e.g., `--d`). Pressing CTRL+RIGHT will automatically complete the full parameter name (e.g., `--detail`).
+- **CTRL+RIGHT (autocomplete):**  Initiate a parameter name by typing `--` followed by its beginning (e.g., `--d`). Pressing CTRL+RIGHT will automatically complete the full parameter name (e.g., `--detail`).
 - **CTRL+UP/DOWN (over parameter value):**  Increment or decrement the value associated with a parameter. For instance, if your cursor is positioned over `--seed 20` and you press CTRL+UP, the text will change to `--seed 21`.
 
 
