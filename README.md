@@ -51,20 +51,21 @@ You need to have these two models copied into your ComfyUI application:
 ## Node Installation
 _Ensure you have the latest version of [ComfyUi](https://github.com/comfyanonymous/ComfyUI)._
 
-### Installation via ComfyUI Manager
+### Installation via ComfyUI Manager (Recommended)
 
-1. Access the Manager within ComfyUI.
-2. Click "Install via GIT URL" and write:
-   ```
-   https://github.com/martin-rizzo/ComfyUI-TinyBreaker
-   ```
-3. After installation, restart the ComfyUI application.
+The easiest way to install the nodes is through ComfyUI Manager:
+
+  1. Open ComfyUI and click on the "Manager" button to launch the "ComfyUI Manager Menu".
+  2. Within the ComfyUI Manager, locate and click on the "Custom Nodes Manager" button.
+  3. In the search bar, type "tinybreaker".
+  4. Select the "ComfyUI-TinyBreaker" node from the search results and click the "Install" button.
+  5. Restart ComfyUI to ensure the changes take effect.
 
 ### Manual Installation
 
-To manually install the nodes, follow these steps:
+To manually install the nodes:
 
-1. Open your preferred file explorer or terminal application.
+1. Open your preferred terminal application.
 2. Navigate to your ComfyUI directory:
    ```bash
    cd <your_comfyui_directory>
