@@ -2,23 +2,13 @@
 
 # ComfyUI-TinyBreaker
 
-<!--
-<p>
-<img alt="Platform" src="https://img.shields.io/badge/platform-ComfyUI-33F">
-<img alt="License"  src="https://img.shields.io/github/license/martin-rizzo/ComfyUI-TinyBreaker?color=11D">
-<img alt="Version"  src="https://img.shields.io/github/v/tag/martin-rizzo/ComfyUI-TinyBreaker?label=version">
-<img alt="Last"     src="https://img.shields.io/github/last-commit/martin-rizzo/ComfyUI-TinyBreaker?color=33F"> |
-<a href="https://civitai.com/models/1213728/tinybreaker">
-   <img alt="CivitAI"      src="https://img.shields.io/badge/page-CivitAI-00F"></a>
-<a href="https://huggingface.co/martin-rizzo/tinybreaker">
-   <img alt="Hugging Face" src="https://img.shields.io/badge/models-HuggingFace-yellow"></a>
-</p>
--->
-
-
-[![CivitAI](https://img.shields.io/badge/CivitAI%3A-TinyBreaker-EEE?labelColor=1971C2&logo=c%2B%2B&logoColor=white)](https://civitai.com/models/1213728)
-[![Hugging Face](https://img.shields.io/badge/Hugging%20Face%3A-TinyBreaker-EEE?labelColor=FFD21E&logo=huggingface&logoColor=000)](https://huggingface.co/martin-rizzo/TinyBreaker.prototype0)
-
+<!-- Badges -->
+[![Platform](https://img.shields.io/badge/platform%3A-ComfyUI-007BFF)](#)
+[![License](https://img.shields.io/github/license/martin-rizzo/ComfyUI-TinyBreaker?label=license%3A&color=28A745)](#)
+[![Version](https://img.shields.io/github/v/tag/martin-rizzo/ComfyUI-TinyBreaker?label=version%3A&color=FFC107)](#)
+[![Last](https://img.shields.io/github/last-commit/martin-rizzo/ComfyUI-TinyBreaker?label=last%20commit%3A)](#)
+| [![CivitAI](https://img.shields.io/badge/CivitAI%3A-TinyBreaker-EEE?labelColor=1971C2&logo=c%2B%2B&logoColor=white)](https://civitai.com/models/1213728)
+| [![Hugging Face](https://img.shields.io/badge/Hugging%20Face%3A-TinyBreaker-EEE?labelColor=FFD21E&logo=huggingface&logoColor=000)](https://huggingface.co/martin-rizzo/TinyBreaker.prototype0)
 
 ![TinyBreaker](./docs/img/tinybreaker_grid.jpg)
 
