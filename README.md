@@ -90,7 +90,7 @@ For those using the standalone ComfyUI release on Windows:
 
 ## Features
 
-## Unified Prompt and Parameters
+### Unified Prompt
 
 The __'Unified Prompt'__ node allows you to input both your prompt and parameters within a single text area, streamlining your workflow. This eliminates the need for separate input fields.
 
@@ -98,11 +98,10 @@ When using the Unified Prompt node:
 
 * Begin by typing your desired prompt text as usual.
 * Then write any necessary parameters, each preceded by a double hyphen (`--`).
-* Utilize the special keys CTRL+UP and CTRL+DOWN to increment or decrement the values of each parameter.
+* Utilize the special keys CTRL+UP and CTRL+DOWN to modify the values of each parameter.
 
 
-#### Prompt Parameters
-_For more details on these parameters, see [docs/prompt_parameters.md](docs/prompt_parameters.md)._
+#### Parameters Supported by the Unified Prompt
 
 ##### Minor Adjustments
 
@@ -130,14 +129,15 @@ _For more details on these parameters, see [docs/prompt_parameters.md](docs/prom
 `--no trees, clouds` `--refine cats ears` `--variant 2` `--cfg-adjust -0.2` `--detail normal`  
 `--seed 42` `--aspect 16:9` `--portrait` `--medium` `--batch-size 4` `--style PIXEL_ART`
 
+_For more details on these parameters, see [docs/prompt_parameters.md](docs/prompt_parameters.md)._
 
-#### Special Keys
 
-The Unified Prompt text area supports special keys to simplify parameter input:
+### Special CTRL Keys
 
-*   **`--` CTRL+RIGHT:**  Auto-completes available parameters one by one. Use CTRL+RIGHT/LEFT to navigate the list of available parameters.
-*   **`--<letter>` CTRL+RIGHT:** If you type `--` followed by the beginning of a parameter name (e.g., `--d`), pressing CTRL+RIGHT will auto-complete the full parameter name (e.g., `--detail`).
-*   **CTRL+UP/DOWN (over a parameter value):**  Increments or decrements the numerical value associated with the parameter. For example, placing the cursor over `--seed 20` and pressing CTRL+UP will change the text to `--seed 21`.
+The __'Unified Prompt'__ node offers special control keys for simplifying parameter input and modification:
+
+- **CTRL+RIGHT after `--<letter>`:**  Initiate a parameter name by typing `--` followed by its beginning (e.g., `--d`). Pressing CTRL+RIGHT will automatically complete the full parameter name (e.g., `--detail`).
+- **CTRL+UP/DOWN (over parameter value):**  Increment or decrement the value associated with a parameter. For instance, if your cursor is positioned over `--seed 20` and you press CTRL+UP, the text will change to `--seed 21`.
 
 
 ### Styles
