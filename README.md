@@ -90,9 +90,16 @@ For those using the standalone ComfyUI release on Windows:
 
 ## Features
 
-### Unified Prompt
+## Unified Prompt and Parameters
 
-ComfyUI-TinyBreaker introduces a custom node that allows you to input the prompt and parameters all together in a single text area, streamlining the workflow. The prompt is entered as usual, followed by a series of parameters, each prefixed with `--`.
+The __'Unified Prompt'__ node allows you to input both your prompt and parameters within a single text area, streamlining your workflow. This eliminates the need for separate input fields.
+
+When using the Unified Prompt node:
+
+* Begin by typing your desired prompt text as usual.
+* Then write any necessary parameters, each preceded by a double hyphen (`--`).
+* Utilize the special keys CTRL+UP and CTRL+DOWN to increment or decrement the values of each parameter.
+
 
 #### Prompt Parameters
 _For more details on these parameters, see [docs/prompt_parameters.md](docs/prompt_parameters.md)._
@@ -154,7 +161,7 @@ The __'Select Style'__ node allows you to select an image style. This node injec
 The __'Save Image'__ node embeds workflow information into the generated image. Additionally, it embeds prompt and parameter information in a format compatible with CivitAI/A1111, this enables:
 
   * CivitAI can read the prompt used to generate the image when uploaded.
-  * A wide range of A1111-compatible applications can access the prompt and parameters used for image generation.
+  * A wide range of applications can access the prompt and parameters used for image generation.
 
 
 ## Acknowledgments
