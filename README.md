@@ -151,10 +151,10 @@ The __'Select Style'__ node allows you to select an image style. This node injec
 
 ### CivitAI/A1111 Image Compatibility
 
-ComfyUI-TinyBreaker includes a custom node that embeds the workflow into the generated image (as is standard in ComfyUI).  In addition, it embeds prompt and parameter information compatible with CivitAI and A1111. This enables:
+The __'Save Image'__ node embeds workflow information into the generated image. Additionally, it embeds prompt and parameter information in a format compatible with CivitAI/A1111, this enables:
 
-*   CivitAI to read the prompt information when the image is uploaded.
-*   A wide range of A1111-compatible applications to read the prompt used to generate the image.
+  * CivitAI can read the prompt used to generate the image when uploaded.
+  * A wide range of A1111-compatible applications can access the prompt and parameters used for image generation.
 
 
 ## Acknowledgments
