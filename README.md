@@ -28,13 +28,14 @@ While still in the prototype stage, the TinyBreaker model stands out for its uni
    - [Installation via ComfyUI Manager](#installation-via-comfyui-manager)
    - [Manual Installation](#manual-installation)
    - [Manual Installation (Windows Portable Version)](#manual-installation-windows-portable-version)
-3. [Features](#features)
+3. [Workflow Example](#workflow-example)
+4. [Features](#features)
+   - [Styles](#styles)
    - [Unified Prompt](#unified-prompt)
    - [Special Ctrl Keys](#special-ctrl-keys)
-   - [Styles](#styles)]
    - [CivitAI/A1111 Image Compatibility](#civitaia1111-image-compatibility)
-4. [Acknowledgments](#acknowledgments)
-5. [License](#license)
+5. [Acknowledgments](#acknowledgments)
+6. [License](#license)
 
 
 ## Required Files
@@ -87,7 +88,32 @@ For those using the standalone ComfyUI release on Windows:
    git clone https://github.com/martin-rizzo/ComfyUI-TinyBreaker .\ComfyUI\custom_nodes\ComfyUI-TinyBreaker
    ```
 
+## Workflow Example
+
+This image contains a simple workflow for utilizing the TinyBreaker model. To execute this workflow, simply drag and drop the  image into ComfyUI.
+
+<img src="workflows/tinybreaker_example.png" width="100px">
+
+For further information and additional workflow examples, please consult the [workflows folder](workflows). 
+
+
 ## Features
+
+### Styles
+
+The __'Select Style'__ node allows you to select an image style. This node injects text into the prompt and modifies sampler parameters to influence the image generation. Please note that these styles are still in development, as I am experimenting with different parameter combinations to refine them over time. Therefore, they might not always function perfectly or reflect exactly what is described here.
+
+#### Available Styles
+| Style Name           | Description                                                    |
+|----------------------|----------------------------------------------------------------|
+| `PHOTO`              | Realistic images that closely resemble photographs.            |
+| `DARKFAN80`          | Dark fantasy images with 80s cinematic style.                  |
+| `LITTLETOY`          | Cute, minimalist images in the style of small toys.            |
+| `PIXEL_ART`          | Pixel art images with retro and blocky details.                |
+| `COLOR_INK`          | Beautiful drawings in vibrant colorful ink style.              |
+| `REALISTIC_WAIFU_X`  | Realistic images where a woman is the main subject.            |
+| `REALISTIC_WAIFU_Z`  | Realistic images where a woman is the main subject (variant)   |
+
 
 ### Unified Prompt
 
@@ -137,22 +163,6 @@ The __'Unified Prompt'__ node offers special control keys for simplifying parame
 
 - **CTRL+RIGHT (autocomplete):**  Initiate a parameter name by typing `--` followed by its beginning (e.g., `--d`). Pressing CTRL+RIGHT will automatically complete the full parameter name (e.g., `--detail`).
 - **CTRL+UP/DOWN (over parameter value):**  Increment or decrement the value associated with a parameter. For instance, if your cursor is positioned over `--seed 20` and you press CTRL+UP, the text will change to `--seed 21`.
-
-
-### Styles
-
-The __'Select Style'__ node allows you to select an image style. This node injects text into the prompt and modifies sampler parameters to influence the image generation. Please note that these styles are still in development, as I am experimenting with different parameter combinations to refine them over time. Therefore, they might not always function perfectly or reflect exactly what is described here.
-
-#### Available Styles
-| Style Name           | Description                                                    |
-|----------------------|----------------------------------------------------------------|
-| `PHOTO`              | Realistic images that closely resemble photographs.            |
-| `DARKFAN80`          | Dark fantasy images with 80s cinematic style.                  |
-| `LITTLETOY`          | Cute, minimalist images in the style of small toys.            |
-| `PIXEL_ART`          | Pixel art images with retro and blocky details.                |
-| `COLOR_INK`          | Beautiful drawings in vibrant colorful ink style.              |
-| `REALISTIC_WAIFU_X`  | Realistic images where a woman is the main subject.            |
-| `REALISTIC_WAIFU_Z`  | Realistic images where a woman is the main subject (variant)   |
 
 
 ### CivitAI/A1111 Image Compatibility
