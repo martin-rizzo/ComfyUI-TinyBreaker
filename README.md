@@ -135,18 +135,18 @@ The Unified Prompt text area supports special keys to simplify parameter input:
 
 ### Styles
 
-The `Select Style` node allows you to select an image style. This node injects text into the prompt and modifies sampler parameters to influence the image generation. Please note that these styles are still in development, as I am experimenting with different parameter combinations to refine them over time. Therefore, they might not always function perfectly or reflect exactly what is described here.
+The __'Select Style'__ node allows you to select an image style. This node injects text into the prompt and modifies sampler parameters to influence the image generation. Please note that these styles are still in development, as I am experimenting with different parameter combinations to refine them over time. Therefore, they might not always function perfectly or reflect exactly what is described here.
 
 #### Available Styles
-| Style Name               | Description                                                    |
-|--------------------------|----------------------------------------------------------------|
-| **`PHOTO`**              | Realistic images that closely resemble photographs.            |
-| **`DARKFAN80`**          | Dark fantasy images with 80s cinematic style.                  |
-| **`LITTLETOY`**          | Cute, minimalist images in the style of small toys.            |
-| **`PIXEL_ART`**          | Pixel art images with retro and blocky details.                |
-| **`COLOR_INK`**          | Beautiful drawings in vibrant colorful ink style.              |
-| **`REALISTIC_WAIFU_X`**  | Realistic images where a woman is the main subject.            |
-| **`REALISTIC_WAIFU_Z`**  | Realistic images where a woman is the main subject (variant)   |
+| Style Name           | Description                                                    |
+|----------------------|----------------------------------------------------------------|
+| `PHOTO`              | Realistic images that closely resemble photographs.            |
+| `DARKFAN80`          | Dark fantasy images with 80s cinematic style.                  |
+| `LITTLETOY`          | Cute, minimalist images in the style of small toys.            |
+| `PIXEL_ART`          | Pixel art images with retro and blocky details.                |
+| `COLOR_INK`          | Beautiful drawings in vibrant colorful ink style.              |
+| `REALISTIC_WAIFU_X`  | Realistic images where a woman is the main subject.            |
+| `REALISTIC_WAIFU_Z`  | Realistic images where a woman is the main subject (variant)   |
 
 
 ### CivitAI/A1111 Image Compatibility
