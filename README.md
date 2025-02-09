@@ -88,18 +88,16 @@ For those using the standalone ComfyUI release on Windows:
    git clone https://github.com/martin-rizzo/ComfyUI-TinyBreaker .\ComfyUI\custom_nodes\ComfyUI-TinyBreaker
    ```
 
-## Experimental Features
-
-This section describes the experimental features included in ComfyUI-TinyBreaker.
+## Features
 
 ### Unified Prompt
 
-ComfyUI-TinyBreaker introduces a custom node that allows you to input the prompt and parameters all together in a single text area, streamlining the workflow.  The prompt is entered as usual, followed by a series of parameters, each prefixed with `--`.
+ComfyUI-TinyBreaker introduces a custom node that allows you to input the prompt and parameters all together in a single text area, streamlining the workflow. The prompt is entered as usual, followed by a series of parameters, each prefixed with `--`.
 
 #### Prompt Parameters
 _For more details on these parameters, see [docs/prompt_parameters.md](docs/prompt_parameters.md)._
 
-##### **Minor Adjustments**
+##### Minor Adjustments
 
 | Parameter                                      | Description                                                                |
 |------------------------------------------------|----------------------------------------------------------------------------|
@@ -109,7 +107,7 @@ _For more details on these parameters, see [docs/prompt_parameters.md](docs/prom
 | **`--cfg-adjust <decimal>`**                   | Adjusts the value of the Classifier-Free Guidance (CFG).                   |
 | **`--detail <level>`**                         | Sets the intensity level for detail refinement.                            |
 
-##### **Major Changes**
+##### Major Changes
 
 | Parameter                                      | Description                                                                |
 |------------------------------------------------|----------------------------------------------------------------------------|
@@ -134,11 +132,24 @@ The Unified Prompt text area supports special keys to simplify parameter input:
 *   **`--<letter>` CTRL+RIGHT:** If you type `--` followed by the beginning of a parameter name (e.g., `--d`), pressing CTRL+RIGHT will auto-complete the full parameter name (e.g., `--detail`).
 *   **CTRL+UP/DOWN (over a parameter value):**  Increments or decrements the numerical value associated with the parameter. For example, placing the cursor over `--seed 20` and pressing CTRL+UP will change the text to `--seed 21`.
 
-### Stylos
 
-The `Stylos` custom node allows you to select an image style. This node injects text into the prompt and modifies sampler parameters to influence the image generation.
+### Styles
 
-### CivitAI/A1111 Compatible Image Embedding
+The `Select Style` node allows you to select an image style. This node injects text into the prompt and modifies sampler parameters to influence the image generation. Please note that these styles are still in development, as I am experimenting with different parameter combinations to refine them over time. Therefore, they might not always function perfectly or reflect exactly what is described here.
+
+#### Available Styles
+| Style Name               | Description                                                    |
+|--------------------------|----------------------------------------------------------------|
+| **`PHOTO`**              | Realistic images that closely resemble photographs.            |
+| **`DARKFAN80`**          | Dark fantasy images with 80s cinematic style.                  |
+| **`LITTLETOY`**          | Cute, minimalist images in the style of small toys.            |
+| **`PIXEL_ART`**          | Pixel art images with retro and blocky details.                |
+| **`COLOR_INK`**          | Beautiful drawings in vibrant colorful ink style.              |
+| **`REALISTIC_WAIFU_X`**  | Realistic images where a woman is the main subject.            |
+| **`REALISTIC_WAIFU_Z`**  | Realistic images where a woman is the main subject (variant)   |
+
+
+### CivitAI/A1111 Image Compatibility
 
 ComfyUI-TinyBreaker includes a custom node that embeds the workflow into the generated image (as is standard in ComfyUI).  In addition, it embeds prompt and parameter information compatible with CivitAI and A1111. This enables:
 
