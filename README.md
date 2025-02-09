@@ -1,9 +1,6 @@
 <div align="center">
 
 # ComfyUI-TinyBreaker
-
-![TinyBreaker Experimental Nodes](./docs/img/banner_nodes.jpg)
-
 <p>
 <img alt="Platform" src="https://img.shields.io/badge/platform-ComfyUI-33F">
 <img alt="License"  src="https://img.shields.io/github/license/martin-rizzo/ComfyUI-TinyBreaker?color=11D">
@@ -16,6 +13,9 @@
    <img alt="Hugging Face" src="https://img.shields.io/badge/models-HuggingFace-yellow"></a>
 -->
 </p>
+
+![TinyBreaker](./docs/img/tinybreaker_grid.jpg)
+
 </div>
 
 **ComfyUI-TinyBreaker** is a collection of custom nodes specifically designed to generate images using the TinyBreaker model. It's actively developed with ongoing improvements. Although still in progress, these nodes are functional and allow you to explore the potential of the model.
