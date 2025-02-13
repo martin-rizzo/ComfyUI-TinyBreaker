@@ -278,8 +278,9 @@ class TimestepEmbedder(nn.Module):
         #  positional_encodings -> [batch_size, positional_channels]
         #  embedding            -> [batch_size,   output_channels  ]
         mlp_dtype            = self.mlp[0].bias.dtype
+        mlp_device           = self.mlp[0].bias.device
         positional_encodings = _generate_positional_encodings(timesteps, self.positional_channels, sincos=False, dtype=self.positional_dtype)
-        embedding = self.mlp( positional_encodings.to(mlp_dtype) )
+        embedding = self.mlp( positional_encodings.to(mlp_device, dtype=mlp_dtype) )
         return embedding
 
 
