@@ -12,7 +12,7 @@ License : MIT
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import torch
-import torch.nn as nn
+import torch.nn as torch_nn
 import torch.nn.functional as F
 
 #--------------------------------- HELPERS ---------------------------------#
@@ -75,23 +75,29 @@ def _generate_positional_encodings(positions: torch.Tensor,
     return embed
 
 
-class _MultilayerPerceptron(nn.Module):
+class _MultilayerPerceptron(torch_nn.Module):
     """
     Simple Multilayer Perceptron (MLP) module.
     Args:
         input_dim  (int): Number of input dimensions.
         hidden_dim (int): Number of dimensions in the hidden layer.
         output_dim (int): Number of output dimensions.
-        gelu_approximation (str, optional): Approximation method for GELU activation.
-            Options are "tanh" or "none". Defaults to "tanh".
+        gelu_approximation (str): Approximation method for GELU activation.
+                                  Options are "tanh" or "none". Defaults to "tanh".
+        nn (optional): The neural network module to use. Defaults to `torch.nn`.
+                       This parameter allows for injecting custom or optimized
+                       implementations of neural network module (`nn`).
     """
     def __init__(self,
                  input_dim         : int,
                  hidden_dim        : int,
                  output_dim        : int,
-                 gelu_approximation: str = "tanh"
+                 gelu_approximation: str = "tanh",
+                 nn = None
                  ):
         super().__init__()
+        if nn is None:
+            nn = torch_nn
         self.fc1 = nn.Linear(input_dim, hidden_dim)
         self.act = nn.GELU(approximate=gelu_approximation)
         self.fc2 = nn.Linear(hidden_dim, output_dim)
@@ -103,18 +109,24 @@ class _MultilayerPerceptron(nn.Module):
         return x
 
 
-class _MultiHeadSelfAttention(nn.Module):
+class _MultiHeadSelfAttention(torch_nn.Module):
     """
     Multi-Head Self-Attention module.
     Args:
         dim       (int): Number of input and output dimensions.
         num_heads (int): Number of attention heads.
+        nn   (optional): The neural network module to use. Defaults to `torch.nn`.
+                         This parameter allows for injecting custom or optimized
+                         implementations of neural network module (`nn`).
     """
     def __init__(self,
                  dim      : int,
                  num_heads: int,
+                 nn = None
                  ):
         super().__init__()
+        if nn is None:
+            nn = torch_nn
         assert dim % num_heads == 0, "Self-Attention dim should be divisible by num_heads"
         self.dim       = dim
         self.num_heads = num_heads
@@ -139,18 +151,24 @@ class _MultiHeadSelfAttention(nn.Module):
         return self.proj(x)
 
 
-class _MultiHeadCrossAttention(nn.Module):
+class _MultiHeadCrossAttention(torch_nn.Module):
     """
     Milti-Head Cross-Attention module.
     Args:
         dim       (int): Number of input and output dimensions.
         num_heads (int): Number of attention heads.
+        nn   (optional): The neural network module to use. Defaults to `torch.nn`.
+                         This parameter allows for injecting custom or optimized
+                         implementations of neural network module (`nn`).
     """
     def __init__(self,
                  dim      : int = 1152,
                  num_heads: int = 16,
+                 nn = None
                  ):
         super().__init__()
+        if nn is None:
+            nn = torch_nn
         assert dim % num_heads == 0, "Cross-Attention dim should be divisible by num_heads"
         self.dim       = dim
         self.num_heads = num_heads
@@ -189,20 +207,26 @@ class _MultiHeadCrossAttention(nn.Module):
 
 
 #---------------------------------------------------------------------------#
-class PatchEmbedder(nn.Module):
+class PatchEmbedder(torch_nn.Module):
     """
     Projects a 2D latent image into a sequence of flattened image patches.
     Args:
         patch_size      (int): The size of each patch.
         input_channels  (int): Number of channels in the input latent image.
         output_channels (int): Number of channels in the projected patches.
+        nn         (optional): The neural network module to use. Defaults to `torch.nn`.
+                               This parameter allows for injecting custom or optimized
+                               implementations of neural network module (`nn`).
     """
     def __init__(self,
                  patch_size     : int =    2,
                  input_channels : int =    4,
                  output_channels: int = 1152,
+                 nn = None
                  ):
         super().__init__()
+        if nn is None:
+            nn = torch_nn
         self.patch_size = patch_size
         self.proj = nn.Conv2d(in_channels  = input_channels,
                               out_channels = output_channels,
@@ -225,21 +249,28 @@ class PatchEmbedder(nn.Module):
 
 
 #---------------------------------------------------------------------------#
-class CaptionEmbedder(nn.Module):
+class CaptionEmbedder(torch_nn.Module):
     """
     Projects a T5-encoded caption into a lower-dimensional vector space.
     Args:
         input_channels  (int): Dimension of the input tensor, matching T5 encoder output.
         output_channels (int): Dimension of the output vector embeddings.
+        nn         (optional): The neural network module to use. Defaults to `torch.nn`.
+                               This parameter allows for injecting custom or optimized
+                               implementations of neural network module (`nn`).
     """
     def __init__(self,
                  input_channels : int = 4096,
                  output_channels: int = 1152,
+                 nn = None
                  ):
         super().__init__()
+        if nn is None:
+            nn = torch_nn
         self.y_proj = _MultilayerPerceptron(input_dim  = input_channels,
                                             hidden_dim = output_channels,
-                                            output_dim = output_channels)
+                                            output_dim = output_channels,
+                                            nn = nn)
 
     def forward(self, caption):
         # REF:
@@ -250,20 +281,26 @@ class CaptionEmbedder(nn.Module):
 
 
 #---------------------------------------------------------------------------#
-class TimestepEmbedder(nn.Module):
+class TimestepEmbedder(torch_nn.Module):
     """
     Maps scalar timesteps to a high-dimensional embedding vector using an MLP and sinusoidal positional encodings.
     Args:
         output_channels          (int) : Dimension of the output vector embeddings.
         positional_channels      (int) : Dimension of the positional encoding.
         positional_dtype  (torch.dtype): Data type for positional encoding, default is float32.
+        nn (optional): The neural network module to use. Defaults to `torch.nn`.
+                       This parameter allows for injecting custom or optimized
+                       implementations of neural network module (`nn`).
     """
     def __init__(self,
                  output_channels    : int         = 1152,
                  positional_channels: int         = 256,
-                 positional_dtype   : torch.dtype = torch.float32
+                 positional_dtype   : torch.dtype = torch.float32,
+                 nn = None
                  ):
         super().__init__()
+        if nn is None:
+            nn = torch_nn
         assert (positional_channels % 2) == 0, "Positional channels must be even"
         self.positional_channels = positional_channels
         self.positional_dtype    = positional_dtype
@@ -285,7 +322,7 @@ class TimestepEmbedder(nn.Module):
 
 
 #---------------------------------------------------------------------------#
-class PixArtBlock(nn.Module):
+class PixArtBlock(torch_nn.Module):
     """
     The PixArt transformer block that integrates visual, textual and
     temporal (timesteps) information.
@@ -294,13 +331,19 @@ class PixArtBlock(nn.Module):
         inout_dim  (int) : Dimension of the input and output tensors.
         num_heads  (int) : Number of attention heads in the transformer encoder.
         mlp_ratio (float): Ratio of the hidden dimension to the input dimension in the MLP layer.
+        nn (optional): The neural network module to use. Defaults to `torch.nn`.
+                       This parameter allows for injecting custom or optimized
+                       implementations of neural network module (`nn`).
     """
     def __init__(self,
                  inout_dim: int   = 1152,
                  num_heads: int   =   16,
                  mlp_ratio: float =  4.0,
+                 nn = None
                  ):
         super().__init__()
+        if nn is None:
+            nn = torch_nn
 
         self.scale_shift_table = nn.Parameter(torch.randn(6, inout_dim) / inout_dim ** 0.5)
 
@@ -309,10 +352,12 @@ class PixArtBlock(nn.Module):
                                               eps                = 1e-6)
 
         self.attn              = _MultiHeadSelfAttention(inout_dim,
-                                                         num_heads = num_heads)
+                                                         num_heads = num_heads,
+                                                         nn = nn)
 
         self.cross_attn        = _MultiHeadCrossAttention(inout_dim,
-                                                          num_heads)
+                                                          num_heads,
+                                                          nn = nn)
 
         self.norm2             = nn.LayerNorm(inout_dim,
                                               elementwise_affine = False,
@@ -320,7 +365,8 @@ class PixArtBlock(nn.Module):
 
         self.mlp               = _MultilayerPerceptron(inout_dim,
                                                        hidden_dim = int(inout_dim * mlp_ratio),
-                                                       output_dim = inout_dim)
+                                                       output_dim = inout_dim,
+                                                       nn = nn)
 
     def forward(self, x, time6, caption: torch.Tensor, caption_mask: torch.Tensor = None):
         # REF:
@@ -350,7 +396,7 @@ class PixArtBlock(nn.Module):
 
 
 #---------------------------------------------------------------------------#
-class PixArtFinalLayer(nn.Module):
+class PixArtFinalLayer(torch_nn.Module):
     """
     The final layer of the PixArt model. This layer includes normalization,
     scaling, shifting, and a linear transformation to produce the final output.
@@ -361,13 +407,19 @@ class PixArtFinalLayer(nn.Module):
                               the latent image is divided into patches of size
                               (patch_size x patch_size), normally 2x2.
         output_channels(int): Number of output channels.
+        nn        (optional): The neural network module to use. Defaults to `torch.nn`.
+                              This parameter allows for injecting custom or optimized
+                              implementations of neural network module (`nn`).
     """
     def __init__(self,
                  input_channels : int = 1152,
                  patch_size     : int =    2,
                  output_channels: int =    8,
+                 nn = None
                  ):
         super().__init__()
+        if nn is None:
+            nn = torch_nn
         self.norm_final        = nn.LayerNorm(input_channels, elementwise_affine=False, eps=1e-6)
         self.scale_shift_table = nn.Parameter(torch.randn(2, input_channels) / input_channels ** 0.5)
         self.linear            = nn.Linear(input_channels, patch_size * patch_size * output_channels, bias=True)
@@ -392,7 +444,7 @@ class PixArtFinalLayer(nn.Module):
 #////////////////////////////// PIXART MODEL ///////////////////////////////#
 #===========================================================================#
 
-class PixArtModel(nn.Module):
+class PixArtModel(torch_nn.Module):
     """
     Diffusion model with a Transformer backbone.
     """
@@ -406,9 +458,12 @@ class PixArtModel(nn.Module):
                  depth               : int =   28, # number of layers in the transformer
                  mlp_ratio           : int =  4.0, # ratio of the hidden dimension to the mlp dimension
                  device              : str | torch.device = "cpu",
+                 nn = None,
                  **kwargs,
                  ):
         super().__init__()
+        if nn is None:
+            nn = torch_nn
         assert latent_img_size in [64, 128, 256], "only support 512px, 1024px, and 2048px models"
         assert internal_dim % num_heads == 0    , "internal dimension must be divisible by the number of heads"
 
@@ -432,14 +487,17 @@ class PixArtModel(nn.Module):
 
             self.x_embedder = PatchEmbedder(patch_size,
                                             latent_img_channels,
-                                            internal_dim)
+                                            internal_dim,
+                                            nn = nn)
 
             self.y_embedder = CaptionEmbedder(caption_dim,
-                                              internal_dim)
+                                              internal_dim,
+                                              nn = nn)
 
             self.t_embedder = TimestepEmbedder(internal_dim,
                                                positional_channels = 256,
-                                               positional_dtype    = torch.float32)
+                                               positional_dtype    = torch.float32,
+                                               nn = nn)
 
             self.t_block    = nn.Sequential(nn.SiLU(),
                                             nn.Linear(internal_dim, 6 * internal_dim))
@@ -450,13 +508,15 @@ class PixArtModel(nn.Module):
                 PixArtBlock(
                     internal_dim,
                     num_heads,
-                    mlp_ratio = mlp_ratio
-                ) for _ in range(depth)
+                    mlp_ratio = mlp_ratio,
+                    nn = nn)
+                for _ in range(depth)
             ])
 
             self.final_layer = PixArtFinalLayer(internal_dim,
                                                 patch_size,
-                                                self.out_channels)
+                                                self.out_channels,
+                                                nn = nn)
 
             #----------------------------------------------
 

@@ -19,6 +19,7 @@ from comfy                  import model_management, supported_models_base, late
 from comfy.model_base       import BaseModel, ModelType
 from ..utils.system         import logger
 from ..core.pixart_model_ex import PixArtModelEx
+from .ops                   import comfy_ops_disable_weight_init
 
 
 #--------------------------------- PIXART ----------------------------------#
@@ -44,7 +45,8 @@ class _PixArtConfig(supported_models_base.BASE):
     supported_inference_dtypes = [torch.float16, torch.bfloat16, torch.float32]
 
     def __init__(self, state_dict, prefix, resolution=1024):
-        unet_config = PixArtModelEx.infer_model_config(state_dict, prefix=prefix, resolution=resolution)
+        unet_config       = PixArtModelEx.infer_model_config(state_dict, prefix=prefix, resolution=resolution)
+        unet_config["nn"] = comfy_ops_disable_weight_init # <- replace `torch.nn` with ComfyUI's version
         super().__init__( unet_config )
 
     def get_model(self, state_dict, prefix="", device=None):
@@ -65,7 +67,8 @@ class _PixArt(BaseModel):
                  device      : torch.device = None
                  ):
         super().__init__(model_config, model_type, device=device, unet_model=PixArtModelEx)
-        self.diffusion_model.freeze()
+        if self.diffusion_model is not None:
+            self.diffusion_model.freeze()
 
     def extra_conds(self, **kwargs):
         out = super().extra_conds(**kwargs)
