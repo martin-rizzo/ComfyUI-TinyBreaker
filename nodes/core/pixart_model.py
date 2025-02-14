@@ -314,10 +314,9 @@ class TimestepEmbedder(torch_nn.Module):
         #  timesteps            -> [batch_size]
         #  positional_encodings -> [batch_size, positional_channels]
         #  embedding            -> [batch_size,   output_channels  ]
-        mlp_dtype            = self.mlp[0].bias.dtype
-        mlp_device           = self.mlp[0].bias.device
+        input_device = timesteps.device
         positional_encodings = _generate_positional_encodings(timesteps, self.positional_channels, sincos=False, dtype=self.positional_dtype)
-        embedding = self.mlp( positional_encodings.to(mlp_device, dtype=mlp_dtype) )
+        embedding = self.mlp( positional_encodings.to(input_device, dtype=self.mlp[0].bias.dtype) )
         return embedding
 
 
@@ -475,11 +474,16 @@ class PixArtModel(torch_nn.Module):
         self.patch_size       = patch_size
         self.num_heads        = num_heads
         self.depth            = depth
-        self.pos_embeddings_cache_key = None
-        self.pos_embeddings           = None
 
         if isinstance(device, str):
             device = torch.device(device)
+
+        #- Cache ----------------------------------
+        self.pos_cache_key        = None
+        self.pos_cache_embeddings = None
+        self.t_cache              = {}
+        self.t_cache_size         = 20  # 0 = disable time cache | -1 = disable time & pos caches
+
 
         with torch.device(device):
 
@@ -545,39 +549,55 @@ class PixArtModel(torch_nn.Module):
         height = latent_height // self.patch_size
         width  = latent_width  // self.patch_size
 
-        # generate the embeddings
+        # generate positional and time embeddings, caching them to avoid re-computing them every time
+        # (note: maybe caching the time embeddings is not that necessary)
+        pos           = self._cached_pos_embeddings(height, width)
         tstep, tstep6 = self._cached_time_embeddings(timestep)
-        pos           = self._cached_pos_embeddings(height, width, x.device, x.dtype)
-        x             = self.x_embedder(x) + pos               # [batch_size, patches_count, internal_dim]
-        caption       = self.y_embedder(caption)               # [batch_size,    seq_length, internal_dim]
+
+        # move embeddings to the same device as the input tensor
+        pos    = pos.to(x)
+        tstep  = tstep.to(x)
+        tstep6 = tstep6.to(x)
+
+        # embed images and captions
+        x       = self.x_embedder(x) + pos                 # [batch_size, patches_count, internal_dim]
+        caption = self.y_embedder(caption)                 # [batch_size,    seq_length, internal_dim]
 
         # apply transformer blocks
         for block in self.blocks:
-            x = block(x, tstep6, caption, caption_mask)        # [batch_size, patches_count, internal_dim]
-        x = self.final_layer(x, tstep)                         # [batch_size, patches_count, (patch_size^2)*(latent_channels*2)]
+            x = block(x, tstep6, caption, caption_mask)    # [batch_size, patches_count, internal_dim]
+        x = self.final_layer(x, tstep)                     # [batch_size, patches_count, (patch_size^2)*(latent_channels*2)]
 
         assert x.shape[1] == height * width, \
             "The number of patches doesn't match the expected value"
 
         # unpatchify
-        x = x.view(batch_size, height, width,                  # [batch_size, height, width, patch_size, patch_size, (latent_channels*2)]
+        x = x.view(batch_size, height, width,              # [batch_size, height, width, patch_size, patch_size, (latent_channels*2)]
                    self.patch_size, self.patch_size,
                    self.out_channels)
-        x = x.permute(0, 5, 1, 3, 2, 4)                        # [batch_size, (latent_channels*2), patch_size, width, patch_size]
-        x = x.reshape(batch_size, self.out_channels,           # [batch_size, (latent_channels*2), latent_height, latent_width]
+        x = x.permute(0, 5, 1, 3, 2, 4)                    # [batch_size, (latent_channels*2), patch_size, width, patch_size]
+        x = x.reshape(batch_size, self.out_channels,       # [batch_size, (latent_channels*2), latent_height, latent_width]
                       latent_height, latent_width)
 
         # if only epsilon is required,
         # remove the second half of the channels (variance?)
         if return_epsilon:
-            return x.chunk(2, dim=1)[0]                        # > [batch_size, latent_channels, latent_height, latent_width]
+            return x.chunk(2, dim=1)[0]                    # > [batch_size, latent_channels, latent_height, latent_width]
         else:
-            return x                                           # > [batch_size, (latent_channels*2), latent_height, latent_width]
+            return x                                       # > [batch_size, (latent_channels*2), latent_height, latent_width]
 
 
     def _cached_time_embeddings(self,
                                 timesteps: torch.Tensor
                                 ) -> torch.Tensor:
+        """Generate time embeddings caching them to avoid re-computing"""
+        cache_key = tuple(timesteps.flatten().tolist()) if self.t_cache_size>0 else None
+        cache     = self.t_cache
+
+        # check if the time embeddings are already cached
+        if cache_key is not None and cache_key in cache:
+            return cache[cache_key]
+
         # REF:
         #  timesteps -> [batch_size]
         #  t         -> [batch_size, internal_dim]
@@ -585,34 +605,39 @@ class PixArtModel(torch_nn.Module):
         batch_size = timesteps.shape[0]
         t  = self.t_embedder(timesteps)
         t6 = self.t_block(t).reshape(batch_size, 6, self.internal_dim)
+
+        # cache the time embeddings for future use
+        if cache_key is not None:
+            cache[cache_key] = (t, t6)
+        if len(cache) > self.t_cache_size:
+            cache.pop( next(iter(cache)) )
+
         return t, t6
+
 
     def _cached_pos_embeddings(self,
                                height: int,
                                width : int,
-                               device: torch.device,
-                               dtype : torch.dtype
                                ) -> torch.Tensor:
         """
-        Computes and caches 2D sinusoidal position embeddings.
+        Computes and caches 2D sinusoidal position embeddings caching them to avoid re-computing.
 
         This method maintains a small cache of position embeddings and calculates them
-        only when the input dimensions (height, width), device, or data type change.
+        only when the input dimensions (height, width) change.
 
         Args:
             height (int)         : Height of the input feature map.
             width  (int)         : Width of the input feature map.
-            device (torch.device): Device where the position embeddings will be stored.
-            dtype  (torch.dtype) : Data type of the position embeddings.
 
         Returns:
             torch.Tensor: A tensor of size (1, internal_dim, height, width) containing the
                 sinusoidal position embeddings.
         """
-        cache_key = (height, width, str(device), str(dtype))
+        cache_key = (height, width) if self.t_cache_size>-1 else None
 
-        if cache_key == self.pos_embeddings_cache_key:
-            return self.pos_embeddings
+        # check if the position embeddings are already cached
+        if cache_key == self.pos_cache_key:
+            return self.pos_cache_embeddings
 
         embedding_dim = self.internal_dim
         assert (embedding_dim % 4) == 0, "Embedding dimensionality must be multiplo de 4."
@@ -627,9 +652,11 @@ class PixArtModel(torch_nn.Module):
         emb_w = _generate_positional_encodings(grid[1], embedding_dim // 2, sincos=True, dtype=torch.float64)  # [height*width, embedding_dim/2]
 
         pos_embeddings = torch.cat([emb_h, emb_w], dim=1) # [height*width, embedding_dim]
-        pos_embeddings = pos_embeddings.unsqueeze(0).to(device, dtype=dtype)
+        pos_embeddings = pos_embeddings.unsqueeze(0)
 
-        self.pos_embeddings_cache_key = cache_key
-        self.pos_embeddings           = pos_embeddings
-        return self.pos_embeddings
+        # cache the position embeddings for future use
+        self.pos_cache_key        = cache_key
+        self.pos_cache_embeddings = pos_embeddings
+
+        return pos_embeddings
 
