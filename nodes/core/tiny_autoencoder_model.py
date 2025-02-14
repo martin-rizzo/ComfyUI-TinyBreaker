@@ -14,31 +14,45 @@ License : MIT
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import torch
-import torch.nn as nn
+import torch.nn as torch_nn
 
 
-class _Clamp(nn.Module):
+def _Conv3x3(in_channels: int, out_channels: int, nn, **kwargs) -> torch_nn.Conv2d:
+    # this is a shortcut to create convolutional layers with specific parameters #
+    return nn.Conv2d(in_channels, out_channels, kernel_size=3, padding=1, **kwargs)
+
+
+class _Clamp(torch_nn.Module):
+    # this layer clamps the input tensor to a range of -3 to +3 #
     def forward(self, x):
         return torch.tanh(x / 3) * 3
 
 
-class _Conv3x3(nn.Conv2d):
-   def __init__(self,
-                input_channels : int,
-                output_channels: int,
-                **kwargs
-                ):
-        super().__init__(input_channels, output_channels, kernel_size=3, padding=1, **kwargs)
-
-
-class _ResidualBlock(nn.Module):
+class _ResidualBlock(torch_nn.Module):
+    """
+    A residual block with 3 convolutional layers.
+    Args:
+        in_channels  (int): Number of input channels.
+        out_channels (int): Number of output channels.
+        nn      (optional): The neural network module to use. Defaults to `torch.nn`.
+                            This parameter allows for the injection of custom or
+                            optimized implementations of "nn" modules.
+    """
     def __init__(self,
-                 n_in : int,
-                 n_out: int
+                 in_channels : int,
+                 out_channels: int,
+                 nn = None
                  ):
         super().__init__()
-        self.conv = nn.Sequential(_Conv3x3(n_in, n_out), nn.ReLU(), _Conv3x3(n_out, n_out), nn.ReLU(), _Conv3x3(n_out, n_out))
-        self.skip = nn.Conv2d(n_in, n_out, 1, bias=False) if n_in != n_out else nn.Identity()
+        if nn is None:
+            nn = torch_nn
+        self.conv = nn.Sequential( _Conv3x3( in_channels, out_channels, nn = nn),
+                                   nn.ReLU(),
+                                   _Conv3x3(out_channels, out_channels, nn = nn),
+                                   nn.ReLU(),
+                                   _Conv3x3(out_channels, out_channels, nn = nn),
+                                   )
+        self.skip = nn.Conv2d(in_channels, out_channels, 1, bias=False) if in_channels != out_channels else nn.Identity()
         self.fuse = nn.ReLU()
 
     def forward(self, x):
@@ -46,105 +60,88 @@ class _ResidualBlock(nn.Module):
 
 
 #---------------------------------------------------------------------------#
-class Encoder(nn.Sequential):
+def Encoder(in_channels         : int  =  3,
+            out_channels        : int  =  4,
+            hidden_channels     : int  = 64,
+            convolutional_layers: int  =  3,
+            res_blocks_per_layer: int  =  3,
+            nn = None,
+            ) -> torch_nn.Sequential:
     """
     The encoder part of the model.
     Args:
-        input_channels       (int): Number of channels in the input image (usually 3 for RGB).
-        output_channels      (int): Number of channels in the output latent space.
+        in_channels          (int): Number of channels in the input image (usually 3 for RGB).
+        out_channels         (int): Number of channels in the output latent space.
         hidden_channels      (int): Number of channels in the intermediate layers.
         convolutional_layers (int): Number of convolutional layers.
         res_blocks_per_layer (int): Number of residual blocks per layer.
+        nn              (optional): The neural network module to use. Defaults to `torch.nn`.
+                                    This parameter allows for the injection of custom or
+                                    optimized implementations of "nn" modules.
     """
-    def __init__(self,
-                 input_channels       : int  =  3,
-                 output_channels      : int  =  4,
-                 hidden_channels      : int  = 64,
-                 convolutional_layers : int  =  3,
-                 res_blocks_per_layer : int  =  3,
-                 ):
-        channels = hidden_channels
-        encoder  = []
+    if nn is None:
+        nn = torch_nn
+    chans   = hidden_channels
+    encoder = []
 
-        encoder.append( _Conv3x3(input_channels, channels) ) # self[0]
-        encoder.append( _ResidualBlock(channels, channels) ) # self[1]
+    encoder.append( _Conv3x3(in_channels, chans, nn = nn) ) # self[0]
+    encoder.append( _ResidualBlock(chans, chans, nn = nn) ) # self[1]
 
-        for _ in range(convolutional_layers):
-            encoder.append( _Conv3x3(channels, channels, stride=2, bias=False) )
-            for _ in range(res_blocks_per_layer):
-                encoder.append( _ResidualBlock(channels, channels) )
+    for _ in range(convolutional_layers):
+        encoder.append( _Conv3x3(chans, chans, nn = nn, stride=2, bias=False) )
+        for _ in range(res_blocks_per_layer):
+            encoder.append( _ResidualBlock(chans, chans, nn = nn) )
 
-        encoder.append( _Conv3x3(channels, output_channels) )
-
-        super().__init__(*encoder)
-
-
-    @property
-    def dtype(self):
-        """Returns the data type of the decoder parameters."""
-        return self[0].weight.dtype
-
-
-    @property
-    def device(self):
-        """Returns the device on which the decoder parameters are located."""
-        return self[0].weight.device
+    encoder.append( _Conv3x3(chans, out_channels, nn = nn) )
+    return nn.Sequential(*encoder)
 
 
 #---------------------------------------------------------------------------#
-class Decoder(nn.Sequential):
+def Decoder(in_channels         : int  =  4,
+            out_channels        : int  =  3,
+            hidden_channels     : int  = 64,
+            convolutional_layers: int  =  3,
+            res_blocks_per_layer: int  =  3,
+            nn = None,
+            ) -> torch_nn.Sequential:
     """
     The decoder part of the model.
     Args:
-        input_channels        (int): Number of channels in the input latent space.
-        output_channels       (int): Number of channels in the output image (usually 3 for RGB).
-        hidden_channels       (int): Number of channels in the intermediate layers.
-        convolutional_layers  (int): Number of convolutional layers.
-        res_blocks_per_layer  (int): Number of residual blocks per layer.
+        in_channels          (int): Number of channels in the input latent space.
+        out_channels         (int): Number of channels in the output image (usually 3 for RGB).
+        hidden_channels      (int): Number of channels in the intermediate layers.
+        convolutional_layers (int): Number of convolutional layers.
+        res_blocks_per_layer (int): Number of residual blocks per layer.
+        nn              (optional): The neural network module to use. Defaults to `torch.nn`.
+                                    This parameter allows for the injection of custom or
+                                    optimized implementations of "nn" modules.
     """
-    def __init__(self,
-                 input_channels      : int  =  4,
-                 output_channels     : int  =  3,
-                 hidden_channels     : int  = 64,
-                 convolutional_layers: int  =  3,
-                 res_blocks_per_layer: int  =  3,
-                 ):
-        channels = hidden_channels
-        decoder  = []
+    if nn is None:
+        nn = torch_nn
+    chans = hidden_channels
+    decoder  = []
 
-        decoder.append( _Clamp()                           ) # self[0]
-        decoder.append( _Conv3x3(input_channels, channels) ) # self[1]
-        decoder.append( nn.ReLU()                          ) # self[2]
+    decoder.append( _Clamp()                              ) # self[0]
+    decoder.append( _Conv3x3(in_channels, chans, nn = nn) ) # self[1]
+    decoder.append( nn.ReLU()                             ) # self[2]
 
-        for _ in range(convolutional_layers):
-            for _ in range(res_blocks_per_layer):
-                decoder.append( _ResidualBlock(channels, channels)           )
-            decoder.append(         nn.Upsample(scale_factor=2)          )
-            decoder.append(         _Conv3x3(channels, channels, bias=False) )
+    for _ in range(convolutional_layers):
+        for _ in range(res_blocks_per_layer):
+            decoder.append( _ResidualBlock(chans, chans, nn = nn)       )
+        decoder.append(     nn.Upsample(scale_factor=2)                 )
+        decoder.append(     _Conv3x3(chans, chans, nn = nn, bias=False) )
 
-        decoder.append( _ResidualBlock(channels, channels) )
-        decoder.append( _Conv3x3(64, output_channels)        )
+    decoder.append( _ResidualBlock(chans, chans, nn = nn) )
+    decoder.append( _Conv3x3(64, out_channels, nn = nn)   )
 
-        super().__init__(*decoder)
-
-
-    @property
-    def dtype(self):
-        """Returns the data type of the decoder parameters."""
-        return self[1].weight.dtype
-
-
-    @property
-    def device(self):
-        """Returns the device on which the decoder parameters are located."""
-        return self[1].weight.device
+    return nn.Sequential(*decoder)
 
 
 #===========================================================================#
 #///////////////////////// TINY AUTOENCODER MODEL //////////////////////////#
 #===========================================================================#
 
-class TinyAutoencoderModel(nn.Module):
+class TinyAutoencoderModel(torch_nn.Module):
 
     def __init__(self, *,
                  image_channels               : int  =    3 ,
@@ -157,8 +154,12 @@ class TinyAutoencoderModel(nn.Module):
                  decoder_res_blocks_per_layer : int  =    3 ,
                  encoder_latent_format        : str  = "unknown",
                  decoder_latent_format        : str  = "unknown",
+                 nn = None
                  ):
         super().__init__()
+        if nn is None:
+            nn = torch_nn
+
         SCALE_SHIFT_BY_LATENT_FORMAT = {
             "unknown": (1.     ,  0.    ), # <- used when the scale/shift values will be read from the model's weights
             "sd15"   : (0.18215,  0.    ), # parameters for Stable Diffusion v1.5 latents
@@ -177,6 +178,7 @@ class TinyAutoencoderModel(nn.Module):
                                    encoder_hidden_channels,
                                    encoder_convolutional_layers,
                                    encoder_res_blocks_per_layer,
+                                   nn = nn,
                                    )
 
         # configure the decoder submodel
@@ -186,6 +188,7 @@ class TinyAutoencoderModel(nn.Module):
                                    decoder_hidden_channels,
                                    decoder_convolutional_layers,
                                    decoder_res_blocks_per_layer,
+                                   nn = nn
                                    )
 
         # these values are used to scale/shift the latent space when emulating a standard autoencoder
@@ -276,3 +279,19 @@ class TinyAutoencoderModel(nn.Module):
 
         return super().load_state_dict(state_dict, *args, **kwargs)
 
+
+    def get_encoder_dtype(self) -> torch.dtype:
+        """Get the dtype of the encoder's weights."""
+        return self.encoder[0].weight.dtype if self.encoder else None
+
+    def get_encoder_device(self) -> torch.device:
+        """Get the device where the encoder is located."""
+        return self.encoder[0].weight.device if self.encoder else None
+
+    def get_decoder_dtype(self) -> torch.dtype:
+        """Get the dtype of the decoder's weights."""
+        return self.decoder[1].weight.dtype if self.decoder else None
+
+    def get_decoder_device(self) -> torch.device:
+        """Get the device where the decoder is located."""
+        return self.decoder[1].weight.device if self.decoder else None

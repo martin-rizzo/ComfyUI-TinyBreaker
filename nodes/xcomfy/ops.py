@@ -28,6 +28,9 @@ class comfy_ops_disable_weight_init(comfy.ops.disable_weight_init):
     system to allocate memory and move tensors from the CPU to GPU as needed.
     """
 
+    class Identity(nn.Identity):
+        pass
+
     class Sequential(nn.Sequential):
         pass
 
@@ -37,7 +40,13 @@ class comfy_ops_disable_weight_init(comfy.ops.disable_weight_init):
     class SiLU(nn.SiLU):
         pass
 
+    class ReLU(nn.ReLU):
+        pass
+
     class GELU(nn.GELU):
+        pass
+
+    class Upsample(nn.Upsample):
         pass
 
     class Parameter(nn.Parameter):

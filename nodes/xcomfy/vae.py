@@ -18,6 +18,7 @@ from ..utils.safetensors              import normalize_safetensors_prefix
 from ..utils.system                   import logger
 from ..core.autoencoder_model_ex      import AutoencoderModelEx
 from ..core.tiny_autoencoder_model_ex import TinyAutoencoderModelEx
+from .ops                             import comfy_ops_disable_weight_init
 
 
 
@@ -69,9 +70,15 @@ def _create_custom_vae_model(state_dict : dict,
 
     # detect the Tiny Autoencoder model by @madebyollin (https://github.com/madebyollin/taesd)
     elif TinyAutoencoderModelEx.detect_prefix(state_dict, prefix) is not None:
+
         logger.info(f"Loading TinyAutoencoderModelEx from '{filename}'")
         vae_model, config, missing_keys, _ = \
-            TinyAutoencoderModelEx.from_state_dict(state_dict, prefix, filename=filename)
+            TinyAutoencoderModelEx.from_state_dict(state_dict,
+                                                   prefix,
+                                                   filename = filename,
+                                                   nn = comfy_ops_disable_weight_init # <- replace `torch.nn` with ComfyUI's version
+                                                   )
+
         vae_model.emulate_std_autoencoder = True
         vae_wrapper.latent_channels = config["latent_channels"] # <- overrides latent channels
         vae_model.freeze()
