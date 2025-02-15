@@ -61,9 +61,14 @@ def _create_custom_vae_model(state_dict : dict,
 
     # detect the classic AutoencoderKL model used by Stable Diffusion
     if AutoencoderModelEx.detect_prefix(state_dict, prefix) is not None:
+
         logger.info(f"Loading AutoencoderModelEx from '{filename}'")
         vae_model, config, missing_keys, _ = \
-            AutoencoderModelEx.from_state_dict(state_dict, prefix)
+            AutoencoderModelEx.from_state_dict(state_dict,
+                                               prefix,
+                                               nn = comfy_ops_disable_weight_init # <- this replace `torch.nn` with ComfyUI's version of `nn`
+                                               )
+
         vae_wrapper.latent_channels = config["latent_channels"] # <- overrides latent channels
         vae_model.freeze()
         return vae_model, missing_keys
@@ -76,7 +81,7 @@ def _create_custom_vae_model(state_dict : dict,
             TinyAutoencoderModelEx.from_state_dict(state_dict,
                                                    prefix,
                                                    filename = filename,
-                                                   nn = comfy_ops_disable_weight_init # <- replace `torch.nn` with ComfyUI's version
+                                                   nn = comfy_ops_disable_weight_init # <- this replace `torch.nn` with ComfyUI's version of `nn`
                                                    )
 
         vae_model.emulate_std_autoencoder = True

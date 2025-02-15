@@ -12,7 +12,9 @@ License : MIT
   (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
+import torch
 from .autoencoder_model import AutoencoderModel
+
 
 def _normalize_prefix(prefix: str) -> str:
     """Normalize a given prefix by ensuring it ends with a dot."""
@@ -106,6 +108,7 @@ class AutoencoderModelEx(AutoencoderModel):
                         *,# keyword-only arguments #
                         config           : dict = None,
                         supported_formats: list = _SUPPORTED_FORMATS,
+                        nn = None,
                         ) -> tuple[ "AutoencoderModelEx", dict, list, list ]:
         """
         Creates an AutoencoderModelEx instance from a state dictionary.
@@ -119,6 +122,9 @@ class AutoencoderModelEx(AutoencoderModel):
                         If None, the configuration is inferred from the state dictionary.
             supported_formats: An optional list of supported formats to convert state_dict to native format.
                                (this parameter normally does not need to be provided)
+            nn (optional): The neural network module to use. Defaults to `torch.nn`.
+                           This parameter allows for the injection of custom or
+                           optimized implementations of "nn" modules.
         """
 
         # convert state_dict to native format using the provided format converters
@@ -129,6 +135,10 @@ class AutoencoderModelEx(AutoencoderModel):
         if not config:
             config = cls.infer_model_config(state_dict)
 
+        # if `nn` was provided then overwrite it in the config
+        if nn is not None:
+            config["nn"] = nn
+
         model = cls( **config )
         missing_keys, unexpected_keys = model.load_state_dict(state_dict, strict=False, assign=False)
         return model, config, missing_keys, unexpected_keys
@@ -136,14 +146,20 @@ class AutoencoderModelEx(AutoencoderModel):
 
     @property
     def dtype(self):
-        """Returns the data type of the model parameters."""
-        return self.encoder.dtype if self.encoder else self.decoder.dtype
+        """
+        Returns the data type of the model parameters.
+        (assuming that all parameters have the same data type)
+        """
+        return self.get_encoder_dtype() or self.get_decoder_dtype() or torch.float16
 
 
     @property
     def device(self):
-        """Returns the device on which the model parameters are located."""
-        return self.encoder.device if self.encoder else self.decoder.device
+        """
+        Returns the device on which the model parameters are located.
+        (assuming that all parameters are on the same device)
+        """
+        return self.get_encoder_device() or self.get_decoder_device() or torch.device("cpu")
 
 
     @device.setter

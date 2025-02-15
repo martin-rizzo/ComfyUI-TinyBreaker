@@ -13,31 +13,41 @@ License : MIT
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import torch
-import torch.nn as nn
+import torch.nn            as torch_nn
 import torch.nn.functional as F
 
 
-class _GroupNorm32(nn.GroupNorm):
-    """Normalizes the input tensor using a 32-group normalization."""
-    def __init__(self, channels: int):
-        super().__init__(num_groups=32, num_channels=channels, eps=1e-6)
+def _GroupNorm32(channels: int, nn, **kwargs) -> torch_nn.GroupNorm:
+    # this is a simple wrapper around GroupNorm that sets num_groups to 32 #
+    return nn.GroupNorm(num_groups=32, num_channels=channels, eps=1e-6, **kwargs)
 
 
-class _ResidualBlock(nn.Module):
-    """Residual block with group normalization and SiLU activation."""
+class _ResidualBlock(torch_nn.Module):
+    """
+    Residual block with group normalization and SiLU activation.
+    Args:
+        in_channels  (int): Number of input channels.
+        out_channels (int): Number of output channels.
+        nn      (optional): The neural network module to use. Defaults to `torch.nn`.
+                            This parameter allows for the injection of custom or
+                            optimized implementations of "nn" modules.
+    """
     def __init__(self,
-                 input_channels : int,
-                 output_channels: int
+                 in_channels : int,
+                 out_channels: int,
+                 nn = None
                  ):
         super().__init__()
-        self.norm1 = _GroupNorm32(input_channels)
+        if nn is None:
+            nn = torch_nn
+        self.norm1 = _GroupNorm32(in_channels, nn = nn)
         self.act1  = nn.SiLU(inplace=True)
-        self.conv1 = nn.Conv2d(input_channels, output_channels, 3, stride=1, padding=1)
-        self.norm2 = _GroupNorm32(output_channels)
+        self.conv1 = nn.Conv2d(in_channels, out_channels, 3, stride=1, padding=1)
+        self.norm2 = _GroupNorm32(out_channels, nn = nn)
         self.act2  = nn.SiLU(inplace=True)
-        self.conv2 = nn.Conv2d(output_channels, output_channels, 3, stride=1, padding=1)
-        if input_channels != output_channels:
-            self.nin_shortcut = nn.Conv2d(input_channels, output_channels, 1, stride=1, padding=0)
+        self.conv2 = nn.Conv2d(out_channels, out_channels, 3, stride=1, padding=1)
+        if in_channels != out_channels:
+            self.nin_shortcut = nn.Conv2d(in_channels, out_channels, 1, stride=1, padding=0)
         else:
             self.nin_shortcut = nn.Identity()
 
@@ -52,11 +62,23 @@ class _ResidualBlock(nn.Module):
         return self.nin_shortcut(residual) + x
 
 
-class _SelfAttention(nn.Module):
-    """Self-attention layer with group normalization."""
-    def __init__(self, channels: int):
+class _SelfAttention(torch_nn.Module):
+    """
+    Self-attention layer with group normalization.
+    Args:
+        channels (int): Number of input/output channels.
+        nn  (optional): The neural network module to use. Defaults to `torch.nn`.
+                        This parameter allows for the injection of custom or
+                        optimized implementations of "nn" modules.
+    """
+    def __init__(self,
+                 channels: int,
+                 nn = None
+                 ):
         super().__init__()
-        self.norm     = _GroupNorm32(channels)
+        if nn is None:
+            nn = torch_nn
+        self.norm     = _GroupNorm32(channels, nn = nn)
         self.q        = nn.Conv2d(channels, channels, 1)
         self.k        = nn.Conv2d(channels, channels, 1)
         self.v        = nn.Conv2d(channels, channels, 1)
@@ -89,10 +111,22 @@ class _SelfAttention(nn.Module):
         return residual + self.proj_out(x)
 
 
-class _UpSample(nn.Module):
-    """Upsamples the input tensor by a factor of 2, effectively doubling its height and width."""
-    def __init__(self, channels: int):
+class _UpSample(torch_nn.Module):
+    """
+    Upsamples the input tensor by a factor of 2, effectively doubling its height and width.
+    Args:
+        channels (int): Number of input/output channels.
+        nn  (optional): The neural network module to use. Defaults to `torch.nn`.
+                        This parameter allows for the injection of custom or
+                        optimized implementations of "nn" modules.
+    """
+    def __init__(self,
+                 channels: int,
+                 nn = None
+                 ):
         super().__init__()
+        if nn is None:
+            nn = torch_nn
         self.conv = nn.Conv2d(channels, channels, 3, padding=1)
 
     def forward(self, x):
@@ -102,10 +136,22 @@ class _UpSample(nn.Module):
         return x
 
 
-class _DownSample(nn.Module):
-    """Downsamples the input tensor by a factor of 2, effectively halving its height and width."""
-    def __init__(self, channels: int):
+class _DownSample(torch_nn.Module):
+    """
+    Downsamples the input tensor by a factor of 2, effectively halving its height and width.
+    Args:
+        channels (int): Number of input/output channels.
+        nn  (optional): The neural network module to use. Defaults to `torch.nn`.
+                        This parameter allows for the injection of custom or
+                        optimized implementations of "nn" modules.
+    """
+    def __init__(self,
+                 channels: int,
+                 nn = None
+                 ):
         super().__init__()
+        if nn is None:
+            nn = torch_nn
         self.conv = nn.Conv2d(channels, channels, 3, stride=2, padding=0)
 
     def forward(self, x: torch.Tensor):
@@ -115,7 +161,7 @@ class _DownSample(nn.Module):
 
 
 #---------------------------------------------------------------------------#
-class Encoder(nn.Module):
+class Encoder(torch_nn.Module):
     """
     Encoder that transforms an input image into a latent representation.
 
@@ -123,21 +169,26 @@ class Encoder(nn.Module):
     to reduce the spatial resolution of the input while increasing the channel depth.
 
     Args:
-        input_channels       (int): Number of channels of the input image. Default: 3 (RGB).
-        output_channels      (int): Number of channels of the output latent representation. Default: 8.
+        in_channels          (int): Number of channels of the input image. Default: 3 (RGB).
+        out_channels         (int): Number of channels of the output latent representation. Default: 8.
         hidden_channels      (int): Number of base channels for the intermediate layers. Default: 128.
         channel_multipliers (list): List of multipliers for the channels in each downsampling layer. Default: [1, 2, 4, 4].
         res_blocks_per_layer (int): Number of ResNet blocks in each downsampling layer. Default: 2.
-
+        nn              (optional): The neural network module to use. Defaults to `torch.nn`.
+                                    This parameter allows for the injection of custom or
+                                    optimized implementations of "nn" modules.
     """
     def __init__(self, *,
-                 input_channels      : int  =     3,
-                 output_channels     : int  =     8,
+                 in_channels         : int  =     3,
+                 out_channels        : int  =     8,
                  hidden_channels     : int  =   128,
                  channel_multipliers : list = [1, 2, 4, 4],
                  res_blocks_per_layer: int  =     2,
+                 nn = None
                  ):
         super().__init__()
+        if nn is None:
+            nn = torch_nn
         assert channel_multipliers[0] == 1, 'The first element of `channel_multipliers` must be 1.'
 
         channels_by_layer  = [mul * hidden_channels for mul in channel_multipliers]
@@ -147,7 +198,7 @@ class Encoder(nn.Module):
         end_layer_channels = channels_by_layer[-1]
 
         # initial convolution block that maps input channels to the layer-0 channels
-        self.conv_in = nn.Conv2d(input_channels, layer_0_channels, 3, stride=1, padding=1)
+        self.conv_in = nn.Conv2d(in_channels, layer_0_channels, 3, stride=1, padding=1)
 
         # each "down layer" halves spatial size while increasing channel depth,
         # helping to capture abstract features from the input image
@@ -158,27 +209,27 @@ class Encoder(nn.Module):
 
             # create a module with multiple ResNet Blocks
             resnet_blocks = nn.ModuleList()
-            resnet_blocks.append( _ResidualBlock(previous_layer_channels, layer_channels) )
+            resnet_blocks.append( _ResidualBlock(previous_layer_channels, layer_channels, nn = nn) )
             for _ in range(res_blocks_per_layer-1):
-                resnet_blocks.append( _ResidualBlock(layer_channels, layer_channels) )
+                resnet_blocks.append( _ResidualBlock(layer_channels, layer_channels, nn = nn) )
 
             # the "down layer" consists of multiple ResNet Blocks and a down-sampling
             # but attention: the last layer does NOT have a down-sampling
-            down_layer = nn.Module()
+            down_layer = torch_nn.Module()
             down_layer.block      = resnet_blocks
-            down_layer.downsample = _DownSample(layer_channels) if layer != end_layer else nn.Identity()
+            down_layer.downsample = _DownSample(layer_channels, nn = nn) if layer != end_layer else nn.Identity()
             self.down.append(down_layer)
 
         # final encoder block (mid) using ResNet with self attention
-        self.mid = nn.Module()
-        self.mid.block_1 = _ResidualBlock(end_layer_channels, end_layer_channels)
-        self.mid.attn_1  = _SelfAttention(end_layer_channels)
-        self.mid.block_2 = _ResidualBlock(end_layer_channels, end_layer_channels)
+        self.mid = torch_nn.Module()
+        self.mid.block_1 = _ResidualBlock(end_layer_channels, end_layer_channels, nn = nn)
+        self.mid.attn_1  = _SelfAttention(end_layer_channels, nn = nn)
+        self.mid.block_2 = _ResidualBlock(end_layer_channels, end_layer_channels, nn = nn)
 
         # final convolution block that maps from the end-layer channels to output channels
-        self.norm_out = _GroupNorm32(end_layer_channels)
+        self.norm_out = _GroupNorm32(end_layer_channels, nn = nn)
         self.act_out  = nn.SiLU()
-        self.conv_out = nn.Conv2d(end_layer_channels, output_channels, 3, stride=1, padding=1)
+        self.conv_out = nn.Conv2d(end_layer_channels, out_channels, 3, stride=1, padding=1)
 
 
     def forward(self, x):
@@ -196,30 +247,35 @@ class Encoder(nn.Module):
         return x
 
 
-    @property
-    def dtype(self):
-        """Returns the data type of the encoder parameters."""
-        return self.mid.block_1.conv1.weight.dtype
-
-
-    @property
-    def device(self):
-        """Returns the device on which the encoder parameters are located."""
-        return self.mid.block_1.conv1.weight.device
-
-
 #---------------------------------------------------------------------------#
-class Decoder(nn.Module):
+class Decoder(torch_nn.Module):
     """
+    Decoder that transforms latent space into a reconstructed image.
+
+    This decoder uses an architecture based on ResNet blocks and upsampling layers
+    to expand the spatial size and reconstruct the image from latent space.
+
+    Args:
+        in_channels          (int): Number of channels of the input latent space. Default: 4.
+        out_channels         (int): Number of channels of the reconstructed image. Default: 3 (RGB)
+        hidden_channels      (int): Number of channels for the intermediate layers. Default: 128.
+        channel_multipliers (list): List of multipliers for the channels in each upsampling layer. Default: [1,2,4,4].
+        res_blocks_per_layer (int): Number of ResNet blocks in each upsampling layer. Default: 2.
+        nn              (optional): The neural network module to use. Defaults to `torch.nn`.
+                                    This parameter allows for the injection of custom or
+                                    optimized implementations of "nn" modules.
     """
     def __init__(self, *,
-                 input_channels      : int  =     4,
-                 output_channels     : int  =     3,
+                 in_channels         : int  =     4,
+                 out_channels        : int  =     3,
                  hidden_channels     : int  =   128,
                  channel_multipliers : list = [1, 2, 4, 4],
                  res_blocks_per_layer: int  =     2,
+                 nn = None
                  ):
         super().__init__()
+        if nn is None:
+            nn = torch_nn
         assert channel_multipliers[0] == 1, 'The first element of `channel_multipliers` must be 1.'
 
         channels_by_layer  = [mul * hidden_channels for mul in channel_multipliers]
@@ -230,13 +286,13 @@ class Decoder(nn.Module):
         end_layer_channels = channels_by_layer[-1]
 
         # initial convolution block that maps from input channels to the end-layer channels
-        self.conv_in = nn.Conv2d(input_channels, end_layer_channels, 3, stride=1, padding=1)
+        self.conv_in = nn.Conv2d(in_channels, end_layer_channels, 3, stride=1, padding=1)
 
         # initial decoder block (mid) using ResNet with self attention
-        self.mid = nn.Module()
-        self.mid.block_1 = _ResidualBlock(end_layer_channels, end_layer_channels)
-        self.mid.attn_1  = _SelfAttention(end_layer_channels)
-        self.mid.block_2 = _ResidualBlock(end_layer_channels, end_layer_channels)
+        self.mid = torch_nn.Module()
+        self.mid.block_1 = _ResidualBlock(end_layer_channels, end_layer_channels, nn = nn)
+        self.mid.attn_1  = _SelfAttention(end_layer_channels, nn = nn)
+        self.mid.block_2 = _ResidualBlock(end_layer_channels, end_layer_channels, nn = nn)
 
         # each "up layer" doubles the spatial size while decreasing channel depth,
         # reconstructing the image from the latent representation
@@ -247,21 +303,21 @@ class Decoder(nn.Module):
 
             # create a module with multiple ResNet Blocks
             resnet_blocks = nn.ModuleList()
-            resnet_blocks.append( _ResidualBlock(previous_channels, layer_channels) )
+            resnet_blocks.append( _ResidualBlock(previous_channels, layer_channels, nn = nn) )
             for _ in range(res_blocks_per_layer):
-                resnet_blocks.append( _ResidualBlock(layer_channels, layer_channels) )
+                resnet_blocks.append( _ResidualBlock(layer_channels, layer_channels, nn = nn) )
 
             # the "up layer" consists of multiple ResNet blocks and a up-sampling
             # but attention: the first layer does NOT have a up-sampling
-            up_layer = nn.Module()
+            up_layer = torch_nn.Module()
             up_layer.block    = resnet_blocks
-            up_layer.upsample = _UpSample(layer_channels) if layer != layer_0 else nn.Identity()
+            up_layer.upsample = _UpSample(layer_channels, nn = nn) if layer != layer_0 else nn.Identity()
             self.up.insert(0, up_layer) # <- inserted in inversed order to be consistent with the checkpoint
 
         # final convolution block that maps from the layer-0 channels to output channels
-        self.norm_out = _GroupNorm32(layer_0_channels)
+        self.norm_out = _GroupNorm32(layer_0_channels, nn = nn)
         self.act_out  = nn.SiLU()
-        self.conv_out = nn.Conv2d(layer_0_channels, output_channels, 3, stride=1, padding=1)
+        self.conv_out = nn.Conv2d(layer_0_channels, out_channels, 3, stride=1, padding=1)
 
 
     def forward(self, x):
@@ -279,25 +335,17 @@ class Decoder(nn.Module):
         return x
 
 
-    @property
-    def dtype(self):
-        """Returns the data type of the decoder parameters."""
-        return self.mid.block_1.conv1.weight.dtype
-
-
-    @property
-    def device(self):
-        """Returns the device on which the decoder parameters are located."""
-        return self.mid.block_1.conv1.weight.device
-
-
 #===========================================================================#
 #//////////////////////////// AUTOENCODER MODEL ////////////////////////////#
 #===========================================================================#
 
-class AutoencoderModel(nn.Module):
+class AutoencoderModel(torch_nn.Module):
     """
     Custom VAE implementation supporting independent encoder and decoder submodels.
+
+    El modelo esta estructurada de modo que puede cargarse los pesos del encoder
+    y del decoder de manera independiente. Para ahorrar memoria puede cargarse
+    solo el encoder o solo el decoder. O tambien puede 
 
 
     """
@@ -313,8 +361,11 @@ class AutoencoderModel(nn.Module):
                  decoder_res_blocks_per_layer: int   =     2,
                  use_deterministic_encoding  : bool  =  True,
                  use_double_encoding_channels: bool  =  True,
+                 nn = None
                  ):
         super().__init__()
+        if nn is None:
+            nn = torch_nn
         self.use_deterministic_encoding   = use_deterministic_encoding
         self.use_double_encoding_channels = use_double_encoding_channels
         self.encoder = None
@@ -331,21 +382,25 @@ class AutoencoderModel(nn.Module):
 
         # configure the encoder submodel
         if encoder_hidden_channels and encoder_channel_multipliers and encoder_res_blocks_per_layer:
-            self.encoder = Encoder(input_channels       = image_channels,
-                                   output_channels      = encoder_output_channels,
+            self.encoder = Encoder(in_channels          = image_channels,
+                                   out_channels         = encoder_output_channels,
                                    hidden_channels      = encoder_hidden_channels,
                                    channel_multipliers  = encoder_channel_multipliers,
-                                   res_blocks_per_layer = encoder_res_blocks_per_layer)
+                                   res_blocks_per_layer = encoder_res_blocks_per_layer,
+                                   nn = nn
+                                   )
             self.quant_conv = nn.Conv2d(encoder_output_channels, encoder_latent_channels, 1)
 
         # configure the decoder submodel
         if decoder_hidden_channels and decoder_channel_multipliers and decoder_res_blocks_per_layer:
             self.post_quant_conv = nn.Conv2d(decoder_latent_channels, decoder_input_channels, 1)
-            self.decoder = Decoder(input_channels       = decoder_input_channels,
-                                output_channels      = image_channels,
-                                hidden_channels      = decoder_hidden_channels,
-                                channel_multipliers  = decoder_channel_multipliers,
-                                res_blocks_per_layer = decoder_res_blocks_per_layer)
+            self.decoder = Decoder(in_channels          = decoder_input_channels,
+                                   out_channels         = image_channels,
+                                   hidden_channels      = decoder_hidden_channels,
+                                   channel_multipliers  = decoder_channel_multipliers,
+                                   res_blocks_per_layer = decoder_res_blocks_per_layer,
+                                   nn = nn
+                                   )
 
 
     def encode(self, x):
@@ -362,6 +417,26 @@ class AutoencoderModel(nn.Module):
         x = self.post_quant_conv(x)
         x = self.decoder(x)
         return x
+
+
+    def get_encoder_dtype(self) -> torch.dtype:
+        """Returns the data type of the encoder parameters."""
+        return self.encoder.mid.block_1.conv1.weight.dtype if self.encoder else None
+
+
+    def get_encoder_device(self) -> torch.device:
+        """Returns the device where the encoder parameters are located."""
+        return self.encoder.mid.block_1.conv1.weight.device if self.encoder else None
+
+
+    def get_decoder_dtype(self) -> torch.dtype:
+        """Returns the data type of the decoder parameters."""
+        return self.decoder.mid.block_1.conv1.weight.dtype if self.decoder else None
+
+
+    def get_decoder_device(self) -> torch.device:
+        """Returns the device where the decoder parameters are located."""
+        return self.decoder.mid.block_1.conv1.weight.device if self.decoder else None
 
 
     @staticmethod
