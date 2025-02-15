@@ -190,7 +190,8 @@ class PixArtModelEx(PixArtModel):
                         state_dict       : dict,
                         prefix           : str  = "",
                         config           : dict = None,
-                        supported_formats: list = _SUPPORTED_FORMATS
+                        supported_formats: list = _SUPPORTED_FORMATS,
+                        nn = None,
                         ) -> "PixArtModel":
         """
         Creates a PixArtModel instance from a state dictionary.
@@ -206,6 +207,9 @@ class PixArtModelEx(PixArtModel):
                                Each format is a callable that takes a state dictionary and
                                a prefix, and returns a tuple containing the modified state
                                dictionary and the detected prefix. Default is _SUPPORTED_FORMATS.
+            nn (optional): The neural network module to use. Defaults to `torch.nn`.
+                           This parameter allows for the injection of custom or
+                           optimized implementations of "nn" modules.
         """
 
         # always ensure that `prefix` is normalized
@@ -221,6 +225,10 @@ class PixArtModelEx(PixArtModel):
         # if no config was provided then try to infer it automatically from the keys of the state_dict
         if not config:
             config = cls.infer_model_config(state_dict)
+
+        # if `nn` was provided then overwrite it in the config
+        if nn is not None:
+            config["nn"] = nn
 
         model = cls( **config )
         model.load_state_dict(state_dict, string=False, assign=False)
