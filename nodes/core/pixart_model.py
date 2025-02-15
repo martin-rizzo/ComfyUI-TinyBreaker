@@ -378,7 +378,7 @@ class PixArtBlock(torch_nn.Module):
         #  return        -> [batch_size, num_patches, inout_dim]
         shift_attn, scale_attn, gate_attn,  \
         shift_mlp , scale_mlp , gate_mlp  = \
-            (self.scale_shift_table.unsqueeze(0) + time6).chunk(6, dim=1)
+            (self.scale_shift_table.unsqueeze(0).to(time6) + time6).chunk(6, dim=1)
 
         residual = x
         x = _scale_and_shift(self.norm1(x), scale_attn, shift_attn)
@@ -431,7 +431,7 @@ class PixArtFinalLayer(torch_nn.Module):
         #  shift     -> [         1,          1, input_channels]
         #  return    -> [batch_size, seq_length, patch_size * patch_size * output_channels]
         time1        = time.unsqueeze(1)
-        shift, scale = (self.scale_shift_table.unsqueeze(0) + time1).chunk(2, dim=1)
+        shift, scale = (self.scale_shift_table.unsqueeze(0).to(time1) + time1).chunk(2, dim=1)
 
         x = self.norm_final(x)
         x = _scale_and_shift(x, scale, shift)
