@@ -1,7 +1,7 @@
 [project]
 name = "tinybreaker"
 description = "ComfyUI-TinyBreaker is a collection of custom nodes specifically designed to generate images using the TinyBreaker model. It's actively developed with ongoing improvements. Although still in progress, these nodes are functional and allow you to explore the potential of the model."
-version = "0.1.2"
+version = "0.2.0"
 license = {file = "LICENSE"}
 
 [project.urls]
