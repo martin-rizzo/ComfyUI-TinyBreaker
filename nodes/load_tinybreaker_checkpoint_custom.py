@@ -149,12 +149,12 @@ class LoadTinyBreakerCheckpointCustom:
     @staticmethod
     def refiner_clip_object(name: str, state_dict: dict) -> CLIP:
         if name == "automatic":
-            return CLIP.from_state_dict(state_dict, prefix="refiner.conditioner", type="stable_diffusion")
+            return CLIP.from_state_dict(state_dict, prefix="refiner.conditioner", clip_type="stable_diffusion")
         elif name == "none":
             return None
         else:
             refiner_path = CHECKPOINTS_DIR.get_full_path(name)
             state_dict   = comfy.utils.load_torch_file(refiner_path)
-            return CLIP.from_state_dict(state_dict, type="stable_diffusion")
+            return CLIP.from_state_dict(state_dict, clip_type="stable_diffusion")
 
 

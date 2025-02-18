@@ -18,7 +18,23 @@ from typing import Union
 
 
 def normalize_prefix(prefix: str) -> str:
-    """Normalize a given prefix by ensuring it ends with a dot when it's not empty."""
+    """
+    Normalizes a string ensuring it is a valid tensor name prefix.
+
+    A valid tensor name prefix adheres to the following rules:
+     - It should be a string.
+     - It can be an empty string.
+     - It can be an asterisk "*" (sometimes used to represent a wildcard search).
+     - If it contains any names, it must end with a period ".". 
+
+    For example:
+      normalize_prefix("tensor")    => "tensor."
+      normalize_prefix("resnet50.") => "resnet50."
+      normalize_prefix("")          => ""
+      normalize_prefix("*")         => "*"
+    """
+    if not isinstance(prefix, str):
+        return ""
     prefix = prefix.strip()
     if prefix and prefix != "*" and not prefix.endswith('.'):
         prefix += '.'

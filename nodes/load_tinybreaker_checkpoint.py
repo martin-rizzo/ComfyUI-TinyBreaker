@@ -61,7 +61,7 @@ class LoadTinyBreakerCheckpoint:
         vae_obj        = VAE.from_state_dict(state_dict, prefix=vae_prefix, filename=ckpt_name)
         transcoder_obj = Transcoder.from_state_dict(state_dict, prefix="transcoder", filename=ckpt_name)
         refiner_model  = Model.from_state_dict(state_dict, prefix="refiner.diffusion_model")
-        refiner_clip   = CLIP.from_state_dict(state_dict, prefix="refiner.conditioner", type="stable_diffusion")
+        refiner_clip   = CLIP.from_state_dict(state_dict, prefix="refiner.conditioner", clip_type="stable_diffusion")
         return (model_obj, vae_obj, transcoder_obj, refiner_model, refiner_clip, genparams)
 
 

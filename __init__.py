@@ -129,6 +129,8 @@ _CATEGORY = "TinyBreaker/__dev"
 from .nodes.genparams_debug_logger import GenParamsDebugLogger
 comfy_import_node(GenParamsDebugLogger)
 
+from .nodes.load_t5_encoder_experimental import LoadT5EncoderExperimental
+comfy_import_node(LoadT5EncoderExperimental)
 
 
 logger.info(f"Imported {len(NODE_CLASS_MAPPINGS)} nodes")
