@@ -1,6 +1,10 @@
 """
 File    : xcomfy/vae.py
+
 Purpose : The standard VAE object transmitted through ComfyUI's node system.
+          This VAE object is directly derived from `comfy.sd.VAE`, extending
+          it to support my custom Autoencoder and TinyAutoencoder code.
+
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
 Date    : May 10, 2024
 Repo    : https://github.com/martin-rizzo/ComfyUI-TinyBreaker
@@ -14,7 +18,7 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 import torch
 import comfy.sd
 from comfy                            import model_management
-from ..utils.safetensors              import normalize_safetensors_prefix
+from ..utils.safetensors              import normalize_prefix
 from ..utils.system                   import logger
 from ..core.autoencoder_model_ex      import AutoencoderModelEx
 from ..core.tiny_autoencoder_model_ex import TinyAutoencoderModelEx
@@ -125,6 +129,10 @@ def _should_use_custom_code(state_dict, config):
     return True
 
 
+#===========================================================================#
+#/////////////////////////////////// VAE ///////////////////////////////////#
+#===========================================================================#
+
 class VAE(comfy.sd.VAE):
     """
     A class representing a Variational Autoencoder (VAE).
@@ -219,7 +227,7 @@ class VAE(comfy.sd.VAE):
         assert state_dict, "state_dict is required in VAE.from_state_dict(..)"
 
         # always ensure that `prefix` is normalized
-        prefix = normalize_safetensors_prefix(prefix)
+        prefix = normalize_prefix(prefix)
 
         # if a prefix is provided, then only the corresponding part needs to be loaded
         if prefix:

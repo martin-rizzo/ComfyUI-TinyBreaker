@@ -17,7 +17,7 @@ import struct
 from typing import Union
 
 
-def normalize_safetensors_prefix(prefix: str) -> str:
+def normalize_prefix(prefix: str) -> str:
     """Normalize a given prefix by ensuring it ends with a dot when it's not empty."""
     prefix = prefix.strip()
     if prefix and prefix != "*" and not prefix.endswith('.'):
@@ -25,9 +25,21 @@ def normalize_safetensors_prefix(prefix: str) -> str:
     return prefix
 
 
-def load_safetensors_header(file_path : str,
-                            size_limit: int = 67108864
-                            ) -> dict:
+def filter_state_dict(state_dict: dict, prefix: str) -> dict:
+    """
+    Extracts a specific section from a state dictionary based on a given prefix.
+    Args:
+        state_dict (dict): A dictionary containing tensors representing the model's state.
+        prefix      (str): The prefix string used to identify the desired section within the state dictionary.
+    Returns:
+        A new dictionary containing only the tensors with names starting with the specified prefix.
+        The keys in the returned dictionary are the original keys with the prefix removed.
+    """
+    prefix = normalize_prefix(prefix)
+    return { name.removeprefix(prefix): tensor for name, tensor in state_dict.items() if name.startswith(prefix) }
+
+
+def load_safetensors_header(file_path: str, size_limit: int = 67108864) -> dict:
     """
     Load the header of a SafeTensors file.
     Args:

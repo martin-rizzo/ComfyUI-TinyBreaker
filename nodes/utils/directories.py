@@ -22,6 +22,8 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import os
 import folder_paths
+from   comfy.utils import load_torch_file
+
 
 #---------------------------------------------------------------------------#
 class _ProjectDirectory:
@@ -118,6 +120,11 @@ class _ComfyDirectory:
         """Returns the full path to a file in the directory, raising an error if the file does not exist."""
         return folder_paths.get_full_path_or_raise(self.folder_name, filename)
 
+    def load_state_dict_or_raise(self, filename: str) -> dict:
+        """Loads a state dictionary from a file in the directory, raising an error if the file does not exist."""
+        full_path = self.get_full_path_or_raise(filename)
+        return load_torch_file(full_path)
+
 
     def get_full_path_for_save(self, filename: str, overwrite: bool = False) -> str:
         """Returns the full path to save a file, ensuring it is unique if necessary.
@@ -137,6 +144,7 @@ class _ComfyDirectory:
             file_path = os.path.join(folder_path, f"{name}_{counter}{ext}")
             counter += 1
         return file_path
+
 
 
 #---------------------------------------------------------------------------#
@@ -179,6 +187,8 @@ PROJECT_DIR                 = _ProjectDirectory(".")
 STYLES_DIR                  = _ProjectDirectory("styles")
 CHECKPOINTS_DIR             = _ComfyModelDirectory("checkpoints")
 VAE_DIR                     = _ComfyModelDirectory("vae")
+TEXT_ENCODERS_DIR           = _ComfyModelDirectory("text_encoders")
+EMBEDDINGS_DIR              = _ProjectDirectory("embeddings")
 TRANSCODERS_DIR             = VAE_DIR
 TINYBREAKER_CHECKPOINTS_DIR = CHECKPOINTS_DIR
 #TINYBREAKER_CHECKPOINTS_DIR = _ComfyModelDirectory("tinybreaker", custom=True)
