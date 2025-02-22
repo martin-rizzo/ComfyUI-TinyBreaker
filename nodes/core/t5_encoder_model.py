@@ -1,0 +1,755 @@
+
+"""
+File    : t5_encoder_model.PY
+Purpose : Experimental T5 encoder
+Author  : Martin Rizzo | <martinrizzo@gmail.com>
+Date    : Feb 16, 2025
+Repo    : https://github.com/martin-rizzo/ComfyUI-TinyBreaker
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+                              ComfyUI-TinyBreaker
+ ComfyUI nodes for experimenting with the capabilities of the TinyBreaker model.
+  (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+"""
+import time
+import math
+import torch
+from torch    import Tensor
+from torch.nn import functional as F
+
+# The data types that are supported by PyTorch for computations.
+PYTORCH_COMPUTABLE_DATA_TYPES = (torch.bfloat16, torch.float16, torch.float32, torch.float64)
+
+# The possible activation functions used in the Transformer model
+_ACTIVATIONS_BY_NAME = {
+    "linear"           : lambda x: x,
+    "gelu"             : F.gelu,
+    "gelu_new"         : lambda x: x * 0.5 * (1.0 + torch.tanh(math.sqrt(2.0 / math.pi) * (x + 0.044715 * torch.pow(x, 3.0)))),
+    "gelu_fast"        : lambda x: x * 0.5 * (1.0 + torch.tanh(x * 0.7978845608 * (1.0 + 0.044715 * x * x))),
+    "gelu_python"      : lambda x: x * 0.5 * (1.0 + torch.erf(x / math.sqrt(2.0))),
+    "gelu_pytorch_tanh": lambda x: F.gelu(x, approximate="tanh"),
+    "quick_gelu"       : lambda x: x * torch.sigmoid(1.702 * x),
+    "relu"             : F.relu,
+    "relu6"            : F.relu6,
+    "sigmoid"          : F.sigmoid,
+    "silu"             : F.silu,
+    "swish"            : F.silu,
+    "tanh"             : torch.nn.Tanh,
+    "prelu"            : torch.nn.PReLU,
+}
+
+
+class InferenceWeightMixin:
+
+    def __init__(self):
+        super().__init__()
+        self.inference_weight      : Tensor | None = None
+        self.inference_bias        : Tensor | None = None
+        self.clear_inference_weight: bool          = False
+
+    def lock_inference_weight_bias(self, weight: Tensor, bias: Tensor | None, input: Tensor, /,*, dtype: torch.dtype = None) -> tuple:
+        dtype = dtype or input.dtype
+        inference_weight = self.inference_weight or weight.to(input.device, dtype, non_blocking=True)
+        if bias is None:
+            return inference_weight, None
+        inference_bias = self.inference_bias or bias.to(input.device, dtype, non_blocking=True)
+        return inference_weight, inference_bias
+
+    def unlock_inference(self):
+        if self.clear_inference_weight:
+            self.inference_weight = None
+            self.inference_bias   = None
+
+
+class Custom_nn:
+
+    class Linear(torch.nn.Linear, InferenceWeightMixin):
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            InferenceWeightMixin.__init__(self)
+
+        def forward(self, input: Tensor) -> Tensor:
+            weight, bias = self.lock_inference_weight_bias(self.weight, self.bias, input)
+            output = F.linear(input, weight, bias)
+            self.unlock_inference()
+            return output
+
+        def reset_parameters(self):
+            pass
+
+    class Embedding(torch.nn.Embedding, InferenceWeightMixin):
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            InferenceWeightMixin.__init__(self)
+
+        def forward(self, input: Tensor, dtype: torch.dtype) -> Tensor:
+            weight, _ = self.lock_inference_weight_bias(self.weight, None, input, dtype=dtype)
+            output = F.embedding(input, weight, self.padding_idx, self.max_norm, self.norm_type, self.scale_grad_by_freq, self.sparse)
+            self.unlock_inference()
+            return output
+
+        def reset_parameters(self):
+            pass
+
+
+    class Parameter(torch.nn.Parameter):
+        pass
+
+    class Dropout(torch.nn.Dropout):
+        pass
+
+
+
+#--------------------------------- HELPERS ---------------------------------#
+
+def _get_4d_attention_mask(attention_mask: Tensor, dtype: torch.dtype) -> Tensor:
+    """
+    Creates a 4D mask of shape `[batch_size, 1, seq_length, seq_length]`
+    from a 2D mask of shape `[batch_size, seq_length]`
+    """
+    if attention_mask.dim() != 2:
+        return attention_mask
+
+    assert len(attention_mask.shape) == 2
+    batch_size = attention_mask.shape[0]
+    seq_length = attention_mask.shape[1]
+    min_dtype  = torch.finfo(dtype).min
+
+    mask4d = 1.0 - attention_mask.to(dtype).reshape(batch_size, 1, -1, seq_length).expand(batch_size, 1, seq_length, seq_length)
+    mask4d = mask4d.masked_fill(mask4d.to(torch.bool), min_dtype)
+    return mask4d
+
+
+def _relative_position_buckets(query_length: int,
+                               key_length  : int,
+                               *,
+                               num_buckets  : int,
+                               max_distance : int,
+                               bidirectional: bool,
+                               device       : torch.device
+                               ) -> Tensor:
+    """
+    Computes relative position buckets for a given query and key sequence.
+
+    This function determines the relative distances between each pair of query
+    and key tokens and assigns these distances to integer buckets. To effectively
+    capture both short-range and long-range relationships, it employs a hybrid
+    approach: a portion of the distance values are represented linearly, while
+    another portion is represented logarithmically.
+     - Distances greater than `num_buckets/2` are mapped logarithmically.
+     - Distances exceeding `max_distance` are all mapped to the same bucket.
+
+    Args:
+        query_length   (int): Length of the query sequence.
+        key_length     (int): Length of the key sequence.
+        num_buckets    (int): Number of relative position buckets to generate.
+        max_distance   (int): Maximum allowed distance between tokens.
+        bidirectional (bool): Whether to consider both positive and negative
+                              distances (True) or only positive distances (False).
+                              Defaults to True.
+        device (torch.device): Device to run the computation on (CPU or GPU).
+
+    Returns:
+        A 2D tensor of shape [query_length, key_length] representing the bucket
+        indices for each query-key pair.
+    """
+    assert bidirectional == True, "only bidirectional relative position buckets are supported"
+    assert num_buckets % 2 == 0, "num_buckets must be even"
+
+    _query_position = torch.arange(query_length, dtype=torch.long, device=device)[:, None]
+    _key_position   = torch.arange(key_length  , dtype=torch.long, device=device)[None, :]
+    query_to_key_distance = _key_position - _query_position                       # INT64[query_length, key_length]
+
+    relative_buckets = 0
+
+    if bidirectional:
+        # if bidirectional, we care about both positive and negative distances
+        # but the maximum bucket value is only HALF of the number of buckets provided:
+        #  - negative distances will have values of [max_bucket-1,      0        ]
+        #  - positive distances will have values of [max_bucket  , 2*max_bucket-1]
+        max_bucket = num_buckets // 2
+        relative_buckets += (query_to_key_distance > 0).to(torch.long) * max_bucket
+    else:
+        # if not bidirectional, we only care about distances < 0
+        # but the maximum bucket value is the number of buckets provided
+        max_bucket = num_buckets
+        query_to_key_distance = torch.min(query_to_key_distance, torch.zeros_like(query_to_key_distance))
+
+    # distances must always be positive in the range [0, inf]
+    query_to_key_distance = torch.abs(query_to_key_distance)
+
+    # sets the limit between the half that contains linear distance
+    # and the half that contains logaritmic distance
+    limit = max_bucket // 2
+
+    # calculate the logarithmic distances
+    logarithmic_distance = (                                                      # FLOAT[query_length, key_length]
+        torch.log(query_to_key_distance.float() / limit) / math.log(max_distance / limit) * (max_bucket - limit) )
+    logarithmic_distance = limit + logarithmic_distance.to(torch.long)
+
+    # clamp logarithmic distances to the range [0, max_bucket - 1]
+    logarithmic_distance = torch.min(                                             # INT64[query_length, key_length]
+        logarithmic_distance, torch.full_like(logarithmic_distance, max_bucket - 1) )
+
+    # compose linear and logarithmic distances depending if distance exceeds limit or not
+    relative_buckets += torch.where( query_to_key_distance < limit, query_to_key_distance, logarithmic_distance )
+    return relative_buckets
+
+
+class _RMSNorm(torch.nn.Module):
+    """
+    A RMS-based normalization layer, devoid of learned bias and mean subtraction
+
+    This module normalizes the input tensor by scaling each feature with its
+    root mean square value, calculated across the last dimension (typically
+    representing samples).
+    It is implemented as described in the paper "RMS Layer Normalization":
+     - https://arxiv.org/pdf/1910.07467.pdf
+
+    Args:
+        dim    : The number of features in both the input and output tensors.
+        epsilon: A small value added to the variance to prevent division by zero.
+        dtype  : The data type of the weight tensor. Defaults to torch.float32.
+        nn (optional): The neural network implementation to use.
+    """
+    def __init__(self,
+                 dim: int,
+                 /,*,
+                 epsilon: float,
+                 dtype: torch.dtype,
+                 nn
+                 ):
+        super().__init__()
+        if nn is None:
+            nn = Custom_nn
+        self.weight           = nn.Parameter( torch.empty(dim, dtype=dtype) )
+        self.variance_epsilon = epsilon
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        variance = x.pow(2).mean(-1, keepdim=True)
+        x = x * torch.rsqrt(variance + self.variance_epsilon)
+        return self.weight.to(x) * x
+
+
+#=========================== FEED FORWARD LAYER ============================#
+
+class _DenseActDense(torch.nn.Module):
+
+    def __init__(self,
+                 dim          : int,
+                 hidden_dim   : int,
+                 activation_fn: str,
+                 dropout_rate : float,
+                 /,*,
+                 dtype: torch.dtype,
+                 nn
+                 ):
+        super().__init__()
+        if nn is None:
+            nn = Custom_nn
+        self.wi      = nn.Linear(dim, hidden_dim, bias=False, dtype=dtype)
+        self.act     = _ACTIVATIONS_BY_NAME[activation_fn]
+        self.dropout = nn.Dropout(dropout_rate)
+        self.wo      = nn.Linear(hidden_dim, dim, bias=False, dtype=dtype)
+
+    def forward(self, x):
+        x = self.wi(x)
+        x = self.act(x)
+        #x= self.dropout(x)
+        x = self.wo(x)
+        return x
+
+
+class _DenseGatedActDense(torch.nn.Module):
+
+    def __init__(self,
+                 dim          : int,
+                 hidden_dim   : int,
+                 activation_fn: str,
+                 dropout_rate : float,
+                 /,*,
+                 dtype: torch.dtype,
+                 nn
+                 ):
+        super().__init__()
+        if nn is None:
+            nn = Custom_nn
+        self.wi_1    = nn.Linear(dim, hidden_dim, bias=False, dtype=dtype)
+        self.wi_0    = nn.Linear(dim, hidden_dim, bias=False, dtype=dtype)
+        self.act     = _ACTIVATIONS_BY_NAME[activation_fn]
+        self.dropout = nn.Dropout(dropout_rate)
+        self.wo      = nn.Linear(hidden_dim, dim, bias=False, dtype=dtype)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        gate = self.wi_1(x)
+        x = self.wi_0(x)
+        x = self.act(x)
+        x *= gate
+        #x= self.dropout(x)
+        x = self.wo(x)
+        return x
+
+#--------------------------------------
+class FeedForwardLayer(torch.nn.Module):
+
+    def __init__(self,
+                 *,
+                 model_dim         : int,
+                 ff_dim            : int,
+                 ff_activation_fn  : str,
+                 ff_is_gated       : bool,
+                 layer_norm_epsilon: float,
+                 dropout_rate      : float,
+                 dtype             : torch.dtype,
+                 nn
+                 ):
+        super().__init__()
+        if nn is None:
+            nn = Custom_nn
+        DenseActDense = _DenseGatedActDense if ff_is_gated else _DenseActDense
+
+        self.layer_norm     = _RMSNorm(model_dim, epsilon=layer_norm_epsilon, dtype=dtype, nn=nn)
+        self.DenseReluDense = DenseActDense(model_dim, ff_dim, ff_activation_fn, dropout_rate, dtype=dtype, nn=nn)
+        self.dropout        = nn.Dropout(dropout_rate)
+
+    def forward(self, x):
+        # REF:
+        #  x      -> [batch_size, seq_length, model_dim]
+        #  output -> [batch_size, seq_length, model_dim]
+        residual = x
+        x = self.layer_norm(x)
+        x = self.DenseReluDense(x)
+        #x= self.dropout(x)
+        x += residual
+        return x
+
+
+#========================== SELF ATTENTION LAYER ===========================#
+
+class _SelfAttention(torch.nn.Module):
+
+    def __init__(self,
+                 model_dim: int,
+                 inner_dim: int,
+                 num_heads: int,
+                 /,*,
+                 has_relative_attention_bias: bool,
+                 relative_attn_num_buckets  : int,
+                 relative_attn_max_distance : int,
+                 dtype: torch.dtype,
+                 nn
+                 ):
+        super().__init__()
+        if nn is None:
+            nn = Custom_nn
+        assert (inner_dim % num_heads) == 0, f"inner_dim ({inner_dim}) must be divisible by num_heads ({num_heads})"
+        self.num_heads               = num_heads
+        self.inner_dim               = inner_dim
+        self.relative_attention_bias = None
+
+        # relative attention bias
+        if has_relative_attention_bias:
+            self.relative_attention_bias    = nn.Embedding(relative_attn_num_buckets, num_heads, dtype=dtype)
+            self.relative_attn_num_buckets  = relative_attn_num_buckets
+            self.relative_attn_max_distance = relative_attn_max_distance
+
+        # attention qkv projection
+        self.q = nn.Linear(model_dim, inner_dim, bias=False, dtype=dtype)
+        self.k = nn.Linear(model_dim, inner_dim, bias=False, dtype=dtype)
+        self.v = nn.Linear(model_dim, inner_dim, bias=False, dtype=dtype)
+        self.o = nn.Linear(inner_dim, model_dim, bias=False, dtype=dtype)
+
+    def forward(self,
+                x            : Tensor,
+                mask         : Tensor = None,
+                position_bias: Tensor = None,
+                ) -> Tensor:
+        # REF:
+        #  x         -> [batch_size, seq_length, model_dim]
+        #  output    -> [batch_size, seq_length, model_dim]
+        #  past_bias -> [1, num_heads, seq_length, seq_length]
+        batch_size = x.shape[0]
+        seq_length = x.shape[1]
+        num_heads  = self.num_heads
+        inner_dim  = self.inner_dim
+        head_dim   = inner_dim // self.num_heads
+
+        # if this layer has a `relative_attention_bias` then the position bias is calculated,
+        # otherwise the provided one is used (probably a position bias calculated in previous layer)
+        if self.relative_attention_bias is not None:
+            _position_buckets = _relative_position_buckets(seq_length, seq_length,    # INT64[seq_length, seq_length]
+                                                           num_buckets   = self.relative_attn_num_buckets,
+                                                           max_distance  = self.relative_attn_max_distance,
+                                                           bidirectional = True,
+                                                           device = x.device
+                                                           )
+            position_bias = self.relative_attention_bias(_position_buckets,      # [seq_length, seq_length, num_heads]
+                                                         dtype = x.dtype
+                                                         )
+            position_bias = position_bias.permute(2, 0, 1).unsqueeze(0)          # [1, num_heads, seq_length, seq_length]
+
+        # attention mask is `position_bias` or `mask`` (the one that
+        # has been supplied), and if both are present they are added
+        if mask is None:
+            attn_mask = position_bias
+        elif position_bias is None:
+            attn_mask = mask
+        else:
+            attn_mask = mask + position_bias
+
+        # project query, key and value
+        q: Tensor = self.q(x)                                                    # [batch_size, seq_length, inner_dim]
+        k: Tensor = self.k(x)                                                    # [batch_size, seq_length, inner_dim]
+        v: Tensor = self.v(x)                                                    # [batch_size, seq_length, inner_dim]
+
+        # prepare for the multi-head dot product attention
+        q = q.view(batch_size, seq_length, num_heads, head_dim).transpose(1, 2)  # [batch_size, num_heads, seq_length, head_dim]
+        k = k.view(batch_size, seq_length, num_heads, head_dim).transpose(1, 2)  # [batch_size, num_heads, seq_length, head_dim]
+        v = v.view(batch_size, seq_length, num_heads, head_dim).transpose(1, 2)  # [batch_size, num_heads, seq_length, head_dim]
+
+        # do the dot product attention
+        x = F.scaled_dot_product_attention(q, k, v, attn_mask=attn_mask, scale=1.0)
+        x = x.transpose(1, 2).reshape(batch_size, seq_length, inner_dim)         # [batch_size, seq_length, inner_dim]
+        x = self.o(x)                                                            # [batch_size, seq_length, model_dim]
+        return x, position_bias
+
+
+#----------------------------------------
+class SelfAttentionLayer(torch.nn.Module):
+    """
+    The self-attention mechanism used by the T5 encoder.
+
+    This module provides a flexible, parameterized structure for self-attention
+    operations. It leverages multiple attention heads and relative positional
+    encodings to capture complex dependencies in sequential data.
+
+    Args:
+        model_dim                    (int): The dimensionality of the embeddings.
+        inner_dim                    (int): The hidden dimension for the self attention mechanism.
+        num_heads                    (int): Number of attention heads in multi-head attention mechanisms.
+        layer_norm_epsilon         (float): A small value added in the normalization layer to prevent division by zero.
+        has_relative_attention_bias (bool): If True, this block will have its own relative attention bias.
+                                            If False, it shares the same relative bias with other blocks.
+        relative_attn_num_buckets    (int): Number of buckets for relative positional encoding.
+        relative_attn_max_distance   (int): Maximum distance in the relative positional encoding.
+        dropout_rate               (float): Dropout rate applied after each layer.
+        dtype                (torch.dtype): The data type used for storing model tensors.
+        nn                      (optional): The neural network library to employ (e.g., `torch.nn`).
+    """
+    def __init__(self,
+                 *,
+                 model_dim                  : int,
+                 inner_dim                  : int,
+                 num_heads                  : int,
+                 layer_norm_epsilon         : float,
+                 has_relative_attention_bias: bool,
+                 relative_attn_num_buckets  : int,
+                 relative_attn_max_distance : int,
+                 dropout_rate               : float,
+                 dtype                      : torch.dtype,
+                 nn
+                 ):
+        super().__init__()
+        if nn is None:
+            nn = Custom_nn
+        self.SelfAttention = _SelfAttention(model_dim, inner_dim, num_heads,
+                                            has_relative_attention_bias = has_relative_attention_bias,
+                                            relative_attn_num_buckets   = relative_attn_num_buckets,
+                                            relative_attn_max_distance  = relative_attn_max_distance,
+                                            dtype                       = dtype,
+                                            nn=nn
+                                            )
+        self.layer_norm    = _RMSNorm(model_dim, epsilon=layer_norm_epsilon, dtype=dtype, nn=nn)
+        self.dropout       = nn.Dropout(dropout_rate)
+
+    def forward(self, x, mask=None, position_bias=None):
+        # REF:
+        # x         -> [batch_size, seq_length, model_dim]
+        # past_bias -> [batch_size, num_heads, seq_length, seq_length]
+        residual = x
+        x = self.layer_norm(x)
+        x, position_bias = self.SelfAttention(x, mask, position_bias)
+        #x= self.dropout(x)
+        x += residual
+        return x, position_bias
+
+
+#=========================== T5 STACK OF BLOCKS ============================#
+
+class _T5Block(torch.nn.Module):
+    def __init__(self,
+                 *,
+                 model_dim                  : int,
+                 inner_dim                  : int,
+                 ff_dim                     : int,
+                 ff_activation_fn           : str,
+                 ff_is_gated                : bool,
+                 num_heads                  : int,
+                 layer_norm_epsilon         : float,
+                 has_relative_attention_bias: bool,
+                 relative_attn_num_buckets  : int,
+                 relative_attn_max_distance : int,
+                 dropout_rate               : float,
+                 dtype: torch.dtype,
+                 nn
+                 ):
+        super().__init__()
+        if nn is None:
+            nn = Custom_nn
+        self.layer = torch.nn.ModuleList()
+
+        self.layer.append( SelfAttentionLayer(
+                                    model_dim                   = model_dim,
+                                    inner_dim                   = inner_dim,
+                                    num_heads                   = num_heads,
+                                    layer_norm_epsilon          = layer_norm_epsilon,
+                                    has_relative_attention_bias = has_relative_attention_bias,
+                                    relative_attn_num_buckets   = relative_attn_num_buckets,
+                                    relative_attn_max_distance  = relative_attn_max_distance,
+                                    dropout_rate                = dropout_rate,
+                                    dtype                       = dtype,
+                                    nn=nn
+                                    ))
+        self.layer.append( FeedForwardLayer(
+                                    model_dim          = model_dim,
+                                    ff_dim             = ff_dim,
+                                    ff_activation_fn   = ff_activation_fn,
+                                    ff_is_gated        = ff_is_gated,
+                                    layer_norm_epsilon = layer_norm_epsilon,
+                                    dropout_rate       = dropout_rate,
+                                    dtype              = dtype,
+                                    nn=nn
+                                    ))
+
+    def forward(self, x, mask=None, position_bias=None):
+        x, position_bias = self.layer[ 0](x, mask, position_bias)  # self attention
+        x                = self.layer[-1](x)                       # feed forward
+        return x, position_bias
+
+
+#-------------------------------------
+class T5StackOfBlocks(torch.nn.Module):
+    """
+    A stack of transformer blocks within the T5 encoder architecture.
+
+    Each block in this tower implements self-attention and feed-forward networks,
+    forming a deep structure that can handle long-range dependencies in text data
+    effectively.
+
+    Args:
+        model_dim        (int): The dimensionality of the embeddings.
+        inner_dim        (int): The hidden dimension for the self attention mechanism.
+        num_heads        (int): Number of attention heads in multi-head attention mechanisms.
+        num_layers       (int): Total number of blocks in the stack.
+        ff_dim           (int): Dimension of the feed-forward network layer.
+        ff_is_gated     (bool): Whether to use a gated linear unit in the feed-forward layer.
+        ff_activation_fn (str): Activation function used in feed-forward networks.
+        layer_norm_epsilon           (float): Epsilon value for Layer Scaling in Layer Normalization.
+        all_layers_have_relative_bias (bool): If True, each block will have its own relative attention bias;
+                                              If False, the same relative bias is applied across all blocks.
+        relative_attn_num_buckets      (int): Number of buckets for relative positional encoding.
+        relative_attm_max_distance     (int): Maximum distance in the relative positional encoding.
+        dropout_rate   (float): Dropout rate applied after each layer.
+        dtype    (torch.dtype): The data type used for storing model tensors.
+        nn          (optional): The neural network library to employ (e.g., `torch.nn`).
+    """
+    def __init__(self,
+                 *,
+                 model_dim                    : int,
+                 inner_dim                    : int,
+                 num_heads                    : int,
+                 num_layers                   : int,
+                 ff_dim                       : int,
+                 ff_is_gated                  : bool,
+                 ff_activation_fn             : str,
+                 layer_norm_epsilon           : float,
+                 all_layers_have_relative_bias: bool,
+                 relative_attn_num_buckets    : int,
+                 relative_attm_max_distance   : int,
+                 dropout_rate                 : float,
+                 dtype                        : torch.dtype,
+                 nn
+                 ):
+        super().__init__()
+        if nn is None:
+            nn = Custom_nn
+
+        self.block = torch.nn.ModuleList([
+            _T5Block(model_dim                   = model_dim,
+                    inner_dim                   = inner_dim,
+                    ff_dim                      = ff_dim,
+                    ff_activation_fn            = ff_activation_fn,
+                    ff_is_gated                 = ff_is_gated,
+                    num_heads                   = num_heads,
+                    layer_norm_epsilon          = layer_norm_epsilon,
+                    has_relative_attention_bias = (layer == 0) or all_layers_have_relative_bias,
+                    relative_attn_num_buckets   = relative_attn_num_buckets,
+                    relative_attn_max_distance  = relative_attm_max_distance,
+                    dropout_rate                = dropout_rate,
+                    dtype                       = dtype,
+                    nn=nn
+                    )
+             for layer in range(num_layers)
+        ])
+        self.final_layer_norm = _RMSNorm(model_dim, epsilon=layer_norm_epsilon, dtype=dtype, nn=nn)
+        self.dropout          = nn.Dropout(dropout_rate)
+
+
+    def forward(self,
+                x                              : torch.Tensor,
+                attention_mask                 : torch.Tensor = None,
+                return_intermediate            : bool         = False,
+                intermediate_index             : int          = -2,
+                intermediate_must_be_normalized: bool         = False,
+                ):
+
+        # `intermediate_index` can have a negative value,
+        # the same logic as Python indexing is used
+        if intermediate_index < 0:
+            intermediate_index += len(self.block)
+
+        # adjust mask to always be 4D
+        if attention_mask:
+            attention_mask = _get_4d_attention_mask(attention_mask, x.dtype)
+
+        # if we don't need to return any intermediate result,
+        # simply execute each block and return the final normalized output
+        if not return_intermediate:
+            position_bias = None
+            for block in self.block:
+                x, position_bias = block(x, attention_mask, position_bias)
+            x = self.final_layer_norm(x)
+            return x
+
+        # if we need to return an intermediate result,
+        # we need to execute each block and capture the output of the specified layer
+        else:
+            intermediate  = None
+            position_bias = None
+            for index, block in enumerate(self.block):
+                x, position_bias = block(x, attention_mask, position_bias)
+                if index == intermediate_index:
+                    intermediate = x.clone()
+                x = self.final_layer_norm(x)
+                if intermediate_must_be_normalized:
+                    intermediate = self.final_layer_norm(intermediate) if intermediate is not None else None
+            return x, intermediate
+
+
+
+#===========================================================================#
+#//////////////////////////// T5 ENCODER MODEL /////////////////////////////#
+#===========================================================================#
+
+class T5EncoderModel(torch.nn.Module):
+
+    def __init__(self,
+                 *,
+                 d_ff                           : int   = 10240,
+                 d_kv                           : int   =    64,
+                 d_model                        : int   =  4096,
+                 dense_act_fn                   : str   = "gelu_pytorch_tanh",
+                 layer_norm_epsilon             : float =  1e-6,
+                 model_type                     : str   =  "t5",
+                 is_gated_act                   : bool  =  True,
+                 num_heads                      : int   =    64,
+                 num_layers                     : int   =    24,
+                 vocab_size                     : int   = 32128,
+                 relative_attention_num_buckets : int   =    32,
+                 relative_attention_max_distance: int   =   128,
+                 dropout_rate                   : float =   0.1,
+                 device: str | torch.device = "cpu",
+                 dtype : str | torch.dtype  = torch.float16,
+                 nn = None,
+                 **kwargs
+                 ):
+        """
+        Args:
+            nn (optional): The neural network module implementation to use.
+                           Defaults to a custom implementation of `torch.nn`.
+                           This parameter allows for injecting custom or optimized
+                           implementations of neural network modules (`nn`).
+        """
+        super().__init__()
+        if nn is None:
+            nn = Custom_nn
+        if isinstance(device, str):
+            device = torch.device(device)
+        if isinstance(dtype, str):
+            dtype = torch.dtype(dtype)
+
+        # backward compatibility with older config versions,
+        # where the activation function was called "feed_forward_proj"
+        dense_act_fn = kwargs.get("feed_forward_proj", dense_act_fn)
+        if dense_act_fn == "gated-gelu":
+            dense_act_fn = "gelu_new"
+
+        with torch.device(device):
+            self.shared  = nn.Embedding(
+                                    num_embeddings = vocab_size,
+                                    embedding_dim  = d_model,
+                                    dtype          = dtype
+                                    )
+            self.encoder = T5StackOfBlocks(
+                                    model_dim                     = d_model,
+                                    inner_dim                     = d_kv * num_heads,
+                                    num_heads                     = num_heads,
+                                    num_layers                    = num_layers,
+                                    ff_dim                        = d_ff,
+                                    ff_is_gated                   = is_gated_act,
+                                    ff_activation_fn              = dense_act_fn,
+                                    layer_norm_epsilon            = layer_norm_epsilon,
+                                    all_layers_have_relative_bias = (model_type == "umt5"),
+                                    relative_attn_num_buckets     = relative_attention_num_buckets,
+                                    relative_attm_max_distance    = relative_attention_max_distance,
+                                    dropout_rate                  = dropout_rate,
+                                    dtype                         = dtype,
+                                    nn=nn
+                                    )
+
+    def forward(self,
+                input_ids,
+                attention_mask                 : torch.Tensor = None,
+                return_intermediate            : bool         = False,
+                intermediate_index             : int          = -2,
+                intermediate_must_be_normalized: bool         = False,
+                dtype: torch.dtype = None,
+                ) -> torch.Tensor | tuple[torch.Tensor]:
+        # REF:
+        #  input_ids     -> [batch_size, seq_length]
+        #  inputs_embeds -> [batch_size, seq_length, model_dim]
+        #  return        -> [batch_size, seq_length, model_dim]
+        start_time = time.time()
+
+        layer_0_dtype = self.encoder.block[0].layer[0].SelfAttention.k.weight.dtype
+        if dtype is None:
+            dtype = layer_0_dtype if layer_0_dtype in PYTORCH_COMPUTABLE_DATA_TYPES else torch.float32
+
+        # get the embedding vectors
+        inputs_embeds = self.shared(input_ids, dtype=dtype)
+
+        # hack to try to avoid `nan` values in float8
+        if layer_0_dtype not in (torch.bfloat16, torch.float16, torch.float32, torch.float64):
+            inputs_embeds = torch.nan_to_num(inputs_embeds)
+
+        # forward pass the embedding vectors through the encoder
+        tensor_or_tuple = self.encoder(inputs_embeds,
+                                       attention_mask                  = attention_mask,
+                                       return_intermediate             = return_intermediate,
+                                       intermediate_index              = intermediate_index,
+                                       intermediate_must_be_normalized = intermediate_must_be_normalized,
+                                       )
+
+        print(f"##>>>>>>  Tiempo de ejecución: {time.time() - start_time:.4f} segundos")
+        return tensor_or_tuple
+
+
+    def get_input_embeddings(self):
+        return self.shared
+
+
+    def set_input_embeddings(self, embeddings):
+        self.shared = embeddings
+
