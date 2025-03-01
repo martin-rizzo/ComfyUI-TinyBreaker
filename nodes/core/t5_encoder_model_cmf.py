@@ -13,8 +13,16 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 import torch
 from .t5_encoder_model import T5EncoderModel
 
-class T5EncoderModelCmf(T5EncoderModel):
 
+class T5EncoderModelCmf(T5EncoderModel):
+    """
+    A ComfyUI compatible version of `T5EncoderModel`.
+    Args:
+        config_dict: A dictionary containing the configuration of the T5 model.
+        dtype      : The data type used to store the model parameters.
+        device     : The device used to store the model parameters.
+        operations : A ComfyUI custom class that overrides the `torch.nn` modules.
+    """
     def __init__(self,
                  config_dict: dict,
                  dtype      : str | torch.dtype,

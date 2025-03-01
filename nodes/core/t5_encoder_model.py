@@ -39,55 +39,80 @@ _ACTIVATIONS_BY_NAME = {
 }
 
 
-class InferenceWeightMixin:
+class InferenceResourceManager:
+    """
+    A simple resource manager for efficient memory usage during model inference.
 
+    This class provides a mechanism to optimize the memory usage and execution
+    speed during inference by lazily loading and unloading model parameters
+    to/from GPU memory. It works in conjunction with model subclasses that
+    inherit from both `torch.nn.Module` and `InferenceResourceManager`.
+    """
     def __init__(self):
         super().__init__()
-        self.inference_weight      : Tensor | None = None
-        self.inference_bias        : Tensor | None = None
-        self.clear_inference_weight: bool          = False
+        self._infer_weight            : Tensor | None = None
+        self._infer_bias              : Tensor | None = None
+        self._persistent_infer_tensors: bool          = False
 
-    def lock_inference_weight_bias(self, weight: Tensor, bias: Tensor | None, input: Tensor, /,*, dtype: torch.dtype = None) -> tuple:
-        dtype = dtype or input.dtype
-        inference_weight = self.inference_weight or weight.to(input.device, dtype, non_blocking=True)
-        if bias is None:
-            return inference_weight, None
-        inference_bias = self.inference_bias or bias.to(input.device, dtype, non_blocking=True)
-        return inference_weight, inference_bias
+    def prepare_for_inference(self, device: torch.device, dtype: torch.dtype, is_persistent: bool | None = None) -> None:
+        """
+        Prepares the parameters for inference on a specified device and data type.
 
-    def unlock_inference(self):
-        if self.clear_inference_weight:
-            self.inference_weight = None
-            self.inference_bias   = None
+        This method can be called much before the inference process to ensure
+        that the model parameters are loaded onto the GPU where the inference
+        will take place.
+        """
+        if hasattr(self, 'weight') and self._infer_weight is None:
+            self._infer_weight = self.weight.to(device, dtype, non_blocking=True) if self.weight is not None else None
+        if hasattr(self, 'bias') and self._infer_bias is None:
+            self._infer_bias = self.bias.to(device, dtype, non_blocking=True) if self.bias is not None else None
+        if is_persistent is not None:
+            self._persistent_infer_tensors = is_persistent
+
+    def prepare_for_inference_with(self, x: Tensor, is_persistent: bool | None = None, /) -> None:
+        """Prepares the parameters for inference with a given tensor."""
+        self.prepare_for_inference(x.device, x.dtype, is_persistent)
+
+    def begin_inference(self, device: torch.device, dtype: torch.dtype) -> tuple:
+        """Begins inference by preparing the parameters for GPU computations."""
+        self.prepare_for_inference(device, dtype)
+        return self._infer_weight, self._infer_bias
+
+    def end_inference(self):
+        """Ends inference by unloading parameters from the GPU memory if they are not persistent."""
+        if not self._persistent_infer_tensors:
+            self._infer_weight = None
+            self._infer_bias   = None
 
 
 class Custom_nn:
 
-    class Linear(torch.nn.Linear, InferenceWeightMixin):
+    class Linear(torch.nn.Linear, InferenceResourceManager):
 
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
-            InferenceWeightMixin.__init__(self)
+            InferenceResourceManager.__init__(self)
 
         def forward(self, input: Tensor) -> Tensor:
-            weight, bias = self.lock_inference_weight_bias(self.weight, self.bias, input)
+            weight, bias = self.begin_inference(input.device, input.dtype)
             output = F.linear(input, weight, bias)
-            self.unlock_inference()
+            self.end_inference()
             return output
 
         def reset_parameters(self):
             pass
 
-    class Embedding(torch.nn.Embedding, InferenceWeightMixin):
+
+    class Embedding(torch.nn.Embedding, InferenceResourceManager):
 
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
-            InferenceWeightMixin.__init__(self)
+            InferenceResourceManager.__init__(self)
 
         def forward(self, input: Tensor, dtype: torch.dtype) -> Tensor:
-            weight, _ = self.lock_inference_weight_bias(self.weight, None, input, dtype=dtype)
+            weight, _ = self.begin_inference(input.device, dtype)
             output = F.embedding(input, weight, self.padding_idx, self.max_norm, self.norm_type, self.scale_grad_by_freq, self.sparse)
-            self.unlock_inference()
+            self.end_inference()
             return output
 
         def reset_parameters(self):
@@ -232,6 +257,10 @@ class _RMSNorm(torch.nn.Module):
         x = x * torch.rsqrt(variance + self.variance_epsilon)
         return self.weight.to(x) * x
 
+    def prepare_for_inference_with(self, x: Tensor, is_persistent: bool | None = None, /) -> None:
+        # ??
+        pass
+
 
 #=========================== FEED FORWARD LAYER ============================#
 
@@ -260,6 +289,10 @@ class _DenseActDense(torch.nn.Module):
         #x= self.dropout(x)
         x = self.wo(x)
         return x
+
+    def prepare_for_inference_with(self, *args):
+        self.wi.prepare_for_inference_with(*args)
+        self.wo.prepare_for_inference_with(*args)
 
 
 class _DenseGatedActDense(torch.nn.Module):
@@ -290,6 +323,12 @@ class _DenseGatedActDense(torch.nn.Module):
         #x= self.dropout(x)
         x = self.wo(x)
         return x
+
+    def prepare_for_inference_with(self, *args):
+        self.wi_1.prepare_for_inference_with(*args)
+        self.wi_0.prepare_for_inference_with(*args)
+        self.wo.prepare_for_inference_with(*args)
+
 
 #--------------------------------------
 class FeedForwardLayer(torch.nn.Module):
@@ -324,6 +363,10 @@ class FeedForwardLayer(torch.nn.Module):
         #x= self.dropout(x)
         x += residual
         return x
+
+    def prepare_for_inference_with(self, *args):
+        self.layer_norm.prepare_for_inference_with(*args)
+        self.DenseReluDense.prepare_for_inference_with(*args)
 
 
 #========================== SELF ATTENTION LAYER ===========================#
@@ -415,6 +458,14 @@ class _SelfAttention(torch.nn.Module):
         x = self.o(x)                                                            # [batch_size, seq_length, model_dim]
         return x, position_bias
 
+    def prepare_for_inference_with(self, *args):
+        if self.relative_attention_bias:
+            self.relative_attention_bias.prepare_for_inference_with(*args)
+        self.q.prepare_for_inference_with(*args)
+        self.k.prepare_for_inference_with(*args)
+        self.v.prepare_for_inference_with(*args)
+        self.o.prepare_for_inference_with(*args)
+
 
 #----------------------------------------
 class SelfAttentionLayer(torch.nn.Module):
@@ -475,6 +526,10 @@ class SelfAttentionLayer(torch.nn.Module):
         x += residual
         return x, position_bias
 
+    def prepare_for_inference_with(self, *args):
+        self.layer_norm.prepare_for_inference_with(*args)
+        self.SelfAttention.prepare_for_inference_with(*args)
+
 
 #=========================== T5 STACK OF BLOCKS ============================#
 
@@ -528,13 +583,17 @@ class _T5Block(torch.nn.Module):
         x                = self.layer[-1](x)                       # feed forward
         return x, position_bias
 
+    def prepare_for_inference_with(self, *args):
+        for layer in self.layer:
+            layer.prepare_for_inference_with(*args)
+
 
 #-------------------------------------
 class T5StackOfBlocks(torch.nn.Module):
     """
     A stack of transformer blocks within the T5 encoder architecture.
 
-    Each block in this tower implements self-attention and feed-forward networks,
+    Each block in this stack implements self-attention and feed-forward networks,
     forming a deep structure that can handle long-range dependencies in text data
     effectively.
 
@@ -603,40 +662,45 @@ class T5StackOfBlocks(torch.nn.Module):
                 return_intermediate            : bool         = False,
                 intermediate_index             : int          = -2,
                 intermediate_must_be_normalized: bool         = False,
-                ):
+                precharge_depth                : int          = 2,
+                ) -> Tensor | tuple[Tensor]:
 
-        # `intermediate_index` can have a negative value,
+        # the `intermediate_index` parameter can have a negative value,
         # the same logic as Python indexing is used
         if intermediate_index < 0:
             intermediate_index += len(self.block)
 
-        # adjust mask to always be 4D
+        # adjust the `attention_mask` parameter to always be 4D
         if attention_mask:
             attention_mask = _get_4d_attention_mask(attention_mask, x.dtype)
 
-        # if we don't need to return any intermediate result,
-        # simply execute each block and return the final normalized output
-        if not return_intermediate:
-            position_bias = None
-            for block in self.block:
-                x, position_bias = block(x, attention_mask, position_bias)
-            x = self.final_layer_norm(x)
-            return x
+        # prepare the first `precharge_depth` blocks for inference
+        for index in range(precharge_depth):
+            self.block[index].prepare_for_inference_with(x, True)
 
-        # if we need to return an intermediate result,
-        # we need to execute each block and capture the output of the specified layer
-        else:
-            intermediate  = None
-            position_bias = None
-            for index, block in enumerate(self.block):
-                x, position_bias = block(x, attention_mask, position_bias)
-                if index == intermediate_index:
-                    intermediate = x.clone()
-                x = self.final_layer_norm(x)
-                if intermediate_must_be_normalized:
-                    intermediate = self.final_layer_norm(intermediate) if intermediate is not None else None
+        # iterates over each transformer block in the stack
+        intermediate  = None
+        position_bias = None
+        last_index    = len(self.block)-1
+        for index, block in enumerate(self.block):
+
+            # prepare a future block for inference
+            if (index+precharge_depth) <= last_index:
+                self.block[index+precharge_depth].prepare_for_inference_with(x)
+
+            # apply attention and feed-forward on the input
+            x, position_bias = block(x, attention_mask, position_bias)
+            if return_intermediate and (index == intermediate_index):
+                intermediate = x.clone()
+
+        # apply the final normalization layer
+        x = self.final_layer_norm(x)
+        if (intermediate is not None) and intermediate_must_be_normalized:
+            intermediate = self.final_layer_norm(intermediate)
+
+        if return_intermediate:
             return x, intermediate
-
+        return x
 
 
 #===========================================================================#
@@ -686,7 +750,8 @@ class T5EncoderModel(torch.nn.Module):
         if dense_act_fn == "gated-gelu":
             dense_act_fn = "gelu_new"
 
-        with torch.device(device):
+        storage_device = device #torch.device("cpu") #device
+        with torch.device(storage_device):
             self.shared  = nn.Embedding(
                                     num_embeddings = vocab_size,
                                     embedding_dim  = d_model,
@@ -721,14 +786,25 @@ class T5EncoderModel(torch.nn.Module):
         #  input_ids     -> [batch_size, seq_length]
         #  inputs_embeds -> [batch_size, seq_length, model_dim]
         #  return        -> [batch_size, seq_length, model_dim]
-        start_time = time.time()
+        start_time    = time.time()
+        forced_dtype  = torch.bfloat16
+        forced_device = torch.device("cuda")
 
         layer_0_dtype = self.encoder.block[0].layer[0].SelfAttention.k.weight.dtype
         if dtype is None:
             dtype = layer_0_dtype if layer_0_dtype in PYTORCH_COMPUTABLE_DATA_TYPES else torch.float32
 
         # get the embedding vectors
+        if forced_device:
+            input_ids = input_ids.to(forced_device)
+        if forced_dtype:
+            dtype = forced_dtype
+
+        print("##>> device: ", input_ids.device)
+        self.shared.prepare_for_inference(input_ids.device, dtype)
         inputs_embeds = self.shared(input_ids, dtype=dtype)
+
+        print("##>> device: ", inputs_embeds.device)
 
         # hack to try to avoid `nan` values in float8
         if layer_0_dtype not in (torch.bfloat16, torch.float16, torch.float32, torch.float64):
@@ -742,7 +818,7 @@ class T5EncoderModel(torch.nn.Module):
                                        intermediate_must_be_normalized = intermediate_must_be_normalized,
                                        )
 
-        print(f"##>>>>>>  Tiempo de ejecución: {time.time() - start_time:.4f} segundos")
+        print(f"##>>>>>>  Execution Time: {time.time() - start_time:.4f} seconds")
         return tensor_or_tuple
 
 
