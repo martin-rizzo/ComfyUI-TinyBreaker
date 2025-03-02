@@ -1,7 +1,12 @@
 
 """
 File    : t5_encoder_model.PY
-Purpose : Experimental T5 encoder
+Purpose : Experimental T5 encoder.
+    - supports storing model weights on one device and performing inference on another.
+    - supports storing model in a dtype (e.g. float8) and perform inference on another (e.g. bfloat16)
+    - supports preloading layers in GPU ahead of time during inference.
+    - the code has minimal dependencies to be integrated into any project.
+
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
 Date    : Feb 16, 2025
 Repo    : https://github.com/martin-rizzo/ComfyUI-TinyBreaker
@@ -16,6 +21,21 @@ import math
 import torch
 from torch    import Tensor
 from torch.nn import functional as F
+
+# import traceback
+# def _print_traceback(title: str = ""):
+#     stack_summary = traceback.extract_stack()
+#     print()
+#     print(f"{title.upper()} call stack:" if title else "call stack:")
+#     for filename, line_number, function_name, text in stack_summary:
+#         print(f"  File: {filename}, Line: {line_number}, Function: {function_name}, Code: {text}")
+#     print()
+
+def empty_cache():
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
+        torch.cuda.ipc_collect()
+
 
 # The data types that are supported by PyTorch for computations.
 PYTORCH_COMPUTABLE_DATA_TYPES = (torch.bfloat16, torch.float16, torch.float32, torch.float64)
@@ -636,7 +656,7 @@ class T5StackOfBlocks(torch.nn.Module):
             nn = Custom_nn
 
         self.block = torch.nn.ModuleList([
-            _T5Block(model_dim                   = model_dim,
+            _T5Block(model_dim                  = model_dim,
                     inner_dim                   = inner_dim,
                     ff_dim                      = ff_dim,
                     ff_activation_fn            = ff_activation_fn,
@@ -686,6 +706,7 @@ class T5StackOfBlocks(torch.nn.Module):
 
             # prepare a future block for inference
             if (index+precharge_depth) <= last_index:
+                empty_cache()
                 self.block[index+precharge_depth].prepare_for_inference_with(x)
 
             # apply attention and feed-forward on the input
@@ -725,12 +746,14 @@ class T5EncoderModel(torch.nn.Module):
                  relative_attention_max_distance: int   =   128,
                  dropout_rate                   : float =   0.1,
                  device: str | torch.device = "cpu",
-                 dtype : str | torch.dtype  = torch.float16,
+                 dtype :       torch.dtype  = torch.float16,
                  nn = None,
                  **kwargs
                  ):
         """
         Args:
+            device       : The device on which to store model parameters.
+            dtype        : The data type of model parameters.
             nn (optional): The neural network module implementation to use.
                            Defaults to a custom implementation of `torch.nn`.
                            This parameter allows for injecting custom or optimized
@@ -741,8 +764,6 @@ class T5EncoderModel(torch.nn.Module):
             nn = Custom_nn
         if isinstance(device, str):
             device = torch.device(device)
-        if isinstance(dtype, str):
-            dtype = torch.dtype(dtype)
 
         # backward compatibility with older config versions,
         # where the activation function was called "feed_forward_proj"
@@ -750,8 +771,7 @@ class T5EncoderModel(torch.nn.Module):
         if dense_act_fn == "gated-gelu":
             dense_act_fn = "gelu_new"
 
-        storage_device = device #torch.device("cpu") #device
-        with torch.device(storage_device):
+        with torch.device(device):
             self.shared  = nn.Embedding(
                                     num_embeddings = vocab_size,
                                     embedding_dim  = d_model,
@@ -776,42 +796,55 @@ class T5EncoderModel(torch.nn.Module):
 
     def forward(self,
                 input_ids,
+                *,
                 attention_mask                 : torch.Tensor = None,
                 return_intermediate            : bool         = False,
                 intermediate_index             : int          = -2,
                 intermediate_must_be_normalized: bool         = False,
-                dtype: torch.dtype = None,
+                device                         : torch.device = None,
+                dtype                          : torch.dtype  = None,
                 ) -> torch.Tensor | tuple[torch.Tensor]:
+        """
+        Forward pass of the T5 encoder.
+        Args:
+            input_ids                      : the input token ids to encode.
+            attention_mask                 : the attention mask to use for masking input tokens.
+            return_intermediate            : whether to return intermediate hidden states.
+            intermediate_index             : index of intermediate hidden state to return.
+            intermediate_must_be_normalized: whether to normalize intermediate hidden states with the final layer norm.
+            device                         : the device on which to perform the inference.
+            dtype                          : the data type to use for performing the inference (bfloat16 or float32).
+        """
         # REF:
         #  input_ids     -> [batch_size, seq_length]
         #  inputs_embeds -> [batch_size, seq_length, model_dim]
         #  return        -> [batch_size, seq_length, model_dim]
+        print()
+        print("##>> input_ids.shape:", input_ids.shape)
+        print("##>> attention_mask.shape:", attention_mask.shape if attention_mask else "None")
+        print()
         start_time    = time.time()
-        forced_dtype  = torch.bfloat16
-        forced_device = torch.device("cuda")
 
-        layer_0_dtype = self.encoder.block[0].layer[0].SelfAttention.k.weight.dtype
-        if dtype is None:
-            dtype = layer_0_dtype if layer_0_dtype in PYTORCH_COMPUTABLE_DATA_TYPES else torch.float32
+        layer_0_dtype    = self.encoder.block[0].layer[0].SelfAttention.k.weight.dtype
+        inference_dtype  = layer_0_dtype if layer_0_dtype in PYTORCH_COMPUTABLE_DATA_TYPES else torch.float32
+        inference_device = input_ids.device
+
+        # if a device or a data type is specified, use them instead of the default ones
+        if device:
+            inference_device = torch.device(device) if isinstance(device, str) else device
+        if dtype:
+            inference_dtype  = dtype
 
         # get the embedding vectors
-        if forced_device:
-            input_ids = input_ids.to(forced_device)
-        if forced_dtype:
-            dtype = forced_dtype
-
-        print("##>> device: ", input_ids.device)
-        self.shared.prepare_for_inference(input_ids.device, dtype)
-        inputs_embeds = self.shared(input_ids, dtype=dtype)
-
-        print("##>> device: ", inputs_embeds.device)
+        self.shared.prepare_for_inference(inference_device, inference_dtype)
+        input_embeds = self.shared(input_ids.to(inference_device), dtype=inference_dtype)
 
         # hack to try to avoid `nan` values in float8
         if layer_0_dtype not in (torch.bfloat16, torch.float16, torch.float32, torch.float64):
-            inputs_embeds = torch.nan_to_num(inputs_embeds)
+            input_embeds = torch.nan_to_num(input_embeds)
 
         # forward pass the embedding vectors through the encoder
-        tensor_or_tuple = self.encoder(inputs_embeds,
+        tensor_or_tuple = self.encoder(input_embeds,
                                        attention_mask                  = attention_mask,
                                        return_intermediate             = return_intermediate,
                                        intermediate_index              = intermediate_index,

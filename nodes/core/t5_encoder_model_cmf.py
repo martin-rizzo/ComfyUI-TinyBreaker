@@ -33,6 +33,10 @@ class T5EncoderModelCmf(T5EncoderModel):
         # comfyui needs the 'self.num_layers' attribute
         self.num_layers = config_dict.get("num_layers", 24)
 
+        # the inference device and dtype can be forced externally with these attributes
+        self.inference_device = None
+        self.inference_dtype  = None
+
         # call the parent class constructor using the `config_dict`
         super().__init__(
             d_ff               = config_dict.get("d_ff"              , 10240),
@@ -60,24 +64,30 @@ class T5EncoderModelCmf(T5EncoderModel):
                 final_layer_norm_intermediate: bool        = False,
                 dtype                        : torch.dtype = None,
                 ) -> tuple[torch.Tensor]:
-        dtype = dtype or torch.float32
+
+        dtype            = dtype or torch.float32
+        inference_dtype  = self.inference_dtype or dtype
+        inference_device = self.inference_device
 
         if intermediate_output:
             # when comfyui requests the output of some intermediate layer
             x, intermediate = super().forward(
-                input_ids                       = input_ids,
+                input_ids,
                 attention_mask                  = attention_mask,
                 return_intermediate             = True,
                 intermediate_index              = intermediate_output,
                 intermediate_must_be_normalized = final_layer_norm_intermediate,
-                dtype = dtype
+                device = inference_device,
+                dtype  = inference_dtype
                 )
+            x = x.to(dtype)
             return x, intermediate
 
         else:
             # when comfyui requires the output of the inference only (no intermediate layers)
             x = super().forward(input_ids      = input_ids,
                                 attention_mask = attention_mask,
-                                dtype = dtype
+                                dtype = inference_dtype
                                 )
+            x = x.to(dtype)
             return x, x

@@ -1,6 +1,6 @@
 {
-  "last_node_id": 210,
-  "last_link_id": 534,
+  "last_node_id": 212,
+  "last_link_id": 535,
   "nodes": [
     {
       "id": 189,
@@ -96,7 +96,7 @@
         {
           "name": "",
           "type": "*",
-          "link": 534
+          "link": 535
         }
       ],
       "outputs": [
@@ -550,50 +550,8 @@
       },
       "widgets_values": [
         "tinybreaker_prototype0.safetensors",
-        "high quality"
+        "fast"
       ]
-    },
-    {
-      "id": 198,
-      "type": "UnifiedPromptInput //TinyBreaker",
-      "pos": [
-        370,
-        -20
-      ],
-      "size": [
-        540,
-        670
-      ],
-      "flags": {
-        "pinned": true
-      },
-      "order": 9,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "link": 528
-        }
-      ],
-      "outputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "links": [
-            514,
-            515
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "UnifiedPromptInput //TinyBreaker"
-      },
-      "widgets_values": [
-        "A cute corgi, smiling with great joy, soaring high over the river bank in Yosemite National Park, wearing a Superman cape. Bokeh and selective focus\n\n--aspect 3:2 --portrait \n"
-      ],
-      "color": "#232",
-      "bgcolor": "#353"
     },
     {
       "id": 191,
@@ -736,7 +694,49 @@
       }
     },
     {
-      "id": 208,
+      "id": 198,
+      "type": "UnifiedPromptInput //TinyBreaker",
+      "pos": [
+        370,
+        -20
+      ],
+      "size": [
+        540,
+        670
+      ],
+      "flags": {
+        "pinned": true
+      },
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 528
+        }
+      ],
+      "outputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "links": [
+            514,
+            515
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "UnifiedPromptInput //TinyBreaker"
+      },
+      "widgets_values": [
+        "A cute corgi, smiling with great joy, soaring high over the river bank in Yosemite National Park, wearing a Superman cape. Bokeh and selective focus\n\n--aspect 3:2 --portrait \n"
+      ],
+      "color": "#232",
+      "bgcolor": "#353"
+    },
+    {
+      "id": 212,
       "type": "LoadT5EncoderExperimental //TinyBreaker",
       "pos": [
         -540,
@@ -744,7 +744,7 @@
       ],
       "size": [
         390,
-        90
+        130
       ],
       "flags": {},
       "order": 4,
@@ -755,9 +755,8 @@
           "name": "CLIP",
           "type": "CLIP",
           "links": [
-            534
-          ],
-          "slot_index": 0
+            535
+          ]
         }
       ],
       "properties": {
@@ -765,7 +764,9 @@
       },
       "widgets_values": [
         "t5xxl_fp8_e4m3fn.safetensors",
-        "experimental"
+        "sd3",
+        "optimized",
+        "bfloat16"
       ],
       "color": "#323",
       "bgcolor": "#535"
@@ -941,8 +942,8 @@
       "*"
     ],
     [
-      534,
-      208,
+      535,
+      212,
       0,
       91,
       0,
@@ -982,10 +983,10 @@
   "config": {},
   "extra": {
     "ds": {
-      "scale": 0.8969998096533214,
+      "scale": 0.8969998096533212,
       "offset": [
-        140.23080238194524,
-        190.12616122533362
+        143.2641631587723,
+        215.2645860303096
       ]
     }
   },

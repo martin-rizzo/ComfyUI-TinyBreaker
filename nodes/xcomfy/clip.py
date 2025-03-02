@@ -44,13 +44,83 @@ _CLIP_TYPES_BY_NAME = {
     "stable_diffusion": comfy.sd.CLIPType.STABLE_DIFFUSION,
     "pixart"          : comfy.sd.CLIPType.PIXART,
     "sd3"             : comfy.sd.CLIPType.SD3,
-    "stable_cascade"  : comfy.sd.CLIPType.STABLE_CASCADE,
-    "stable_audio"    : comfy.sd.CLIPType.STABLE_AUDIO,
-    "mochi"           : comfy.sd.CLIPType.MOCHI,
-    "ltxv"            : comfy.sd.CLIPType.LTXV,
-#    "cosmos"         : comfy.sd.CLIPType.COSMOS,
-#    "lumina2"        : comfy.sd.CLIPType.LUMINA2,
+    # "stable_cascade"  : comfy.sd.CLIPType.STABLE_CASCADE,
+    # "stable_audio"    : comfy.sd.CLIPType.STABLE_AUDIO,
+    # "mochi"           : comfy.sd.CLIPType.MOCHI,
+    # "ltxv"            : comfy.sd.CLIPType.LTXV,
+    # "cosmos"          : comfy.sd.CLIPType.COSMOS,
+    # "lumina2"         : comfy.sd.CLIPType.LUMINA2,
 }
+
+class _T5XXLModel(comfy.sd1_clip.SDClipModel):
+    """
+    A custom version of the T5XXLModel class that allows injecting any T5
+    encoder model via the key "t5_encoder_class" in model_options.
+    The original implementation can be found here:
+    - https://github.com/comfyanonymous/ComfyUI/blob/v0.3.18/comfy/text_encoders/sd3_clip.py#L10
+    """
+    def __init__(self, device="cpu", layer="last", layer_idx=None, dtype=None, attention_mask=False, model_options={}):
+        t5_config_dir         = os.path.join(os.path.dirname(os.path.realpath(__file__)), "t5_config")
+        textmodel_json_config = os.path.join(t5_config_dir, "t5_config_xxl.json")
+        t5_encoder_class      = comfy.text_encoders.t5.T5
+
+        print("##>> _T5XXLModel dtype:", dtype)
+
+        if "t5xxl_scaled_fp8" in model_options:
+            model_options = model_options.copy()
+            model_options["scaled_fp8"] = model_options["t5xxl_scaled_fp8"]
+
+        if "t5_encoder_class" in model_options:
+            t5_encoder_class = model_options.pop("t5_encoder_class")
+
+        super().__init__(device                 = device,
+                         layer                  = layer,
+                         layer_idx              = layer_idx,
+                         textmodel_json_config  = textmodel_json_config,
+                         dtype                  = dtype,
+                         special_tokens         = {"end": 1, "pad": 0},
+                         model_class            = t5_encoder_class,
+                         enable_attention_masks = attention_mask,
+                         return_attention_masks = attention_mask,
+                         model_options          = model_options)
+
+
+def _create_pixart_clip_model_class(t5_encoder_class: type[torch.nn.Module],
+                                    *,
+                                    dtype_t5        : torch.dtype = None,
+                                    t5xxl_scaled_fp8: torch.dtype = None,
+                                    ) -> type[comfy.text_encoders.pixart_t5.PixArtT5XXL]:
+
+    class _T5XXLModel_PA(_T5XXLModel):
+        def __init__(self, **kwargs):
+            super().__init__(**kwargs)
+
+        def gen_empty_tokens(self, special_tokens, *args, **kwargs):
+            special_tokens = special_tokens.copy()
+            special_tokens.pop("end")
+            return comfy.sd1_clip.gen_empty_tokens(special_tokens, *args, **kwargs)
+
+    class _PixArtT5XXL(comfy.sd1_clip.SD1ClipModel):
+        """
+        A custom subclass that attempts to emulate the behavior of PixArtT5XXL/PixArtTEModel_
+        but injecting the custom T5 encoder class. The original implementation can be found here:
+        https://github.com/comfyanonymous/ComfyUI/blob/v0.3.18/comfy/text_encoders/pixart_t5.py#L34
+        """
+        def __init__(self, device = "cpu", dtype = None, model_options = {}):
+            model_options = model_options.copy()
+            model_options["t5_encoder_class"] = t5_encoder_class # <-- inject the custom T5 encoder, to be read by _T5XXLModel
+            if t5xxl_scaled_fp8:
+                model_options["t5xxl_scaled_fp8"] = t5xxl_scaled_fp8
+
+            super().__init__(device        = device,
+                             dtype         = dtype_t5,
+                             name          = "t5xxl",
+                             clip_model    = _T5XXLModel_PA,
+                             model_options = model_options)
+
+    # return the configured class with the custom T5 encoder injected
+    return _PixArtT5XXL
+
 
 def _create_sd3_clip_model_class(t5_encoder_class : type[torch.nn.Module],
                                  *,
@@ -83,38 +153,18 @@ def _create_sd3_clip_model_class(t5_encoder_class : type[torch.nn.Module],
         with the specified configurations and custom T5 encoder class. 
     """
 
-    class _T5XXLModel(comfy.sd1_clip.SDClipModel):
-        """
-        A custom version of the T5XXLModel class found here:
-        - https://github.com/comfyanonymous/ComfyUI/blob/v0.3.14/comfy/text_encoders/sd3_clip.py#L10
-        """
-        def __init__(self, device="cpu", layer="last", layer_idx=None, dtype=None, attention_mask=False, model_options={}):
-            textmodel_json_config = os.path.join(os.path.dirname(os.path.realpath(__file__)), "t5_config_xxl.json")
-            if "t5xxl_scaled_fp8" in model_options:
-                model_options = model_options.copy()
-                model_options["scaled_fp8"] = model_options["t5xxl_scaled_fp8"]
-            super().__init__(device                 = device,
-                             layer                  = layer,
-                             layer_idx              = layer_idx,
-                             textmodel_json_config  = textmodel_json_config,
-                             dtype                  = dtype,
-                             special_tokens         = {"end": 1, "pad": 0},
-                             model_class            = t5_encoder_class,
-                             enable_attention_masks = attention_mask,
-                             return_attention_masks = attention_mask,
-                             model_options          = model_options)
-
-
     class _SD3ClipModel(comfy.text_encoders.sd3_clip.SD3ClipModel):
         """
         A custom subclass of `comfy.text_encoders.sd3_clip.SD3ClipModel` with
         the custom T5 encoder class injected. The base class can be found here:
-        - https://github.com/comfyanonymous/ComfyUI/blob/v0.3.14/comfy/text_encoders/sd3_clip.py#L59
+        - https://github.com/comfyanonymous/ComfyUI/blob/v0.3.18/comfy/text_encoders/sd3_clip.py#L59
         """
         def __init__(self, device = "cpu", dtype = None, model_options = {}):
+            model_options = model_options.copy()
+            model_options["t5_encoder_class"] = t5_encoder_class # <-- inject the custom T5 encoder, to be read by _T5XXLModel
             if t5xxl_scaled_fp8:
-                model_options = model_options.copy()
                 model_options["t5xxl_scaled_fp8"] = t5xxl_scaled_fp8
+
             super().__init__(clip_l            = clip_l,
                              clip_g            = clip_g,
                              t5                = False,
@@ -240,8 +290,9 @@ class CLIP(comfy.sd.CLIP):
                                t5_encoder_class: type,
                                state_dicts: list[dict], /,
                                *,
-                               prefix   : str = None,
-                               clip_type: str = "sd3",
+                               prefix         : str         = None,
+                               clip_type      : str         = "sd3",
+                               inference_dtype: torch.dtype = None,
                                ) -> "CLIP":
         """
         Creates a standard ComfyUI CLIP object from a custom T5 text encoder model.
@@ -251,7 +302,7 @@ class CLIP(comfy.sd.CLIP):
         and enabling the use of custom models.
 
         The original function can be found at:
-        - https://github.com/comfyanonymous/ComfyUI/blob/v0.3.14/comfy/sd.py#L725 
+        - https://github.com/comfyanonymous/ComfyUI/blob/v0.3.18/comfy/sd.py#L740
 
         Args:
             t5_encoder_class: The class of the custom T5 model.
@@ -288,13 +339,17 @@ class CLIP(comfy.sd.CLIP):
         if clip_type == "sd3":
             comfy_tokenizer_class = comfy.text_encoders.sd3_clip.SD3Tokenizer
             comfy_model_class     = _create_sd3_clip_model_class(t5_encoder_class,
-                                                                clip_l           = False,
-                                                                clip_g           = False,
-                                                                t5               = True,
-                                                                dtype_t5         = dtype_t5,
-                                                                t5xxl_scaled_fp8 = t5xxl_scaled_fp8)
+                                                                 clip_l           = False,
+                                                                 clip_g           = False,
+                                                                 t5               = True,
+                                                                 dtype_t5         = dtype_t5,
+                                                                 t5xxl_scaled_fp8 = t5xxl_scaled_fp8)
+
         elif clip_type == "pixart":
-            raise NotImplementedError("CLIP type 'pixart' is not supported yet!")
+            comfy_tokenizer_class = comfy.text_encoders.pixart_t5.PixArtTokenizer
+            comfy_model_class     = _create_pixart_clip_model_class(t5_encoder_class,
+                                                                    dtype_t5         = dtype_t5,
+                                                                    t5xxl_scaled_fp8 = t5xxl_scaled_fp8)
         else:
             raise ValueError(f"Invalid CLIP type: {clip_type}")
 
@@ -312,6 +367,10 @@ class CLIP(comfy.sd.CLIP):
             comfy_model_options     = {},
             raw_model_options       = {}
             )
+
+        # force the inference device and dtype
+        clip.cond_stage_model.t5xxl.transformer.inference_device = comfy.model_management.get_torch_device()
+        clip.cond_stage_model.t5xxl.transformer.inference_dtype  = inference_dtype
 
         # load the weights into the new CLIP instance
         for _state_dict in state_dicts:
