@@ -20,8 +20,13 @@ class Styles:
     """
     A class for managing a set of pre-configured styles.
     """
-    def __init__(self):
-        self.styles = {}
+    def __init__(self, styles_dict: dict = None, /):
+        self.styles = styles_dict if styles_dict else {}
+
+
+    def __len__(self):
+        """Returns the number of styles in this instance."""
+        return len(self.styles)
 
 
     @classmethod
@@ -59,6 +64,23 @@ class Styles:
         return styles
 
 
+    @classmethod
+    def from_merge(cls, base_styles: "Styles", new_styles: "Styles") -> "Styles":
+        """
+        Returns a new instance of Styles populated with all styles defined in both base_styles and new_styles.
+
+        If a style is defined in both base_styles and new_styles, the value from `new_styles` takes precedence.
+        The merge performs a shallow copy so that references to each style are maintained.
+
+        Args:
+            base_styles (Styles): The base Styles instance.
+            new_styles  (Styles): The new Styles instance.
+        """
+        merged_styles = base_styles.styles.copy()
+        merged_styles.update(new_styles.styles)
+        return cls(merged_styles)
+
+
     def add_style(self,
                   style_name       : str,
                   style_raw_options: tuple[str,str]
@@ -74,6 +96,22 @@ class Styles:
         if style_name not in self.styles:
             raise ValueError(f"Style '{style_name}' does not exist.")
         del self.styles[style_name]
+
+
+    def update(self, new_styles: "Styles", /, overwrite: bool = True):
+        """
+        Updates this instance with styles from another Styles object.
+        Args:
+            new_styles (Styles): The Styles object to update from.
+            overwrite    (bool): If False, only new styles will be added.
+                                 If True (default), existing styles will be overwritten.
+        """
+        if overwrite:
+            self.styles.update(new_styles.styles)
+            return
+        for name in new_styles.names():
+            if name not in self.styles:
+                self.styles[name] = new_styles.styles[name]
 
 
     def get_genparams_for_style(self, style_name):
@@ -114,10 +152,54 @@ class Styles:
 
 #---------------------------------------------------------------------------#
 
-def load_all_styles_versions(dir_path   : str,
-                             file_prefix: str="styles",
-                             extension  : str=".ini"
-                             )-> tuple[ dict[str,Styles], str ]:
+def _merge_new_styles_preserving_existing(old_styles_by_version: dict[str,Styles],
+                                          new_styles           : Styles
+                                          ) -> None:
+    """
+    Updates older versions of styles with new styles but without overwriting existing ones.
+    """
+    for old_styles in old_styles_by_version.values():
+        old_styles.update( new_styles, overwrite=False )
+
+
+def _apply_style_order(style_names_to_sort: list[str],
+                       *,
+                       dir_path      : str,
+                       order_filename: str = "order.conf",
+                       ) -> list[str]:
+    """
+    Applies the order defined in a configuration file to a list of style names.
+    Args:
+        style_names_to_sort (list): The list of style names to be ordered.
+        dir_path             (str): The directory path containing the order configuration file.
+        order_filename       (str): The name of the order configuration file. Defaults to "order.conf".
+    """
+    # read the style order from file (if it exists)
+    name_order = []
+    try:
+        with open(os.path.join(dir_path, order_filename), 'r') as f:
+            for line in f:
+                line = line.strip()
+                if line and not (line.startswith('#') or line.startswith(';')):
+                    name_order.extend([s.strip() for s in line.split(',')])
+    except FileNotFoundError:
+        name_order = []
+
+    # apply the style order to `style_names_to_sort`
+    sorted_names   = []
+    unsorted_names = list(style_names_to_sort)
+    for name in name_order:
+        if name in style_names_to_sort:
+            unsorted_names.remove(name)
+            sorted_names.append(name)
+    return sorted_names + unsorted_names
+
+
+def load_all_styles_versions(dir_path       : str,
+                             file_prefix    : str = "styles",
+                             extension      : str = ".ini",
+                             order_filename : str = "order.conf",
+                             ) -> tuple[ dict[str,Styles], list[str], list[str] ]:
     """
     Loads multiple Styles object from files in the specified directory.
     Args:
@@ -125,7 +207,10 @@ def load_all_styles_versions(dir_path   : str,
         file_prefix (str): The prefix of the style files. Default is "styles".
         extension   (str): The extension of the style files. Default is ".cfg".
     Returns:
-        A dictionary mapping style version to their respective Styles objects.
+        A tuple containing:
+        - A dictionary mapping style version to their respective Styles objects.
+        - A list of all versions found in the directory sorted by new version first.
+        - A list of style names found across all versions.
     """
 
     def _extract_number(string:str, prefix_len, suffix_len) -> int:
@@ -139,22 +224,38 @@ def load_all_styles_versions(dir_path   : str,
     extension_len   = len(extension)
 
     # find all files in the directory that match the specified prefix and extension
-    # and sort by the number/version that follows the prefix in the filename (first the highest value ones)
+    # and sort by the number/version that follows the prefix in the filename (the oldest version first)
     sorted_file_names = [f for f in os.listdir(dir_path) if f.startswith(file_prefix) and f.endswith(extension)]
-    sorted_file_names.sort( key=lambda name: -_extract_number(name, file_prefix_len, extension_len) )
+    sorted_file_names.sort( key=lambda name: _extract_number(name, file_prefix_len, extension_len) )
 
-    last_version = ""
-    styles_by_version = {}
+    styles_by_version      = {}
+    chronological_versions = []
+    new_version_styles     = Styles()
 
     # load the styles, indexing them by their version number
     for file_name in sorted_file_names:
-        version_number = _extract_number(file_name, file_prefix_len, extension_len)
-        version   = f"{version_number//10}.{version_number%10}" if version_number > 0 else "???"
-        file_path = os.path.join(dir_path, file_name)
-        styles_by_version[version] = Styles.from_file(file_path)
-        if not last_version:
-            last_version = version
+        prev_version_styles = new_version_styles
 
-    return styles_by_version, last_version
+        version_number = _extract_number(file_name, file_prefix_len, extension_len)
+        version        = f"{version_number//10}.{version_number%10}" if version_number > 0 else "???"
+        file_path      = os.path.join(dir_path, file_name)
+
+        # merge the styles from the file with the ones from previous version,
+        # if any new style was added then add it to all previous versions as well
+        new_version_styles = Styles.from_merge( prev_version_styles, Styles.from_file(file_path) )
+        if len(new_version_styles) > len(prev_version_styles):
+            _merge_new_styles_preserving_existing( styles_by_version, new_version_styles )
+
+        # add the loaded styles to the dictionary
+        styles_by_version[version] = new_version_styles
+        chronological_versions.append(version)
+
+    # sort the style names by their order in the `order.conf` file
+    style_names = _apply_style_order(new_version_styles.names(),
+                                     dir_path       = dir_path,
+                                     order_filename = order_filename
+                                     )
+    return styles_by_version, list(reversed(chronological_versions)), style_names
+
 
 

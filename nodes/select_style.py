@@ -17,8 +17,9 @@ from .utils.directories import PROJECT_DIR
 
 
 # load all versions of the pre-defined styles
-_PREDEFINED_STYLES_BY_VERSION, _LAST_VERSION = \
+_PREDEFINED_STYLES_BY_VERSION, _VERSIONS, _STYLES = \
     load_all_styles_versions(dir_path = PROJECT_DIR.get_full_path("styles"))
+_LAST_VERSION = _VERSIONS[0]
 
 
 class SelectStyle:
@@ -31,12 +32,12 @@ class SelectStyle:
     def INPUT_TYPES(cls):
         return {
         "required": {
-            "genparams" :("GENPARAMS"      , {"tooltip": "The generation parameters to be updated."
-                                              }),
-            "style_name":(cls.style_names(), {"tooltip": "The name of the style to use."
-                                              }),
-            "version"   :(cls.versions()   , {"tooltip": "The version of the styles file to use. By selecting a particular version, you're choosing a snapshot of the style at that point in time."
-                                              }),
+            "genparams" :("GENPARAMS"   , {"tooltip": "The generation parameters to be updated."
+                                          }),
+            "style_name":(cls.styles()  , {"tooltip": "The name of the style to use."
+                                          }),
+            "version"   :(cls.versions(), {"tooltip": "The version of the styles file to use. By selecting a particular version, you're choosing a snapshot of the style at that point in time."
+                                          }),
             },
         "optional": {
             "custom_definitions":("STRING", {"tooltip": "A string containing a list of custom styles that override the pre-defined styles.",
@@ -57,11 +58,15 @@ class SelectStyle:
                    style_name        : str,
                    custom_definitions: str = None
                    ):
-        genparams = genparams.copy()
+        genparams    = genparams.copy()
 
         # replace "last" with the last available version
         if version == "last":
             version = _LAST_VERSION
+
+        print()
+        print("##>> LAST_VERSION:", _LAST_VERSION)
+        print()
 
         # load the pre-defined styles in `genparams` using the keys "styles.<style_name>"
         predefined_styles = _PREDEFINED_STYLES_BY_VERSION[version]
@@ -84,16 +89,10 @@ class SelectStyle:
 
     @classmethod
     def versions(cls) -> list[str]:
-        return [ "last", *_PREDEFINED_STYLES_BY_VERSION.keys() ]
+        return [ "last", *_VERSIONS ]
 
 
     @classmethod
-    def style_names(cls) -> list[str]:
-        # return the list of style of the first valid version
-        # (versions are ordered by number, from most recent to oldest)
-        for styles in _PREDEFINED_STYLES_BY_VERSION.values():
-            names = styles.names()
-            if len(names) > 0:
-                return list(names)
-        return []
+    def styles(cls) -> list[str]:
+        return _STYLES
 
