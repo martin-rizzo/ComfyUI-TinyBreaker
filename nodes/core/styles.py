@@ -49,18 +49,26 @@ class Styles:
         Args:
             config_string (str): A string containing configuration data.
         """
-        # ensure config has a [DEFAULT] section, this trick ensures that
-        # the parser treats the unnamed first section as a default section
-        if "[DEFAULT]" not in config_string:
-            config_string = "[DEFAULT]\n" + config_string
 
-        # use configparser to extract any defined styles
-        config = configparser.ConfigParser(empty_lines_in_values=False)
+        # this trick ensures the parser treats the unnamed first section
+        # as "__default__" for use as the base when no template is specified
+        if "[__default__]" not in config_string:
+            config_string = "[__default__]\n" + config_string
+
+        # use `ConfigParser` to parse the string,
+        # each section is a style with its properties
+        config = configparser.ConfigParser(empty_lines_in_values=False, default_section="")
         config.read_string(config_string)
         styles = cls()
         for section in config.sections():
-            styles.add_style(section, config.items(section))
 
+            # section names are expected in the format "[style:template]" where template is optional
+            # if a template is specified, that style will be used as the base
+            style_name, _, template_name = section.partition(":")
+            style_name,    template_name = style_name.strip(), template_name.strip()
+            styles.add_style(style_name, config.items(section), template_name = template_name or "__default__")
+
+        styles.remove_style("__default__")
         return styles
 
 
@@ -82,13 +90,29 @@ class Styles:
 
 
     def add_style(self,
-                  style_name       : str,
-                  style_raw_options: tuple[str,str]
+                  style_name         : str,
+                  style_raw_kv_params: dict[str,str],
+                  /,*,
+                  template_name: str = None
                   ):
-        """Adds a new style to the dictionary"""
+        """
+        Adds a new style from a raw dictionary of key-value pairs.
+        Args:
+            style_name              : The name of the style to be added.
+            style_raw_kv_params     : A dictionary containing key-value pairs for the style parameters.
+            template_name (optional): The name of an existing style to use as a template.
+        """
         if style_name in self.styles:
             raise ValueError(f"Style '{style_name}' already exists.")
-        self.styles[style_name] = GenParams.from_raw_options(style_raw_options)
+
+        genparams = GenParams.from_raw_kv_params(style_raw_kv_params)
+        template  = self.styles.get(template_name) if template_name else None
+        if template:
+            _combined = template.copy()
+            _combined.update(genparams)
+            genparams = _combined
+
+        self.styles[style_name] = genparams
 
 
     def remove_style(self, style_name):

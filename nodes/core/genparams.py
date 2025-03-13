@@ -73,22 +73,25 @@ class GenParams(dict):
     and manipulating parameters.
 
     **Alternative Constructors:**
-      - `from_raw_options(cls, raw_options)`: Creates a new GenParams object from the given raw options.
+      - `from_raw_kv_params(cls, raw_kv_params)`: Creates a new GenParams object from the given raw parameters.
       - `from_safetensors_metadata(cls, file_path)`: Creates a new GenParams object from the given safetensors metadata.
     """
 
     @classmethod
-    def from_raw_options(cls, raw_options) -> "GenParams":
+    def from_raw_kv_params(cls, raw_kv_params: dict[str, str], /) -> "GenParams":
         """
-        Creates a new GenParams object from the given raw options.
+        Creates a new GenParams object from the given raw key/value parameters.
 
-        This method is used to parse raw options from configuration files.
-        Raw options are key-value pairs where both the key and value are strings.
-        The values can be quoted, numeric, or boolean. If a value is quoted,
-        it will remain as a string even if it looks like a number or boolean.
+        This method is used while parsing parameters from configuration files.
+        Raw parameters are key-value pairs where both the key and value are strings.
+        This method will convert these strings into their appropriate data types,
+        but if the value is quoted it will remain as a string.
+
+        Args:
+            raw_kv_params: A dictionary with key-value pairs representing raw parameters.
         """
         genparams = cls()
-        for key, value in raw_options:
+        for key, value in raw_kv_params:
             if not isinstance(key,str) or not isinstance(value,str):
                 continue
 
