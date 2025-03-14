@@ -129,8 +129,8 @@ class Custom_nn:
             super().__init__(*args, **kwargs)
             InferenceResourceManager.__init__(self)
 
-        def forward(self, input: Tensor, dtype: torch.dtype) -> Tensor:
-            weight, _ = self.begin_inference(input.device, dtype)
+        def forward(self, input: Tensor, dtype: torch.dtype = None) -> Tensor:
+            weight, _ = self.begin_inference(input.device, dtype or self.weight.dtype)
             output = F.embedding(input, weight, self.padding_idx, self.max_norm, self.norm_type, self.scale_grad_by_freq, self.sparse)
             self.end_inference()
             return output
@@ -752,8 +752,9 @@ class T5EncoderModel(torch.nn.Module):
                  ):
         """
         Args:
-            device       : The device on which to store model parameters.
-            dtype        : The data type of model parameters.
+            dropout_rate : The dropout rate to apply during training. (not yet implemented).
+            device       : The device on which the model's parameters will be stored.
+            dtype        : The data type used to store the model's parameters.
             nn (optional): The neural network module implementation to use.
                            Defaults to a custom implementation of `torch.nn`.
                            This parameter allows for injecting custom or optimized
@@ -797,10 +798,12 @@ class T5EncoderModel(torch.nn.Module):
     def forward(self,
                 input_ids,
                 *,
+                input_embeds                   : torch.Tensor = None,
                 attention_mask                 : torch.Tensor = None,
                 return_intermediate            : bool         = False,
                 intermediate_index             : int          = -2,
                 intermediate_must_be_normalized: bool         = False,
+                precharge_depth                : int          = 2,
                 device                         : torch.device = None,
                 dtype                          : torch.dtype  = None,
                 ) -> torch.Tensor | tuple[torch.Tensor]:
@@ -808,26 +811,25 @@ class T5EncoderModel(torch.nn.Module):
         Forward pass of the T5 encoder.
         Args:
             input_ids                      : the input token ids to encode.
+            input_embeds                   : the pre-embedded inputs to encode (normally not provided as they are generated from input_ids).
             attention_mask                 : the attention mask to use for masking input tokens.
             return_intermediate            : whether to return intermediate hidden states.
             intermediate_index             : index of intermediate hidden state to return.
             intermediate_must_be_normalized: whether to normalize intermediate hidden states with the final layer norm.
+            precharge_depth                : number of layers to pre-charge in GPU when performing inference with dynamic GPU allocation.
             device                         : the device on which to perform the inference.
             dtype                          : the data type to use for performing the inference (bfloat16 or float32).
         """
+        assert (input_ids is not None) or (input_embeds is not None)
+        start_time = time.time()
         # REF:
         #  input_ids     -> [batch_size, seq_length]
         #  inputs_embeds -> [batch_size, seq_length, model_dim]
         #  return        -> [batch_size, seq_length, model_dim]
-        print()
-        print("##>> input_ids.shape:", input_ids.shape)
-        print("##>> attention_mask.shape:", attention_mask.shape if attention_mask else "None")
-        print()
-        start_time    = time.time()
 
         layer_0_dtype    = self.encoder.block[0].layer[0].SelfAttention.k.weight.dtype
         inference_dtype  = layer_0_dtype if layer_0_dtype in PYTORCH_COMPUTABLE_DATA_TYPES else torch.float32
-        inference_device = input_ids.device
+        inference_device = input_embeds.device if (input_embeds is not None) else input_ids.device
 
         # if a device or a data type is specified, use them instead of the default ones
         if device:
@@ -835,20 +837,22 @@ class T5EncoderModel(torch.nn.Module):
         if dtype:
             inference_dtype  = dtype
 
-        # get the embedding vectors
-        self.shared.prepare_for_inference(inference_device, inference_dtype)
-        input_embeds = self.shared(input_ids.to(inference_device), dtype=inference_dtype)
+        # get the embedding vectors if they are not provided
+        if input_embeds is None:
+            self.shared.prepare_for_inference(inference_device, inference_dtype)
+            input_embeds = self.shared(input_ids.to(inference_device), dtype=inference_dtype)
 
         # hack to try to avoid `nan` values in float8
         if layer_0_dtype not in (torch.bfloat16, torch.float16, torch.float32, torch.float64):
             input_embeds = torch.nan_to_num(input_embeds)
 
         # forward pass the embedding vectors through the encoder
-        tensor_or_tuple = self.encoder(input_embeds,
+        tensor_or_tuple = self.encoder(input_embeds.to(inference_device, inference_dtype),
                                        attention_mask                  = attention_mask,
                                        return_intermediate             = return_intermediate,
                                        intermediate_index              = intermediate_index,
                                        intermediate_must_be_normalized = intermediate_must_be_normalized,
+                                       precharge_depth                 = precharge_depth,
                                        )
 
         print(f"##>>>>>>  Execution Time: {time.time() - start_time:.4f} seconds")
