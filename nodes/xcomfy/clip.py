@@ -15,8 +15,8 @@ License : MIT
   (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 
-  Over simplification of the ComfyUI CLIP class
-  ---------------------------------------------
+  Over simplification of the ComfyUI CLIP class for SD3
+  -----------------------------------------------------
   clip : CLIP
     > .patcher          : model_patcher.ModelPatcher
     > .tokenizer        : text_encoders.sd3_clip.SD3Tokenizer
@@ -24,7 +24,7 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
                  > .clip_l : ??
                  > .clip_g : ??
                  > .t5xxl  : sd1_clip.SDClipModel
-                     > .transformer : nn.Module
+                     > .transformer : nn.Module (the T5 encoder model)
 
 """
 import torch
@@ -35,6 +35,7 @@ import comfy.model_management
 import comfy.text_encoders.t5
 import comfy.text_encoders.pixart_t5
 import comfy.text_encoders.sd3_clip
+from   torch               import nn
 from   ..utils.system      import logging
 from   ..utils.directories import EMBEDDINGS_DIR
 from   ..utils.safetensors import filter_state_dict, normalize_prefix
@@ -53,7 +54,9 @@ _CLIP_TYPES_BY_NAME = {
 }
 
 
-def _create_pixart_clip_model_class(t5_encoder_class: type[torch.nn.Module],
+#--------------------------------- HELPERS ---------------------------------#
+
+def _create_pixart_clip_model_class(t5_encoder_class: type[nn.Module],
                                     *,
                                     dtype_t5        : torch.dtype = None,
                                     t5xxl_scaled_fp8: torch.dtype = None,
@@ -65,7 +68,12 @@ def _create_pixart_clip_model_class(t5_encoder_class: type[torch.nn.Module],
         but injecting the custom T5 encoder class. The original implementation can be found here:
         https://github.com/comfyanonymous/ComfyUI/blob/v0.3.18/comfy/text_encoders/pixart_t5.py#L34
         """
-        def __init__(self, device = "cpu", dtype = None, model_options = {}):
+        def __init__(self, *,
+                     device        = "cpu",
+                     dtype         = None,
+                     model_options = {},
+                     **kwargs
+                     ):
             model_options = model_options.copy()
             model_options["t5_encoder_class"] = t5_encoder_class # <-- inject the custom T5 encoder, to be read by T5XXLModel
             if t5xxl_scaled_fp8:
@@ -113,12 +121,16 @@ def _create_sd3_clip_model_class(t5_encoder_class : type[torch.nn.Module],
     """
 
     class _SD3ClipModel(comfy.text_encoders.sd3_clip.SD3ClipModel):
-        """
-        A custom subclass of `comfy.text_encoders.sd3_clip.SD3ClipModel` with
-        the custom T5 encoder class injected. The base class can be found here:
+        """A custom subclass of `comfy.text_encoders.sd3_clip.SD3ClipModel`
+        with the custom T5 encoder class injected. The base class can be found here:
         - https://github.com/comfyanonymous/ComfyUI/blob/v0.3.18/comfy/text_encoders/sd3_clip.py#L59
         """
-        def __init__(self, device = "cpu", dtype = None, model_options = {}):
+        def __init__(self, *,
+                     device        = "cpu",
+                     dtype         = None,
+                     model_options = {},
+                     **kwargs
+                     ):
             model_options = model_options.copy()
             model_options["t5_encoder_class"] = t5_encoder_class # <-- inject the custom T5 encoder, to be read by T5XXLModel
             if t5xxl_scaled_fp8:
@@ -227,7 +239,7 @@ class CLIP(comfy.sd.CLIP):
                         number_of_parameters   : int,
                         comfy_tokenizer_options: dict = {},
                         comfy_model_options    : dict = {},
-                        raw_model_options      : dict = {}
+                        model_options          : dict = {},
                         ) -> "CLIP":
         """
         Creates a standard ComfyUI CLIP object from the provided components.
@@ -246,7 +258,7 @@ class CLIP(comfy.sd.CLIP):
                    embedding_directory = EMBEDDINGS_DIR.paths,
                    tokenizer_data      = comfy_tokenizer_options,
                    parameters          = number_of_parameters,
-                   model_options       = raw_model_options)
+                   model_options       = model_options)
 
 
     @classmethod
@@ -254,9 +266,11 @@ class CLIP(comfy.sd.CLIP):
                                t5_encoder_class: type,
                                state_dicts: list[dict], /,
                                *,
-                               prefix         : str         = None,
-                               clip_type      : str         = "sd3",
-                               inference_dtype: torch.dtype = None,
+                               prefix          : str          = None,
+                               clip_type       : str          = "sd3",
+                               initial_device  : torch.device = None,
+                               load_device     : torch.device = None,
+                               offload_device  : torch.device = None,
                                ) -> "CLIP":
         """
         Creates a standard ComfyUI CLIP object from a custom T5 text encoder model.
@@ -269,13 +283,14 @@ class CLIP(comfy.sd.CLIP):
         - https://github.com/comfyanonymous/ComfyUI/blob/v0.3.18/comfy/sd.py#L740
 
         Args:
-            t5_encoder_class: The class of the custom T5 model.
+            t5_encoder_class: The class of the custom T5 model (it must be a class, not an instance!)
             state_dicts     : A list of dictionaries containing the model's state.
                               Note that a single dictionary can also be provided!
-        Keyword Arguments:
             prefix          : A tensor name prefix used to filter part of the state dictionary.
             clip_type       : The type of CLIP model to create. Currently supports "sd3" and "pixart".
-                              Defaults to "sd3".
+            initial_device  : The device used to load the model's parameters from storage.
+            load_device     : The device used during inference.
+            offload_device  : The device used to offload the model while not used.
         Returns:
             A ComfyUI CLIP object initialized with the custom T5 encoder.
         """
@@ -322,6 +337,12 @@ class CLIP(comfy.sd.CLIP):
         for _state_dict in state_dicts:
             number_of_parameters += comfy.utils.calculate_parameters(_state_dict)
 
+        # create a dictionary with standard ComfyUI CLIP options
+        model_options = { }
+        if initial_device:  model_options["initial_device"] = initial_device
+        if load_device   :  model_options["load_device"   ] = load_device
+        if offload_device:  model_options["offload_device"] = offload_device
+
         # create a new CLIP instance from the components
         clip = cls.from_components(
             comfy_model_class       = comfy_model_class,
@@ -329,12 +350,8 @@ class CLIP(comfy.sd.CLIP):
             number_of_parameters    = number_of_parameters,
             comfy_tokenizer_options = {},
             comfy_model_options     = {},
-            raw_model_options       = {}
+            model_options           = model_options,
             )
-
-        # force the inference device and dtype
-        clip.cond_stage_model.t5xxl.transformer.inference_device = comfy.model_management.get_torch_device()
-        clip.cond_stage_model.t5xxl.transformer.inference_dtype  = inference_dtype
 
         # load the weights into the new CLIP instance
         for _state_dict in state_dicts:
