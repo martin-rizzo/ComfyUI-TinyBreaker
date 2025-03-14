@@ -132,6 +132,9 @@ comfy_import_node(GenParamsDebugLogger)
 from .nodes.load_t5_encoder_experimental import LoadT5EncoderExperimental
 comfy_import_node(LoadT5EncoderExperimental)
 
+from .nodes.save_anything import SaveAnything
+comfy_import_node(SaveAnything)
+
 
 logger.info(f"Imported {len(NODE_CLASS_MAPPINGS)} nodes")
 __all__ = ["NODE_CLASS_MAPPINGS", "NODE_DISPLAY_NAME_MAPPINGS", "WEB_DIRECTORY"]
