@@ -1,0 +1,53 @@
+
+[REALISTIC_WAIFU_X2]
+# realistic images where a woman is the main subject
+base.prompt      = "An iPhone instagram photo{. $@}. (144p photo with JPEG artifacts:1.1)."
+base.negative    = "macrophoto, bokeh, out of focus, minimalist{, $@}"
+base.sampler     = "dpmpp_2m_sde"
+base.scheduler   = "karras"
+base.steps       = 15
+base.steps_start = 3
+base.cfg         = 3.2
+refiner.prompt      = "(argentine social woman:1.2){, $@}"
+refiner.negative    = "(worst quality, low quality, painting:1.8){, $@}"
+refiner.sampler     = "dpmpp_2m"
+refiner.scheduler   = "normal"
+refiner.steps       = 22
+refiner.steps_start = 12
+refiner.cfg         = 1.8
+
+
+[REALISTIC_WAIFU_Y2]
+# deprecated
+base.prompt      = "An iPhone photo{. $@}. (144p photo:1.1) with JPEG artifacts."
+base.negative    = "macrophoto, bokeh, out of focus{, $@}"
+base.sampler     = "dpmpp_2m_sde"
+base.scheduler   = "karras"
+base.steps       = 14
+base.steps_start = 2
+refiner.prompt      = "(argentine social woman:1.1){, $@}"
+refiner.negative    = "(worst quality, low quality:1.8){, $@}"
+refiner.sampler     = "dpmpp_2m"
+refiner.scheduler   = "normal"
+refiner.steps       = 25
+refiner.steps_start = 14
+refiner.cfg         = 2.0
+
+
+[REALISTIC_WAIFU_Z2]
+# realistic images where a woman is the main subject (alternative)
+base.prompt      = "An iPhone photo{. $@}. (JPEG artifacts:1.1)"
+base.negative    = "macrophoto, bokeh, anime, comic, nintendo, toy, pixar{, $@}"
+base.sampler     = "dpmpp_2m_sde"
+base.scheduler   = "beta"
+base.steps       = 16
+base.steps_start = 3
+refiner.prompt      = "(argentine social woman:1.2){, $@}"
+refiner.negative    = "(worst quality, low quality, manga:1.8){, $@}"
+refiner.sampler     = "dpmpp_2m"
+refiner.scheduler   = "normal"
+refiner.steps       = 22
+refiner.steps_start = 12
+refiner.cfg         = 2.0
+
+
