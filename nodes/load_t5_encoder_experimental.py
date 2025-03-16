@@ -26,9 +26,9 @@ _CLIP_TYPES = [
 ]
 _INFERENCE_DTYPES_BY_NAME = {
     _AUTOMATIC       : None,
-  # "comfyui native" : None,
+   #"comfyui native" : None,           # <- disabled: ComfyUI always defaults to fp32 (is it confirmed?)
     "bfloat16"       : torch.bfloat16,
-    "float16"        : torch.float16,
+   #"float16"        : torch.float16,  # <- disabled: T5 encoder doesn't work with fp16 (only bfloat16 or float32)
     "float32"        : torch.float32,
 }
 _INFERENCE_MODE_NATIVE  = "comfyui native"
@@ -75,7 +75,7 @@ class LoadT5EncoderExperimental:
         # TODO: implement an algorithm to determine the best inference mode/dtype (?)
         if type            == _AUTOMATIC:  type            = "sd3"
         if inference_mode  == _AUTOMATIC:  inference_mode  = _INFERENCE_MODE_DYNAMIC
-        if inference_dtype == _AUTOMATIC:  inference_dtype = "bfloat16"
+        if inference_dtype == _AUTOMATIC:  inference_dtype = "float32"
 
 
         if inference_mode == _INFERENCE_MODE_GPU:
