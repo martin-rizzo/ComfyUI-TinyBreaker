@@ -40,17 +40,29 @@ NODE_DISPLAY_NAME_MAPPINGS = {}
 _PROJECT_ID    = "//TinyBreaker"
 _PROJECT_EMOJI = "💪"
 _CATEGORY      = "TinyBreaker"
+_DEPRECATED    = False
 
 def comfy_import_node(cls):
     global NODE_CLASS_MAPPINGS
     global NODE_DISPLAY_NAME_MAPPINGS
-    if cls.__name__ in NODE_CLASS_MAPPINGS:
-        logger.warning(f"Node class {cls.__name__} already exists, skipping import.")
+
+    class_name         = cls.__name__
+    class_display_name = cls.TITLE
+    class_category     = f"{_PROJECT_EMOJI}{_CATEGORY}"
+    comfy_class_name   = f"{class_name} {_PROJECT_ID}"
+
+    if class_name in NODE_CLASS_MAPPINGS:
+        logger.warning(f"Node class {class_name} already exists, skipping import.")
         return
-    cls.CATEGORY = f"{_PROJECT_EMOJI}{_CATEGORY}"
-    comfy_class_name = f"{cls.__name__} {_PROJECT_ID}"
+
+    if _DEPRECATED:
+        class_display_name = class_display_name.replace("💪TB","")
+        class_display_name = class_display_name.replace("| ","")
+        class_display_name = f"❌{class_display_name} [Deprecated]"
+
+    cls.CATEGORY = class_category
     NODE_CLASS_MAPPINGS[comfy_class_name]        = cls
-    NODE_DISPLAY_NAME_MAPPINGS[comfy_class_name] = cls.TITLE
+    NODE_DISPLAY_NAME_MAPPINGS[comfy_class_name] = class_display_name
 
 
 # TinyBreaker/genparams
@@ -78,8 +90,8 @@ comfy_import_node(UnifiedPromptInput)
 # TinyBreakers/loaders
 _CATEGORY = "TinyBreaker/loaders"
 
-from .nodes.load_tinybreaker_checkpoint import LoadTinyBreakerCheckpoint
-comfy_import_node(LoadTinyBreakerCheckpoint)
+from .nodes.load_tinybreaker_checkpoint_v2 import LoadTinyBreakerCheckpointV2
+comfy_import_node(LoadTinyBreakerCheckpointV2)
 
 from .nodes.load_tinybreaker_checkpoint_custom import LoadTinyBreakerCheckpointCustom
 comfy_import_node(LoadTinyBreakerCheckpointCustom)
@@ -134,6 +146,14 @@ comfy_import_node(LoadT5EncoderExperimental)
 
 from .nodes.save_anything import SaveAnything
 comfy_import_node(SaveAnything)
+
+
+# TinyBreaker/__deprecated
+_CATEGORY   = "TinyBreaker/__deprecated"
+_DEPRECATED = True
+
+from .nodes.deprecated.load_tinybreaker_checkpoint import LoadTinyBreakerCheckpoint
+comfy_import_node(LoadTinyBreakerCheckpoint)
 
 
 logger.info(f"Imported {len(NODE_CLASS_MAPPINGS)} nodes")
