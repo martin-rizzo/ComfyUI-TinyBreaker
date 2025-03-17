@@ -93,8 +93,8 @@ _CATEGORY = "TinyBreaker/loaders"
 from .nodes.load_tinybreaker_checkpoint_v2 import LoadTinyBreakerCheckpointV2
 comfy_import_node(LoadTinyBreakerCheckpointV2)
 
-from .nodes.load_tinybreaker_checkpoint_custom import LoadTinyBreakerCheckpointCustom
-comfy_import_node(LoadTinyBreakerCheckpointCustom)
+from .nodes.load_tinybreaker_checkpoint_custom_v2 import LoadTinyBreakerCheckpointCustomV2
+comfy_import_node(LoadTinyBreakerCheckpointCustomV2)
 
 from .nodes.load_any_vae import LoadAnyVAE
 comfy_import_node(LoadAnyVAE)
@@ -154,6 +154,9 @@ _DEPRECATED = True
 
 from .nodes.deprecated.load_tinybreaker_checkpoint import LoadTinyBreakerCheckpoint
 comfy_import_node(LoadTinyBreakerCheckpoint)
+
+from .nodes.deprecated.load_tinybreaker_checkpoint_custom import LoadTinyBreakerCheckpointCustom
+comfy_import_node(LoadTinyBreakerCheckpointCustom)
 
 
 logger.info(f"Imported {len(NODE_CLASS_MAPPINGS)} nodes")

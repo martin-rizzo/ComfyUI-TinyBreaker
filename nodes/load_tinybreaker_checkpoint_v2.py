@@ -46,11 +46,11 @@ class LoadTinyBreakerCheckpointV2:
     RETURN_TYPES = ("MODEL", "CLIP", "TRANSCODER", "MODEL"        , "CLIP"        , "VAE", "GENPARAMS")
     RETURN_NAMES = ("MODEL", "CLIP", "TRANSCODER", "REFINER_MODEL", "REFINER_CLIP", "VAE", "GENPARAMS")
     OUTPUT_TOOLTIPS = ("The model used for denoising latent images.",
-                       "The VAE model used for encoding and decoding images to and from latent space.",
                        "The CLIP model used for embedding text prompts."
                        "The transcoder model used for converting latent images from base to refiner.",
                        "The model used for refining latent images.",
                        "The CLIP model used for embedding text prompts during refining.",
+                       "The VAE model used for encoding and decoding images to and from latent space.",
                        "Generation parameters extracted from the metadata of the loaded checkpoint.",
                        )
 
