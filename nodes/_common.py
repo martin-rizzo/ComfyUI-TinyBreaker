@@ -54,7 +54,7 @@ LANDSCAPE_SIZES_BY_ASPECT_RATIO = {
     # "48:35  (35 mm)"     : (1199.2,  874.4),
     # "71:50  (~imax)"     : (1220.2,  859.3),
 }
-SCALES_BY_SIZE = {
+SCALES_BY_NAME = {
     "small"  : 0.82,
     "medium" : 1.0,
     "large"  : 1.22,
@@ -197,7 +197,7 @@ def genparams_from_arguments(args: dict,
     # "image.scale"
     value = _pop_option(args, "small", "medium", "large")
     if value:
-        genparams.set_float(f"image.scale", SCALES_BY_SIZE[value])
+        genparams.set_float(f"image.scale", SCALES_BY_NAME[value])
 
     # --b, --batch <int>
     # "image.batch_size"

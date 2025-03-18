@@ -1,8 +1,8 @@
 """
-File    : set_seed.py
-Purpose : Node to set a seed number, packing it into the generation parameters.
+File    : set_base_seed.py
+Purpose : Node to set a seed number for the base model and integrate it into the generation parameters
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
-Date    : Dec 21, 2024
+Date    : Mar 17, 2025
 Repo    : https://github.com/martin-rizzo/ComfyUI-TinyBreaker
 License : MIT
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -13,10 +13,10 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 from .core.genparams import GenParams
 
-class SetSeed:
-    TITLE       = "💪TB | Set Seed"
+class SetBaseSeed:
+    TITLE       = "💪TB | Set Base Seed"
     CATEGORY    = "TinyBreaker"
-    DESCRIPTION = "Allows to set a seed number, packing it into GenParams."
+    DESCRIPTION = "Allows to set the noise seed number for the base model."
 
     #__ PARAMETERS ________________________________________
     @classmethod
@@ -24,23 +24,20 @@ class SetSeed:
         return {
         "required": {
             "genparams":("GENPARAMS", {"tooltip": "The generation parameters to be updated.",
-                                       }),
-            "key"      :("STRING"   , {"tooltip": "The full key of the parameter to modify. This key must include the prefix if any.",
-                                       "default": "base.noise_seed"
-                                       }),
+                                      }),
             "seed"     :("INT"      , {"tooltip": "The seed number to apply.",
                                        "default": 1, "min": 1, "max": 0xffffffffffffffff,
-                                       }),
+                                      }),
             },
         }
 
     #__ FUNCTION __________________________________________
-    FUNCTION = "set_seed"
+    FUNCTION = "set_base_noise_seed"
     RETURN_TYPES    = ("GENPARAMS",)
     RETURN_NAMES    = ("genparams",)
     OUTPUT_TOOLTIPS = ("The generation parameters with the updated seed number. (you can use this output to chain other genparams nodes)",)
 
-    def set_seed(self, genparams: GenParams, key: str, seed: int):
+    def set_base_noise_seed(self, genparams: GenParams, seed: int):
         genparams = genparams.copy()
-        genparams.set_int(f"denoising.{key}", seed)
+        genparams.set_int(f"denoising.base.noise_seed", seed)
         return (genparams,)
