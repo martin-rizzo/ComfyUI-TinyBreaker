@@ -28,7 +28,7 @@ import { app } from "../../../scripts/app.js"
 const ENABLED = true;
 
 /**
- * List of detail levels that can be used as value for `--detail` parameter.
+ * List of detail levels that can be used as value for `--detail-level` parameter.
  */
 const DETAIL_LEVELS = [
     "none", "minimal", "low", "normal", "high", "veryhigh", "maximum", ]
@@ -59,7 +59,7 @@ const IMAGE_ORIENTATIONS = [
  * List of all options that the user can cycle through by pressing CTRL+LEFT/RIGHT
  */
 const NAVIGABLE_OPTIONS = [
-    "--no", "--refine", "--variant", "--cfg-adjust", "--detail",
+    "--no", "--refine", "--img-shift", "--cfg-shift", "--level-detail",
     "--seed", "--aspect", "--landscape", "--large", "--style", "--batch-size"
 ]
 
@@ -68,7 +68,7 @@ const NAVIGABLE_OPTIONS = [
  */
 const AUTOCOMPLETE_LIST = [
     "--no", "--refine",
-    "--variant", "--cfg-adjust", "--detail",
+    "--img-shift", "--cfg-shift", "--level-detail",
     "--seed", "--aspect",
     "--landscape", "--portrait", 
     "--small", "--medium", "--large",
@@ -163,16 +163,14 @@ function insertText(textarea, text, start, end) {
  *   The full argument string (including the argument's name) with the adjusted value.
  */
 function adjustInt(name, value, offset, defaultValue, minValue, maxValue) {
-    const number     = parseInt(value);
-    let   new_number = 0;
-    if( !isNaN(number) ) {
-        new_number = number + offset;
-        if( minValue !== undefined && new_number < minValue ) { new_number = minValue; }
-        if( maxValue !== undefined && new_number > maxValue ) { new_number = maxValue; }
+    let number = parseInt(value);
+    if( isNaN(number) ) {
+        number = 0
+        if( defaultValue !== undefined ) { number = defaultValue; }
     }
-    else if( defaultValue !== undefined ) {
-        new_number = defaultValue;
-    }
+    let new_number = number + offset;
+    if( minValue !== undefined && new_number < minValue ) { new_number = minValue; }
+    if( maxValue !== undefined && new_number > maxValue ) { new_number = maxValue; }
     return `${name} ${new_number} `;
 }
 
@@ -233,25 +231,25 @@ function adjustMultipleChoice(name, value, offset, choices, defaultChoise) {
  */
 function adjustArgument(name, value, offset) {
     switch(name) {
-        case '--variant':
-            return adjustInt(name, value, offset, 1, 1)
-        case '--cfg-adjust':
-            return adjustFloat(name, value, offset*0.1, 0.0, -4.0, 4.0);
-        case '--detail':
+        case '--img-shift':
+            return adjustInt(name, value, offset, 0, 0);
+        case '--cfg-shift':
+            return adjustInt(name, value, offset, 0, -20, 20);
+        case '--detail-level':
             return adjustMultipleChoice(name, value, offset, DETAIL_LEVELS, DEFAULT_DETAIL_LEVEL);
         case '--seed':
             return adjustInt(name, value, offset, 1, 1);
         case '--aspect':
-            return adjustMultipleChoice(name, value, offset, ASPECT_RATIOS)
+            return adjustMultipleChoice(name, value, offset, ASPECT_RATIOS);
         case '--batch-size':
-            return adjustInt(name, value, offset, 1, 1)
+            return adjustInt(name, value, offset, 1, 1);
     }
     if( IMAGE_ORIENTATIONS.includes(name) ) {
         console.log("##>> name:", name)
-        return adjustMultipleChoice("", name, offset, IMAGE_ORIENTATIONS)
+        return adjustMultipleChoice("", name, offset, IMAGE_ORIENTATIONS);
     }
     if( IMAGE_SIZES.includes(name) ) {
-        return adjustMultipleChoice("", name, offset, IMAGE_SIZES)
+        return adjustMultipleChoice("", name, offset, IMAGE_SIZES);
     }
     return null;
 }

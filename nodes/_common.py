@@ -140,6 +140,12 @@ def genparams_from_arguments(args: dict,
     prompt = _pop_str_value(args, "prompt") or ""
     genparams.set_str(f"{BASE}prompt", prompt, use_template=True)
 
+    # --no, --negative <text>
+    # "base.negative", "refiner.negative"
+    value = _pop_str_value(args, "no", "negative") or ""
+    genparams.set_str(f"{BASE}negative", value, use_template=True)
+    genparams.set_str(f"{RE__}negative", value, use_template=True)
+
     # --refine <text>
     # << "refiner.prompt" >>
     value = _pop_str_value(args, "refine") or ""
@@ -150,27 +156,21 @@ def genparams_from_arguments(args: dict,
     else:
         genparams.set_str(f"{RE__}prompt", f"{value}{prompt}", use_template=True)
 
-    # --no, --negative <text>
-    # "base.negative", "refiner.negative"
-    value = _pop_str_value(args, "no", "negative") or ""
-    genparams.set_str(f"{BASE}negative", value, use_template=True)
-    genparams.set_str(f"{RE__}negative", value, use_template=True)
-
-    # --v, --variant <int>
+    # --i, --img-shift <int>
     # "refiner.noise_seed"
-    value, as_delta = _pop_int_value(args, "v", "variant")
+    value, as_delta = _pop_int_value(args, "i", "img-shift")
     if value is not None:
         genparams.set_int(f"{RE__}noise_seed", value, as_delta=False)
 
-    # --c, --cfg-adjust <float>
+    # --c, --cfg-shift <int>
     # "base.cfg"
-    value, as_delta = _pop_float_value(args, "c", "cfg-adjust")
+    value, as_delta = _pop_int_value(args, "c", "cfg-shift")
     if value is not None:
-        genparams.set_float(f"{BASE}cfg", value, as_delta=True)
+        genparams.set_float(f"{BASE}cfg", value * 0.2, as_delta=True)
 
-    # --d, --detail <level>
+    # --d, --detail-level <level>
     # "refiner.steps_nfactor"
-    value = _pop_str_value(args, "d", "detail")
+    value = _pop_str_value(args, "d", "detail-level")
     if value in NFACTORS_BY_DETAIL_LEVEL:
         genparams.set_int(f"{RE__}steps_nfactor", NFACTORS_BY_DETAIL_LEVEL[value] )
 
@@ -204,6 +204,20 @@ def genparams_from_arguments(args: dict,
     value, as_delta = _pop_int_value(args, "b", "batch")
     if value is not None:
         genparams.set_int("image.batch_size", value, as_delta=False)
+
+    #-- DEPRECATED ------------------------------------------------#
+    # --v, --variant <int>
+    # "refiner.noise_seed"
+    value, as_delta = _pop_int_value(args, "variant")
+    if value is not None:
+        genparams.set_int(f"{RE__}noise_seed", value, as_delta=False)
+    # --c, --cfg-adjust <float>
+    # "base.cfg"
+    value, as_delta = _pop_float_value(args, "cfg-adjust")
+    if value is not None:
+        genparams.set_float(f"{BASE}cfg", value, as_delta=True)
+    #--------------------------------------------------------------#
+
 
     return genparams
 
