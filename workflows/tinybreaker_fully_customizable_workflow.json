@@ -1,6 +1,6 @@
 {
-  "last_node_id": 175,
-  "last_link_id": 486,
+  "last_node_id": 176,
+  "last_link_id": 488,
   "nodes": [
     {
       "id": 70,
@@ -392,7 +392,7 @@
       },
       "widgets_values": [
         true,
-        713422325848413,
+        871401304155102,
         "randomize",
         3.4
       ]
@@ -1015,7 +1015,7 @@
           "name": "genparams",
           "type": "GENPARAMS",
           "links": [
-            478
+            487
           ],
           "slot_index": 0
         }
@@ -1031,92 +1031,6 @@
       ],
       "color": "#2a363b",
       "bgcolor": "#3f5159"
-    },
-    {
-      "id": 172,
-      "type": "SetImageDetailsV2 //TinyBreaker",
-      "pos": [
-        100,
-        350
-      ],
-      "size": [
-        280,
-        110
-      ],
-      "flags": {
-        "pinned": true
-      },
-      "order": 15,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "link": 478
-        }
-      ],
-      "outputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "links": [
-            479
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "SetImageDetailsV2 //TinyBreaker"
-      },
-      "widgets_values": [
-        0,
-        0,
-        "normal"
-      ],
-      "color": "#2a363b",
-      "bgcolor": "#3f5159"
-    },
-    {
-      "id": 166,
-      "type": "UnifiedPromptInput //TinyBreaker",
-      "pos": [
-        390,
-        -110
-      ],
-      "size": [
-        540,
-        570
-      ],
-      "flags": {
-        "pinned": true
-      },
-      "order": 16,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "link": 479
-        }
-      ],
-      "outputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "links": [
-            460,
-            486
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "UnifiedPromptInput //TinyBreaker"
-      },
-      "widgets_values": [
-        "Noodle monster with a big evil smile and evil face, composed entirely of noodles. Tomato sauce covers the monster. Flying tomatoes are present. A dark mirror in the background creating an evil atmosphere\n"
-      ],
-      "color": "#232",
-      "bgcolor": "#353"
     },
     {
       "id": 161,
@@ -1240,7 +1154,7 @@
         "Node name for S&R": "SelectStyle //TinyBreaker"
       },
       "widgets_values": [
-        "FAST_PHOTO",
+        "PHOTO",
         "last",
         "[CUSTOM1]\nbase.prompt        = \"\"\nbase.negative      = \"\"\nbase.steps         = 12\nbase.steps_start   = 2\nbase.cfg           = 3.4\nbase.sampler       = \"uni_pc\"\nbase.scheduler     = \"simple\"\nrefiner.prompt        = \"\"\nrefiner.negative      = \"(worst quality, low quality:1.8)\"\nrefiner.steps         = 11\nrefiner.steps_start   = 6\nrefiner.cfg           = 2.0\nrefiner.sampler       = \"deis\"\nrefiner.scheduler     = \"ddim_uniform\"\n\n[CUSTOM2]\nbase.prompt        = \"\"\nbase.negative      = \"\"\nbase.steps         = 12\nbase.steps_start   = 2\nbase.cfg           = 3.4\nbase.sampler       = \"uni_pc\"\nbase.scheduler     = \"simple\"\nrefiner.prompt        = \"\"\nrefiner.negative      = \"(worst quality, low quality:1.8)\"\nrefiner.steps         = 11\nrefiner.steps_start   = 6\nrefiner.cfg           = 2.0\nrefiner.sampler       = \"deis\"\nrefiner.scheduler     = \"ddim_uniform\"\n\n[CUSTOM3]\nbase.prompt        = \"\"\nbase.negative      = \"\"\nbase.steps         = 12\nbase.steps_start   = 2\nbase.cfg           = 3.4\nbase.sampler       = \"uni_pc\"\nbase.scheduler     = \"simple\"\nrefiner.prompt        = \"\"\nrefiner.negative      = \"(worst quality, low quality:1.8)\"\nrefiner.steps         = 11\nrefiner.steps_start   = 6\nrefiner.cfg           = 2.0\nrefiner.sampler       = \"deis\"\nrefiner.scheduler     = \"ddim_uniform\"\n\n[CUSTOM4]\nbase.prompt        = \"\"\nbase.negative      = \"\"\nbase.steps         = 12\nbase.steps_start   = 2\nbase.cfg           = 3.4\nbase.sampler       = \"uni_pc\"\nbase.scheduler     = \"simple\"\nrefiner.prompt        = \"\"\nrefiner.negative      = \"(worst quality, low quality:1.8)\"\nrefiner.steps         = 11\nrefiner.steps_start   = 6\nrefiner.cfg           = 2.0\nrefiner.sampler       = \"deis\"\nrefiner.scheduler     = \"ddim_uniform\"\n"
       ],
@@ -1503,6 +1417,90 @@
       ],
       "color": "#323",
       "bgcolor": "#535"
+    },
+    {
+      "id": 166,
+      "type": "UnifiedPromptInput //TinyBreaker",
+      "pos": [
+        390,
+        -110
+      ],
+      "size": [
+        540,
+        570
+      ],
+      "flags": {
+        "pinned": true
+      },
+      "order": 16,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 488
+        }
+      ],
+      "outputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "links": [
+            460,
+            486
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "UnifiedPromptInput //TinyBreaker"
+      },
+      "widgets_values": [
+        "Noodle monster with a big evil smile and evil face, composed entirely of noodles. Tomato sauce covers the monster. Flying tomatoes are present. A dark mirror in the background creating an evil atmosphere\n"
+      ],
+      "color": "#232",
+      "bgcolor": "#353"
+    },
+    {
+      "id": 176,
+      "type": "SetImageDetailsV2 //TinyBreaker",
+      "pos": [
+        100,
+        350
+      ],
+      "size": [
+        280,
+        110
+      ],
+      "flags": {},
+      "order": 15,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 487
+        }
+      ],
+      "outputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "links": [
+            488
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "SetImageDetailsV2 //TinyBreaker"
+      },
+      "widgets_values": [
+        0,
+        0,
+        "normal"
+      ],
+      "color": "#2a363b",
+      "bgcolor": "#3f5159"
     }
   ],
   "links": [
@@ -1883,22 +1881,6 @@
       "GENPARAMS"
     ],
     [
-      478,
-      171,
-      0,
-      172,
-      0,
-      "GENPARAMS"
-    ],
-    [
-      479,
-      172,
-      0,
-      166,
-      0,
-      "GENPARAMS"
-    ],
-    [
       484,
       174,
       0,
@@ -1921,6 +1903,22 @@
       174,
       0,
       "*"
+    ],
+    [
+      487,
+      171,
+      0,
+      176,
+      0,
+      "GENPARAMS"
+    ],
+    [
+      488,
+      176,
+      0,
+      166,
+      0,
+      "GENPARAMS"
     ]
   ],
   "groups": [
@@ -1956,10 +1954,10 @@
   "config": {},
   "extra": {
     "ds": {
-      "scale": 0.6739292333984412,
+      "scale": 0.8969998096533254,
       "offset": [
-        567.0325605102375,
-        482.5371584794454
+        151.7770820515874,
+        311.04860837023614
       ]
     }
   },

@@ -151,7 +151,8 @@
       ],
       "properties": {
         "Node name for S&R": "EmptyLatentImage //TinyBreaker"
-      }
+      },
+      "widgets_values": []
     },
     {
       "id": 234,
@@ -366,7 +367,8 @@
       ],
       "properties": {
         "Node name for S&R": "DoubleStageSampler //TinyBreaker"
-      }
+      },
+      "widgets_values": []
     },
     {
       "id": 239,
@@ -408,7 +410,8 @@
       ],
       "properties": {
         "Node name for S&R": "VAEDecode"
-      }
+      },
+      "widgets_values": []
     },
     {
       "id": 240,
@@ -640,58 +643,6 @@
       "bgcolor": "#535"
     },
     {
-      "id": 203,
-      "type": "Note",
-      "pos": [
-        -70,
-        470
-      ],
-      "size": [
-        430,
-        190
-      ],
-      "flags": {
-        "pinned": true
-      },
-      "order": 2,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [],
-      "title": "NOTE: SUPPORTED PARAMETERS",
-      "properties": {},
-      "widgets_values": [
-        "  --no <text>\n  --refine <text>\n  --variant <number>\n  --cfg-adjust <decimal>\n  --detail <none|low|normal|high>\n  --seed <number>\n  --aspect <ratio>\n  --landscape / --portrait\n  --small / --medium / --large\n  --batch-size <number>\n"
-      ],
-      "color": "#222",
-      "bgcolor": "#000"
-    },
-    {
-      "id": 204,
-      "type": "Note",
-      "pos": [
-        -70,
-        140
-      ],
-      "size": [
-        430,
-        300
-      ],
-      "flags": {
-        "pinned": true
-      },
-      "order": 3,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [],
-      "title": "NOTE: KEYS",
-      "properties": {},
-      "widgets_values": [
-        " PARAMETER AUTO-COMPLETION:\n   - Start typing a parameter.\n   - Press CTRL+RIGHT to auto-complete.\n     example: type \"--as\" + CTRL+RIGHT -> result: \"--aspect\"\n\n NAVIGATE BETWEEN PARAMETERS:\n   - Type \"--\".\n   - Use CTRL+RIGHT/LEFT to cycle through parameters.\n\n MODIFY PARAMETER VALUES:\n   - Position cursor on a parameter value (e.g., \"--seed 6\").\n   - Press CTRL+UP to increase value.\n   - Press CTRL+DOWN to decrease value.\n     example: \"--seed 6\" + CTRL+UP -> result: \"--seed 7\"\n\nTRIGGER IMAGE GENERATION:\n   - Press CTRL+ENTER to generate the image.\n"
-      ],
-      "color": "#222",
-      "bgcolor": "#000"
-    },
-    {
       "id": 177,
       "type": "SelectStyle //TinyBreaker",
       "pos": [
@@ -737,7 +688,7 @@
         "Node name for S&R": "SelectStyle //TinyBreaker"
       },
       "widgets_values": [
-        "ULTRAPHOTO",
+        "COMIC_ART",
         "last",
         ""
       ],
@@ -758,7 +709,7 @@
       "flags": {
         "pinned": true
       },
-      "order": 4,
+      "order": 2,
       "mode": 0,
       "inputs": [],
       "outputs": [],
@@ -768,7 +719,8 @@
         "\n The TinyBreaker model can be downloaded from:\n   https://civitai.com/models/1213728\n\n The T5 Text Encoder is available at:\n   https://huggingface.co/Comfy-Org/stable-diffusion-3.5-fp8/blob/main/text_encoders/t5xxl_fp8_e4m3fn.safetensors\n\n The custom nodes used in this workflow are implemented in:\n   https://github.com/martin-rizzo/ComfyUI-TinyBreaker\n"
       ],
       "color": "#222",
-      "bgcolor": "#000"
+      "bgcolor": "#000",
+      "shape": 1
     },
     {
       "id": 198,
@@ -807,10 +759,64 @@
         "Node name for S&R": "UnifiedPromptInput //TinyBreaker"
       },
       "widgets_values": [
-        "A cute corgi, smiling with great joy, soaring high over the river bank in Yosemite National Park, wearing a Superman cape. Bokeh and selective focus\n\n--aspect 3:2 --portrait\n"
+        "A tall woman, dressed in a black suit with a dark pink tie, a green miniskirt, and long boots made of rusted metal. Her head is translucent, burning with a combination of yellow and dark red hues of fire. She is leaning against a brick wall. The woman is on a futuristic urban street\n\n--aspect 3:2 --portrait\n"
       ],
       "color": "#232",
       "bgcolor": "#353"
+    },
+    {
+      "id": 204,
+      "type": "Note",
+      "pos": [
+        -70,
+        360
+      ],
+      "size": [
+        430,
+        300
+      ],
+      "flags": {
+        "pinned": true
+      },
+      "order": 3,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "title": "NOTE: KEYS",
+      "properties": {},
+      "widgets_values": [
+        " PARAMETER AUTO-COMPLETION:\n   - Start typing a parameter.\n   - Press CTRL+RIGHT to auto-complete.\n     example: type \"--as\" + CTRL+RIGHT -> result: \"--aspect\"\n\n NAVIGATE BETWEEN PARAMETERS:\n   - Type \"--\".\n   - Use CTRL+RIGHT/LEFT to cycle through parameters.\n\n MODIFY PARAMETER VALUES:\n   - Position cursor on a parameter value (e.g., \"--seed 6\").\n   - Press CTRL+UP to increase value.\n   - Press CTRL+DOWN to decrease value.\n     example: \"--seed 6\" + CTRL+UP -> result: \"--seed 7\"\n\nTRIGGER IMAGE GENERATION:\n   - Press CTRL+ENTER to generate the image.\n"
+      ],
+      "color": "#222",
+      "bgcolor": "#000",
+      "shape": 1
+    },
+    {
+      "id": 203,
+      "type": "Note",
+      "pos": [
+        -70,
+        140
+      ],
+      "size": [
+        430,
+        190
+      ],
+      "flags": {
+        "pinned": true
+      },
+      "order": 4,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "title": "NOTE: SUPPORTED PARAMETERS",
+      "properties": {},
+      "widgets_values": [
+        "  --no <text>\n  --refine <text>\n  --img-shift <number>\n  --cfg-shift <number>\n  --detail-level <none|low|normal|high>\n  --seed <number>\n  --aspect <ratio>\n  --landscape | --portrait\n  --small | --medium | --large\n  --batch-size <number>\n"
+      ],
+      "color": "#222",
+      "bgcolor": "#000",
+      "shape": 1
     }
   ],
   "links": [
@@ -1034,10 +1040,10 @@
   "config": {},
   "extra": {
     "ds": {
-      "scale": 0.8969998096533246,
+      "scale": 0.8969998096533254,
       "offset": [
-        123.09554785375971,
-        207.02587022746772
+        148.2355385104846,
+        161.9248708057961
       ]
     }
   },

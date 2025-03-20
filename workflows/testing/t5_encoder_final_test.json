@@ -467,30 +467,6 @@
       }
     },
     {
-      "id": 203,
-      "type": "Note",
-      "pos": [
-        100,
-        630
-      ],
-      "size": [
-        430,
-        200
-      ],
-      "flags": {},
-      "order": 1,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [],
-      "title": "NOTE: SUPPORTED PARAMETERS",
-      "properties": {},
-      "widgets_values": [
-        "  --no <text>\n  --refine <text>\n  --variant <number>\n  --cfg-adjust <decimal>\n  --detail <none|low|normal|high>\n  --seed <number>\n  --aspect <ratio>\n  --landscape / --portrait\n  --small / --medium / --large\n  --batch-size <number>\n"
-      ],
-      "color": "#222",
-      "bgcolor": "#000"
-    },
-    {
       "id": 204,
       "type": "Note",
       "pos": [
@@ -502,7 +478,7 @@
         300
       ],
       "flags": {},
-      "order": 2,
+      "order": 1,
       "mode": 0,
       "inputs": [],
       "outputs": [],
@@ -635,7 +611,7 @@
         130
       ],
       "flags": {},
-      "order": 3,
+      "order": 2,
       "mode": 0,
       "inputs": [],
       "outputs": [
@@ -751,6 +727,30 @@
       ],
       "color": "#232",
       "bgcolor": "#353"
+    },
+    {
+      "id": 203,
+      "type": "Note",
+      "pos": [
+        100,
+        630
+      ],
+      "size": [
+        430,
+        200
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "title": "NOTE: SUPPORTED PARAMETERS",
+      "properties": {},
+      "widgets_values": [
+        "  --no <text>\n  --refine <text>\n  --img-shift <number>\n  --cfg-shift <number>\n  --detail-level <none|low|normal|high>\n  --seed <number>\n  --aspect <ratio>\n  --landscape | --portrait\n  --small | --medium | --large\n  --batch-size <number>\n"
+      ],
+      "color": "#222",
+      "bgcolor": "#000"
     }
   ],
   "links": [
@@ -970,10 +970,10 @@
   "config": {},
   "extra": {
     "ds": {
-      "scale": 0.8969998096533284,
+      "scale": 0.8969998096533254,
       "offset": [
-        -56.834831690604624,
-        31.602346166917858
+        -7.8403028591002,
+        19.226958696461658
       ]
     }
   },

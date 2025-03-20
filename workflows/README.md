@@ -13,16 +13,16 @@ To use these workflows, ensure you have the TinyBreaker custom nodes installed a
 > [!NOTE]
 > You can drag this image into ComfyUI to get the workflow.
 
-<img src="tinybreaker_example.png" width="20%">
+<img src="ximg/tinybreaker_example.png" width="20%">
 
 This is a simple yet powerful workflow that allows you to adjust parameters within the prompt text box.  
 After entering your initial prompt, you can add any of the following parameters:
 
 - `--no <text>`: Exclude specific elements (negative prompt)
 - `--refine <text>`: Refine certain aspects of the image.
-- `--variant <number>`: Choose a variant number for minor changes.
-- `--cfg-adjust <decimal>`: Adjust CFG scale (the value es relative, 0.0 means default CFG)
-- `--detail <none|low|normal|high>`: Set detail level (normal is recommended)
+- `--img-shift <number>`: Choose a variant number for minor changes.
+- `--cfg-shift <number>`: Adjust CFG scale (the value es relative, 0.0 means default CFG)
+- `--detail-level <none|low|normal|high>`: Set detail level (normal is recommended)
 - `--seed <number>`: Specify a seed number.
 - `--aspect <ratio>`: Define aspect ratio of the image (e.g., 16:9)
 - `--landscape` / `--portrait`: Choose orientation.
@@ -35,6 +35,6 @@ After entering your initial prompt, you can add any of the following parameters:
 > [!NOTE]
 > You can drag this image into ComfyUI to get the workflow.
 
-<img src="tinybreaker_fully_customizable_example.png" width="20%">
+<img src="ximg/tinybreaker_fully_customizable_example.png" width="20%">
 
 This workflow allows you to customize all elements and alter node connections entirely, enabling full experimentation with the model as desired.
