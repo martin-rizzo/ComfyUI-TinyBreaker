@@ -92,7 +92,7 @@ For those using the standalone ComfyUI release on Windows:
 
 This image contains a simple workflow for testing the TinyBreaker model. To load this workflow, simply drag and drop the image into ComfyUI.
 
-<img src="workflows/tinybreaker_example.png" width="100px">
+<img src="workflows/ximg/tinybreaker_example.png" width="100px">
 
 _For further information and additional workflow examples, please consult the [workflows folder](workflows)._
 
@@ -114,9 +114,9 @@ When using the Unified Prompt node:
 |:-----------------------------------------------|----------------------------------------------------------------------------|
 | **`--no <text>`**                              | Specifies elements that should not appear in the image. (negative prompt)  |
 | **`--refine <text>`**                          | Provides a textual description of what elements should be refined.         |
-| **`--variant <number>`**                       | Specifies variants of the refinement without changing composition.         |
-| **`--cfg-adjust <decimal>`**                   | Adjusts the value of the Classifier-Free Guidance (CFG).                   |
-| **`--detail <level>`**                         | Sets the intensity level for detail refinement.                            |
+| **`--img-shift <number>`**                     | Specifies variants of the refinement without changing composition.         |
+| **`--cfg-shift <number>`**                     | Adjusts the value of the Classifier-Free Guidance (CFG).                   |
+| **`--detail-level <level>`**                   | Sets the intensity level for detail refinement.                            |
 
 
 | Major changes                                  | Description                                                                |
@@ -130,7 +130,7 @@ When using the Unified Prompt node:
 
 #### Examples
 
-`--no trees, clouds` `--refine cats ears` `--variant 2` `--cfg-adjust -0.2` `--detail normal`  
+`--no trees, clouds` `--refine cats ears` `--img_shift 2` `--cfg-shift 1` `--detail-level normal`  
 `--seed 42` `--aspect 16:9` `--portrait` `--medium` `--batch-size 4` `--style PIXEL_ART`
 
 _For more details on these parameters, see [docs/prompt_parameters.md](docs/prompt_parameters.md)._
@@ -140,7 +140,7 @@ _For more details on these parameters, see [docs/prompt_parameters.md](docs/prom
 
 The __'Unified Prompt'__ node offers special control keys for simplifying parameter input and modification:
 
-- **CTRL+RIGHT (autocomplete):**  Initiate a parameter name by typing `--` followed by its beginning (e.g., `--d`). Pressing CTRL+RIGHT will automatically complete the full parameter name (e.g., `--detail`).
+- **CTRL+RIGHT (autocomplete):**  Initiate a parameter name by typing `--` followed by its beginning (e.g., `--d`). Pressing CTRL+RIGHT will automatically complete the full parameter name (e.g., `--detail-level`).
 - **CTRL+UP/DOWN (over parameter value):**  Increment or decrement the value associated with a parameter. For instance, if your cursor is positioned over `--seed 20` and you press CTRL+UP, the text will change to `--seed 21`.
 
 
@@ -149,15 +149,18 @@ The __'Unified Prompt'__ node offers special control keys for simplifying parame
 The __'Select Style'__ node allows you to select an image style. This node injects text into the prompt and modifies sampler parameters to influence the image generation. Please note that these styles are still in development, as I am experimenting with different parameter combinations to refine them over time. Therefore, they might not always function perfectly or reflect exactly what is described here.
 
 #### Available Styles
-| Style Name           | Description                                                    |
-|:---------------------|----------------------------------------------------------------|
-| `PHOTO`              | Realistic images that closely resemble photographs.            |
-| `DARKFAN80`          | Dark fantasy images with 80s cinematic style.                  |
-| `LITTLETOY`          | Cute, minimalist images in the style of small toys.            |
-| `PIXEL_ART`          | Pixel art images with retro and blocky details.                |
-| `COLOR_INK`          | Beautiful drawings in vibrant colorful ink style.              |
-| `REALISTIC_WAIFU_X`  | Realistic images where a woman is the main subject.            |
-| `REALISTIC_WAIFU_Z`  | Realistic images where a woman is the main subject (variant)   |
+| Style Name           | Description                                                        |
+|:---------------------|--------------------------------------------------------------------|
+| `PHOTO`              | Fast photorealistic images with beautiful design.                  |
+| `ULTRAPHOTO`         | Realistic images with exceptional detail and clarity.              |
+| `DARKFAN80`          | Dark fantasy images with 80s cinematic style.                      |
+| `LITTLE_TOY`         | Minimalist images in the style of small toys.                      |
+| `COMIC_ART`          | Dynamic illustrations in comic book art style.                     |
+| `PIXEL_ART`          | Pixel art images with retro and blocky details.                    |
+| `COLOR_INK`          | Beautiful drawings in vibrant colorful ink style.                  |
+| `REALISTIC_WAIFU_X`  | Realistic images where a woman is the main subject.                |
+| `REALISTIC_WAIFU_Y`  | Realistic images where a woman is the main subject (alternative1). |
+| `REALISTIC_WAIFU_Z`  | Realistic images where a woman is the main subject (alternative2). |
 
 
 ## Features : CivitAI/A1111 Image Compatibility

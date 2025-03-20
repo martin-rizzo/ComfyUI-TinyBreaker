@@ -5,9 +5,9 @@ One of the advantages of the **Unified Prompt Input** is that it allows paramete
 - Parameters for Minor Adjustments
   - [`--no`](#--no-elements)
   - [`--refine`](#--refine-description)
-  - [`--variant`](#--variant-number)
-  - [`--cfg-adjust`](#--cfg-adjust-value)
-  - [`--detail`](#--detail-level)
+  - [`--img-shift`](#--img-shift-number)
+  - [`--cfg-shift`](#--cfg-shift-number)
+  - [`--detail-level`](#--detail-level-level)
 - Parameters for Major Changes
   - [`--seed`](#--seed-number)
   - [`--aspect`](#--aspect-ratio)
@@ -20,36 +20,36 @@ One of the advantages of the **Unified Prompt Input** is that it allows paramete
 
 These parameters allow for subtle modifications and fine-tuning of the generated image.
 
-### `--no <elements>`
+### `--no <text>`
 
 *   **Description:** Specifies elements that should **not** appear in the generated image. (negative prompt)
 *   **Example:** `--no trees, sky, clouds`
 *   **Usage:** Useful for removing unwanted elements from the final result.
 
-### `--refine <description>`
+### `--refine <text>`
 
 *   **Description:** Provides a textual description of what elements should be refined in the image.
 *   **Example:** `--refine trees and cat
 *   **Usage:** Helps to refine specific elements in the image.
 
-### `--variant <number>`
+### `--img-shift <number>`
 
 *   **Description:** Specifies variants of the refinement process without changing the composition of the image.
-*   **Example:** `--variant 2`
+*   **Example:** `--img-shift 2`
 *   **Usage:** Although the image remains practically unchanged, different variants can solve errors in hands and faces.
 *   **Values:** An integer indicating the desired variant.
 
-### `--cfg-adjust <value>`
+### `--cfg-shift <number>`
 
 *   **Description:** Adjusts the correction value to the default Classifier-Free Guidance (CFG).
-*   **Example:** `--cfg-adjust -0.2`
+*   **Example:** `--cfg-shift -2`
 *   **Usage:** Allows fine-tuning the effect of the Classifier-Free Guidance (CFG).
-*   **Values:** A floating-point number. A value of `0.0` is the best value for the model.
+*   **Values:** A floating-point number. A value of `0.0` is the best value for the current style.
 
-### `--detail <level>`
+### `--detail-level <level>`
 
 *   **Description:** The intensity of the refiner.
-*   **Example:** `--detail normal`
+*   **Example:** `--detail-level normal`
 *   **Usage:** Adjusts the level of detail added during the refinement process.
 *   **Options:**
     *   `none`: Disables the refinement process
