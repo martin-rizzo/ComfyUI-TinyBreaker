@@ -27,6 +27,7 @@ class SetBaseSeed:
                                       }),
             "seed"     :("INT"      , {"tooltip": "The seed number to apply.",
                                        "default": 1, "min": 1, "max": 0xffffffffffffffff,
+                                       "control_after_generate": True,
                                       }),
             },
         }
