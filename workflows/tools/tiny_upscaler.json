@@ -1,0 +1,402 @@
+{
+  "last_node_id": 31,
+  "last_link_id": 27,
+  "nodes": [
+    {
+      "id": 12,
+      "type": "CheckpointLoaderSimple",
+      "pos": [
+        100,
+        362
+      ],
+      "size": [
+        315,
+        98
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            23
+          ]
+        },
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": [
+            17,
+            18
+          ]
+        },
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CheckpointLoaderSimple"
+      },
+      "widgets_values": [
+        "photon_refiner-FP16.safetensors"
+      ]
+    },
+    {
+      "id": 13,
+      "type": "LoadAnyVAE //TinyBreaker",
+      "pos": [
+        100,
+        590
+      ],
+      "size": [
+        315,
+        58
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [
+            24
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadAnyVAE //TinyBreaker"
+      },
+      "widgets_values": [
+        "tiny_vae_sd.safetensors"
+      ]
+    },
+    {
+      "id": 29,
+      "type": "CLIPTextEncode",
+      "pos": [
+        515,
+        616
+      ],
+      "size": [
+        400,
+        200
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 18
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            27
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        "(worst quality, low quality, manga:1.8)"
+      ]
+    },
+    {
+      "id": 11,
+      "type": "LoadImage",
+      "pos": [
+        -110,
+        -40
+      ],
+      "size": [
+        315,
+        314
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            22
+          ]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": [
+        "image_to_upscale.png",
+        "image"
+      ]
+    },
+    {
+      "id": 17,
+      "type": "PreviewImage",
+      "pos": [
+        1450,
+        -230
+      ],
+      "size": [
+        640,
+        560
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 20
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "PreviewImage"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 19,
+      "type": "PreviewImage",
+      "pos": [
+        1440,
+        400
+      ],
+      "size": [
+        650,
+        720
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 21
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "PreviewImage"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 28,
+      "type": "CLIPTextEncode",
+      "pos": [
+        515,
+        286
+      ],
+      "size": [
+        400,
+        200
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 17
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            26
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        "A photo"
+      ]
+    },
+    {
+      "id": 31,
+      "type": "TinyUpscaleExperimental //TinyBreaker",
+      "pos": [
+        980,
+        70
+      ],
+      "size": [
+        390,
+        370
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 22
+        },
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 23
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 24
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 26
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 27
+        }
+      ],
+      "outputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "links": [
+            20
+          ]
+        },
+        {
+          "name": "preview",
+          "type": "IMAGE",
+          "links": [
+            21
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "TinyUpscaleExperimental //TinyBreaker"
+      },
+      "widgets_values": [
+        0,
+        "fixed",
+        5,
+        3,
+        "dpmpp_2m",
+        "sgm_uniform",
+        0.3
+      ]
+    }
+  ],
+  "links": [
+    [
+      17,
+      12,
+      1,
+      28,
+      0,
+      "CLIP"
+    ],
+    [
+      18,
+      12,
+      1,
+      29,
+      0,
+      "CLIP"
+    ],
+    [
+      20,
+      31,
+      0,
+      17,
+      0,
+      "IMAGE"
+    ],
+    [
+      21,
+      31,
+      1,
+      19,
+      0,
+      "IMAGE"
+    ],
+    [
+      22,
+      11,
+      0,
+      31,
+      0,
+      "IMAGE"
+    ],
+    [
+      23,
+      12,
+      0,
+      31,
+      1,
+      "MODEL"
+    ],
+    [
+      24,
+      13,
+      0,
+      31,
+      2,
+      "VAE"
+    ],
+    [
+      26,
+      28,
+      0,
+      31,
+      3,
+      "CONDITIONING"
+    ],
+    [
+      27,
+      29,
+      0,
+      31,
+      4,
+      "CONDITIONING"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.612662939453132,
+      "offset": [
+        243.37337256184932,
+        371.276884975072
+      ]
+    }
+  },
+  "version": 0.4
+}
