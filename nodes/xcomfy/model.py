@@ -17,10 +17,9 @@ import comfy.utils
 import comfy.model_patcher
 from comfy                  import model_management, supported_models_base, latent_formats, conds
 from comfy.model_base       import BaseModel, ModelType
-from ..utils.system         import logger
 from ..core.pixart_model_ex import PixArtModelEx
-from .ops                   import comfy_ops_disable_weight_init
-
+from ..xcomfy.helpers.ops   import comfy_ops_disable_weight_init
+from ..utils.system         import logger
 
 #--------------------------------- PIXART ----------------------------------#
 

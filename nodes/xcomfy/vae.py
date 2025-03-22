@@ -22,7 +22,7 @@ from ..utils.safetensors              import normalize_prefix
 from ..utils.system                   import logger
 from ..core.autoencoder_model_ex      import AutoencoderModelEx
 from ..core.tiny_autoencoder_model_ex import TinyAutoencoderModelEx
-from .ops                             import comfy_ops_disable_weight_init
+from ..xcomfy.helpers.ops             import comfy_ops_disable_weight_init
 
 
 

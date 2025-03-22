@@ -1,5 +1,5 @@
 """
-File    : xcomfy/ops.py
+File    : xcomfy/helpers/ops.py
 Purpose : Custom PyTorch operations for ComfyUI
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
 Date    : Feb 14, 2025
