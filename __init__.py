@@ -138,8 +138,8 @@ comfy_import_node(EmptyLatentImage)
 from .nodes.save_image                              import SaveImage
 comfy_import_node(SaveImage)
 
-from .nodes.tiny_upscale_experimental               import TinyUpscaleExperimental
-comfy_import_node(TinyUpscaleExperimental)
+from .nodes.tiny_upscale_prototype1                 import TinyUpscalePrototype1
+comfy_import_node(TinyUpscalePrototype1)
 
 
 # TinyBreaker/__dev

@@ -1,6 +1,6 @@
 {
-  "last_node_id": 31,
-  "last_link_id": 27,
+  "last_node_id": 41,
+  "last_link_id": 48,
   "nodes": [
     {
       "id": 12,
@@ -22,7 +22,7 @@
           "name": "MODEL",
           "type": "MODEL",
           "links": [
-            23
+            44
           ]
         },
         {
@@ -66,7 +66,7 @@
           "name": "VAE",
           "type": "VAE",
           "links": [
-            24
+            45
           ]
         }
       ],
@@ -103,7 +103,7 @@
           "name": "CONDITIONING",
           "type": "CONDITIONING",
           "links": [
-            27
+            47
           ]
         }
       ],
@@ -134,8 +134,10 @@
           "name": "IMAGE",
           "type": "IMAGE",
           "links": [
-            22
-          ]
+            41,
+            43
+          ],
+          "slot_index": 0
         },
         {
           "name": "MASK",
@@ -147,63 +149,9 @@
         "Node name for S&R": "LoadImage"
       },
       "widgets_values": [
-        "image_to_upscale.png",
+        "TB-0086.png",
         "image"
       ]
-    },
-    {
-      "id": 17,
-      "type": "PreviewImage",
-      "pos": [
-        1450,
-        -230
-      ],
-      "size": [
-        640,
-        560
-      ],
-      "flags": {},
-      "order": 6,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "images",
-          "type": "IMAGE",
-          "link": 20
-        }
-      ],
-      "outputs": [],
-      "properties": {
-        "Node name for S&R": "PreviewImage"
-      },
-      "widgets_values": []
-    },
-    {
-      "id": 19,
-      "type": "PreviewImage",
-      "pos": [
-        1440,
-        400
-      ],
-      "size": [
-        650,
-        720
-      ],
-      "flags": {},
-      "order": 7,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "images",
-          "type": "IMAGE",
-          "link": 21
-        }
-      ],
-      "outputs": [],
-      "properties": {
-        "Node name for S&R": "PreviewImage"
-      },
-      "widgets_values": []
     },
     {
       "id": 28,
@@ -231,7 +179,7 @@
           "name": "CONDITIONING",
           "type": "CONDITIONING",
           "links": [
-            26
+            46
           ]
         }
       ],
@@ -239,19 +187,55 @@
         "Node name for S&R": "CLIPTextEncode"
       },
       "widgets_values": [
-        "A photo"
+        "(argentine social woman:1.2)"
       ]
     },
     {
-      "id": 31,
-      "type": "TinyUpscaleExperimental //TinyBreaker",
+      "id": 35,
+      "type": "Reroute",
       "pos": [
-        980,
-        70
+        1210,
+        -200
       ],
       "size": [
-        390,
-        370
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 42
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "IMAGE",
+          "links": [
+            40
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 36,
+      "type": "ImageScaleBy",
+      "pos": [
+        620,
+        -230
+      ],
+      "size": [
+        315,
+        82
       ],
       "flags": {},
       "order": 5,
@@ -260,27 +244,113 @@
         {
           "name": "image",
           "type": "IMAGE",
-          "link": 22
+          "link": 41
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            42
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ImageScaleBy"
+      },
+      "widgets_values": [
+        "nearest-exact",
+        3
+      ]
+    },
+    {
+      "id": 32,
+      "type": "Image Comparer (rgthree)",
+      "pos": [
+        1420,
+        -60
+      ],
+      "size": [
+        630,
+        920
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image_a",
+          "type": "IMAGE",
+          "dir": 3,
+          "link": 40
+        },
+        {
+          "name": "image_b",
+          "type": "IMAGE",
+          "dir": 3,
+          "link": 48
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "comparer_mode": "Slide"
+      },
+      "widgets_values": [
+        [
+          {
+            "name": "A",
+            "selected": true,
+            "url": "/api/view?filename=rgthree.compare._temp_ooanv_00007_.png&type=temp&subfolder=&rand=0.06409555855732352"
+          },
+          {
+            "name": "B",
+            "selected": true,
+            "url": "/api/view?filename=rgthree.compare._temp_ooanv_00008_.png&type=temp&subfolder=&rand=0.6675764529972497"
+          }
+        ]
+      ]
+    },
+    {
+      "id": 41,
+      "type": "TinyUpscalePrototype1 //TinyBreaker",
+      "pos": [
+        950,
+        -10
+      ],
+      "size": [
+        415.8000183105469,
+        306
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 43
         },
         {
           "name": "model",
           "type": "MODEL",
-          "link": 23
+          "link": 44
         },
         {
           "name": "vae",
           "type": "VAE",
-          "link": 24
+          "link": 45
         },
         {
           "name": "positive",
           "type": "CONDITIONING",
-          "link": 26
+          "link": 46
         },
         {
           "name": "negative",
           "type": "CONDITIONING",
-          "link": 27
+          "link": 47
         }
       ],
       "outputs": [
@@ -288,28 +358,28 @@
           "name": "image",
           "type": "IMAGE",
           "links": [
-            20
-          ]
+            48
+          ],
+          "slot_index": 0
         },
         {
-          "name": "preview",
+          "name": "lowfreq_guide",
           "type": "IMAGE",
-          "links": [
-            21
-          ]
+          "links": null
         }
       ],
       "properties": {
-        "Node name for S&R": "TinyUpscaleExperimental //TinyBreaker"
+        "Node name for S&R": "TinyUpscalePrototype1 //TinyBreaker"
       },
       "widgets_values": [
         0,
         "fixed",
         5,
-        3,
+        2,
         "dpmpp_2m",
         "sgm_uniform",
-        0.3
+        0.2,
+        3
       ]
     }
   ],
@@ -331,70 +401,86 @@
       "CLIP"
     ],
     [
-      20,
-      31,
+      40,
+      35,
       0,
-      17,
-      0,
-      "IMAGE"
-    ],
-    [
-      21,
-      31,
-      1,
-      19,
+      32,
       0,
       "IMAGE"
     ],
     [
-      22,
+      41,
       11,
       0,
-      31,
+      36,
       0,
       "IMAGE"
     ],
     [
-      23,
+      42,
+      36,
+      0,
+      35,
+      0,
+      "*"
+    ],
+    [
+      43,
+      11,
+      0,
+      41,
+      0,
+      "IMAGE"
+    ],
+    [
+      44,
       12,
       0,
-      31,
+      41,
       1,
       "MODEL"
     ],
     [
-      24,
+      45,
       13,
       0,
-      31,
+      41,
       2,
       "VAE"
     ],
     [
-      26,
+      46,
       28,
       0,
-      31,
+      41,
       3,
       "CONDITIONING"
     ],
     [
-      27,
+      47,
       29,
       0,
-      31,
+      41,
       4,
       "CONDITIONING"
+    ],
+    [
+      48,
+      41,
+      0,
+      32,
+      1,
+      "IMAGE"
     ]
   ],
   "groups": [],
   "config": {},
   "extra": {
     "ds": {
-      "scale": 0.612662939453132,
+      "scale": 1.3513057093104168,
       "offset": [
-        243.37337256184932,
-        371.276884975072
+        -918.8351362385887,
+        -142.32073885591475
       ]
     }
   },
