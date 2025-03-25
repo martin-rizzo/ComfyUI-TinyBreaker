@@ -12,7 +12,7 @@ License : MIT
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import torch.nn.functional as F
-from .xcomfy.helpers.images import normalize_images, tiny_image_encode
+from .xcomfy.helpers.images import normalize_images, tiny_encode
 
 
 class TinyUpscalePrototype2:
@@ -48,10 +48,9 @@ class TinyUpscalePrototype2:
         upscaled_width  = int( round(image_width  * upscale_by) )
         upscaled_height = int( round(image_height * upscale_by) )
         upscaled_image  = F.interpolate(image.transpose(1,-1),
-                                        size = (upscaled_height, upscaled_width),
+                                        size = (upscaled_width, upscaled_height),
                                         mode = "bilinear").transpose(1,-1)
 
-        upscaled_latent = tiny_image_encode(image, vae, tile_size=128)
-        #upscaled_latent = vae.encode(upscaled_image)
+        upscaled_latent = tiny_encode(upscaled_image, vae, tile_size=64, tile_padding=6)
         return ({"samples":upscaled_latent}, )
 

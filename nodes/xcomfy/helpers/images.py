@@ -264,7 +264,7 @@ def _overlay_latent(dest  : torch.Tensor,
                     x     : int,
                     y     : int,
                     source: torch.Tensor,
-                    ):
+                    ) -> None:
     sour_x, sour_y = (0,0)
     _, _, sour_height, sour_width = source.shape
     _, _, dest_height, dest_width = dest.shape
@@ -273,30 +273,70 @@ def _overlay_latent(dest  : torch.Tensor,
     excess = (x+sour_width ) - dest_width
     if excess > 0:  sour_width -= excess
     excess = (y+sour_height) - dest_height
-    if excess > 0:  source_height -= excess
+    if excess > 0:  sour_height -= excess
 
     # fix the position to fit in the destination
-    excess = -x
-    if excess > 0:
-        x          += excess
-        sour_x     += excess
-        sour_width -= excess
-    excess = -y
-    if excess > 0:
-        y           += excess
-        sour_y      += excess
-        sour_height -= excess
+    offset = -x
+    if offset > 0:  x += offset ; sour_x += offset ; sour_width -= offset
+    offset = -y
+    if offset > 0:  y += offset ; sour_y += offset ; sour_height -= offset
 
-    # add the source section to the destination
+    # add the source section into the destination
+    if sour_width<=0 or sour_height<=0:
+        return
     dest[ : , : , y:y+sour_height , x:x+sour_width ] \
         += source[ : , : , sour_y:sour_y+sour_height , sour_x:sour_x+sour_width ]
+
+
+def _multiply_latent(dest  : torch.Tensor,
+                     x     : int,
+                     y     : int,
+                     source: torch.Tensor,
+                     ) -> None:
+    sour_x, sour_y = (0,0)
+    _, _, sour_height, sour_width = source.shape
+    _, _, dest_height, dest_width = dest.shape
+
+    # fix the source size to fit in the destination
+    excess = (x+sour_width ) - dest_width
+    if excess > 0:  sour_width -= excess
+    excess = (y+sour_height) - dest_height
+    if excess > 0:  sour_height -= excess
+
+    # fix the position to fit in the destination
+    offset = -x
+    if offset > 0:  x += offset ; sour_x += offset ; sour_width -= offset
+    offset = -y
+    if offset > 0:  y += offset ; sour_y += offset ; sour_height -= offset
+
+    # multiply the source section into the destination
+    if sour_width<=0 or sour_height<=0:
+        return
+    dest[ : , : , y:y+sour_height, x:x+sour_width ] \
+      *= source[ : , : , sour_y:sour_y+sour_height , sour_x:sour_x+sour_width ]
+
 
 def _get_image_section(image: torch.Tensor,
                        x     : int,
                        y     : int,
                        width : int,
                        height: int, \
-                       ) -> torch.Tensor:
+                       ) -> torch.Tensor | None:
+
+    # fix the rectangle size to fit in the image
+    excess = (x+width ) - image.shape[-2]
+    if excess > 0:  width -= excess
+    excess = (y+height) - image.shape[-3]
+    if excess > 0:  height -= excess
+
+    # fix the rectangle position to fit in the image
+    offset = -x
+    if offset > 0:  x += offset ; width -= offset
+    offset = -y
+    if offset > 0:  y += offset ; height -= offset
+
+    if width<=0 or height<=0:
+        return None
     return image[ : , y:y+height, x:x+width , : ]
 
 
@@ -325,47 +365,86 @@ def _create_lantent_mask(width  : int,
     return mask
 
 
-def tiny_image_encode(image: torch.Tensor,
-                      vae           : VAE,
-                      /,*,
-                      tile_size     : int = 256,
-                      vae_channels  : int = None,
-                      vae_patch_size: int = None,
-                      ):
-    batch_size, image_height, image_width, channels = image.shape
-    vae_channels   = vae_channels   or vae.latent_channels
-    vae_patch_size = vae_patch_size or vae.downscale_ratio
-    padding        = 2
+def tiny_encode(image: torch.Tensor,
+                vae           : VAE,
+                /,*,
+                tile_size     : int = 32,
+                tile_padding  : int = 2,
+                vae_channels  : int = None,
+                vae_patch_size: int = None,
+                ) -> torch.Tensor:
+    """
+    Encodes an image into a latent representation using the provided VAE.
 
-    # calculate the number of patches in a tile and the actual tile size
-    tile_latent_step = int( tile_size // vae_patch_size )
-    tile_latent_size = tile_latent_step + (2 * padding)
-    tile_step        = int( tile_latent_step * vae_patch_size )
+    This function divides the input image into overlapping tiles, encodes each
+    tile using the provided VAE, and combines the encoded tiles to create the
+    complete latent representation.
+
+    Args:
+        image            (Tensor): The input image tensor, expected to be in the
+                                   format [batch_size, image_height, image_width, channels].
+        vae                 (VAE): The Variational Autoencoder to use for encoding the image.
+        tile_size      (optional): The size of each tile expressed in latent space.
+                                   Defaults to 32.
+        tile_padding   (optional): The amount of padding to apply to each tile expressed in latent space.
+                                   This creates overlap between tiles. Defaults to 2.
+        vae_channels   (optional): The number of channels in the VAE's latent space.
+                                   Defaults to the VAE's `latent_channels` attribute.
+        vae_patch_size (optional): The downscale ratio used by the VAE.
+                                   Defaults to the VAE's `downscale_ratio` attribute.
+    Returns:
+        The latent representation of the image, with the
+        shape: [batch_size, vae_channels, latent_height, latent_width].
+    """
+    assert tile_padding >= 2         , f"Tile padding must be at least 2, got {tile_padding}"
+    assert tile_size > tile_padding*4, f"Tile size must be larger than 4x padding, got {tile_size}"
+    batch_size, image_height, image_width, _ = image.shape
+    vae_channels   = int(vae_channels   or vae.latent_channels)
+    vae_patch_size = int(vae_patch_size or vae.downscale_ratio)
+    latent_width   = int(image_width  // vae_patch_size)
+    latent_height  = int(image_height // vae_patch_size)
+    tile_padding   = int(tile_padding)
+    safe_border    = 2 * tile_padding
+
+    # calculate the tile size and the step beetween tiles
+    # (tile size is greater than tile step because the tiles overlap)
+    tile_latent_step = int( tile_size )
+    tile_latent_size = tile_latent_step + (2 * tile_padding)
     tile_size        = int( tile_latent_size * vae_patch_size )
 
+    # create the overlap mask
     latent_tile_mask = _create_lantent_mask(width   = tile_latent_size,
                                             height  = tile_latent_size,
-                                            padding = padding
+                                            padding = tile_padding
                                             )
 
-
     # create an empty `latent_canvas` and fill it tile by tile
-    latent_canvas = torch.zeros((batch_size, vae_channels, image_height // vae_patch_size, image_width // vae_patch_size), dtype=torch.float32)
+    latent_canvas = torch.zeros((batch_size, vae_channels, latent_height, latent_width), dtype=torch.float32)
+    for ylatent in range(-safe_border, latent_height, tile_latent_step):
+        for xlatent in range(-safe_border, latent_width, tile_latent_step):
 
-    xsteps = int( image_width  // tile_step )
-    ysteps = int( image_height // tile_step )
-    for y in range(ysteps-1):
-        for x in range(xsteps-1):
+            # extract a tile from the main image
             tile = _get_image_section(image,
-                                      x*tile_step,
-                                      y*tile_step,
+                                      xlatent * vae_patch_size,
+                                      ylatent * vae_patch_size,
                                       tile_size, tile_size
                                       )
-            lantent_tile = vae.encode(tile)
+            if tile is None: continue
+
+            # encode the tile to the latent space
+            latent_tile = vae.encode(tile)
+
+            # multiply the tile with the mask and overlay it on the canvas
+            # (the mask is used ensure that the tiles overlap each other)
+            _multiply_latent(latent_tile,
+                             xlatent if xlatent<0 else 0,
+                             ylatent if ylatent<0 else 0,
+                             source = latent_tile_mask
+                             )
             _overlay_latent(latent_canvas,
-                            x*tile_latent_step,
-                            y*tile_latent_step,
-                            source = lantent_tile * latent_tile_mask
+                            xlatent if xlatent>0 else 0,
+                            ylatent if ylatent>0 else 0,
+                            source = latent_tile
                             )
 
     # [batch_size, vae_channels, image_height//vae_patch_size, image_width//vae_patch_size]

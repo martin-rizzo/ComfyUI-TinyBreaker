@@ -1,6 +1,6 @@
 {
-  "last_node_id": 44,
-  "last_link_id": 54,
+  "last_node_id": 47,
+  "last_link_id": 62,
   "nodes": [
     {
       "id": 29,
@@ -79,42 +79,6 @@
       ]
     },
     {
-      "id": 35,
-      "type": "Reroute",
-      "pos": [
-        1210,
-        -200
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {},
-      "order": 7,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 42
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "IMAGE",
-          "links": [
-            40
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
-    },
-    {
       "id": 41,
       "type": "TinyUpscalePrototype1 //TinyBreaker",
       "pos": [
@@ -126,7 +90,7 @@
         306
       ],
       "flags": {},
-      "order": 8,
+      "order": 7,
       "mode": 0,
       "inputs": [
         {
@@ -194,7 +158,7 @@
         46
       ],
       "flags": {},
-      "order": 9,
+      "order": 10,
       "mode": 0,
       "inputs": [
         {
@@ -205,7 +169,7 @@
         {
           "name": "vae",
           "type": "VAE",
-          "link": 54
+          "link": 62
         }
       ],
       "outputs": [
@@ -306,11 +270,93 @@
       ]
     },
     {
+      "id": 45,
+      "type": "VAEDecode",
+      "pos": [
+        1060,
+        -270
+      ],
+      "size": [
+        210,
+        46
+      ],
+      "flags": {},
+      "order": 11,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 56
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 61
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            57
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 46,
+      "type": "VAEEncode",
+      "pos": [
+        790,
+        -270
+      ],
+      "size": [
+        210,
+        46
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "pixels",
+          "type": "IMAGE",
+          "link": 55
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 60
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            56
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEEncode"
+      },
+      "widgets_values": []
+    },
+    {
       "id": 36,
       "type": "ImageScaleBy",
       "pos": [
-        620,
-        -230
+        390,
+        -280
       ],
       "size": [
         315,
@@ -331,7 +377,7 @@
           "name": "IMAGE",
           "type": "IMAGE",
           "links": [
-            42
+            55
           ],
           "slot_index": 0
         }
@@ -356,7 +402,7 @@
         78
       ],
       "flags": {},
-      "order": 6,
+      "order": 8,
       "mode": 0,
       "inputs": [
         {
@@ -367,7 +413,7 @@
         {
           "name": "vae",
           "type": "VAE",
-          "link": 50
+          "link": 59
         }
       ],
       "outputs": [
@@ -388,11 +434,50 @@
       ]
     },
     {
+      "id": 47,
+      "type": "Reroute",
+      "pos": [
+        380,
+        -150
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 58
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "VAE",
+          "links": [
+            59,
+            60,
+            61,
+            62
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
       "id": 13,
       "type": "LoadAnyVAE //TinyBreaker",
       "pos": [
-        100,
-        590
+        -110,
+        -200
       ],
       "size": [
         315,
@@ -407,8 +492,7 @@
           "name": "VAE",
           "type": "VAE",
           "links": [
-            50,
-            54
+            58
           ],
           "slot_index": 0
         }
@@ -425,21 +509,21 @@
       "type": "Image Comparer (rgthree)",
       "pos": [
         1420,
-        -60
+        -90
       ],
       "size": [
         630,
         920
       ],
       "flags": {},
-      "order": 10,
+      "order": 12,
       "mode": 0,
       "inputs": [
         {
           "name": "image_a",
           "type": "IMAGE",
           "dir": 3,
-          "link": 40
+          "link": 57
         },
         {
           "name": "image_b",
@@ -457,12 +541,12 @@
           {
             "name": "A",
             "selected": true,
-            "url": "/api/view?filename=rgthree.compare._temp_kfppa_00001_.png&type=temp&subfolder=&rand=0.5286520193188944"
+            "url": "/api/view?filename=rgthree.compare._temp_rqhpl_00001_.png&type=temp&subfolder=&rand=0.6484960574396579"
           },
           {
             "name": "B",
             "selected": true,
-            "url": "/api/view?filename=rgthree.compare._temp_kfppa_00002_.png&type=temp&subfolder=&rand=0.009850823741397452"
+            "url": "/api/view?filename=rgthree.compare._temp_rqhpl_00002_.png&type=temp&subfolder=&rand=0.9968840418309257"
           }
         ]
       ]
@@ -486,28 +570,12 @@
       "CLIP"
     ],
     [
-      40,
-      35,
-      0,
-      32,
-      0,
-      "IMAGE"
-    ],
-    [
       41,
       11,
       0,
       36,
       0,
       "IMAGE"
-    ],
-    [
-      42,
-      36,
-      0,
-      35,
-      0,
-      "*"
     ],
     [
       44,
@@ -542,14 +610,6 @@
       "IMAGE"
     ],
     [
-      50,
-      13,
-      0,
-      42,
-      1,
-      "VAE"
-    ],
-    [
       51,
       43,
       0,
@@ -566,8 +626,64 @@
       "LATENT"
     ],
     [
-      54,
+      55,
+      36,
+      0,
+      46,
+      0,
+      "IMAGE"
+    ],
+    [
+      56,
+      46,
+      0,
+      45,
+      0,
+      "LATENT"
+    ],
+    [
+      57,
+      45,
+      0,
+      32,
+      0,
+      "IMAGE"
+    ],
+    [
+      58,
       13,
+      0,
+      47,
+      0,
+      "*"
+    ],
+    [
+      59,
+      47,
+      0,
+      42,
+      1,
+      "VAE"
+    ],
+    [
+      60,
+      47,
+      0,
+      46,
+      1,
+      "VAE"
+    ],
+    [
+      61,
+      47,
+      0,
+      45,
+      1,
+      "VAE"
+    ],
+    [
+      62,
+      47,
       0,
       43,
       1,
@@ -578,10 +694,10 @@
   "config": {},
   "extra": {
     "ds": {
-      "scale": 0.6934334949441363,
+      "scale": 0.6303940863128524,
       "offset": [
-        91.5060514443135,
-        280.0103604598991
+        121.12173826418058,
+        395.7184330672078
       ]
     }
   },
