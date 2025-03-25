@@ -29,14 +29,14 @@ def normalize_images(images: torch.Tensor,
     Normalizes a batch of images to default ComfyUI format.
 
     This function ensures that the input image tensor has a consistent shape
-    of [batch_size, width, height, channels].
+    of [batch_size, height, width, channels].
 
     Args:
         images           (Tensor): A tensor representing a batch of images.
         max_channels   (optional): The maximum number of color channels allowed. Defaults to 3.
         max_batch_size (optional): The maximum batch size allowed. Defaults to None (no limit).
     Returns:
-        A normalized image tensor with shape [batch_size, width, height, channels].
+        A normalized image tensor with shape [batch_size, height, width, channels].
     """
     images_dimension = len(images.shape)
 
@@ -147,7 +147,7 @@ def prepare_image_for_superresolution(image: torch.Tensor,
     image                     = normalize_images(image, max_channels=3, max_batch_size=1)
     patch_width, patch_height = _getXY(patch_size)
     gaussian_blur_sigma       = 2.0 # scale_by * 0.1
-    batch_size, image_width, image_height, channels = image.shape
+    batch_size, image_height, image_width, channels = image.shape
     assert batch_size == 1  , f"Superresolution only supports batch size of 1. Got: {batch_size}"
     assert channels   == 3  , f"Superresolution only supports RGB (3 channels) images. Got: {channels}"
     assert upscale_by >= 1.0, f"Upscale factor must be greater than or equal to 1. Got: {upscale_by}"
@@ -194,7 +194,7 @@ def generate_superresolution_image(image: torch.Tensor,
 
                                    ) -> torch.Tensor:
 
-    batch_size, image_width, image_height, channels = image.shape
+    batch_size, image_height, image_width, channels = image.shape
     assert batch_size == 1, f"Superresolution only supports batch size of 1. Got: {batch_size}"
     assert channels   == 3, f"Superresolution only supports RGB (3 channels) images. Got: {channels}"
 
@@ -209,7 +209,7 @@ def generate_superresolution_image(image: torch.Tensor,
     y    = int( tile_pos[1] * image_height / upscaled_height )
     xend = int( (tile_pos[0] + tile_size[0]) * image_width  / upscaled_width  )
     yend = int( (tile_pos[1] + tile_size[1]) * image_height / upscaled_height )
-    image_section = image[ : , x:xend , y:yend , : ]
+    image_section = image[ : , y:yend , x:xend , : ]
 
     # generate the tile upscaling the image_section
     tile = torch.nn.functional.interpolate(image_section.transpose(1,-1),
@@ -241,19 +241,135 @@ def generate_superresolution_image(image: torch.Tensor,
 
     return normalize_images( tile )
 
+def _getXY(xy: int | tuple[int, int]) -> tuple[int, int]:
 
-
-def _getXY(size: int | tuple[int, int]) -> tuple[int, int]:
-    if isinstance(size, int):
-        return size, size
-    elif isinstance(size, (tuple, list)):
-        if len(size) >= 2:
-            return size[0], size[1]
+    if isinstance(xy, int):
+        return xy, xy
+    elif isinstance(xy, (tuple, list)):
+        if len(xy) >= 2:
+            return xy[0], xy[1]
         else:
-            return size[0], size[0]
-    elif isinstance(size, str):
-        x, y = size.split('x', 1)
+            return xy[0], xy[0]
+    elif isinstance(xy, str):
+        x, y = xy.split('x', 1)
         return int(x.strip()), int(y.strip())
 
     raise ValueError("position/size must be an integer or a tuple of two integers")
+
+
+
+#=========================== UPSCALE PROTOTYPE 2 ===========================#
+
+def _overlay_latent(dest  : torch.Tensor,
+                    x     : int,
+                    y     : int,
+                    source: torch.Tensor,
+                    ):
+    sour_x, sour_y = (0,0)
+    _, _, sour_height, sour_width = source.shape
+    _, _, dest_height, dest_width = dest.shape
+
+    # fix the source size to fit in the destination
+    excess = (x+sour_width ) - dest_width
+    if excess > 0:  sour_width -= excess
+    excess = (y+sour_height) - dest_height
+    if excess > 0:  source_height -= excess
+
+    # fix the position to fit in the destination
+    excess = -x
+    if excess > 0:
+        x          += excess
+        sour_x     += excess
+        sour_width -= excess
+    excess = -y
+    if excess > 0:
+        y           += excess
+        sour_y      += excess
+        sour_height -= excess
+
+    # add the source section to the destination
+    dest[ : , : , y:y+sour_height , x:x+sour_width ] \
+        += source[ : , : , sour_y:sour_y+sour_height , sour_x:sour_x+sour_width ]
+
+def _get_image_section(image: torch.Tensor,
+                       x     : int,
+                       y     : int,
+                       width : int,
+                       height: int, \
+                       ) -> torch.Tensor:
+    return image[ : , y:y+height, x:x+width , : ]
+
+
+def _create_lantent_mask(width  : int,
+                         height : int,
+                         padding: int
+                         ) -> torch.Tensor:
+    gradient_size = (padding * 2) - 1
+
+    # create a mask
+    mask = torch.ones((1, 1, height, width), dtype=torch.float32)
+
+    # set a linear gradient for the left and right borders
+    for j in range(gradient_size):
+        gradient_level = float(j) / gradient_size
+        mask[:, :, :,  j  ] = gradient_level
+        mask[:, :, :, -j-1] = gradient_level
+
+    # set a linear gradient for the top and bottom borders
+    for i in range(gradient_size):
+        gradient_level = float(i) / gradient_size
+        mask[:, :,  i  , :] *= gradient_level
+        mask[:, :, -i-1, :] *= gradient_level
+        print("##>> gradient_level:", gradient_level)
+
+    return mask
+
+
+def tiny_image_encode(image: torch.Tensor,
+                      vae           : VAE,
+                      /,*,
+                      tile_size     : int = 256,
+                      vae_channels  : int = None,
+                      vae_patch_size: int = None,
+                      ):
+    batch_size, image_height, image_width, channels = image.shape
+    vae_channels   = vae_channels   or vae.latent_channels
+    vae_patch_size = vae_patch_size or vae.downscale_ratio
+    padding        = 2
+
+    # calculate the number of patches in a tile and the actual tile size
+    tile_latent_step = int( tile_size // vae_patch_size )
+    tile_latent_size = tile_latent_step + (2 * padding)
+    tile_step        = int( tile_latent_step * vae_patch_size )
+    tile_size        = int( tile_latent_size * vae_patch_size )
+
+    latent_tile_mask = _create_lantent_mask(width   = tile_latent_size,
+                                            height  = tile_latent_size,
+                                            padding = padding
+                                            )
+
+
+    # create an empty `latent_canvas` and fill it tile by tile
+    latent_canvas = torch.zeros((batch_size, vae_channels, image_height // vae_patch_size, image_width // vae_patch_size), dtype=torch.float32)
+
+    xsteps = int( image_width  // tile_step )
+    ysteps = int( image_height // tile_step )
+    for y in range(ysteps-1):
+        for x in range(xsteps-1):
+            tile = _get_image_section(image,
+                                      x*tile_step,
+                                      y*tile_step,
+                                      tile_size, tile_size
+                                      )
+            lantent_tile = vae.encode(tile)
+            _overlay_latent(latent_canvas,
+                            x*tile_latent_step,
+                            y*tile_latent_step,
+                            source = lantent_tile * latent_tile_mask
+                            )
+
+    # [batch_size, vae_channels, image_height//vae_patch_size, image_width//vae_patch_size]
+    return latent_canvas
+
+
 

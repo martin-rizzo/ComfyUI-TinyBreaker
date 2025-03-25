@@ -93,6 +93,7 @@ class TinyUpscalePrototype1:
         print()
         print("##>> input image.dtype :", image.dtype)
         print("##>> input image.device:", image.device)
+        print("##>> input image.shape:", image.shape)
 
 
         # adjust the model sampling parameters to match the denoising strength
@@ -114,7 +115,7 @@ class TinyUpscalePrototype1:
                                                 )
 
         # create the empty upscaled image (in RED color)
-        upscaled_image = torch.zeros(1, upscaled_width, upscaled_height, 3)
+        upscaled_image = torch.zeros(1, upscaled_height, upscaled_width, 3)
         upscaled_image[ : , : , : , 0 ] = 1.0
 
 
@@ -180,7 +181,7 @@ class TinyUpscalePrototype1:
 def tile_filling_zero(canvas          : torch.Tensor,
                       generate_tile_fn: callable,
                       ):
-    batch_size, canvas_width, canvas_height, channels = canvas.shape
+    batch_size, canvas_height, canvas_width, channels = canvas.shape
     tile_width  = 768
     tile_height = 768
 
@@ -195,8 +196,8 @@ def draw_tile(canvas: torch.Tensor,
               y: int,
               tile: torch.Tensor
               ):
-    _, canvas_width, canvas_height, _ = canvas.shape
-    _,        width,        height, _ = tile.shape
+    _, canvas_height, canvas_width, _ = canvas.shape
+    _,        height,        width, _ = tile.shape
     width  = min( width , canvas_width -x )
     height = min( height, canvas_height-y )
-    canvas[ : , x:x+width , y:y+width, : ] = tile[ : , :width , :height , : ]
+    canvas[ : , y:y+width , x:x+width, : ] = tile[ : , :height , :width , : ]

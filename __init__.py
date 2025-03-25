@@ -141,6 +141,9 @@ comfy_import_node(SaveImage)
 from .nodes.tiny_upscale_prototype1                 import TinyUpscalePrototype1
 comfy_import_node(TinyUpscalePrototype1)
 
+from .nodes.tiny_upscale_prototype2                 import TinyUpscalePrototype2
+comfy_import_node(TinyUpscalePrototype2)
+
 
 # TinyBreaker/__dev
 _CATEGORY = "TinyBreaker/__dev"
