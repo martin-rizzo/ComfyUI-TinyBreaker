@@ -11,8 +11,10 @@ License : MIT
   (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
+import torch
 import torch.nn.functional as F
 from .xcomfy.helpers.images import normalize_images, tiny_encode
+from .xcomfy.vae            import VAE
 
 
 class TinyUpscalePrototype2:
@@ -41,16 +43,44 @@ class TinyUpscalePrototype2:
     RETURN_NAMES    = ("latent",)
     OUTPUT_TOOLTIPS = ("The upscaled image in latent space.",)
 
-    def upscale(self, image, vae, upscale_by):
+    def upscale(self, image: torch.Tensor, vae: VAE, upscale_by: float):
         image = normalize_images(image)
         batch_size, image_height, image_width, channels = image.shape
+        extra_noise = 0.8  # <- adjust this value to control the amount of extra noise to add
+        tile_size =  512
 
+        # upscale the image using simple bilinear interpolation
         upscaled_width  = int( round(image_width  * upscale_by) )
         upscaled_height = int( round(image_height * upscale_by) )
         upscaled_image  = F.interpolate(image.transpose(1,-1),
                                         size = (upscaled_width, upscaled_height),
                                         mode = "bilinear").transpose(1,-1)
 
-        upscaled_latent = tiny_encode(upscaled_image, vae, tile_size=64, tile_padding=6)
+        # encode the image into latent space
+        upscaled_latent = tiny_encode(upscaled_image,
+                                      vae          = vae,
+                                      tile_size    = tile_size,
+                                      tile_padding = (tile_size/4),
+                                      )
+
+        # # add extra noise to the latent image
+        # upscaled_latent += torch.randn_like(upscaled_latent) * extra_noise
+
+
+        # generate_super_details_fn = lambda x, y, width, height: \
+        #     generate_super_details(upscaled_latent,
+        #                            model     = model,
+        #                            seed      = seed,
+        #                            cfg       = cfg,
+        #                            sampler   = sampler,
+        #                            sigmas    = sigmas_step,
+        #                            positive  = positive,
+        #                            negative  = negative,
+        #                            tile_pos  = (x, y),
+        #                            tile_size = (width, height)
+        #                            )
+
+        # tile_filling_zero( generate_super_details_fn )
+
         return ({"samples":upscaled_latent}, )
 

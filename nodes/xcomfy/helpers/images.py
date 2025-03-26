@@ -260,11 +260,61 @@ def _getXY(xy: int | tuple[int, int]) -> tuple[int, int]:
 
 #=========================== UPSCALE PROTOTYPE 2 ===========================#
 
+def _get_image_section(image: torch.Tensor,
+                       x     : int,
+                       y     : int,
+                       width : int,
+                       height: int, \
+                       ) -> torch.Tensor | None:
+    """Extracts a section of an image.
+
+    If the provided section is partially outside of the image, it will be cropped
+    to fit within the image.
+    Args:
+        image : The input image tensor. Expected to be in the format [B, H, W, C].
+        x     : The x-coordinate of the top-left corner of the section to extract.
+        y     : The y-coordinate of the top-left corner of the section to extract.
+        width : The width of the section to extract.
+        height: The height of the section to extract.
+    Returns:
+        A tensor representing the extracted image section.
+        Returns `None` if the section is completely outside of the image.
+    """
+    # fix the rectangle size to fit in the image
+    excess = (x+width ) - image.shape[-2]
+    if excess > 0:  width -= excess
+    excess = (y+height) - image.shape[-3]
+    if excess > 0:  height -= excess
+
+    # fix the rectangle position to fit in the image
+    offset = -x
+    if offset > 0:  x += offset ; width -= offset
+    offset = -y
+    if offset > 0:  y += offset ; height -= offset
+
+    if width<=0 or height<=0:
+        return None
+    return image[ : , y:y+height, x:x+width , : ]
+
+
 def _overlay_latent(dest  : torch.Tensor,
                     x     : int,
                     y     : int,
                     source: torch.Tensor,
                     ) -> None:
+    """Overlays the source tensor onto the destination tensor at specified coordinates.
+
+    The function adjusts the source tensor's dimensions to fit within the
+    destination tensor's boundaries. It then adds the value of the source
+    tensor onto the destination.
+    Args:
+        dest   (Tensor): The destination tensor to which the source tensor will be overlayed (added)
+        x         (int): The x-coordinate of the top-left corner of the section to overlay.
+        y         (int): The y-coordinate of the top-left corner of the section to overlay.
+        source (Tensor): The source tensor.
+    Returns:
+        Nothing. The function modifies the `dest` tensor in place.
+    """
     sour_x, sour_y = (0,0)
     _, _, sour_height, sour_width = source.shape
     _, _, dest_height, dest_width = dest.shape
@@ -293,6 +343,19 @@ def _multiply_latent(dest  : torch.Tensor,
                      y     : int,
                      source: torch.Tensor,
                      ) -> None:
+    """Multiplies the source tensor onto the destination tensor at specified coordinates.
+
+    The function adjusts the source tensor's dimensions to fit within the
+    destination tensor's boundaries. It then multiplies the value of the
+    source tensor onto the destination.
+    Args:
+        dest   (Tensor): The destination tensor to which the source tensor will be multiplied.
+        x         (int): The x-coordinate of the top-left corner of the section to multiply.
+        y         (int): The y-coordinate of the top-left corner of the section to multiply.
+        source (Tensor): The source tensor.
+    Returns:
+        None. The function modifies the `dest` tensor in place.
+    """
     sour_x, sour_y = (0,0)
     _, _, sour_height, sour_width = source.shape
     _, _, dest_height, dest_width = dest.shape
@@ -316,60 +379,54 @@ def _multiply_latent(dest  : torch.Tensor,
       *= source[ : , : , sour_y:sour_y+sour_height , sour_x:sour_x+sour_width ]
 
 
-def _get_image_section(image: torch.Tensor,
-                       x     : int,
-                       y     : int,
-                       width : int,
-                       height: int, \
-                       ) -> torch.Tensor | None:
-
-    # fix the rectangle size to fit in the image
-    excess = (x+width ) - image.shape[-2]
-    if excess > 0:  width -= excess
-    excess = (y+height) - image.shape[-3]
-    if excess > 0:  height -= excess
-
-    # fix the rectangle position to fit in the image
-    offset = -x
-    if offset > 0:  x += offset ; width -= offset
-    offset = -y
-    if offset > 0:  y += offset ; height -= offset
-
-    if width<=0 or height<=0:
-        return None
-    return image[ : , y:y+height, x:x+width , : ]
-
-
-def _create_lantent_mask(width  : int,
-                         height : int,
-                         padding: int
+def _create_lantent_mask(width      : int,
+                         height     : int,
+                         gradient   : int,
+                         zero_border: int
                          ) -> torch.Tensor:
-    gradient_size = (padding * 2) - 1
+    """Creates a latent mask with gradient and zero borders."""
+    #
+    #             returned width
+    #      |<--------------------------~
+    #      :                 width
+    #      :             |<------------~
+    # 1.0  :             :    __________ 1.0
+    #      :             :  /
+    #      :             :/
+    #      :            /:
+    # 0.0   _________ /  :               0.0
+    #      |  zero  |grad|
+    #
+    #                 2x grad
+    #               |---------|
+    #
+    returned_width  = zero_border + gradient + width  + gradient + zero_border
+    returned_height = zero_border + gradient + height + gradient + zero_border
+    total_gradient  = (gradient * 2) - 1
 
     # create a mask
-    mask = torch.ones((1, 1, height, width), dtype=torch.float32)
+    mask = torch.ones((1, 1, returned_height, returned_width), dtype=torch.float32)
 
     # set a linear gradient for the left and right borders
-    for j in range(gradient_size):
-        gradient_level = float(j) / gradient_size
-        mask[:, :, :,  j  ] = gradient_level
-        mask[:, :, :, -j-1] = gradient_level
+    for i in range(0, total_gradient+zero_border):
+        gradient_level = float(i-zero_border) / total_gradient if i>zero_border else 0.0
+        mask[:, :, :,  i  ] = gradient_level
+        mask[:, :, :, -i-1] = gradient_level
 
     # set a linear gradient for the top and bottom borders
-    for i in range(gradient_size):
-        gradient_level = float(i) / gradient_size
+    for i in range(0, total_gradient+zero_border):
+        gradient_level = float(i-zero_border) / total_gradient if i>=zero_border else 0.0
         mask[:, :,  i  , :] *= gradient_level
         mask[:, :, -i-1, :] *= gradient_level
-        print("##>> gradient_level:", gradient_level)
 
     return mask
 
 
 def tiny_encode(image: torch.Tensor,
-                vae           : VAE,
                 /,*,
-                tile_size     : int = 32,
-                tile_padding  : int = 2,
+                vae           : VAE,
+                tile_size     : int = 512,
+                tile_padding  : int = 128,
                 vae_channels  : int = None,
                 vae_patch_size: int = None,
                 ) -> torch.Tensor:
@@ -384,10 +441,10 @@ def tiny_encode(image: torch.Tensor,
         image            (Tensor): The input image tensor, expected to be in the
                                    format [batch_size, image_height, image_width, channels].
         vae                 (VAE): The Variational Autoencoder to use for encoding the image.
-        tile_size      (optional): The size of each tile expressed in latent space.
-                                   Defaults to 32.
-        tile_padding   (optional): The amount of padding to apply to each tile expressed in latent space.
-                                   This creates overlap between tiles. Defaults to 2.
+        tile_size      (optional): The size of each tile expressed in pixels.
+                                   Defaults to 512.
+        tile_padding   (optional): The amount of padding to add around each tile expressed in pixels.
+                                   This creates overlap between tiles. Defaults to 128.
         vae_channels   (optional): The number of channels in the VAE's latent space.
                                    Defaults to the VAE's `latent_channels` attribute.
         vae_patch_size (optional): The downscale ratio used by the VAE.
@@ -396,26 +453,30 @@ def tiny_encode(image: torch.Tensor,
         The latent representation of the image, with the
         shape: [batch_size, vae_channels, latent_height, latent_width].
     """
-    assert tile_padding >= 2         , f"Tile padding must be at least 2, got {tile_padding}"
-    assert tile_size > tile_padding*4, f"Tile size must be larger than 4x padding, got {tile_size}"
+    assert tile_size >= tile_padding*4, f"Tile size must be larger or equal to 4x tile padding. Got {tile_size} with padding {tile_padding}."
     batch_size, image_height, image_width, _ = image.shape
-    vae_channels   = int(vae_channels   or vae.latent_channels)
-    vae_patch_size = int(vae_patch_size or vae.downscale_ratio)
+    vae_channels   = int(vae_channels   or vae.latent_channels) # = 4
+    vae_patch_size = int(vae_patch_size or vae.downscale_ratio) # = 8
     latent_width   = int(image_width  // vae_patch_size)
     latent_height  = int(image_height // vae_patch_size)
-    tile_padding   = int(tile_padding)
+
+    # convert sizes (in pixels) to latent sizes
+    tile_size      = int( ((tile_size   -1) // vae_patch_size) + 1 )
+    tile_padding   = int( ((tile_padding-1) // vae_patch_size) + 1 )
     safe_border    = 2 * tile_padding
 
     # calculate the tile size and the step beetween tiles
     # (tile size is greater than tile step because the tiles overlap)
     tile_latent_step = int( tile_size )
-    tile_latent_size = tile_latent_step + (2 * tile_padding)
+    tile_latent_size = tile_padding + tile_latent_step + tile_padding
     tile_size        = int( tile_latent_size * vae_patch_size )
 
     # create the overlap mask
-    latent_tile_mask = _create_lantent_mask(width   = tile_latent_size,
-                                            height  = tile_latent_size,
-                                            padding = tile_padding
+    # TODO: more testing to determine the best gradient and zero border values
+    latent_tile_mask = _create_lantent_mask(width       = tile_latent_step,
+                                            height      = tile_latent_step,
+                                            gradient    = tile_padding // 2,
+                                            zero_border = tile_padding - (tile_padding // 2),
                                             )
 
     # create an empty `latent_canvas` and fill it tile by tile
