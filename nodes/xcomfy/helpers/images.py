@@ -260,41 +260,83 @@ def _getXY(xy: int | tuple[int, int]) -> tuple[int, int]:
 
 #=========================== UPSCALE PROTOTYPE 2 ===========================#
 
-def _get_image_section(image: torch.Tensor,
-                       x     : int,
-                       y     : int,
-                       width : int,
-                       height: int, \
-                       ) -> torch.Tensor | None:
-    """Extracts a section of an image.
+def _normalize_dim_order(dim_order: tuple[int, int] | str) -> tuple[int, int]:
+    if isinstance(dim_order, str):
+        if   dim_order == "bhwc":  return (-2, -3)
+        elif dim_order == "bchw":  return (-1, -2)
+        else:
+            raise ValueError(f'Invalid dim_order value: expected "bchw", "bhwc" or a tuple of integers. Got {dim_order}.')
+    return dim_order
 
-    If the provided section is partially outside of the image, it will be cropped
-    to fit within the image.
+
+def shrink_tensor_2d(tensor: torch.Tensor,
+                     left     : int,
+                     top      : int,
+                     right    : int,
+                     bottom   : int, /,
+                     dim_order: tuple[int, int] | str = "bchw"
+                     ):
+    width_dim, height_dim = _normalize_dim_order(dim_order)
+    left, top, right, bottom = max(0, left), max(0, top), max(0, right), max(0, bottom)
+
+    # if nothing to shrink, return the original tensor
+    if left == 0 and top == 0 and right == 0 and bottom == 0:
+        return tensor
+
+    # calculate the new dimensions after shrinking
+    new_width  = tensor.shape[width_dim]  - left - right
+    new_height = tensor.shape[height_dim] - top  - bottom
+    if new_width <= 0 or new_height <= 0:
+        return None
+
+    # shrink the tensor
+    return tensor.narrow(height_dim, top, new_height).narrow(width_dim , left, new_width)
+
+
+
+def get_section_2d(tensor: torch.Tensor,
+                   x     : int,
+                   y     : int,
+                   width : int,
+                   height: int, /,
+                   dim_order: tuple[int, int] | str = (-2, -3)
+                   ) -> torch.Tensor | None:
+    """Extracts a section of a 2D tensor (image or latent).
+
+    If the provided section is partially outside of the tensor, it will
+    be cropped to fit within the tensor.
     Args:
-        image : The input image tensor. Expected to be in the format [B, H, W, C].
+        tensor: The input tensor (image or latent).
         x     : The x-coordinate of the top-left corner of the section to extract.
         y     : The y-coordinate of the top-left corner of the section to extract.
         width : The width of the section to extract.
         height: The height of the section to extract.
+        dim_order: Tuple indicating the position of width/height in the tensor.
+                   Default is (-2, -3) for tensors with shape [-, H, W, -].
     Returns:
-        A tensor representing the extracted image section.
-        Returns `None` if the section is completely outside of the image.
+        A tensor representing the extracted section.
+        Returns `None` if the section is completely outside of the tensor.
     """
-    # fix the rectangle size to fit in the image
-    excess = (x+width ) - image.shape[-2]
+    width_dim, height_dim = _normalize_dim_order(dim_order)
+
+    # fix rectangle position/size to fit in the tensor
+    excess = -x
+    if excess > 0:  x = 0 ; width -= excess
+    excess = -y
+    if excess > 0:  y = 0 ; height -= excess
+    excess = (x+width ) - tensor.shape[ width_dim ]
     if excess > 0:  width -= excess
-    excess = (y+height) - image.shape[-3]
+    excess = (y+height) - tensor.shape[ height_dim ]
     if excess > 0:  height -= excess
 
-    # fix the rectangle position to fit in the image
-    offset = -x
-    if offset > 0:  x += offset ; width -= offset
-    offset = -y
-    if offset > 0:  y += offset ; height -= offset
-
+    # if the rectangle is outside of the tensor, return `None`
     if width<=0 or height<=0:
         return None
-    return image[ : , y:y+height, x:x+width , : ]
+
+    # extract the section from the tensor
+    return tensor.narrow(height_dim, y, height).narrow(width_dim, x, width)
+
+
 
 
 def _overlay_latent(dest  : torch.Tensor,
@@ -485,11 +527,11 @@ def tiny_encode(image: torch.Tensor,
         for xlatent in range(-safe_border, latent_width, tile_latent_step):
 
             # extract a tile from the main image
-            tile = _get_image_section(image,
-                                      xlatent * vae_patch_size,
-                                      ylatent * vae_patch_size,
-                                      tile_size, tile_size
-                                      )
+            tile = get_section_2d(image,
+                                   xlatent * vae_patch_size,
+                                   ylatent * vae_patch_size,
+                                   tile_size, tile_size
+                                   )
             if tile is None: continue
 
             # encode the tile to the latent space
@@ -511,5 +553,51 @@ def tiny_encode(image: torch.Tensor,
     # [batch_size, vae_channels, image_height//vae_patch_size, image_width//vae_patch_size]
     return latent_canvas
 
+
+
+def refine_latent_image(latent: torch.Tensor,
+                        /,*,
+                        model     : Model,
+                        add_noise : bool,
+                        noise_seed: int,
+                        cfg       : float,
+                        sampler   : object,
+                        sigmas    : torch.Tensor,
+                        positive  : list[ list[torch.Tensor, dict] ],
+                        negative  : list[ list[torch.Tensor, dict] ],
+                        tile_pos  : tuple[int,int]       = None,
+                        tile_size : tuple[int,int] | int = None,
+                        ) -> torch.Tensor:
+    _, _, latent_height, latent_width = latent.shape
+
+    # resolve tile parameters
+    if not tile_pos:
+        tile_pos  = (0,0)
+    if not tile_size:
+        tile_size = (latent_width-tile_pos[0], latent_height-tile_pos[1])
+    elif isinstance(tile_size, int):
+        tile_size = (tile_size,tile_size)
+
+    # extract the tile from the latent image
+    # and generate a noise tensor if required
+    tile = get_section_2d(latent, tile_pos[0], tile_pos[1], tile_size[0], tile_size[1], dim_order="bchw")
+    if add_noise:
+        noise = comfy.sample.prepare_noise(tile, noise_seed, None)
+    else:
+        noise = torch.zeros_like(tile) #, device=latent.device)
+
+    # use the naive ComfyUI sampling function to refine the image
+    return comfy.sample.sample_custom(model,
+                                      noise,
+                                      cfg,
+                                      sampler,
+                                      sigmas,
+                                      positive,
+                                      negative,
+                                      tile,
+                                      noise_mask   = None,
+                                      callback     = None,
+                                      disable_pbar = True,
+                                      seed         = noise_seed)
 
 
