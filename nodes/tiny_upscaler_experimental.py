@@ -13,6 +13,7 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import torch
 import torch.nn.functional as F
+import comfy.utils
 import comfy.sample
 import comfy.samplers
 from .xcomfy.helpers.sigmas import calculate_sigmas
@@ -92,7 +93,7 @@ class TinyUpscalerExperimental:
                 upscale_by: float
                 ):
         image = normalize_images(image)
-        batch_size, image_height, image_width, channels = image.shape
+        _, image_height, image_width, _ = image.shape
         tile_size        = 1024
         interpolate_mode = "bilinear" # "nearest" # "bilinear"
 
@@ -104,8 +105,6 @@ class TinyUpscalerExperimental:
 
         # get sampler object
         sampler = comfy.samplers.sampler_object(sampler)
-
-
 
         # upscale the image using simple bilinear interpolation
         upscaled_width  = int( round(image_width  * upscale_by) )
@@ -125,7 +124,11 @@ class TinyUpscalerExperimental:
         if extra_noise > 0.0:
             upscaled_latent += torch.randn_like(upscaled_latent) * extra_noise
 
-        for step in range(len(sigmas)-1):
+
+        number_of_steps = len(sigmas)-1
+        pbar, pstep     = comfy.utils.ProgressBar(1000), int(1000 / number_of_steps)
+        for step in range(number_of_steps):
+            progress_bar = (pbar,step*pstep,pstep)
 
             # build the function (lambda) for refining tiles of the latent image
             #     latent       : the latent image to refine
@@ -151,11 +154,13 @@ class TinyUpscalerExperimental:
             if step % 2 == 0:
                 apply_tiles_tlbr(upscaled_latent,
                                  create_tile_func = refine_tile,
-                                 tile_size        = int(tile_size//8))
+                                 tile_size        = int(tile_size//8),
+                                 progress_bar     = progress_bar)
             else:
                 apply_tiles_brtl(upscaled_latent,
                                  create_tile_func = refine_tile,
-                                 tile_size        = int(tile_size//8))
+                                 tile_size        = int(tile_size//8),
+                                 progress_bar     = progress_bar)
 
         return ({"samples":upscaled_latent}, )
 

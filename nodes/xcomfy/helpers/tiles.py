@@ -236,6 +236,7 @@ def apply_tiles_tlbr(canvas: torch.Tensor,
                      tile_size       : int,
                      overlap         : int = None,
                      discard         : int = None,
+                     progress_bar: tuple = None,
                      ) -> None:
     """Applies tiles to a canvas in Top-Left to Bottom-Right order.
 
@@ -257,14 +258,19 @@ def apply_tiles_tlbr(canvas: torch.Tensor,
     """
     if overlap is None:  overlap = (tile_size // 8)
     if discard is None:  discard = (tile_size // 8)
-    tile_step   = tile_size - overlap
-    max_valid_x = canvas.shape[-1] - tile_size
-    max_valid_y = canvas.shape[-2] - tile_size
+    canvas_width  = canvas.shape[-1]
+    canvas_height = canvas.shape[-2]
+    tile_step     = tile_size - overlap
+    max_valid_x   = canvas_width  - tile_size
+    max_valid_y   = canvas_height - tile_size
 
     last_row_bottom = 0
     for y in range(0, max_valid_y+tile_step, tile_step):
         y              = min(y, max_valid_y)
         discard_bottom = min(discard, max_valid_y - y)
+        if progress_bar:
+            _pbar = progress_bar[0]
+            _pbar.update_absolute( progress_bar[1] + int(progress_bar[2] * y / canvas_height) )
 
         last_column_right = 0
         for x in range(0, max_valid_x+tile_step, tile_step):
@@ -280,9 +286,9 @@ def apply_tiles_tlbr(canvas: torch.Tensor,
             overlap_left = max(0, last_column_right - x)
             overlap_top  = max(0, last_row_bottom   - y)
             tile = shrink_tile(tile,
-                                    overlap_left, overlap_top,
-                                    discard_right, discard_bottom,
-                                    dim_order="bchw")
+                               overlap_left, overlap_top,
+                               discard_right, discard_bottom,
+                               dim_order="bchw")
 
             # apply the generated tile to the canvas at (x,y)
             if tile is not None:
@@ -300,6 +306,7 @@ def apply_tiles_brtl(canvas: torch.Tensor,
                      tile_size       : int,
                      overlap         : int = None,
                      discard         : int = None,
+                     progress_bar : tuple = None,
                      ) -> None:
     """Applies tiles to a canvas in Bottom-Right to Top-Left order.
 
@@ -331,6 +338,9 @@ def apply_tiles_brtl(canvas: torch.Tensor,
     for y in range(max_valid_y, -tile_step, -tile_step):
         y           = max(0, y)
         discard_top = min(discard, y)
+        if progress_bar:
+            _pbar = progress_bar[0]
+            _pbar.update_absolute( progress_bar[1] + int(progress_bar[2] * (canvas_height-y) / canvas_height) )
 
         last_column_left = canvas_width
         for x in range(max_valid_x, -tile_step, -tile_step):
@@ -346,9 +356,9 @@ def apply_tiles_brtl(canvas: torch.Tensor,
             overlap_right  = (x + tile_size) - last_column_left
             overlap_bottom = (y + tile_size) - last_row_top
             tile = shrink_tile(tile,
-                                    discard_left, discard_top,
-                                    overlap_right, overlap_bottom,
-                                    dim_order="bchw")
+                               discard_left, discard_top,
+                               overlap_right, overlap_bottom,
+                               dim_order="bchw")
 
             # apply the generated tile to the canvas at (x,y)
             if tile is not None:
