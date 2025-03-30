@@ -1,6 +1,6 @@
 {
-  "last_node_id": 52,
-  "last_link_id": 83,
+  "last_node_id": 53,
+  "last_link_id": 89,
   "nodes": [
     {
       "id": 29,
@@ -28,7 +28,7 @@
           "name": "CONDITIONING",
           "type": "CONDITIONING",
           "links": [
-            69
+            88
           ],
           "slot_index": 0
         }
@@ -69,7 +69,7 @@
           "name": "CONDITIONING",
           "type": "CONDITIONING",
           "links": [
-            70
+            87
           ],
           "slot_index": 0
         }
@@ -104,8 +104,8 @@
           "name": "IMAGE",
           "type": "IMAGE",
           "links": [
-            73,
-            75
+            75,
+            84
           ],
           "slot_index": 0
         },
@@ -124,42 +124,6 @@
       ],
       "color": "#323",
       "bgcolor": "#535"
-    },
-    {
-      "id": 49,
-      "type": "Reroute",
-      "pos": [
-        220,
-        -90
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {},
-      "order": 4,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 80
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "MODEL",
-          "links": [
-            77
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
     },
     {
       "id": 13,
@@ -243,7 +207,7 @@
       "id": 47,
       "type": "Reroute",
       "pos": [
-        170,
+        120,
         -200
       ],
       "size": [
@@ -265,8 +229,8 @@
           "name": "",
           "type": "VAE",
           "links": [
-            79,
-            83
+            83,
+            86
           ],
           "slot_index": 0
         }
@@ -277,14 +241,50 @@
       }
     },
     {
-      "id": 48,
-      "type": "TinyUpscalePrototype2 //TinyBreaker",
+      "id": 49,
+      "type": "Reroute",
       "pos": [
-        490,
-        170
+        170,
+        -90
       ],
       "size": [
-        415.8000183105469,
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 80
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "MODEL",
+          "links": [
+            85
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 53,
+      "type": "TinyUpscalerExperimental //TinyBreaker",
+      "pos": [
+        460,
+        150
+      ],
+      "size": [
+        441,
         330
       ],
       "flags": {},
@@ -294,27 +294,27 @@
         {
           "name": "image",
           "type": "IMAGE",
-          "link": 73
+          "link": 84
         },
         {
           "name": "model",
           "type": "MODEL",
-          "link": 77
+          "link": 85
         },
         {
           "name": "vae",
           "type": "VAE",
-          "link": 79
+          "link": 86
         },
         {
           "name": "positive",
           "type": "CONDITIONING",
-          "link": 70
+          "link": 87
         },
         {
           "name": "negative",
           "type": "CONDITIONING",
-          "link": 69
+          "link": 88
         }
       ],
       "outputs": [
@@ -322,12 +322,12 @@
           "name": "latent",
           "type": "LATENT",
           "links": [
-            74
+            89
           ]
         }
       ],
       "properties": {
-        "Node name for S&R": "TinyUpscalePrototype2 //TinyBreaker"
+        "Node name for S&R": "TinyUpscalerExperimental //TinyBreaker"
       },
       "widgets_values": [
         0,
@@ -345,12 +345,12 @@
       "id": 43,
       "type": "VAEDecode",
       "pos": [
-        1000,
+        950,
         40
       ],
       "size": [
-        210,
-        46
+        150,
+        50
       ],
       "flags": {},
       "order": 9,
@@ -359,7 +359,7 @@
         {
           "name": "samples",
           "type": "LATENT",
-          "link": 74
+          "link": 89
         },
         {
           "name": "vae",
@@ -386,7 +386,7 @@
       "id": 52,
       "type": "Reroute",
       "pos": [
-        820,
+        760,
         -200
       ],
       "size": [
@@ -422,7 +422,7 @@
       "id": 32,
       "type": "Image Comparer (rgthree)",
       "pos": [
-        1250,
+        1150,
         -20
       ],
       "size": [
@@ -455,12 +455,12 @@
           {
             "name": "A",
             "selected": true,
-            "url": "/api/view?filename=rgthree.compare._temp_anbfl_00007_.png&type=temp&subfolder=&rand=0.2595899993609123"
+            "url": "/api/view?filename=rgthree.compare._temp_olzbo_00001_.png&type=temp&subfolder=&rand=0.03882237013614209"
           },
           {
             "name": "B",
             "selected": true,
-            "url": "/api/view?filename=rgthree.compare._temp_anbfl_00008_.png&type=temp&subfolder=&rand=0.7985841532982532"
+            "url": "/api/view?filename=rgthree.compare._temp_olzbo_00002_.png&type=temp&subfolder=&rand=0.7216219609100847"
           }
         ]
       ]
@@ -500,60 +500,12 @@
       "IMAGE"
     ],
     [
-      69,
-      29,
-      0,
-      48,
-      4,
-      "CONDITIONING"
-    ],
-    [
-      70,
-      28,
-      0,
-      48,
-      3,
-      "CONDITIONING"
-    ],
-    [
-      73,
-      11,
-      0,
-      48,
-      0,
-      "IMAGE"
-    ],
-    [
-      74,
-      48,
-      0,
-      43,
-      0,
-      "LATENT"
-    ],
-    [
       75,
       11,
       0,
       32,
       0,
       "IMAGE"
-    ],
-    [
-      77,
-      49,
-      0,
-      48,
-      1,
-      "MODEL"
-    ],
-    [
-      79,
-      47,
-      0,
-      48,
-      2,
-      "VAE"
     ],
     [
       80,
@@ -578,16 +530,64 @@
       52,
       0,
       "*"
+    ],
+    [
+      84,
+      11,
+      0,
+      53,
+      0,
+      "IMAGE"
+    ],
+    [
+      85,
+      49,
+      0,
+      53,
+      1,
+      "MODEL"
+    ],
+    [
+      86,
+      47,
+      0,
+      53,
+      2,
+      "VAE"
+    ],
+    [
+      87,
+      28,
+      0,
+      53,
+      3,
+      "CONDITIONING"
+    ],
+    [
+      88,
+      29,
+      0,
+      53,
+      4,
+      "CONDITIONING"
+    ],
+    [
+      89,
+      53,
+      0,
+      43,
+      0,
+      "LATENT"
     ]
   ],
   "groups": [],
   "config": {},
   "extra": {
     "ds": {
-      "scale": 0.6303940863128564,
+      "scale": 0.6303940863128491,
       "offset": [
-        721.6994792206297,
-        312.3518682190655
+        693.800495263399,
+        269.08112398425556
       ]
     }
   },
