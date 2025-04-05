@@ -14,7 +14,6 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 import torch
 import torch.nn.functional as F
 import comfy.utils
-import comfy.sample
 import comfy.samplers
 from .xcomfy.helpers.sigmas import calculate_sigmas
 from .xcomfy.helpers.images import normalize_images, tiny_encode, refine_latent_image
@@ -33,25 +32,31 @@ class TinyUpscalerExperimental:
     def INPUT_TYPES(cls):
         return {
         "required": {
-            "image"     :("IMAGE"       ,{"tooltip": "The image to upscale.",
+            "image"    :("IMAGE"        ,{"tooltip": "The image to upscale.",
                                          }),
             "model"    :("MODEL"        ,{"tooltip": "The model to use for the upscale.",
-                                         }),
-            "vae"       :("VAE"         ,{"tooltip": "The VAE to use for the upscale.",
                                          }),
             "positive" :("CONDITIONING" ,{"tooltip": "The positive conditioning to use for the upscale.",
                                          }),
             "negative" :("CONDITIONING" ,{"tooltip": "The negative conditioning to use for the upscale.",
+                                         }),
+            "vae"      :("VAE"          ,{"tooltip": "The VAE to use for the upscale.",
                                          }),
             "seed"     :("INT"          ,{"tooltip": "The random seed used for creating the noise.",
                                           "default": 0, "min": 0, "max": 0xffffffffffffffff,
                                           "control_after_generate": True,
                                          }),
             "steps"    :("INT"          ,{"tooltip": "The number of steps used in the denoising process.",
-                                          "default": 5, "min": 1, "max": 50,
+                                          "default": 20, "min": 1, "max": 1000,
+                                         }),
+            "start_at_step":("INT"      ,{"tooltip": "???.",
+                                          "default": 11, "min": 1, "max": 50,
+                                         }),
+            "end_at_step":("INT"        ,{"tooltip": "???.",
+                                          "default": 16, "min": 1, "max": 50,
                                          }),
             "cfg"      :("FLOAT"        ,{"tooltip": "The Classifier-Free Guidance scale balances creativity and adherence to the prompt. Higher values result in images more closely matching the prompt however too high values will negatively impact quality.",
-                                          "default": 3.0, "min": 0.0, "max": 15.0, "step":0.1, "round": 0.01,
+                                          "default": 4.0, "min": 0.0, "max": 15.0, "step":0.5, "round": 0.01,
                                          }),
             "sampler"  :(cls._samplers(),{"tooltip": "The algorithm used when sampling, this can affect the quality, speed, and style of the generated output.",
                                           "default": "dpmpp_2m",
@@ -59,14 +64,11 @@ class TinyUpscalerExperimental:
             "scheduler":(cls._schedulers(),{"tooltip": "The scheduler controls how noise is gradually removed to form the image.",
                                             "default": "karras",
                                          }),
-            "strength" :("FLOAT"        ,{"tooltip": "The strength of the denoising process. Higher values result in more alterations to the image.",
-                                          "default": 0.5, "min": 0.1, "max": 0.9, "step": 0.02,
-                                         }),
             "extra_noise":("FLOAT"      ,{"tooltip": "The amount of extra noise to add to the image during the denoising process.",
                                           "default": 0.6, "min": 0.0, "max": 1.5, "step":0.1,
-                                          }),
+                                         }),
             "upscale_by":("FLOAT"       ,{"tooltip": "The upscale factor.",
-                                          "default": 2.0, "min": 1.0, "max": 5.0, "step":0.5,
+                                          "default": 3.0, "min": 1.0, "max": 5.0, "step":0.5,
                                          }),
             },
         }
@@ -78,40 +80,44 @@ class TinyUpscalerExperimental:
     OUTPUT_TOOLTIPS = ("The upscaled image in latent space.",)
 
     def upscale(self,
-                image     : torch.Tensor,
-                model     : Model,
-                vae       : VAE,
-                positive  : list[ list[torch.Tensor, dict] ],
-                negative  : list[ list[torch.Tensor, dict] ],
-                seed      : int,
-                steps     : int,
-                cfg       : float,
-                sampler   : str,
-                scheduler : str,
-                strength  : float,
-                extra_noise: float,
-                upscale_by: float
+                image             : torch.Tensor,
+                model             : Model,
+                vae               : VAE,
+                positive          : list[ list[torch.Tensor, dict] ],
+                negative          : list[ list[torch.Tensor, dict] ],
+                seed              : int,
+                steps             : int,
+                start_at_step     : int,
+                end_at_step       : int,
+                cfg               : float,
+                sampler           : str,
+                scheduler         : str,
+                extra_noise       : float,
+                upscale_by        : float,
+                tile_size         : int = 1024,
+                interpolation_mode: str = "bilinear" # "nearest"
                 ):
-        image = normalize_images(image)
-        _, image_height, image_width, _ = image.shape
-        tile_size        = 1024
-        interpolate_mode = "bilinear" # "nearest" # "bilinear"
-
-        # calculate sigmas
-        total_steps    = int(steps / strength)
-        steps_start    = total_steps - steps
-        model_sampling = model.get_model_object("model_sampling")
-        sigmas = calculate_sigmas(model_sampling, sampler, scheduler, total_steps, steps_start)
-
-        # get sampler object
         sampler = comfy.samplers.sampler_object(sampler)
+        image   = normalize_images(image)
+        _, image_height, image_width, _ = image.shape
 
-        # upscale the image using simple bilinear interpolation
+        # calculate sigmas (old)
+        # total_steps    = int(steps / strength)
+        # steps_start    = total_steps - steps
+        # steps_end      = 10000
+        # model_sampling = model.get_model_object("model_sampling")
+        # sigmas         = calculate_sigmas(model_sampling, sampler, scheduler, total_steps, steps_start, steps_end)
+
+        # calculate sigmas (new)
+        model_sampling = model.get_model_object("model_sampling")
+        sigmas         = calculate_sigmas(model_sampling, sampler, scheduler, steps, start_at_step, end_at_step)
+
+        # upscale the image using simple interpolation
         upscaled_width  = int( round(image_width  * upscale_by) )
         upscaled_height = int( round(image_height * upscale_by) )
         upscaled_image  = F.interpolate(image.transpose(1,-1),
                                         size = (upscaled_width, upscaled_height),
-                                        mode = interpolate_mode).transpose(1,-1)
+                                        mode = interpolation_mode).transpose(1,-1)
 
         # encode the image into latent space
         upscaled_latent = tiny_encode(upscaled_image,
@@ -125,6 +131,7 @@ class TinyUpscalerExperimental:
             upscaled_latent += torch.randn_like(upscaled_latent) * extra_noise
 
 
+        sigmas = sigmas[:-1]
         number_of_steps = len(sigmas)-1
         pbar, pstep     = comfy.utils.ProgressBar(1000), int(1000 / number_of_steps)
         for step in range(number_of_steps):

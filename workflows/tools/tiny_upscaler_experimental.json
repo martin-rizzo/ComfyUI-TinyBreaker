@@ -1,130 +1,7 @@
 {
-  "last_node_id": 53,
-  "last_link_id": 89,
+  "last_node_id": 61,
+  "last_link_id": 103,
   "nodes": [
-    {
-      "id": 29,
-      "type": "CLIPTextEncode",
-      "pos": [
-        -100,
-        730
-      ],
-      "size": [
-        400,
-        170
-      ],
-      "flags": {},
-      "order": 6,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "clip",
-          "type": "CLIP",
-          "link": 18
-        }
-      ],
-      "outputs": [
-        {
-          "name": "CONDITIONING",
-          "type": "CONDITIONING",
-          "links": [
-            88
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "CLIPTextEncode"
-      },
-      "widgets_values": [
-        "(worst quality, low quality, manga:1.8)"
-      ],
-      "color": "#322",
-      "bgcolor": "#533",
-      "shape": 1
-    },
-    {
-      "id": 28,
-      "type": "CLIPTextEncode",
-      "pos": [
-        -100,
-        530
-      ],
-      "size": [
-        400,
-        170
-      ],
-      "flags": {},
-      "order": 5,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "clip",
-          "type": "CLIP",
-          "link": 17
-        }
-      ],
-      "outputs": [
-        {
-          "name": "CONDITIONING",
-          "type": "CONDITIONING",
-          "links": [
-            87
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "CLIPTextEncode"
-      },
-      "widgets_values": [
-        "A squadron of Hello Kitty robots, there are hundreds of them. They are all walking down the middle of the street in Tokyo"
-      ],
-      "color": "#232",
-      "bgcolor": "#353",
-      "shape": 1
-    },
-    {
-      "id": 11,
-      "type": "LoadImage",
-      "pos": [
-        -90,
-        -20
-      ],
-      "size": [
-        380,
-        510
-      ],
-      "flags": {},
-      "order": 0,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "IMAGE",
-          "type": "IMAGE",
-          "links": [
-            75,
-            84
-          ],
-          "slot_index": 0
-        },
-        {
-          "name": "MASK",
-          "type": "MASK",
-          "links": null
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "LoadImage"
-      },
-      "widgets_values": [
-        "TB-0086.png",
-        "image"
-      ],
-      "color": "#323",
-      "bgcolor": "#535"
-    },
     {
       "id": 13,
       "type": "LoadAnyVAE //TinyBreaker",
@@ -137,7 +14,7 @@
         58
       ],
       "flags": {},
-      "order": 1,
+      "order": 0,
       "mode": 0,
       "inputs": [],
       "outputs": [
@@ -169,7 +46,7 @@
         98
       ],
       "flags": {},
-      "order": 2,
+      "order": 1,
       "mode": 0,
       "inputs": [],
       "outputs": [
@@ -230,7 +107,7 @@
           "type": "VAE",
           "links": [
             83,
-            86
+            92
           ],
           "slot_index": 0
         }
@@ -266,7 +143,7 @@
           "name": "",
           "type": "MODEL",
           "links": [
-            85
+            91
           ],
           "slot_index": 0
         }
@@ -275,112 +152,6 @@
         "showOutputText": false,
         "horizontal": false
       }
-    },
-    {
-      "id": 53,
-      "type": "TinyUpscalerExperimental //TinyBreaker",
-      "pos": [
-        460,
-        150
-      ],
-      "size": [
-        441,
-        330
-      ],
-      "flags": {},
-      "order": 8,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "image",
-          "type": "IMAGE",
-          "link": 84
-        },
-        {
-          "name": "model",
-          "type": "MODEL",
-          "link": 85
-        },
-        {
-          "name": "vae",
-          "type": "VAE",
-          "link": 86
-        },
-        {
-          "name": "positive",
-          "type": "CONDITIONING",
-          "link": 87
-        },
-        {
-          "name": "negative",
-          "type": "CONDITIONING",
-          "link": 88
-        }
-      ],
-      "outputs": [
-        {
-          "name": "latent",
-          "type": "LATENT",
-          "links": [
-            89
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "TinyUpscalerExperimental //TinyBreaker"
-      },
-      "widgets_values": [
-        0,
-        "fixed",
-        5,
-        3,
-        "dpmpp_2m",
-        "sgm_uniform",
-        0.26,
-        0.6,
-        3
-      ]
-    },
-    {
-      "id": 43,
-      "type": "VAEDecode",
-      "pos": [
-        950,
-        40
-      ],
-      "size": [
-        150,
-        50
-      ],
-      "flags": {},
-      "order": 9,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "samples",
-          "type": "LATENT",
-          "link": 89
-        },
-        {
-          "name": "vae",
-          "type": "VAE",
-          "link": 82
-        }
-      ],
-      "outputs": [
-        {
-          "name": "IMAGE",
-          "type": "IMAGE",
-          "links": [
-            63
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "VAEDecode"
-      },
-      "widgets_values": []
     },
     {
       "id": 52,
@@ -422,14 +193,16 @@
       "id": 32,
       "type": "Image Comparer (rgthree)",
       "pos": [
-        1150,
+        1190,
         -20
       ],
       "size": [
         630,
         920
       ],
-      "flags": {},
+      "flags": {
+        "pinned": true
+      },
       "order": 10,
       "mode": 0,
       "inputs": [
@@ -437,7 +210,7 @@
           "name": "image_a",
           "type": "IMAGE",
           "dir": 3,
-          "link": 75
+          "link": 103
         },
         {
           "name": "image_b",
@@ -455,15 +228,355 @@
           {
             "name": "A",
             "selected": true,
-            "url": "/api/view?filename=rgthree.compare._temp_olzbo_00001_.png&type=temp&subfolder=&rand=0.03882237013614209"
+            "url": "/api/view?filename=rgthree.compare._temp_cnadu_00137_.png&type=temp&subfolder=&rand=0.5552056145853106"
           },
           {
             "name": "B",
             "selected": true,
-            "url": "/api/view?filename=rgthree.compare._temp_olzbo_00002_.png&type=temp&subfolder=&rand=0.7216219609100847"
+            "url": "/api/view?filename=rgthree.compare._temp_cnadu_00138_.png&type=temp&subfolder=&rand=0.20610885440594573"
           }
         ]
       ]
+    },
+    {
+      "id": 59,
+      "type": "Reroute",
+      "pos": [
+        1200,
+        -90
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 11,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 102
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "IMAGE",
+          "links": [
+            101
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 61,
+      "type": "Reroute",
+      "pos": [
+        1730,
+        -90
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 12,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 101
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "IMAGE",
+          "links": [
+            100
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 58,
+      "type": "SaveImage //TinyBreaker",
+      "pos": [
+        1920,
+        80
+      ],
+      "size": [
+        650,
+        680
+      ],
+      "flags": {},
+      "order": 13,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 100
+        },
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "shape": 7,
+          "link": null
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "SaveImage //TinyBreaker"
+      },
+      "widgets_values": [
+        "TinyUpscaler/%date:yyyy_MM_dd%/TB"
+      ],
+      "color": "#323",
+      "bgcolor": "#535"
+    },
+    {
+      "id": 43,
+      "type": "VAEDecode",
+      "pos": [
+        950,
+        40
+      ],
+      "size": [
+        150,
+        50
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 95
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 82
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            63,
+            102
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 29,
+      "type": "CLIPTextEncode",
+      "pos": [
+        -100,
+        730
+      ],
+      "size": [
+        400,
+        170
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 18
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            94
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        "(worst quality, low quality, manga:1.8)"
+      ],
+      "color": "#322",
+      "bgcolor": "#533",
+      "shape": 1
+    },
+    {
+      "id": 28,
+      "type": "CLIPTextEncode",
+      "pos": [
+        -100,
+        530
+      ],
+      "size": [
+        400,
+        170
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 17
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            93
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        ""
+      ],
+      "color": "#232",
+      "bgcolor": "#353",
+      "shape": 1
+    },
+    {
+      "id": 57,
+      "type": "TinyUpscalerExperimental //TinyBreaker",
+      "pos": [
+        460,
+        140
+      ],
+      "size": [
+        441,
+        354
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 90
+        },
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 91
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 92
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 93
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 94
+        }
+      ],
+      "outputs": [
+        {
+          "name": "latent",
+          "type": "LATENT",
+          "links": [
+            95
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "TinyUpscalerExperimental //TinyBreaker"
+      },
+      "widgets_values": [
+        0,
+        "fixed",
+        20,
+        11,
+        16,
+        4,
+        "dpmpp_2m",
+        "karras",
+        0.6000000000000001,
+        3
+      ]
+    },
+    {
+      "id": 11,
+      "type": "LoadImage",
+      "pos": [
+        -90,
+        -20
+      ],
+      "size": [
+        380,
+        510
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            90,
+            103
+          ],
+          "slot_index": 0
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": [
+        "TB-0046.png",
+        "image"
+      ],
+      "color": "#323",
+      "bgcolor": "#535"
     }
   ],
   "links": [
@@ -500,14 +613,6 @@
       "IMAGE"
     ],
     [
-      75,
-      11,
-      0,
-      32,
-      0,
-      "IMAGE"
-    ],
-    [
       80,
       12,
       0,
@@ -532,62 +637,94 @@
       "*"
     ],
     [
-      84,
+      90,
       11,
       0,
-      53,
+      57,
       0,
       "IMAGE"
     ],
     [
-      85,
+      91,
       49,
       0,
-      53,
+      57,
       1,
       "MODEL"
     ],
     [
-      86,
+      92,
       47,
       0,
-      53,
+      57,
       2,
       "VAE"
     ],
     [
-      87,
+      93,
       28,
       0,
-      53,
+      57,
       3,
       "CONDITIONING"
     ],
     [
-      88,
+      94,
       29,
       0,
-      53,
+      57,
       4,
       "CONDITIONING"
     ],
     [
-      89,
-      53,
+      95,
+      57,
       0,
       43,
       0,
       "LATENT"
+    ],
+    [
+      100,
+      61,
+      0,
+      58,
+      0,
+      "IMAGE"
+    ],
+    [
+      101,
+      59,
+      0,
+      61,
+      0,
+      "*"
+    ],
+    [
+      102,
+      43,
+      0,
+      59,
+      0,
+      "*"
+    ],
+    [
+      103,
+      11,
+      0,
+      32,
+      0,
+      "IMAGE"
     ]
   ],
   "groups": [],
   "config": {},
   "extra": {
     "ds": {
-      "scale": 0.6303940863128491,
+      "scale": 1.2284597357367284,
       "offset": [
-        693.800495263399,
-        269.08112398425556
+        -797.5731803886347,
+        66.33670854312373
       ]
     }
   },
