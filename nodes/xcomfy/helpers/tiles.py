@@ -14,13 +14,13 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 import torch
 
 
-def get_section_2d(tensor: torch.Tensor,
-                   x     : int,
-                   y     : int,
-                   width : int,
-                   height: int, /,
-                   dim_order: tuple[int, int] | str = (-2, -3)
-                   ) -> torch.Tensor | None:
+def get_tile(tensor: torch.Tensor,
+             x     : int,
+             y     : int,
+             width : int,
+             height: int, /,
+             dim_order: tuple[int, int] | str = (-2, -3)
+             ) -> torch.Tensor | None:
     """Extracts a section of a 2D tensor (image or latent).
 
     If the provided section is partially outside of the tensor, it will
@@ -55,6 +55,120 @@ def get_section_2d(tensor: torch.Tensor,
 
     # extract the section from the tensor
     return tensor.narrow(height_dim, y, height).narrow(width_dim, x, width)
+
+
+
+def overlay_tile(dest: torch.Tensor,
+                 x   : int,
+                 y   : int,
+                 /,*,
+                 source: torch.Tensor,
+                 dim_order: str = "bchw"
+                 ) -> None:
+    """Overlays the source tensor onto the destination tensor at specified coordinates.
+
+    The function adjusts the source tensor's dimensions to fit within the
+    destination tensor's boundaries. It then adds the value of the source
+    tensor onto the destination.
+    Args:
+        dest   (Tensor): The destination tensor to which the source tensor will be overlayed (added)
+        x         (int): The x-coordinate of the top-left corner of the section to overlay.
+        y         (int): The y-coordinate of the top-left corner of the section to overlay.
+        source (Tensor): The source tensor.
+        dim_order      : The order of dimensions. Defaults to "bchw".
+    Returns:
+        Nothing. The function modifies the `dest` tensor in place.
+    """
+    width_dim, height_dim = _extract_wh_indices(dim_order)
+
+    # get the source/destination sizes
+    sour_x, sour_y = (0,0)
+    sour_width, sour_height = source.shape[width_dim], source.shape[height_dim]
+    dest_width, dest_height =   dest.shape[width_dim],   dest.shape[height_dim]
+
+    # fix the source size to fit in the destination
+    excess = (x+sour_width ) - dest_width
+    if excess > 0:  sour_width -= excess
+    excess = (y+sour_height) - dest_height
+    if excess > 0:  sour_height -= excess
+
+    # fix the position to fit in the destination
+    offset = -x
+    if offset > 0:  x += offset ; sour_x += offset ; sour_width -= offset
+    offset = -y
+    if offset > 0:  y += offset ; sour_y += offset ; sour_height -= offset
+
+    # if the overlay section is out of the destination,
+    # return without doing anything
+    if sour_width<=0 or sour_height<=0:
+        return
+
+    # add the source section into the destination
+    if width_dim == -1 and height_dim == -2:
+        dest[ : , : , y:y+sour_height , x:x+sour_width ] \
+            += source[ : , : , sour_y:sour_y+sour_height , sour_x:sour_x+sour_width ]
+    elif width_dim == -2 and height_dim == -3:
+        dest[ : , y:y+sour_height , x:x+sour_width , : ] \
+            += source[ : , sour_y:sour_y+sour_height , sour_x:sour_x+sour_width , : ]
+    else:
+        raise ValueError("Invalid dim_order: " + dim_order)
+
+
+
+def multiply_tile(dest: torch.Tensor,
+                  x   : int,
+                  y   : int,
+                  /,*,
+                  source: torch.Tensor,
+                  dim_order: str = "bchw"
+                  ) -> None:
+    """Multiplies the source tensor onto the destination tensor at specified coordinates.
+
+    The function adjusts the source tensor's dimensions to fit within the
+    destination tensor's boundaries. It then multiplies the value of the
+    source tensor onto the destination.
+    Args:
+        dest   (Tensor): The destination tensor to which the source tensor will be multiplied.
+        x         (int): The x-coordinate of the top-left corner of the section to multiply.
+        y         (int): The y-coordinate of the top-left corner of the section to multiply.
+        source (Tensor): The source tensor.
+        dim_order      : The order of dimensions. Defaults to "bchw".
+    Returns:
+        None. The function modifies the `dest` tensor in place.
+    """
+    width_dim, height_dim = _extract_wh_indices(dim_order)
+
+    # get the source/destination sizes
+    sour_x, sour_y = (0,0)
+    sour_width, sour_height = source.shape[width_dim], source.shape[height_dim]
+    dest_width, dest_height =   dest.shape[width_dim],   dest.shape[height_dim]
+
+    # fix the source size to fit in the destination
+    excess = (x+sour_width ) - dest_width
+    if excess > 0:  sour_width -= excess
+    excess = (y+sour_height) - dest_height
+    if excess > 0:  sour_height -= excess
+
+    # fix the position to fit in the destination
+    offset = -x
+    if offset > 0:  x += offset ; sour_x += offset ; sour_width -= offset
+    offset = -y
+    if offset > 0:  y += offset ; sour_y += offset ; sour_height -= offset
+
+    # if the multiply section is out of the destination,
+    # return without doing anything
+    if sour_width<=0 or sour_height<=0:
+        return
+
+    # multiply the source section into the destination
+    if width_dim == -1 and height_dim == -2:
+        dest[ : , : , y:y+sour_height , x:x+sour_width ] \
+            *= source[ : , : , sour_y:sour_y+sour_height , sour_x:sour_x+sour_width ]
+    elif width_dim == -2 and height_dim == -3:
+        dest[ : , y:y+sour_height , x:x+sour_width , : ] \
+            *= source[ : , sour_y:sour_y+sour_height , sour_x:sour_x+sour_width , : ]
+    else:
+        raise ValueError("Invalid dim_order: " + dim_order)
 
 
 
@@ -141,90 +255,6 @@ def shrink_tile(tile  : torch.Tensor,
 
     # shrink the tile by removing elements from each side
     return tile.narrow(height_dim, top, new_height).narrow(width_dim , left, new_width)
-
-
-
-def overlay_latent(dest  : torch.Tensor,
-                   x     : int,
-                   y     : int,
-                   source: torch.Tensor,
-                   ) -> None:
-    """Overlays the source tensor onto the destination tensor at specified coordinates.
-
-    The function adjusts the source tensor's dimensions to fit within the
-    destination tensor's boundaries. It then adds the value of the source
-    tensor onto the destination.
-    Args:
-        dest   (Tensor): The destination tensor to which the source tensor will be overlayed (added)
-        x         (int): The x-coordinate of the top-left corner of the section to overlay.
-        y         (int): The y-coordinate of the top-left corner of the section to overlay.
-        source (Tensor): The source tensor.
-    Returns:
-        Nothing. The function modifies the `dest` tensor in place.
-    """
-    sour_x, sour_y = (0,0)
-    _, _, sour_height, sour_width = source.shape
-    _, _, dest_height, dest_width = dest.shape
-
-    # fix the source size to fit in the destination
-    excess = (x+sour_width ) - dest_width
-    if excess > 0:  sour_width -= excess
-    excess = (y+sour_height) - dest_height
-    if excess > 0:  sour_height -= excess
-
-    # fix the position to fit in the destination
-    offset = -x
-    if offset > 0:  x += offset ; sour_x += offset ; sour_width -= offset
-    offset = -y
-    if offset > 0:  y += offset ; sour_y += offset ; sour_height -= offset
-
-    # add the source section into the destination
-    if sour_width<=0 or sour_height<=0:
-        return
-    dest[ : , : , y:y+sour_height , x:x+sour_width ] \
-        += source[ : , : , sour_y:sour_y+sour_height , sour_x:sour_x+sour_width ]
-
-
-
-def multiply_latent(dest  : torch.Tensor,
-                    x     : int,
-                    y     : int,
-                    source: torch.Tensor,
-                    ) -> None:
-    """Multiplies the source tensor onto the destination tensor at specified coordinates.
-
-    The function adjusts the source tensor's dimensions to fit within the
-    destination tensor's boundaries. It then multiplies the value of the
-    source tensor onto the destination.
-    Args:
-        dest   (Tensor): The destination tensor to which the source tensor will be multiplied.
-        x         (int): The x-coordinate of the top-left corner of the section to multiply.
-        y         (int): The y-coordinate of the top-left corner of the section to multiply.
-        source (Tensor): The source tensor.
-    Returns:
-        None. The function modifies the `dest` tensor in place.
-    """
-    sour_x, sour_y = (0,0)
-    _, _, sour_height, sour_width = source.shape
-    _, _, dest_height, dest_width = dest.shape
-
-    # fix the source size to fit in the destination
-    excess = (x+sour_width ) - dest_width
-    if excess > 0:  sour_width -= excess
-    excess = (y+sour_height) - dest_height
-    if excess > 0:  sour_height -= excess
-
-    # fix the position to fit in the destination
-    offset = -x
-    if offset > 0:  x += offset ; sour_x += offset ; sour_width -= offset
-    offset = -y
-    if offset > 0:  y += offset ; sour_y += offset ; sour_height -= offset
-
-    # multiply the source section into the destination
-    if sour_width<=0 or sour_height<=0:
-        return
-    dest[ : , : , y:y+sour_height, x:x+sour_width ] \
-      *= source[ : , : , sour_y:sour_y+sour_height , sour_x:sour_x+sour_width ]
 
 
 
@@ -382,8 +412,8 @@ def _extract_wh_indices(dim_order: str | tuple[int, int]) -> tuple[int, int]:
         A tuple of two integers representing the width and height dim indices in the tensors.
     """
     if isinstance(dim_order, str):
-        if   dim_order.endswith( "hw"):  return (-1, -2)
-        elif dim_order.endswith("hwc"):  return (-2, -3)
+        if   dim_order[-2:  ] == "hw":  return (-1, -2)
+        elif dim_order[-3:-1] == "hw":  return (-2, -3)
     if isinstance(dim_order, tuple) and len(dim_order) == 2:
         return dim_order
     raise ValueError(f'Invalid dim_order value: expected "bchw", "bhwc" or a tuple of integers. Got {dim_order}.')

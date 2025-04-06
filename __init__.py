@@ -138,6 +138,12 @@ comfy_import_node(EmptyLatentImage)
 from .nodes.save_image                              import SaveImage
 comfy_import_node(SaveImage)
 
+from .nodes.tiny_encode                             import TinyEncode
+comfy_import_node(TinyEncode)
+
+from .nodes.tiny_decode                             import TinyDecode
+comfy_import_node(TinyDecode)
+
 from .nodes.tiny_upscaler_experimental              import TinyUpscalerExperimental
 comfy_import_node(TinyUpscalerExperimental)
 
