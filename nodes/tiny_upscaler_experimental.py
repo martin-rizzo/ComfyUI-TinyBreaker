@@ -16,7 +16,7 @@ import torch.nn.functional as F
 import comfy.utils
 import comfy.samplers
 from .xcomfy.helpers.sigmas import calculate_sigmas
-from .xcomfy.helpers.images import normalize_images, tiny_encode, refine_latent_image
+from .xcomfy.helpers.images import normalize_images, tiny_encode, refine_latent_image, tiny_decode
 from .xcomfy.helpers.tiles  import apply_tiles_tlbr, apply_tiles_brtl
 from .xcomfy.vae            import VAE
 from .xcomfy.model          import Model
@@ -75,9 +75,9 @@ class TinyUpscalerExperimental:
 
     #__ FUNCTION __________________________________________
     FUNCTION = "upscale"
-    RETURN_TYPES    = ("LATENT",)
-    RETURN_NAMES    = ("latent",)
-    OUTPUT_TOOLTIPS = ("The upscaled image in latent space.",)
+    RETURN_TYPES    = ("IMAGE",)
+    RETURN_NAMES    = ("image",)
+    OUTPUT_TOOLTIPS = ("The upscaled image.",)
 
     def upscale(self,
                 image             : torch.Tensor,
@@ -169,7 +169,8 @@ class TinyUpscalerExperimental:
                                  tile_size        = int(tile_size//8),
                                  progress_bar     = progress_bar)
 
-        return ({"samples":upscaled_latent}, )
+        upscaled_image = tiny_decode(upscaled_latent, vae=vae)
+        return (upscaled_image, )
 
 
     #__ internal functions ________________________________
