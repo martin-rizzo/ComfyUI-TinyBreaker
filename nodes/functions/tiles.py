@@ -1,6 +1,6 @@
 """
-File    : xcomfy/helpers/tiles.py
-Purpose : Helper functions to process tensors by dividing them into tiles
+File    : functions/tiles.py
+Purpose : Functions to process tensors by dividing them into tiles
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
 Date    : Mar 29, 2025
 Repo    : https://github.com/martin-rizzo/ComfyUI-TinyBreaker

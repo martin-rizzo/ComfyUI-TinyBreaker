@@ -12,14 +12,10 @@ License : MIT
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import torch
-import torch.nn.functional as F
-import comfy.utils
 import comfy.samplers
-from .xcomfy.helpers.sigmas import calculate_sigmas
-from .xcomfy.helpers.images import normalize_images, tiny_encode, refine_latent_image, tiny_decode
-from .xcomfy.helpers.tiles  import apply_tiles_tlbr, apply_tiles_brtl
-from .xcomfy.vae            import VAE
-from .xcomfy.model          import Model
+from .functions.tiny_upscale import tiny_upscale
+from .xcomfy.vae             import VAE
+from .xcomfy.model           import Model
 
 
 class TinyUpscalerExperimental:
@@ -95,81 +91,28 @@ class TinyUpscalerExperimental:
                 extra_noise       : float,
                 upscale_by        : float,
                 tile_size         : int = 1024,
+                overlap_percent   : int = 100,
                 interpolation_mode: str = "bilinear" # "nearest"
                 ):
-        sampler = comfy.samplers.sampler_object(sampler)
-        image   = normalize_images(image)
-        _, image_height, image_width, _ = image.shape
 
-        # calculate sigmas (old)
-        # total_steps    = int(steps / strength)
-        # steps_start    = total_steps - steps
-        # steps_end      = 10000
-        # model_sampling = model.get_model_object("model_sampling")
-        # sigmas         = calculate_sigmas(model_sampling, sampler, scheduler, total_steps, steps_start, steps_end)
-
-        # calculate sigmas (new)
-        model_sampling = model.get_model_object("model_sampling")
-        sigmas         = calculate_sigmas(model_sampling, sampler, scheduler, steps, start_at_step, end_at_step)
-
-        # upscale the image using simple interpolation
-        upscaled_width  = int( round(image_width  * upscale_by) )
-        upscaled_height = int( round(image_height * upscale_by) )
-        upscaled_image  = F.interpolate(image.transpose(1,-1),
-                                        size = (upscaled_width, upscaled_height),
-                                        mode = interpolation_mode).transpose(1,-1)
-
-        # encode the image into latent space
-        upscaled_latent = tiny_encode(upscaled_image,
-                                      vae          = vae,
-                                      tile_size    = tile_size,
-                                      tile_padding = (tile_size/4),
+        upscaled_image = tiny_upscale(image,
+                                      model              = model,
+                                      vae                = vae,
+                                      positive           = positive,
+                                      negative           = negative,
+                                      seed               = seed,
+                                      steps              = steps,
+                                      start_at_step      = start_at_step,
+                                      end_at_step        = end_at_step,
+                                      cfg                = cfg,
+                                      sampler            = sampler,
+                                      scheduler          = scheduler,
+                                      extra_noise        = extra_noise,
+                                      upscale_by         = upscale_by,
+                                      tile_size          = tile_size,
+                                      overlap_percent    = overlap_percent,
+                                      interpolation_mode = interpolation_mode,
                                       )
-
-        # add extra noise to the latent image if requested
-        if extra_noise > 0.0:
-            upscaled_latent += torch.randn_like(upscaled_latent) * extra_noise
-
-
-        sigmas = sigmas[:-1]
-        number_of_steps = len(sigmas)-1
-        pbar, pstep     = comfy.utils.ProgressBar(1000), int(1000 / number_of_steps)
-        for step in range(number_of_steps):
-            progress_bar = (pbar,step*pstep,pstep)
-
-            # build the function (lambda) for refining tiles of the latent image
-            #     latent       : the latent image to refine
-            #     x, y         : the coordinates of the tile to refine
-            #     width, height: the size of the tile to refine
-            refine_tile = lambda latent, x, y, width, height: \
-                refine_latent_image(latent,
-                                    model      = model,
-                                    add_noise  = (step==0),
-                                    noise_seed = seed,
-                                    cfg        = cfg,
-                                    sampler    = sampler,
-                                    sigmas     = torch.Tensor( [sigmas[step], sigmas[step+1]] ),
-                                    positive   = positive,
-                                    negative   = negative,
-                                    tile_pos   = (x,y),
-                                    tile_size  = (width,height),
-                                    )
-
-            # process the latent image in tiles using the refinement function,
-            # alternating between top-left to bottom-right and
-            # bottom-right to top-left directions
-            if step % 2 == 0:
-                apply_tiles_tlbr(upscaled_latent,
-                                 create_tile_func = refine_tile,
-                                 tile_size        = int(tile_size//8),
-                                 progress_bar     = progress_bar)
-            else:
-                apply_tiles_brtl(upscaled_latent,
-                                 create_tile_func = refine_tile,
-                                 tile_size        = int(tile_size//8),
-                                 progress_bar     = progress_bar)
-
-        upscaled_image = tiny_decode(upscaled_latent, vae=vae)
         return (upscaled_image, )
 
 

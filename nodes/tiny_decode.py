@@ -11,8 +11,10 @@ License : MIT
   (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
-from .xcomfy.vae            import VAE
-from .xcomfy.helpers.images import tiny_decode, normalize_images
+from .xcomfy.vae                   import VAE
+from .xcomfy.helpers.images        import normalize_images
+from .functions.tiny_encode_decode import tiny_decode
+
 
 class TinyDecode:
     TITLE       = "💪TB | Tiny Decode"
