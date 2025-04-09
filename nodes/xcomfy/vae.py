@@ -44,10 +44,10 @@ def _create_custom_vae_model(state_dict : dict,
     Returns:
         A tuple containing the VAE model and a list of missing keys (if any)
     """
-
-    # state_dict == None is a small hack to indicate that
-    # the wrapper should be initialized with default values,
-    # (these values can be overridden later by any model)
+    # ATTENTION:
+    #   using `state_dict == None` is a small hack to indicate that the wrapper should be initialized with default values!
+    #   default values can be found at: https://github.com/comfyanonymous/ComfyUI/blob/v0.3.27/comfy/sd.py#L258
+    #  (these values can be overridden later during model initialization when state_dict is not None)
     if not state_dict:
         vae_wrapper.memory_used_encode      = lambda shape, dtype: (1767 * shape[2] * shape[3]     ) * model_management.dtype_size(dtype) # <- for AutoencoderKL and need tweaking (should be lower)
         vae_wrapper.memory_used_decode      = lambda shape, dtype: (2178 * shape[2] * shape[3] * 64) * model_management.dtype_size(dtype)
@@ -58,7 +58,8 @@ def _create_custom_vae_model(state_dict : dict,
         vae_wrapper.output_channels         = 3
         vae_wrapper.process_input           = lambda image: image * 2.0 - 1.0
         vae_wrapper.process_output          = lambda image: torch.clamp((image + 1.0) / 2.0, min=0.0, max=1.0)
-        vae_wrapper.working_dtypes          = [torch.float16, torch.bfloat16, torch.float32]
+        vae_wrapper.working_dtypes          = [torch.bfloat16, torch.float32] # not torch.float16 (?)
+        vae_wrapper.disable_offload         = False
         vae_wrapper.downscale_index_formula = None
         vae_wrapper.upscale_index_formula   = None
         return
@@ -90,6 +91,7 @@ def _create_custom_vae_model(state_dict : dict,
 
         vae_model.emulate_std_autoencoder = True
         vae_wrapper.latent_channels = config["latent_channels"] # <- overrides latent channels
+        vae_wrapper.disable_offload = True                      # <- try to keep the model in GPU memory
         vae_model.freeze()
         return vae_model, missing_keys
 
