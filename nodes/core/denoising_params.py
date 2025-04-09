@@ -13,9 +13,9 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import torch
 import comfy.samplers
-from .core.genparams        import GenParams, normalize_prefix
-from .xcomfy.helpers.sigmas import calculate_sigmas
-from .utils.system          import logger
+from .genparams        import GenParams, normalize_prefix
+from ..xcomfy.helpers.sigmas import calculate_sigmas
+from ..utils.system          import logger
 
 
 class DenoisingParams:

@@ -16,7 +16,7 @@ import comfy.utils
 import comfy.sample
 import comfy.samplers
 import latent_preview
-from ._denoising_params import DenoisingParams
+from .core.denoising_params import DenoisingParams
 
 
 class DoubleStageSampler:

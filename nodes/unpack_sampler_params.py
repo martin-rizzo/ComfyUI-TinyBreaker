@@ -11,7 +11,7 @@ License : MIT
   (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
-from ._denoising_params import DenoisingParams
+from .core.denoising_params import DenoisingParams
 
 
 class UpackSamplerParams:
