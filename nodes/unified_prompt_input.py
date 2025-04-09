@@ -12,8 +12,8 @@ License : MIT
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import re
-from .core.genparams import GenParams
-from ._common        import genparams_from_arguments
+from .functions.genparams import GenParams
+from ._common             import genparams_from_arguments
 
 
 class UnifiedPromptInput:

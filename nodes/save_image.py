@@ -16,10 +16,10 @@ import time
 import json
 import numpy as np
 import folder_paths
-from PIL                import Image
-from PIL.PngImagePlugin import PngInfo
-from .core.genparams    import GenParams
-from ._common            import ireplace
+from PIL                  import Image
+from PIL.PngImagePlugin   import PngInfo
+from .functions.genparams import GenParams
+from ._common             import ireplace
 
 _A1111_SAMPLER_BY_COMFY_NAME = {
     "euler"                    : "Euler",

@@ -11,8 +11,8 @@ License : MIT
   (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
-from ..core.genparams import GenParams
-from .._common        import NFACTORS_BY_DETAIL_LEVEL, DEFAULT_DETAIL_LEVEL
+from ..functions.genparams import GenParams
+from .._common             import NFACTORS_BY_DETAIL_LEVEL, DEFAULT_DETAIL_LEVEL
 
 
 class SetImageTweaks:

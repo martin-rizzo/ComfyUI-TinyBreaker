@@ -15,11 +15,11 @@ import comfy.model_detection
 import torch
 import comfy.utils
 import comfy.model_patcher
-from comfy                  import model_management, supported_models_base, latent_formats, conds
-from comfy.model_base       import BaseModel, ModelType
-from ..core.pixart_model_ex import PixArtModelEx
-from ..xcomfy.helpers.ops   import comfy_ops_disable_weight_init
-from ..utils.system         import logger
+from comfy                    import model_management, supported_models_base, latent_formats, conds
+from comfy.model_base         import BaseModel, ModelType
+from ..models.pixart_model_ex import PixArtModelEx
+from ..xcomfy.helpers.ops     import comfy_ops_disable_weight_init
+from ..utils.system           import logger
 
 #--------------------------------- PIXART ----------------------------------#
 

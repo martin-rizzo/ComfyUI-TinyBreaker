@@ -14,9 +14,9 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 import math
 import torch
 import comfy
-from   .utils.system   import logger
-from   .core.genparams import GenParams, normalize_prefix
-from   ._common        import normalize_aspect_ratio
+from   .utils.system        import logger
+from   .functions.genparams import GenParams, normalize_prefix
+from   ._common             import normalize_aspect_ratio
 MAX_RESOLUTION=16384
 LATENT_SCALE_FACTOR=8
 

@@ -11,7 +11,7 @@ License : MIT
   (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
-from .core.genparams import GenParams
+from .functions.genparams import GenParams
 
 class SetBaseSeed:
     TITLE       = "💪TB | Set Base Seed"

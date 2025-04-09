@@ -12,7 +12,7 @@ License : MIT
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import re
-from .core.genparams import GenParams
+from .functions.genparams import GenParams
 
 #----------------------- IMAGE SCALE/RATIO CONSTANTS -----------------------#
 
