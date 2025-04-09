@@ -11,12 +11,12 @@ License : MIT
   (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
-from .xcomfy.model        import Model
-from .xcomfy.vae          import VAE
-from .xcomfy.clip         import CLIP
-from .xcomfy.transcoder   import Transcoder
-from .utils.directories   import TINYBREAKER_CHECKPOINTS_DIR
-from .functions.genparams import GenParams
+from .xcomfy.model       import Model
+from .xcomfy.vae         import VAE
+from .xcomfy.clip        import CLIP
+from .xcomfy.transcoder  import Transcoder
+from .utils.directories  import TINYBREAKER_CHECKPOINTS_DIR
+from .core.genparams     import GenParams
 
 _AUTOMATIC        = "auto"
 _VAE_TYPE_FAST    = "fast"

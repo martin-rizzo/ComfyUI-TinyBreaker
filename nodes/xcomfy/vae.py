@@ -17,12 +17,12 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import torch
 import comfy.sd
-from comfy                              import model_management
-from ..utils.safetensors                import normalize_prefix
-from ..utils.system                     import logger
-from ..models.autoencoder_model_ex      import AutoencoderModelEx
-from ..models.tiny_autoencoder_model_ex import TinyAutoencoderModelEx
-from ..xcomfy.helpers.ops               import comfy_ops_disable_weight_init
+from comfy                                   import model_management
+from ..utils.safetensors                     import normalize_prefix
+from ..utils.system                          import logger
+from ..core.models.autoencoder_model_ex      import AutoencoderModelEx
+from ..core.models.tiny_autoencoder_model_ex import TinyAutoencoderModelEx
+from ..xcomfy.helpers.ops                    import comfy_ops_disable_weight_init
 
 
 

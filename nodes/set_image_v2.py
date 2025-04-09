@@ -12,7 +12,7 @@ License : MIT
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 
-from .functions.genparams import GenParams
+from .core.genparams import GenParams
 from ._common import LANDSCAPE_SIZES_BY_ASPECT_RATIO, \
                      SCALES_BY_NAME,                  \
                      ORIENTATIONS,                    \

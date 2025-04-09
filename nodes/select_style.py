@@ -11,9 +11,9 @@ License : MIT
   (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
-from .functions.styles    import Styles, load_all_styles_versions
-from .functions.genparams import GenParams
-from .utils.directories   import PROJECT_DIR
+from .core.styles       import Styles, load_all_styles_versions
+from .core.genparams    import GenParams
+from .utils.directories import PROJECT_DIR
 
 
 # load all versions of the pre-defined styles
