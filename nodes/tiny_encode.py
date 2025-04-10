@@ -12,9 +12,9 @@ License : MIT
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import torch
-from .xcomfy.vae               import VAE
-from .xcomfy.helpers.images    import normalize_images
-from .core.tiny_encode_decode  import tiny_encode
+from .core.comfyui_bridge.vae             import VAE
+from .core.comfyui_bridge.helpers.images  import normalize_images
+from .core.tiny_encode_decode             import tiny_encode
 
 
 class TinyEncode:

@@ -11,8 +11,8 @@ License : MIT
   (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
-from .xcomfy.transcoder import Transcoder
-from .xcomfy.vae        import VAE
+from .core.comfyui_bridge.transcoder import Transcoder
+from .core.comfyui_bridge.vae        import VAE
 
 
 class TranscodeLatentTwoSteps:

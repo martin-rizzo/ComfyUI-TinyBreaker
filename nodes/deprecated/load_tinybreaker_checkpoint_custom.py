@@ -12,15 +12,15 @@ License : MIT
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import comfy.utils
-from ..xcomfy.model        import Model
-from ..xcomfy.vae          import VAE
-from ..xcomfy.clip         import CLIP
-from ..xcomfy.transcoder   import Transcoder
-from ..core.genparams      import GenParams
-from ..utils.directories   import TINYBREAKER_CHECKPOINTS_DIR, \
-                                  CHECKPOINTS_DIR, \
-                                  TRANSCODERS_DIR, \
-                                  VAE_DIR
+from ..core.comfyui_bridge.model       import Model
+from ..core.comfyui_bridge.vae         import VAE
+from ..core.comfyui_bridge.clip        import CLIP
+from ..core.comfyui_bridge.transcoder  import Transcoder
+from ..core.genparams                  import GenParams
+from ..utils.directories import TINYBREAKER_CHECKPOINTS_DIR, \
+                                CHECKPOINTS_DIR, \
+                                TRANSCODERS_DIR, \
+                                VAE_DIR
 
 _RESOLUTIONS = ["automatic", "512", "1024", "2K", "4K" ]
 _VAE_OPTIONS = ["fast", "high quality"]

@@ -12,8 +12,8 @@ License : MIT
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import torch
-from ..xcomfy.vae import VAE
-from .tiles import create_tile_mask, get_tile, multiply_tile, overlay_tile
+from .tiles              import create_tile_mask, get_tile, multiply_tile, overlay_tile
+from .comfyui_bridge.vae import VAE
 _IMAGE_DIM_ORDER  = "bhwc"
 _LATENT_DIM_ORDER = "bchw"
 

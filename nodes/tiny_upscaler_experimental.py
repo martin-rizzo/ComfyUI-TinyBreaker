@@ -13,9 +13,9 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import torch
 import comfy.samplers
-from .core.tiny_upscale import tiny_upscale
-from .xcomfy.vae        import VAE
-from .xcomfy.model      import Model
+from .core.comfyui_bridge.vae    import VAE
+from .core.comfyui_bridge.model  import Model
+from .core.tiny_upscale          import tiny_upscale
 
 
 class TinyUpscalerExperimental:

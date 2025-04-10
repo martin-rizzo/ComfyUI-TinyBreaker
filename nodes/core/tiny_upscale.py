@@ -13,12 +13,12 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import torch
 import torch.nn.functional as F
-from .tiles                  import get_tile, apply_tiles_tlbr, apply_tiles_brtl
-from .tiny_encode_decode     import tiny_encode, tiny_decode
-from ..xcomfy.model          import Model
-from ..xcomfy.vae            import VAE
-from ..xcomfy.helpers.sigmas import calculate_sigmas
-from ..xcomfy.helpers.images import normalize_images, refine_latent_image
+from .tiles                         import get_tile, apply_tiles_tlbr, apply_tiles_brtl
+from .tiny_encode_decode            import tiny_encode, tiny_decode
+from .comfyui_bridge.model          import Model
+from .comfyui_bridge.vae            import VAE
+from .comfyui_bridge.helpers.sigmas import calculate_sigmas
+from .comfyui_bridge.helpers.images import normalize_images, refine_latent_image
 
 
 import comfy.samplers

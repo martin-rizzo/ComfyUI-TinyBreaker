@@ -14,8 +14,8 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import os
 import torch
-from ..utils.system                    import logger
-from ..core.models.transcoder_model_ex import TranscoderModelEx
+from ...utils.system                   import logger
+from ..models.transcoder_model_ex      import TranscoderModelEx
 from .vae                              import VAE
 from comfy                             import model_management
 from torchvision.transforms.functional import gaussian_blur

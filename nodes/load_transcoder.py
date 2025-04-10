@@ -12,9 +12,8 @@ License : MIT
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import comfy.utils
-import comfy.model_management
-from   .utils.directories          import VAE_DIR
-from   .xcomfy.transcoder          import Transcoder
+from .core.comfyui_bridge.transcoder  import Transcoder
+from .utils.directories import VAE_DIR
 
 
 class LoadTranscoder:
