@@ -17,7 +17,7 @@ from ..core.comfyui_bridge.vae         import VAE
 from ..core.comfyui_bridge.clip        import CLIP
 from ..core.comfyui_bridge.transcoder  import Transcoder
 from ..core.genparams                  import GenParams
-from ..utils.directories import TINYBREAKER_CHECKPOINTS_DIR
+from ..core.directories import TINYBREAKER_CHECKPOINTS_DIR
 
 _VAE_OPTIONS        = ["fast", "high quality"]
 _DEFAULT_VAE_OPTION = "fast"

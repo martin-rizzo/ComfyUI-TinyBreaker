@@ -15,7 +15,7 @@ import torch
 import comfy.samplers
 from .genparams                     import GenParams, normalize_prefix
 from .comfyui_bridge.helpers.sigmas import calculate_sigmas
-from ..utils.system                 import logger
+from .system                        import logger
 
 
 class DenoisingParams:

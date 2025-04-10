@@ -19,7 +19,7 @@ from comfy                     import model_management, supported_models_base, l
 from comfy.model_base          import BaseModel, ModelType
 from .helpers.ops              import comfy_ops_disable_weight_init
 from ..models.pixart_model_ex  import PixArtModelEx
-from ...utils.system           import logger
+from ..system                  import logger
 
 #--------------------------------- PIXART ----------------------------------#
 

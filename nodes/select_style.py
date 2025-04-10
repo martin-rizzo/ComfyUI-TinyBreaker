@@ -13,7 +13,7 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 from .core.styles       import Styles, load_all_styles_versions
 from .core.genparams    import GenParams
-from .utils.directories import PROJECT_DIR
+from .core.directories  import PROJECT_DIR
 
 
 # load all versions of the pre-defined styles

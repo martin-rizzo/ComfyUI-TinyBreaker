@@ -16,7 +16,7 @@ from .core.comfyui_bridge.model       import Model
 from .core.comfyui_bridge.vae         import VAE
 from .core.comfyui_bridge.clip        import CLIP
 from .core.comfyui_bridge.transcoder  import Transcoder
-from .utils.directories import TINYBREAKER_CHECKPOINTS_DIR
+from .core.directories import TINYBREAKER_CHECKPOINTS_DIR
 
 _AUTOMATIC        = "auto"
 _VAE_TYPE_FAST    = "fast"

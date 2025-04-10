@@ -16,7 +16,7 @@ import comfy.model_management
 import torch
 from .core.models.t5_encoder_model_cmf import get_t5_encoder_custom_class
 from .core.comfyui_bridge.clip         import CLIP
-from .utils.directories                import TEXT_ENCODERS_DIR
+from .core.directories                 import TEXT_ENCODERS_DIR
 _AUTOMATIC = "auto"
 
 _CLIP_TYPES = [

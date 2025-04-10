@@ -13,7 +13,7 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 from comfy.utils              import load_torch_file
 from .core.comfyui_bridge.vae import VAE
-from .utils.directories       import VAE_DIR
+from .core.directories        import VAE_DIR
 
 
 class LoadAnyVAE:

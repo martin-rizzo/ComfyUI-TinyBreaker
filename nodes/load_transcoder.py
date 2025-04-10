@@ -13,7 +13,7 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import comfy.utils
 from .core.comfyui_bridge.transcoder  import Transcoder
-from .utils.directories import VAE_DIR
+from .core.directories import VAE_DIR
 
 
 class LoadTranscoder:

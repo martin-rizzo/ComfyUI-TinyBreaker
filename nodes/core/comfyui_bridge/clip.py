@@ -34,11 +34,11 @@ import comfy.sd1_clip
 import comfy.model_management
 import comfy.text_encoders.t5
 import comfy.text_encoders.sd3_clip
-from   torch                import nn
-from   .t5.t5_config        import T5XXLModel_SD3, T5XXLModel_PA, PixArtTokenizer
-from   ...utils.system      import logging
-from   ...utils.directories import EMBEDDINGS_DIR
-from   ...utils.safetensors import filter_state_dict, normalize_prefix
+from   torch         import nn
+from   ..system      import logging
+from   ..directories import EMBEDDINGS_DIR
+from   ..safetensors import filter_state_dict, normalize_prefix
+from   .t5.t5_config import T5XXLModel_SD3, T5XXLModel_PA, PixArtTokenizer
 
 _CLIP_TYPES_BY_NAME = {
     "stable_diffusion": comfy.sd.CLIPType.STABLE_DIFFUSION,
