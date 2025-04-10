@@ -163,19 +163,19 @@ comfy_import_node(SaveAnything)
 _CATEGORY   = "TinyBreaker/__deprecated"
 _DEPRECATED = True
 
-from .nodes.deprecated.load_tinybreaker_checkpoint          import LoadTinyBreakerCheckpoint
+from .nodes.deprecated_nodes.load_tinybreaker_checkpoint        import LoadTinyBreakerCheckpoint
 comfy_import_node(LoadTinyBreakerCheckpoint)
 
-from .nodes.deprecated.load_tinybreaker_checkpoint_custom   import LoadTinyBreakerCheckpointCustom
+from .nodes.deprecated_nodes.load_tinybreaker_checkpoint_custom import LoadTinyBreakerCheckpointCustom
 comfy_import_node(LoadTinyBreakerCheckpointCustom)
 
-from .nodes.deprecated.set_float                            import SetFloat
+from .nodes.deprecated_nodes.set_float                          import SetFloat
 comfy_import_node(SetFloat)
 
-from .nodes.deprecated.set_image                            import SetImage
+from .nodes.deprecated_nodes.set_image                          import SetImage
 comfy_import_node(SetImage)
 
-from .nodes.deprecated.set_image_tweaks                     import SetImageTweaks
+from .nodes.deprecated_nodes.set_image_tweaks                   import SetImageTweaks
 comfy_import_node(SetImageTweaks)
 
 
