@@ -45,6 +45,7 @@ def calculate_sigmas(model_sampling           : object,
     Returns:
         A tensor containing the sigma values for each step.
     """
+    assert isinstance(sampler, str), f"sampler must be a string. Got {type(sampler)}"
     steps       = min(steps, steps_end)
     steps_start = max(0, steps_start)
 

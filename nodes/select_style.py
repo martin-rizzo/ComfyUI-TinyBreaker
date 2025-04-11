@@ -78,7 +78,7 @@ class SelectStyle:
             genparams.update( custom_styles.to_genparams(prefix_to_add="styles") )
 
         # copy parameters from "styles.<style_name>.*" -> "denoising.*"
-        count = genparams.copy_parameters( target="denoising", source=f"styles.{style_name}", valid_subkeys=["base", "refiner"])
+        count = genparams.copy_parameters( target="denoising", source=f"styles.{style_name}", valid_subkeys=["base", "refiner", "upscaler"])
         if count > 0:
             genparams.set_str("user.style", style_name)
 

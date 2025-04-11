@@ -108,27 +108,69 @@ class DenoisingParams:
     def from_genparams(cls,
                        genparams      : GenParams,
                        prefix         : str,
-                       model_to_sample: object
+                       model_to_sample: object,
+                       return_none_on_missing: bool = False,
                        ) -> 'DenoisingParams':
         """
         Create a DenoisingParams object from the information contained in a `GenParams` instance.
         Args:
-            genparams      : The GenParams instance to extract the information from.
-            prefix         : The prefix to use to access the information in `genparams`.
-            model_to_sample: The model that will be used for image generation.
+            genparams             : The GenParams instance to extract the information from.
+            prefix                : The prefix to use to access the information in `genparams`.
+            model_to_sample       : The model that will be used for image generation.
+            return_none_on_missing: Determines what will be returned if no value with the given prefix is found:
+                                    If True, returns `None`.
+                                    If False, returns `DenoisingParams.default()`.
         """
         prefix = normalize_prefix(prefix)
-        return cls(positive      = genparams.get( f"{prefix}prompt"        ),
-                   negative      = genparams.get( f"{prefix}negative"      ),
-                   sampler       = genparams.get( f"{prefix}sampler"       ),
-                   scheduler     = genparams.get( f"{prefix}scheduler"     ),
-                   steps         = genparams.get( f"{prefix}steps"         ),
-                   steps_start   = genparams.get( f"{prefix}steps_start"   ),
-                   steps_end     = genparams.get( f"{prefix}steps_end"     ),
-                   steps_nfactor = genparams.get( f"{prefix}steps_nfactor" ),
-                   cfg           = genparams.get( f"{prefix}cfg"           ),
-                   noise_seed    = genparams.get( f"{prefix}noise_seed"    ),
-                   model         = model_to_sample)
+        positive      = genparams.get( f"{prefix}prompt"        )
+        negative      = genparams.get( f"{prefix}negative"      )
+        sampler       = genparams.get( f"{prefix}sampler"       )
+        scheduler     = genparams.get( f"{prefix}scheduler"     )
+        steps         = genparams.get( f"{prefix}steps"         )
+        steps_start   = genparams.get( f"{prefix}steps_start"   )
+        steps_end     = genparams.get( f"{prefix}steps_end"     )
+        steps_nfactor = genparams.get( f"{prefix}steps_nfactor" )
+        cfg           = genparams.get( f"{prefix}cfg"           )
+        noise_seed    = genparams.get( f"{prefix}noise_seed"    )
+
+        # checks if no value was provided (all_missing)
+        all_missing = all(value is None for value in [positive,
+                                                      negative,
+                                                      sampler,
+                                                      scheduler,
+                                                      steps,
+                                                      steps_start,
+                                                      steps_end,
+                                                      steps_nfactor,
+                                                      cfg,
+                                                      noise_seed,
+                                                      ])
+        # if no values were provided,
+        # return default or None according to the parameter `return_on_missing`
+        if all_missing:
+            return None if return_none_on_missing else cls.default()
+
+        # if at least one parameter is provided,
+        # return a new DenoisingParams instance initialized with the provided values
+        # (missing values will be set to their default value)
+        return cls(positive      = positive,
+                   negative      = negative,
+                   sampler       = sampler,
+                   scheduler     = scheduler,
+                   steps         = steps,
+                   steps_start   = steps_start,
+                   steps_end     = steps_end,
+                   steps_nfactor = steps_nfactor,
+                   cfg           = cfg,
+                   noise_seed    = noise_seed,
+                   model         = model_to_sample,
+                   )
+
+
+    @classmethod
+    def default(cls) -> 'DenoisingParams':
+        """Create a DenoisingParams object with the default values."""
+        return cls()
 
 
     def __str__(self):

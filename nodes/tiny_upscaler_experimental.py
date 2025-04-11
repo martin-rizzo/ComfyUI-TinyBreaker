@@ -13,9 +13,11 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import torch
 import comfy.samplers
-from .core.comfyui_bridge.vae    import VAE
-from .core.comfyui_bridge.model  import Model
-from .core.tiny_upscale          import tiny_upscale
+from .core.comfyui_bridge.vae            import VAE
+from .core.comfyui_bridge.model          import Model
+from .core.tiny_upscale                  import tiny_upscale
+from .core.comfyui_bridge.helpers.sigmas import calculate_sigmas
+
 
 
 class TinyUpscalerExperimental:
@@ -94,24 +96,28 @@ class TinyUpscalerExperimental:
                 overlap_percent   : int = 100,
                 interpolation_mode: str = "bilinear" # "nearest"
                 ):
+        model_sampling = model.get_model_object("model_sampling")
 
+        # get the sampler object and calculate the sigmas
+        sampler_object = comfy.samplers.sampler_object(sampler)
+        sigmas         = calculate_sigmas(model_sampling, sampler, scheduler, steps, start_at_step, end_at_step)
+
+        # upscale the image
         upscaled_image = tiny_upscale(image,
                                       model              = model,
                                       vae                = vae,
                                       positive           = positive,
                                       negative           = negative,
-                                      seed               = seed,
-                                      steps              = steps,
-                                      start_at_step      = start_at_step,
-                                      end_at_step        = end_at_step,
+                                      sampler_object     = sampler_object,
+                                      sigmas             = sigmas,
                                       cfg                = cfg,
-                                      sampler            = sampler,
-                                      scheduler          = scheduler,
+                                      noise_seed         = seed,
                                       extra_noise        = extra_noise,
                                       upscale_by         = upscale_by,
                                       tile_size          = tile_size,
                                       overlap_percent    = overlap_percent,
                                       interpolation_mode = interpolation_mode,
+                                      discard_last_sigma = True,
                                       )
         return (upscaled_image, )
 

@@ -147,6 +147,10 @@ comfy_import_node(TinyDecode)
 from .nodes.tiny_upscaler_experimental              import TinyUpscalerExperimental
 comfy_import_node(TinyUpscalerExperimental)
 
+from .nodes.tiny_upscaler                           import TinyUpscaler
+comfy_import_node(TinyUpscaler)
+
+
 
 # TinyBreaker/__dev
 _CATEGORY = "TinyBreaker/__dev"

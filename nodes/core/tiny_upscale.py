@@ -24,40 +24,28 @@ from .comfyui_bridge.helpers.images import normalize_images, refine_latent_image
 import comfy.samplers
 import comfy.utils
 
+
 def tiny_upscale(image             : torch.Tensor,
                  model             : Model,
                  vae               : VAE,
                  positive          : list[ list[torch.Tensor, dict] ],
                  negative          : list[ list[torch.Tensor, dict] ],
-                 seed              : int,
-                 steps             : int,
-                 start_at_step     : int,
-                 end_at_step       : int,
+                 sampler_object    : comfy.samplers.KSAMPLER,
+                 sigmas            : torch.Tensor,
                  cfg               : float,
-                 sampler           : str,
-                 scheduler         : str,
+                 noise_seed        : int,
                  extra_noise       : float,
                  upscale_by        : float,
-                 tile_size         : int = 1024,
-                 overlap_percent   : int = 100,
-                 interpolation_mode: str = "bilinear" # "nearest"
+                 tile_size         : int  = 1024,
+                 overlap_percent   : int  = 100,
+                 interpolation_mode: str  = "bilinear", # "nearest"
+                 discard_last_sigma: bool = True,
                  ):
 
-    sampler = comfy.samplers.sampler_object(sampler)
-    image   = normalize_images(image)
+    image = normalize_images(image)
     _, image_height, image_width, _ = image.shape
-
-    # calculate sigmas (old)
-    # total_steps    = int(steps / strength)
-    # steps_start    = total_steps - steps
-    # steps_end      = 10000
-    # model_sampling = model.get_model_object("model_sampling")
-    # sigmas         = calculate_sigmas(model_sampling, sampler, scheduler, total_steps, steps_start, steps_end)
-
-    # calculate sigmas (new)
-    model_sampling = model.get_model_object("model_sampling")
-    sigmas         = calculate_sigmas(model_sampling, sampler, scheduler, steps, start_at_step, end_at_step)
-    sigmas         = sigmas[:-1]
+    if discard_last_sigma:
+        sigmas = sigmas[:-1]
 
     # upscale the image using simple interpolation
     upscaled_width  = int( round(image_width  * upscale_by) )
@@ -68,13 +56,14 @@ def tiny_upscale(image             : torch.Tensor,
 
     # encode the image into latent space
     upscaled_latent = tiny_encode(upscaled_image,
-                                    vae          = vae,
-                                    tile_size    = tile_size,
-                                    tile_padding = (tile_size*overlap_percent//400),
-                                    )
+                                  vae          = vae,
+                                  tile_size    = tile_size,
+                                  tile_padding = (tile_size*overlap_percent//400),
+                                  )
 
     # add extra noise to the latent image if requested
     if extra_noise > 0.0:
+        torch.manual_seed(noise_seed+100)
         upscaled_latent += torch.randn_like(upscaled_latent) * extra_noise
 
 
@@ -89,14 +78,14 @@ def tiny_upscale(image             : torch.Tensor,
         #     width, height: the size of the tile
         create_refined_tile = lambda latent, x, y, width, height: \
             _create_refined_tile(latent, x, y, width, height,
-                                 model      = model,
-                                 add_noise  = (step==0),
-                                 noise_seed = seed,
-                                 cfg        = cfg,
-                                 sampler    = sampler,
-                                 sigmas     = torch.Tensor( [sigmas[step], sigmas[step+1]] ),
-                                 positive   = positive,
-                                 negative   = negative,
+                                 model          = model,
+                                 positive       = positive,
+                                 negative       = negative,
+                                 sampler_object = sampler_object,
+                                 sigmas         = torch.Tensor( [sigmas[step], sigmas[step+1]] ),
+                                 cfg            = cfg,
+                                 add_noise      = (step==0),
+                                 noise_seed     = noise_seed,
                                  )
 
         # process the latent image in tiles using the refinement function,
@@ -123,14 +112,14 @@ def _create_refined_tile(latent: torch.Tensor,
                          width : int ,
                          height: int,
                          /,*,
-                         model     : Model,
-                         add_noise : bool,
-                         noise_seed: int,
-                         cfg       : float,
-                         sampler   : object,
-                         sigmas    : torch.Tensor,
-                         positive  : list[ list[torch.Tensor, dict] ],
-                         negative  : list[ list[torch.Tensor, dict] ],
+                         model         : Model,
+                         positive      : list[ list[torch.Tensor, dict] ],
+                         negative      : list[ list[torch.Tensor, dict] ],
+                         sampler_object: object,
+                         sigmas        : torch.Tensor,
+                         cfg           : float,
+                         add_noise     : bool,
+                         noise_seed    : int,
                          ) -> torch.Tensor:
 
     # extract the tile from the latent image and refine it
@@ -139,13 +128,13 @@ def _create_refined_tile(latent: torch.Tensor,
         return None
     return refine_latent_image(tile,
                                model      = model,
+                               positive   = positive,
+                               negative   = negative,
+                               sampler    = sampler_object,
+                               sigmas     = sigmas,
+                               cfg        = cfg,
                                add_noise  = add_noise,
                                noise_seed = noise_seed,
-                               cfg        = cfg,
-                               sampler    = sampler,
-                               sigmas     = sigmas,
-                               positive   = positive,
-                               negative   = negative
                                )
 
 
