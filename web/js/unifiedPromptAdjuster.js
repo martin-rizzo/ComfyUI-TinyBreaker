@@ -59,7 +59,7 @@ const IMAGE_ORIENTATIONS = [
  * List of all options that the user can cycle through by pressing CTRL+LEFT/RIGHT
  */
 const NAVIGABLE_OPTIONS = [
-    "--no", "--refine", "--img-shift", "--cfg-shift", "--level-detail",
+    "--no", "--refine", "--image-shift", "--cfg-shift", "--level-detail",
     "--seed", "--aspect", "--landscape", "--large", "--style", "--batch-size"
 ]
 
@@ -68,7 +68,7 @@ const NAVIGABLE_OPTIONS = [
  */
 const AUTOCOMPLETE_LIST = [
     "--no", "--refine",
-    "--img-shift", "--cfg-shift", "--level-detail",
+    "--image-shift", "--cfg-shift", "--level-detail",
     "--seed", "--aspect",
     "--landscape", "--portrait", 
     "--small", "--medium", "--large",
@@ -231,7 +231,7 @@ function adjustMultipleChoice(name, value, offset, choices, defaultChoise) {
  */
 function adjustArgument(name, value, offset) {
     switch(name) {
-        case '--img-shift':
+        case '--image-shift':
             return adjustInt(name, value, offset, 0, 0);
         case '--cfg-shift':
             return adjustInt(name, value, offset, 0, -20, 20);

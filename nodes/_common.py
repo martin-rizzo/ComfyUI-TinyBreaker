@@ -157,9 +157,9 @@ def genparams_from_arguments(args: dict,
     else:
         genparams.set_str(f"{RE__}prompt", f"{value}{prompt}", use_template=True)
 
-    # --i, --img-shift <int>
+    # --i, --image-shift <int>
     # "refiner.noise_seed"
-    value, as_delta = _pop_int_value(args, "i", "img-shift")
+    value, as_delta = _pop_int_value(args, "i", "image-shift")
     if value is not None:
         genparams.set_int(f"{RE__}noise_seed", value, as_delta=False)
 

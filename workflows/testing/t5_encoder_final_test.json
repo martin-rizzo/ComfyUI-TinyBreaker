@@ -747,7 +747,7 @@
       "title": "NOTE: SUPPORTED PARAMETERS",
       "properties": {},
       "widgets_values": [
-        "  --no <text>\n  --refine <text>\n  --img-shift <number>\n  --cfg-shift <number>\n  --detail-level <none|low|normal|high>\n  --seed <number>\n  --aspect <ratio>\n  --landscape | --portrait\n  --small | --medium | --large\n  --batch-size <number>\n"
+        "  --no <text>\n  --refine <text>\n  --image-shift <number>\n  --cfg-shift <number>\n  --detail-level <none|low|normal|high>\n  --seed <number>\n  --aspect <ratio>\n  --landscape | --portrait\n  --small | --medium | --large\n  --batch-size <number>\n"
       ],
       "color": "#222",
       "bgcolor": "#000"

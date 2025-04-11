@@ -5,7 +5,7 @@ One of the advantages of the **Unified Prompt Input** is that it allows paramete
 - Parameters for Minor Adjustments
   - [`--no`](#--no-elements)
   - [`--refine`](#--refine-description)
-  - [`--img-shift`](#--img-shift-number)
+  - [`--image-shift`](#--image-shift-number)
   - [`--cfg-shift`](#--cfg-shift-number)
   - [`--detail-level`](#--detail-level-level)
 - Parameters for Major Changes
@@ -32,10 +32,10 @@ These parameters allow for subtle modifications and fine-tuning of the generated
 *   **Example:** `--refine trees and cat
 *   **Usage:** Helps to refine specific elements in the image.
 
-### `--img-shift <number>`
+### `--image-shift <number>`
 
 *   **Description:** Specifies variants of the refinement process without changing the composition of the image.
-*   **Example:** `--img-shift 2`
+*   **Example:** `--image-shift 2`
 *   **Usage:** Although the image remains practically unchanged, different variants can solve errors in hands and faces.
 *   **Values:** An integer indicating the desired variant.
 

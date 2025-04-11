@@ -20,13 +20,15 @@ After entering your initial prompt, you can add any of the following parameters:
 
 - `--no <text>`: Exclude specific elements (negative prompt)
 - `--refine <text>`: Refine certain aspects of the image.
-- `--img-shift <number>`: Choose a variant number for minor changes.
 - `--cfg-shift <number>`: Adjust CFG scale (the value es relative, 0.0 means default CFG)
-- `--detail-level <none|low|normal|high>`: Set detail level (normal is recommended)
+- `--image-shift <number>`: Choose a variant number for minor changes.
+- `--upscale <number>`: Set the upscale factor (e.g., 3 for x3)
 - `--seed <number>`: Specify a seed number.
 - `--aspect <ratio>`: Define aspect ratio of the image (e.g., 16:9)
-- `--landscape` / `--portrait`: Choose orientation.
-- `--small` / `--medium` / `--large`: Select image size.
+- `--portrait`: Choose orientation.
+- `--landscape`: Choose orientation.
+- `--medium`: Select image size.
+- `--detail-level <none|low|normal|high>`: Set detail level (normal is recommended)
 - `--batch-size <number>`: Set batch processing size.
 
 

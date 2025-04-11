@@ -215,8 +215,7 @@
         "Node name for S&R": "SaveImage //TinyBreaker"
       },
       "widgets_values": [
-        "TinyBreaker/%date:yyyy_MM_dd%/TB",
-        ""
+        "TinyBreaker/%date:yyyy_MM_dd%/TB"
       ],
       "color": "#323",
       "bgcolor": "#535"
@@ -302,33 +301,6 @@
       "shape": 1
     },
     {
-      "id": 203,
-      "type": "Note",
-      "pos": [
-        -70,
-        140
-      ],
-      "size": [
-        430,
-        190
-      ],
-      "flags": {
-        "pinned": true
-      },
-      "order": 1,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [],
-      "title": "NOTE: SUPPORTED PARAMETERS",
-      "properties": {},
-      "widgets_values": [
-        "  --no <text>\n  --refine <text>\n  --img-shift <number>\n  --cfg-shift <number>\n  --detail-level <none|low|normal|high>\n  --seed <number>\n  --aspect <ratio>\n  --landscape | --portrait\n  --small | --medium | --large\n  --batch-size <number>\n"
-      ],
-      "color": "#222",
-      "bgcolor": "#000",
-      "shape": 1
-    },
-    {
       "id": 256,
       "type": "Reroute",
       "pos": [
@@ -378,7 +350,7 @@
       "flags": {
         "pinned": true
       },
-      "order": 2,
+      "order": 1,
       "mode": 0,
       "inputs": [],
       "outputs": [],
@@ -403,7 +375,7 @@
         140
       ],
       "flags": {},
-      "order": 3,
+      "order": 2,
       "mode": 0,
       "inputs": [],
       "outputs": [
@@ -622,7 +594,7 @@
         260
       ],
       "flags": {},
-      "order": 4,
+      "order": 3,
       "mode": 0,
       "inputs": [],
       "outputs": [
@@ -905,7 +877,8 @@
       ],
       "properties": {
         "Node name for S&R": "TinyUpscaler //TinyBreaker"
-      }
+      },
+      "widgets_values": []
     },
     {
       "id": 280,
@@ -977,8 +950,7 @@
         "Node name for S&R": "SaveImage //TinyBreaker"
       },
       "widgets_values": [
-        "TinyUpscaler/%date:yyyy_MM_dd%/TB",
-        ""
+        "TinyUpscaler/%date:yyyy_MM_dd%/TB"
       ],
       "color": "#323",
       "bgcolor": "#535"
@@ -1090,6 +1062,33 @@
         "showOutputText": false,
         "horizontal": false
       }
+    },
+    {
+      "id": 203,
+      "type": "Note",
+      "pos": [
+        -70,
+        140
+      ],
+      "size": [
+        430,
+        190
+      ],
+      "flags": {
+        "pinned": true
+      },
+      "order": 4,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "title": "NOTE: SUPPORTED PARAMETERS",
+      "properties": {},
+      "widgets_values": [
+        "  --no <text>\n  --refine <text>\n  --seed <number>\n  --cfg-shift <number>\n  --image-shift <number>\n  --upscale <number|disabled>\n\n  --portrait\n  --landscape\n  --aspect <ratio>\n  --batch-size <number>\n  --detail-level <none|low|normal|high>\n"
+      ],
+      "color": "#222",
+      "bgcolor": "#000",
+      "shape": 1
     }
   ],
   "links": [
@@ -1407,10 +1406,10 @@
   "config": {},
   "extra": {
     "ds": {
-      "scale": 0.6303940863128685,
+      "scale": 1.3513057093104404,
       "offset": [
-        807.4701765088305,
-        981.9920821084711
+        385.37492189656365,
+        36.049026016911235
       ]
     }
   },

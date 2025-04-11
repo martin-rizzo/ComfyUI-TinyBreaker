@@ -27,7 +27,7 @@ class SetImageDetailsV2:
         "required": {
             "genparams"   :("GENPARAMS" , {"tooltip": "The generation parameters to be updated."
                                           }),
-            "img_shift"   :("INT"       , {"tooltip": "Adjustment to the refiner's noise seed. Experiment with different values to create slight image variations without altering the overall composition",
+            "image_shift" :("INT"       , {"tooltip": "Adjustment to the refiner's noise seed. Experiment with different values to create slight image variations without altering the overall composition",
                                            "default": 0, "min": 0, "max": 0xffffffffffffffff
                                           }),
             "cfg_shift"   :("INT"     ,   {"tooltip": "Adjustment to the Classifier-Free Guidance (CFG) scale. Positive values increase prompt adherence; negative values allow the model more freedom. A value of 0 uses the default recommendation from the current style.",
@@ -47,12 +47,12 @@ class SetImageDetailsV2:
 
     def set_image_details(self,
                           genparams   : GenParams,
-                          img_shift   : int,
+                          image_shift : int,
                           cfg_shift   : int,
                           detail_level: str,
                           ):
         genparams = genparams.copy()
-        genparams.set_int  ("denoising.refiner.noise_seed"   , img_shift       , as_delta = True      )
+        genparams.set_int  ("denoising.refiner.noise_seed"   , image_shift     , as_delta = True      )
         genparams.set_float("denoising.base.cfg"             , cfg_shift * 0.2 , as_delta = True      )
         genparams.set_int  ("denoising.refiner.steps_nfactor", NFACTORS_BY_DETAIL_LEVEL[detail_level] )
         return (genparams,)
