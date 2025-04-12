@@ -35,6 +35,7 @@ The code should gracefully handle cases where parameters are missing by:
 *   `image.scale` (float): The scaling factor applied to the image size, based in the original resolution of the model (e.g., 1.22).
 *   `image.orientation` (str): The orientation of the image (e.g., "landscape", "portrait").
 *   `image.aspect_ratio` (str): The aspect ratio of the image (e.g., "16:9").
+*   `image.upscale_factor` (float): The factor by which the image is upscaled (e.g., 2.5).
 *   `image.batch_size` (int): The number of images that are generated in each batch (e.g., 1).
 
 ### Denoising Parameters
@@ -62,6 +63,19 @@ The code should gracefully handle cases where parameters are missing by:
 *   `denoising.refiner.noise_seed` (int): The seed used for generating initial noise used by the refiner model.
 *   `denoising.refiner.sampler` (str): The name of the sampler used by the refiner model.
 *   `denoising.refiner.scheduler` (str): The name of the scheduler used by the refiner model.
+
+### Denoising Parameters (Upscaler)
+
+*   `denoising.upscaler.prompt` (str): The prompt used for the model during upscaling.
+*   `denoising.upscaler.negative` (str): The negative prompt used for the model during upscaling.
+*   `denoising.upscaler.steps` (int): The total number of denoising steps during upscaling.
+*   `denoising.upscaler.steps_start` (int): The step at which starting denoising for upscaling.
+*   `denoising.upscaler.steps_end` (int): The step at which ending denoising for upscaling.
+*   `denoising.upscaler.steps_nfactor` (int): A factor used to expand or reduce the number of denoising steps.
+*   `denoising.upscaler.cfg` (float): The guidance scale used during upscaling.
+*   `denoising.upscaler.noise_seed` (int): The seed used for generating initial noise during upscaling.
+*   `denoising.upscaler.sampler` (str): The name of the sampler used during upscaling.
+*   `denoising.upscaler.scheduler` (str): The name of the scheduler used during upscaling.
 
 ### Style Parameters
 

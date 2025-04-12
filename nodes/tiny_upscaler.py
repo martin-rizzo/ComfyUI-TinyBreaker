@@ -61,20 +61,16 @@ class TinyUpscaler:
         denoising = DenoisingParams.from_genparams(genparams, "denoising.upscaler",
                                                    model_to_sample        = model,
                                                    return_none_on_missing = True)
-        if not denoising:
+        upscale_by = genparams.get_float("image.upscale_factor")
+
+        if not denoising or not upscale_by:
             return image # no upscaling
 
         positive, negative = self._encode(clip, denoising.positive, denoising.negative)
         extra_noise        = 0.6
-        upscale_by         = 3.0
         tile_size          = 1024
         overlap_percent    = 100
         interpolation_mode = "bilinear"
-
-        print()
-        print("##>> denoising:")
-        print(denoising)
-        print()
 
         # upscale the image
         upscaled_image = tiny_upscale(image,

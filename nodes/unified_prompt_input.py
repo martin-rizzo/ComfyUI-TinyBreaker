@@ -11,9 +11,8 @@ License : MIT
   (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
-import re
-from .core.genparams import GenParams
-from ._common        import genparams_from_arguments
+from .core.genparams    import GenParams
+from .core.genparams_ex import GenParamsEx
 
 
 class UnifiedPromptInput:
@@ -35,56 +34,15 @@ class UnifiedPromptInput:
         }
 
     #__ FUNCTION __________________________________________
-    FUNCTION = "parse_text"
+    FUNCTION = "parse_prompt"
     RETURN_TYPES    = ("GENPARAMS",)
     RETURN_NAMES    = ("genparams",)
     OUTPUT_TOOLTIPS = ("The generation parameters with the updated values. (you can use this output to chain other genparams nodes)",)
 
-    def parse_text(self, genparams: GenParams, text: str) -> GenParams:
+    def parse_prompt(self, text: str, genparams: GenParams) -> GenParams:
+        genparams = GenParamsEx.from_prompt(text, template=genparams)
+        genparams.set_str("user.prompt"  , text)
+        genparams.set_str("user.negative", ""  )
+        return (genparams,)
 
-        # parse the arguments entered by the user
-        args = self._parse_args(text)
-
-        # extract the style name from the arguments and apply it to `genparams`
-        style_name = args.pop("style", None)
-        if style_name is not None:
-            genparams = genparams.copy()
-            # copy parameters from "styles.<style_name>.*" -> "denoising.*"
-            count = genparams.copy_parameters( target="denoising", source=f"styles.{style_name}", valid_subkeys=["base", "refiner"])
-            if count > 0:
-                genparams.set_str("user.style", style_name)
-
-        # build `genparams` from the parsed arguments (using the node input as template)
-        genparams_output = genparams_from_arguments(args, template=genparams)
-        genparams_output.set_str("user.prompt"  , text)
-        genparams_output.set_str("user.negative", ""  )
-        return (genparams_output,)
-
-
-    #__ internal functions ________________________________
-
-    @staticmethod
-    def _parse_args(text: str) -> dict[str, str]:
-        """Parse the text input into a dictionary of arguments."""
-        prompt = ""
-
-        # split the text into arguments by "--"
-        arg_list = text.split("--")
-
-        # the first element is the positive prompt, the rest are arguments
-        if len(arg_list) > 0:
-            prompt = arg_list.pop(0).strip()
-
-        # parse the arguments into a dictionary
-        # each argument is of the form "key value" or just "key" (for boolean values)
-        arg_dict = {}
-        for arg in arg_list:
-            key, _, value = arg.partition(' ')
-            key   = key.lower().strip()
-            value = value.strip()
-            if key:
-                arg_dict[key] = value
-
-        arg_dict["prompt"] = prompt
-        return arg_dict
 

@@ -12,7 +12,6 @@ License : MIT
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import os
-import re
 import json
 import struct
 from datetime import datetime
@@ -338,10 +337,12 @@ class GenParams(dict):
         keys = self.__pop_group_as_string("image."    , source=genparams, indent=indent, width=width)
         if keys: string += f"# IMAGE\n{keys}"
 
-        refkeys = self.__pop_group_as_string("denoising.refiner", source=genparams, indent=indent, width=width)
-        keys    = self.__pop_group_as_string("denoising"        , source=genparams, indent=indent, width=width)
+        refkeys = self.__pop_group_as_string("denoising.refiner" , source=genparams, indent=indent, width=width)
+        upskeys = self.__pop_group_as_string("denoising.upscaler", source=genparams, indent=indent, width=width)
+        keys    = self.__pop_group_as_string("denoising"         , source=genparams, indent=indent, width=width)
         if keys   : string += f"# DENOISING\n{keys}"
         if refkeys: string += f"# DENOISING (refiner)\n{refkeys}"
+        if upskeys: string += f"# DENOISING (upscaler)\n{upskeys}"
 
         keys = self.__pop_group_as_string("user."     , source=genparams, indent=indent, width=width)
         if keys: string += f"# USER\n{keys}"

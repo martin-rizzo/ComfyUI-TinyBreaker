@@ -16,10 +16,11 @@ import time
 import json
 import numpy as np
 import folder_paths
-from PIL                 import Image
-from PIL.PngImagePlugin  import PngInfo
-from .core.genparams     import GenParams
-from ._common            import ireplace
+from PIL                                 import Image
+from PIL.PngImagePlugin                  import PngInfo
+from .core.genparams                     import GenParams
+from .core.comfyui_bridge.helpers.images import normalize_images
+from ._common                            import ireplace
 
 _A1111_SAMPLER_BY_COMFY_NAME = {
     "euler"                    : "Euler",
@@ -103,7 +104,7 @@ class SaveImage:
                     prompt         : dict      = None,
                     extra_pnginfo  : dict      = None
                     ):
-
+        images = normalize_images(images)
         image_width  = images[0].shape[1]
         image_height = images[0].shape[0]
         a1111_params = self._create_a1111_params(genparams, image_width, image_height)
@@ -137,6 +138,7 @@ class SaveImage:
             image = Image.fromarray( image.astype(np.uint8) )        # <- PIL
 
             # generate the full file path to save the image
+            # TODO: Fix name accumulation bug on multiple images
             filename  = filename.replace("%batch_num%", str(batch_number))
             filename  = f"{filename}_{counter+batch_number:04}_.png"
             file_path =  os.path.join(full_output_folder, filename)

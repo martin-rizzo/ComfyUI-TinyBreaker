@@ -28,52 +28,60 @@ import { app } from "../../../scripts/app.js"
 const ENABLED = true;
 
 /**
- * List of detail levels that can be used as value for `--detail-level` parameter.
- */
-const DETAIL_LEVELS = [
-    "none", "minimal", "low", "normal", "high", "veryhigh", "maximum", ]
-const DEFAULT_DETAIL_LEVEL = "normal";
-
-/**
  * List of aspect ratios that can be used as value for `--ratio` parameter.
  */
 const ASPECT_RATIOS = [
-    "1:1", "4:3", "3:2", "16:10", "16:9", "2:1", "21:9", "12:5", "70:27", "32:9",
-]
+    "1:1", "4:3", "3:2", "16:10", "16:9", "2:1", "21:9", "12:5", "70:27", "32:9" ];
+const DEFAULT_ASPECT_RATIO = "4:3"
+
+/**
+ * List of upscale values that can be used as value for `--upscale` parameter.
+ */
+const UPSCALE_VALUES = [
+    "disabled", "1.5x", "2x", "2.5x", "3x", "3.5x", "4x", "4.5x", "5x" ];
+const DEFAULT_UPSCALE_VALUE = "1.5x";
+
+/**
+ * List of detail levels that can be used as value for `--detail-level` parameter.
+ */
+const DETAIL_LEVELS = [
+    "none", "minimal", "low", "normal", "high", "veryhigh", "maximum" ];
+const DEFAULT_DETAIL_LEVEL = "normal";
 
 /**
  * List of image sizes that can be used as parameters within a prompt.
  */
 const IMAGE_SIZES = [
-    "--small", "--medium", "--large",
-]
+    "--medium", "--large",
+];
 
 /**
  * List of image orientations that can be used as parameters within a prompt.
  */
 const IMAGE_ORIENTATIONS = [
     "--portrait", "--landscape"
-]
+];
 
 /**
  * List of all options that the user can cycle through by pressing CTRL+LEFT/RIGHT
  */
 const NAVIGABLE_OPTIONS = [
-    "--no", "--refine", "--image-shift", "--cfg-shift", "--level-detail",
-    "--seed", "--aspect", "--landscape", "--large", "--style", "--batch-size"
-]
+    "--no", "--refine", "--seed",
+    "--cfg-shift", "--image-shift", "--upscale",
+    "--portrait", "--landscape", "--aspect",
+    "--medium", "--level-detail", "--batch-size"
+];
 
 /**
  * List of options that can be automatically completed when pressing CTRL+RIGHT
  */
 const AUTOCOMPLETE_LIST = [
     "--no", "--refine",
-    "--image-shift", "--cfg-shift", "--level-detail",
+    "--cfg-shift", "--image-shift", "--upscale",
     "--seed", "--aspect",
-    "--landscape", "--portrait", 
-    "--small", "--medium", "--large",
-    "--style", "--batch-size"
-]
+    "--portrait", "--landscape", "--medium",
+    "--level-detail", "--batch-size"
+];
 
 /*------------------------------- HELPERS -------------------------------*/
 
@@ -231,21 +239,22 @@ function adjustMultipleChoice(name, value, offset, choices, defaultChoise) {
  */
 function adjustArgument(name, value, offset) {
     switch(name) {
-        case '--image-shift':
-            return adjustInt(name, value, offset, 0, 0);
-        case '--cfg-shift':
-            return adjustInt(name, value, offset, 0, -20, 20);
-        case '--detail-level':
-            return adjustMultipleChoice(name, value, offset, DETAIL_LEVELS, DEFAULT_DETAIL_LEVEL);
         case '--seed':
             return adjustInt(name, value, offset, 1, 1);
+        case '--cfg-shift':
+            return adjustInt(name, value, offset, 0, -20, 20);
+        case '--image-shift':
+            return adjustInt(name, value, offset, 0, 0);
+        case '--upscale':
+            return adjustMultipleChoice(name, value, offset, UPSCALE_VALUES, DEFAULT_UPSCALE_VALUE);
         case '--aspect':
-            return adjustMultipleChoice(name, value, offset, ASPECT_RATIOS);
+            return adjustMultipleChoice(name, value, offset, ASPECT_RATIOS, DEFAULT_ASPECT_RATIO);
+        case '--detail-level':
+            return adjustMultipleChoice(name, value, offset, DETAIL_LEVELS, DEFAULT_DETAIL_LEVEL);
         case '--batch-size':
             return adjustInt(name, value, offset, 1, 1);
     }
     if( IMAGE_ORIENTATIONS.includes(name) ) {
-        console.log("##>> name:", name)
         return adjustMultipleChoice("", name, offset, IMAGE_ORIENTATIONS);
     }
     if( IMAGE_SIZES.includes(name) ) {
