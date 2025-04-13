@@ -183,6 +183,13 @@ class GenParams(dict):
         self[key] = int(new_value)
 
 
+    def set_bool(self, key: str, new_value: bool):
+        """
+        Stores a boolean value under the given key.
+        """
+        self[key] = bool(new_value)
+
+
     def get_str(self, key: str, default: str = None, /) -> str | None:
         """
         Returns the string value stored under the given key.
@@ -225,6 +232,19 @@ class GenParams(dict):
                 return value
             except ValueError:
                 pass
+        return default
+
+
+    def get_bool(self, key: str, default: bool = None, /) -> bool | None:
+        """
+        Returns the boolean value stored under the given key.
+        If no such value is found, returns `default` (or None if `default` is not specified).
+        """
+        value = self.get(key)
+        if isinstance(value, (bool,int,float)):
+            return bool(value)
+        elif isinstance(value, str):
+            return value.lower() == "true"
         return default
 
 

@@ -38,8 +38,8 @@ const DEFAULT_ASPECT_RATIO = "4:3"
  * List of upscale values that can be used as value for `--upscale` parameter.
  */
 const UPSCALE_VALUES = [
-    "disabled", "1.5x", "2x", "2.5x", "3x", "3.5x", "4x", "4.5x", "5x" ];
-const DEFAULT_UPSCALE_VALUE = "1.5x";
+    "on", "off" ];
+const DEFAULT_UPSCALE_VALUE = "off";
 
 /**
  * List of detail levels that can be used as value for `--detail-level` parameter.

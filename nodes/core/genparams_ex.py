@@ -83,12 +83,12 @@ class GenParamsEx(GenParams):
         if value is not None:
             genparams.set_int(f"{RE__}noise_seed", value, as_delta=False)
 
-        # --u, --upscale <float>
+        # --u, --upscale <bool>
         # "image.upscale_factor"
         print("##>>>>============================")
-        value, as_delta =  _pop_floatX_or_str(args, "u", "upscale")
-        if isinstance(value, float):
-            genparams.set_float(f"image.upscale_factor", value, as_delta=False)
+        value, as_delta =  _pop_bool_or_str(args, "u", "upscale", "upscaler")
+        if isinstance(value, bool):
+            genparams.set_bool("image.enable_upscaler", value)
 
         # --d, --detail-level <level>
         # "refiner.steps_nfactor"
@@ -202,6 +202,18 @@ def _pop_float_value(args: dict, *keys) -> tuple[float | None, bool]:
     if value is None:
         return None, False
     return value, as_delta
+
+def _pop_bool_or_str(args: dict, *keys) -> tuple[bool | str | None, bool]:
+    str_value = _pop_str_value(args, *keys)
+    if str_value is None:
+        return None, False
+    str_value = str_value.lower()
+    if str_value in ["true", "yes", "on"]:
+        return True, False
+    elif str_value in ["false", "no", "off"]:
+        return False, False
+    else:
+        return str_value, False
 
 def _pop_floatX_or_str(args: dict, *keys) -> tuple[float | str | None, bool]:
     str_value = _pop_str_value(args, *keys)

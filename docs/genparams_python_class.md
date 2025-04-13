@@ -35,7 +35,7 @@ The code should gracefully handle cases where parameters are missing by:
 *   `image.scale` (float): The scaling factor applied to the image size, based in the original resolution of the model (e.g., 1.22).
 *   `image.orientation` (str): The orientation of the image (e.g., "landscape", "portrait").
 *   `image.aspect_ratio` (str): The aspect ratio of the image (e.g., "16:9").
-*   `image.upscale_factor` (float): The factor by which the image is upscaled (e.g., 2.5).
+*   `image.enable_upscaler` (bool): A flag indicating whether upscaling is enabled (default: False)
 *   `image.batch_size` (int): The number of images that are generated in each batch (e.g., 1).
 
 ### Denoising Parameters

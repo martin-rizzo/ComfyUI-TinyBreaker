@@ -39,6 +39,7 @@ def tiny_upscale(image             : torch.Tensor,
                  tile_size         : int  = 1024,
                  overlap_percent   : int  = 100,
                  interpolation_mode: str  = "bilinear", # "nearest"
+                 keep_original_size: bool = False,
                  discard_last_sigma: bool = True,
                  ):
 
@@ -103,7 +104,15 @@ def tiny_upscale(image             : torch.Tensor,
                              progress_bar     = progress_bar)
 
     upscaled_image = tiny_decode(upscaled_latent, vae=vae)
-    return upscaled_image
+
+    # if requested, downscale the result to match the original image size
+    # otherwise, return the upscaled result as is
+    if keep_original_size:
+        return F.interpolate(upscaled_image.transpose(1,-1),
+                             size = (image_width, image_height),
+                             mode = "nearest").transpose(1,-1)
+    else:
+        return upscaled_image
 
 
 def _create_refined_tile(latent: torch.Tensor,

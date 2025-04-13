@@ -22,7 +22,7 @@ After entering your initial prompt, you can add any of the following parameters:
 - `--refine <text>`: Refine certain aspects of the image.
 - `--cfg-shift <number>`: Adjust CFG scale (the value es relative, 0.0 means default CFG)
 - `--image-shift <number>`: Choose a variant number for minor changes.
-- `--upscale <number>`: Set the upscale factor (e.g., 3 for x3)
+- `--upscale`: Enable the upscaling process.
 - `--seed <number>`: Specify a seed number.
 - `--aspect <ratio>`: Define aspect ratio of the image (e.g., 16:9)
 - `--portrait`: Choose portrait orientation.

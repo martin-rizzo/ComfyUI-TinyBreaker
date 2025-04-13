@@ -116,7 +116,7 @@ When using the Unified Prompt node:
 | **`--refine <text>`**                  | Specifies elements that should be refined.                                  |
 | **`--cfg-shift <number>`**             | Modifies the value of the Classifier-Free Guidance (CFG) scale.             |
 | **`--image-shift <number>`**           | Modifies minor image details without altering the overall composition.      |
-| **`--upscale <number>`**               | Sets the scaling factor for the image upscaling operation.                  |
+| **`--upscale`**                        | Enables the application of the upscaling process to the final image.        |
 
 
 | Major image changes                    | Description                                                                 |

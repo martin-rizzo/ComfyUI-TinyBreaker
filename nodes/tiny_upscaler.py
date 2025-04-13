@@ -18,6 +18,10 @@ from .core.comfyui_bridge.model import Model
 from .core.tiny_upscale         import tiny_upscale
 from .core.genparams            import GenParams
 from .core.denoising_params     import DenoisingParams
+_MODE_UPSCALER = "upscaler"
+_MODE_ENHANCER = "enhancer"
+_MODES = [_MODE_UPSCALER ] # enhancer mode is not available yet
+
 
 
 class TinyUpscaler:
@@ -40,6 +44,11 @@ class TinyUpscaler:
                                       }),
             "vae"      :("VAE"       ,{"tooltip": "The VAE used to encode the image for the model.",
                                       }),
+            "scale_by" :("FLOAT"     ,{"tooltip": "The factor by which to scale the image.",
+                                       "default": 3, "min": 1.5, "max": 6.0, "step": 0.5
+                                      }),
+            "mode"     :(cls.modes() ,{"tooltip": "The upscaling mode (experimental).",
+                                      }),
             }
         }
 
@@ -55,15 +64,16 @@ class TinyUpscaler:
                                 model    : Model,
                                 vae      : VAE,
                                 clip     : CLIP,
+                                scale_by : float,
+                                mode     : str,
                                 ):
-
         # get denoising params from the genparams
         denoising = DenoisingParams.from_genparams(genparams, "denoising.upscaler",
                                                    model_to_sample        = model,
                                                    return_none_on_missing = True)
-        upscale_by = genparams.get_float("image.upscale_factor")
+        upscale = genparams.get_bool("image.enable_upscaler", False)
 
-        if not denoising or not upscale_by:
+        if not denoising or not upscale:
             return image # no upscaling
 
         positive, negative = self._encode(clip, denoising.positive, denoising.negative)
@@ -71,6 +81,7 @@ class TinyUpscaler:
         tile_size          = 1024
         overlap_percent    = 100
         interpolation_mode = "bilinear"
+        keep_original_size = (mode == _MODE_ENHANCER)
 
         # upscale the image
         upscaled_image = tiny_upscale(image,
@@ -83,16 +94,22 @@ class TinyUpscaler:
                                       cfg                = denoising.cfg,
                                       noise_seed         = denoising.noise_seed,
                                       extra_noise        = extra_noise,
-                                      upscale_by         = upscale_by,
+                                      upscale_by         = scale_by,
                                       tile_size          = tile_size,
                                       overlap_percent    = overlap_percent,
                                       interpolation_mode = interpolation_mode,
+                                      keep_original_size = keep_original_size,
                                       discard_last_sigma = True,
                                       )
         return (upscaled_image, )
 
 
     #__ internal functions ________________________________
+
+    @staticmethod
+    def modes():
+        return _MODES
+
 
     @staticmethod
     def _encode(clip: CLIP,
