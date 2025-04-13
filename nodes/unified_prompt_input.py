@@ -11,8 +11,8 @@ License : MIT
   (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
-from .core.genparams    import GenParams
-from .core.genparams_ex import GenParamsEx
+from .core.genparams             import GenParams
+from .core.genparams_from_prompt import genparams_from_prompt
 
 
 class UnifiedPromptInput:
@@ -40,7 +40,7 @@ class UnifiedPromptInput:
     OUTPUT_TOOLTIPS = ("The generation parameters with the updated values. (you can use this output to chain other genparams nodes)",)
 
     def parse_prompt(self, text: str, genparams: GenParams) -> GenParams:
-        genparams = GenParamsEx.from_prompt(text, template=genparams)
+        genparams = genparams_from_prompt(text, template=genparams)
         genparams.set_str("user.prompt"  , text)
         genparams.set_str("user.negative", ""  )
         return (genparams,)

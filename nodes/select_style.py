@@ -11,9 +11,10 @@ License : MIT
   (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
-from .core.styles       import Styles, load_all_styles_versions
-from .core.genparams    import GenParams
-from .core.directories  import PROJECT_DIR
+from .core.styles                import Styles, load_all_styles_versions
+from .core.genparams             import GenParams
+from .core.genparams_from_prompt import apply_style
+from .core.directories           import PROJECT_DIR
 
 
 # load all versions of the pre-defined styles
@@ -58,15 +59,11 @@ class SelectStyle:
                    style_name        : str,
                    custom_definitions: str = None
                    ):
-        genparams    = genparams.copy()
+        genparams = genparams.copy()
 
         # replace "last" with the last available version
         if version == "last":
             version = _LAST_VERSION
-
-        print()
-        print("##>> LAST_VERSION:", _LAST_VERSION)
-        print()
 
         # load the pre-defined styles in `genparams` using the keys "styles.<style_name>"
         predefined_styles = _PREDEFINED_STYLES_BY_VERSION[version]
@@ -77,10 +74,8 @@ class SelectStyle:
         if custom_styles:
             genparams.update( custom_styles.to_genparams(prefix_to_add="styles") )
 
-        # copy parameters from "styles.<style_name>.*" -> "denoising.*"
-        count = genparams.copy_parameters( target="denoising", source=f"styles.{style_name}", valid_subkeys=["base", "refiner", "upscaler"])
-        if count > 0:
-            genparams.set_str("user.style", style_name)
+        # apply the style (overwritting all denoising values)
+        apply_style( genparams, style_name )
 
         return (genparams,)
 
