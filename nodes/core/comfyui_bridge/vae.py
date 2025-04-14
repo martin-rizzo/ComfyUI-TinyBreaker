@@ -17,12 +17,13 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import torch
 import comfy.sd
-from comfy                              import model_management
-from ..safetensors                      import normalize_prefix
-from ..system                           import logger
-from ..models.autoencoder_model_ex      import AutoencoderModelEx
-from ..models.tiny_autoencoder_model_ex import TinyAutoencoderModelEx
-from .helpers.ops                       import comfy_ops_disable_weight_init
+from comfy                               import model_management
+from ..safetensors                       import normalize_prefix
+from ..system                            import logger
+from ..models.autoencoder_model_ex       import AutoencoderModelEx
+from ..models.tiny_autoencoder_model_ex  import TinyAutoencoderModelEx
+from ..models.combined_autoencoder_model import CombinedAutoencoderModel
+from .helpers.ops                        import comfy_ops_disable_weight_init
 
 
 
@@ -64,38 +65,67 @@ def _create_custom_vae_model(state_dict : dict,
         vae_wrapper.upscale_index_formula   = None
         return
 
-    # detect the classic AutoencoderKL model used by Stable Diffusion
-    if AutoencoderModelEx.detect_prefix(state_dict, prefix) is not None:
+    # vae type auto-detection
+    standard_vae_detected = AutoencoderModelEx.detect_prefix(state_dict, prefix)     is not None
+    tiny_vae_detected     = TinyAutoencoderModelEx.detect_prefix(state_dict, prefix) is not None
 
-        logger.info(f"Loading AutoencoderModelEx from '{filename}'")
+
+    # Combined Autoencoder Model
+    # - This is an experimental hybrid model that combines both Standard and Tiny Autoencoder models.
+    # - Example: the encoder can be `Tiny` and the decoder can be `Standard`, or vice versa.
+    if standard_vae_detected and tiny_vae_detected:
+        logger.info(f"Loading a Combined Autoencoder Model from '{filename}'")
+
+        standard_model, config, standard_missing_keys, _ = \
+            AutoencoderModelEx.from_state_dict(state_dict, prefix,
+                                               nn = comfy_ops_disable_weight_init) # <- replaces `torch.nn` with ComfyUI's version
+        tiny_model, config, tiny_missing_keys, _ = \
+            TinyAutoencoderModelEx.from_state_dict(state_dict, prefix,
+                                                   filename = filename,
+                                                   nn = comfy_ops_disable_weight_init) # <- replaces `torch.nn` with ComfyUI's version
+        vae_wrapper.latent_channels = config["latent_channels"] # <- overrides latent channels
+        tiny_model.emulate_std_autoencoder = True               # <- force tiny model to behave like a standard autoencoder
+        vae_model = CombinedAutoencoderModel(standard_model, tiny_model)
+        vae_model.freeze()
+        return vae_model, [*standard_missing_keys, *tiny_missing_keys]
+
+
+    # Standard Autoencoder Model
+    # - This is the standard Variational Autoencoder (VAE)
+    #   commonly utilized in Stable Diffusion (SD) models.
+    if standard_vae_detected:
+        logger.info(f"Loading a Standard Autoencoder Model from '{filename}'")
+
         vae_model, config, missing_keys, _ = \
-            AutoencoderModelEx.from_state_dict(state_dict,
-                                               prefix,
-                                               nn = comfy_ops_disable_weight_init # <- this replace `torch.nn` with ComfyUI's version of `nn`
-                                               )
-
+            AutoencoderModelEx.from_state_dict(state_dict, prefix,
+                                               nn = comfy_ops_disable_weight_init) # <- replaces `torch.nn` with ComfyUI's version
         vae_wrapper.latent_channels = config["latent_channels"] # <- overrides latent channels
         vae_model.freeze()
         return vae_model, missing_keys
 
-    # detect the Tiny Autoencoder model by @madebyollin (https://github.com/madebyollin/taesd)
-    elif TinyAutoencoderModelEx.detect_prefix(state_dict, prefix) is not None:
 
-        logger.info(f"Loading TinyAutoencoderModelEx from '{filename}'")
+    # Tiny Autoencoder Model
+    # - This is a distilled model using a specialized architecture developed by @madebyollin.
+    # - It's designed for exceptionally fast encoding and decoding operations,
+    #   while also maintaining a significantly reduced model size.
+    # - Refer to the original repository for more details: https://github.com/madebyollin/taesd
+    if tiny_vae_detected:
+        logger.info(f"Loading Tiny Autoencoder Model from '{filename}'")
+
         vae_model, config, missing_keys, _ = \
-            TinyAutoencoderModelEx.from_state_dict(state_dict,
-                                                   prefix,
+            TinyAutoencoderModelEx.from_state_dict(state_dict, prefix,
                                                    filename = filename,
-                                                   nn = comfy_ops_disable_weight_init # <- this replace `torch.nn` with ComfyUI's version of `nn`
-                                                   )
-
-        vae_model.emulate_std_autoencoder = True
+                                                   nn = comfy_ops_disable_weight_init) # <- replaces `torch.nn` with ComfyUI's version
         vae_wrapper.latent_channels = config["latent_channels"] # <- overrides latent channels
         vae_wrapper.disable_offload = True                      # <- try to keep the model in GPU memory
+        vae_model.emulate_std_autoencoder = True                # <- force tiny model to behave like a standard autoencoder
         vae_model.freeze()
         return vae_model, missing_keys
 
+    # Unknown model
+    # return `None` to force ComfyUI to load the model using its default mechanism
     return None, []
+
 
 
 def _should_use_custom_code(state_dict, config):
@@ -184,7 +214,7 @@ class VAE(comfy.sd.VAE):
 
             self.first_stage_model = model
             if missing_keys:
-                logger.warning(f"Missing TRANSCODER keys: {missing_keys}")
+                logger.warning(f"Missing VAE keys: {missing_keys}")
 
             if device is None:
                 device = model_management.vae_device()

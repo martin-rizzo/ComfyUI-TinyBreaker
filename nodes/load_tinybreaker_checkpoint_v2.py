@@ -17,6 +17,8 @@ from .core.comfyui_bridge.vae         import VAE
 from .core.comfyui_bridge.clip        import CLIP
 from .core.comfyui_bridge.transcoder  import Transcoder
 from .core.directories import TINYBREAKER_CHECKPOINTS_DIR
+from .core.safetensors import filter_state_dict, update_state_dict, prune_state_dict
+from .core.system      import logger
 
 _AUTOMATIC        = "auto"
 _VAE_TYPE_FAST    = "fast"
@@ -59,41 +61,55 @@ class LoadTinyBreakerCheckpointV2:
                        )
 
     def load_checkpoint(self, ckpt_name, vae_type, upscaler_vae_type):
-
         # resolve the automatic settings
         if  vae_type == _AUTOMATIC:
             vae_type =  _VAE_TYPE_FAST
 
-        # determine the VAE model prefix (used in the safetensors file)
-        if   vae_type  == _VAE_TYPE_FAST:
-             vae_prefix = "first_stage_model"
-        elif vae_type  == _VAE_TYPE_QUALITY:
-             vae_prefix = "first_stage_hqmodel"
-        else:
-            raise ValueError(f"Invalid VAE type: {vae_type}")
-
         ckpt_full_path = TINYBREAKER_CHECKPOINTS_DIR.get_full_path_or_raise(ckpt_name)
         state_dict     = TINYBREAKER_CHECKPOINTS_DIR.load_state_dict_or_raise(ckpt_name)
+        metadata       = GenParams.from_safetensors_metadata(ckpt_full_path)
         model_type     = self.get_model_type(state_dict)
+        logger.info(f"Loading '{ckpt_name}' ('{model_type}' checkpoint type).")
+        logger.info(f"Configured VAE type: '{vae_type}'.")
+        logger.info(f"Configured upscaler VAE type: '{upscaler_vae_type}'.")
 
         if model_type == "prototype0":
-            metadata       =  GenParams.from_safetensors_metadata(ckpt_full_path)
+
+            # a small hack to be able to configure the quality of the VAE decoder
+            hq_vae_state_dict = filter_state_dict( state_dict, "first_stage_hqmodel" )
+            if vae_type == _VAE_TYPE_QUALITY:
+                prune_state_dict ( state_dict, "first_stage_model", ("decoder", "post_quant_conv") )
+                update_state_dict( state_dict, "first_stage_model", hq_vae_state_dict)
+
             model          =      Model.from_state_dict( state_dict, prefix="base.diffusion_model"   , resolution=1024   )
             transcoder     = Transcoder.from_state_dict( state_dict, prefix="transcoder"             , filename=ckpt_name)
             refiner_model  =      Model.from_state_dict( state_dict, prefix="refiner.diffusion_model")
             refiner_clip   =       CLIP.from_state_dict( state_dict, prefix="refiner.conditioner"    , clip_type="stable_diffusion")
-            vae            =        VAE.from_state_dict( state_dict, prefix=vae_prefix               , filename=ckpt_name)
+            vae            =        VAE.from_state_dict( state_dict, prefix="first_stage_model"      , filename=ckpt_name)
+            upscaler_vae   =       None
             return (model, None, vae, transcoder, refiner_model, refiner_clip, None, metadata)
 
         if model_type == "prototype1":
-            metadata      =  GenParams.from_safetensors_metadata(ckpt_full_path)
-            vae            =        VAE.from_state_dict( state_dict, prefix="first_stage_model"        , filename=ckpt_name)
+
+            # a small hack to be able to configure the quality of the VAE decoders,
+            # assuming that `first_stage_model` is the high-quality VAE while `refiner.first_stage_model` is the fast VAE
+            # (prototype1 should always be created in this way)
+            hq_vae_state_dict   = filter_state_dict( state_dict, "first_stage_model"        , ("decoder", "post_quant_conv") )
+            fast_vae_state_dict = filter_state_dict( state_dict, "refiner.first_stage_model", ("decoder", "post_quant_conv") )
+            if vae_type == _VAE_TYPE_FAST:
+                prune_state_dict ( state_dict, "first_stage_model", ("decoder", "post_quant_conv") )
+                update_state_dict( state_dict, "first_stage_model", fast_vae_state_dict)
+            if upscaler_vae_type == _VAE_TYPE_QUALITY:
+                prune_state_dict ( state_dict, "refiner.first_stage_model", ("decoder", "post_quant_conv") )
+                update_state_dict( state_dict, "refiner.first_stage_model", hq_vae_state_dict)
+
             model          =      Model.from_state_dict( state_dict, prefix="base.diffusion_model"     , resolution=1024   )
             transcoder     = Transcoder.from_state_dict( state_dict, prefix="transcoder"               , filename=ckpt_name)
-            refiner_vae    =        VAE.from_state_dict( state_dict, prefix="refiner.first_stage_model", filename=ckpt_name)
-            refiner_clip   =       CLIP.from_state_dict( state_dict, prefix="refiner.conditioner"      , clip_type="stable_diffusion")
             refiner_model  =      Model.from_state_dict( state_dict, prefix="refiner.diffusion_model")
-            return (model, None, vae, transcoder, refiner_model, refiner_clip, refiner_vae, metadata)
+            refiner_clip   =       CLIP.from_state_dict( state_dict, prefix="refiner.conditioner"      , clip_type="stable_diffusion")
+            vae            =        VAE.from_state_dict( state_dict, prefix="first_stage_model"        , filename=ckpt_name)
+            upscaler_vae   =        VAE.from_state_dict( state_dict, prefix="refiner.first_stage_model", filename=ckpt_name)
+            return (model, None, vae, transcoder, refiner_model, refiner_clip, upscaler_vae, metadata)
 
 
     #__ internal functions ________________________________
