@@ -12,6 +12,7 @@ License : MIT
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import torch
+from .comfyui_bridge.progress_bar import ProgressBar
 
 
 def get_tile(tensor: torch.Tensor,
@@ -266,7 +267,7 @@ def apply_tiles_tlbr(canvas: torch.Tensor,
                      tile_size       : int,
                      overlap         : int = None,
                      discard         : int = None,
-                     progress_bar: tuple = None,
+                     progress_bar    : ProgressBar = None,
                      ) -> None:
     """Applies tiles to a canvas in Top-Left to Bottom-Right order.
 
@@ -299,8 +300,7 @@ def apply_tiles_tlbr(canvas: torch.Tensor,
         y              = min(y, max_valid_y)
         discard_bottom = min(discard, max_valid_y - y)
         if progress_bar:
-            _pbar = progress_bar[0]
-            _pbar.update_absolute( progress_bar[1] + int(progress_bar[2] * y / canvas_height) )
+            progress_bar.update_absolute(y / canvas_height * progress_bar.total)
 
         last_column_right = 0
         for x in range(0, max_valid_x+tile_step, tile_step):
@@ -334,9 +334,9 @@ def apply_tiles_brtl(canvas: torch.Tensor,
                      /,*,
                      create_tile_func: callable,
                      tile_size       : int,
-                     overlap         : int = None,
-                     discard         : int = None,
-                     progress_bar : tuple = None,
+                     overlap         : int         = None,
+                     discard         : int         = None,
+                     progress_bar    : ProgressBar = None,
                      ) -> None:
     """Applies tiles to a canvas in Bottom-Right to Top-Left order.
 
@@ -369,8 +369,7 @@ def apply_tiles_brtl(canvas: torch.Tensor,
         y           = max(0, y)
         discard_top = min(discard, y)
         if progress_bar:
-            _pbar = progress_bar[0]
-            _pbar.update_absolute( progress_bar[1] + int(progress_bar[2] * (canvas_height-y) / canvas_height) )
+            progress_bar.update_absolute((canvas_height-y) / canvas_height * progress_bar.total)
 
         last_column_left = canvas_width
         for x in range(max_valid_x, -tile_step, -tile_step):

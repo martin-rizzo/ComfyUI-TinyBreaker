@@ -15,8 +15,8 @@ import torch
 import comfy.utils
 import comfy.sample
 import comfy.samplers
-import latent_preview
-from .core.denoising_params import DenoisingParams
+from .core.denoising_params            import DenoisingParams
+from .core.comfyui_bridge.progress_bar import ProgressPreview
 
 
 class DoubleStageSampler:
@@ -51,14 +51,16 @@ class DoubleStageSampler:
         denoising = DenoisingParams.from_genparams(genparams, "denoising.base", model_to_sample = model)
         encoded_positive, encoded_negative = self._encode(clip, denoising.positive, denoising.negative)
         latents = self._sample(model,
-                               positive   = encoded_positive,
-                               negative   = encoded_negative,
-                               sampler    = denoising.sampler_object,
-                               sigmas     = denoising.sigmas,
-                               cfg        = denoising.cfg,
-                               noise_seed = denoising.noise_seed,
-                               latent     = latent_input,
-                               add_noise  = True)
+                               positive       = encoded_positive,
+                               negative       = encoded_negative,
+                               sampler        = denoising.sampler_object,
+                               sigmas         = denoising.sigmas,
+                               cfg            = denoising.cfg,
+                               noise_seed     = denoising.noise_seed,
+                               latent         = latent_input,
+                               add_noise      = True,
+                               progress_range = (0, 50),
+                               )
 
         # intermediate step: transcoder
         if transcoder is not None:
@@ -73,15 +75,16 @@ class DoubleStageSampler:
         denoising = DenoisingParams.from_genparams(genparams, "denoising.refiner", model_to_sample = refiner_model)
         encoded_positive, encoded_negative = self._encode(refiner_clip, denoising.positive, denoising.negative)
         latents = self._sample(refiner_model,
-                               positive   = encoded_positive,
-                               negative   = encoded_negative,
-                               sampler    = denoising.sampler_object,
-                               sigmas     = denoising.sigmas,
-                               cfg        = denoising.cfg,
-                               noise_seed = denoising.noise_seed,
-                               latent     = latents,
-                               add_noise  = True)
-
+                               positive       = encoded_positive,
+                               negative       = encoded_negative,
+                               sampler        = denoising.sampler_object,
+                               sigmas         = denoising.sigmas,
+                               cfg            = denoising.cfg,
+                               noise_seed     = denoising.noise_seed,
+                               latent         = latents,
+                               add_noise      = True,
+                               progress_range = (50, 100),
+                               )
         return (latents, )
 
 
@@ -100,14 +103,15 @@ class DoubleStageSampler:
 
     @staticmethod
     def _sample(model,
-                positive  : torch.Tensor,
-                negative  : torch.Tensor,
-                sampler   : comfy.samplers.KSAMPLER,
-                sigmas    : torch.Tensor,
-                cfg       : float,
-                noise_seed: int,
-                latent    : torch.Tensor,
-                add_noise : bool
+                positive        : torch.Tensor,
+                negative        : torch.Tensor,
+                sampler         : comfy.samplers.KSAMPLER,
+                sigmas          : torch.Tensor,
+                cfg             : float,
+                noise_seed      : int,
+                latent          : torch.Tensor,
+                add_noise       : bool,
+                progress_range  : tuple[int, int],
                 ) -> tuple[torch.Tensor, torch.Tensor]:
         """
         A custom version of the `sample` function from the node `SamplerCustom` from ComfyUI.
@@ -128,26 +132,29 @@ class DoubleStageSampler:
         noise_mask   = latent.get("noise_mask")
         latent_image = comfy.sample.fix_empty_latent_channels(model, latent["samples"])
 
+        prog_min = progress_range[0]
+        prog_max = progress_range[1]
+
         if add_noise:
             noise = comfy.sample.prepare_noise(latent_image, noise_seed, batch_inds)
         else:
             noise = torch.zeros(latent_image.shape, dtype=latent_image.dtype, layout=latent_image.layout, device="cpu")
 
-        x0_output = {}
-        callback  = latent_preview.prepare_callback(model, sigmas.shape[-1] - 1, x0_output)
-        samples   = comfy.sample.sample_custom(model,
-                                               noise,
-                                               cfg,
-                                               sampler,
-                                               sigmas,
-                                               positive,
-                                               negative,
-                                               latent_image,
-                                               noise_mask   = noise_mask,
-                                               callback     = callback,
-                                               disable_pbar = not comfy.utils.PROGRESS_BAR_ENABLED,
-                                               seed         = noise_seed)
-
+        #x0_output = {}
+        total_steps      = sigmas.shape[-1] - 1
+        progress_preview = ProgressPreview.from_comfyui(model, 100)
+        samples = comfy.sample.sample_custom(model,
+                                             noise,
+                                             cfg,
+                                             sampler,
+                                             sigmas,
+                                             positive,
+                                             negative,
+                                             latent_image,
+                                             noise_mask   = noise_mask,
+                                             callback     = ProgressPreview(total_steps, parent=(progress_preview,prog_min,prog_max)),
+                                             disable_pbar = not comfy.utils.PROGRESS_BAR_ENABLED,
+                                             seed         = noise_seed)
         latent = latent.copy()
         latent["samples"] = samples
         return latent

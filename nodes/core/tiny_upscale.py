@@ -19,6 +19,7 @@ from .comfyui_bridge.model          import Model
 from .comfyui_bridge.vae            import VAE
 from .comfyui_bridge.helpers.sigmas import calculate_sigmas
 from .comfyui_bridge.helpers.images import normalize_images, refine_latent_image
+from .comfyui_bridge.progress_bar   import ProgressBar
 
 
 import comfy.samplers
@@ -41,6 +42,7 @@ def tiny_upscale(image             : torch.Tensor,
                  interpolation_mode: str  = "bilinear", # "nearest"
                  keep_original_size: bool = False,
                  discard_last_sigma: bool = True,
+                 progress_bar      : ProgressBar = None,
                  ):
     vae_tile_size       = 256
     vae_overlap_percent = 100
@@ -71,11 +73,12 @@ def tiny_upscale(image             : torch.Tensor,
 
 
     number_of_steps = len(sigmas)-1
-    pbar, pstep     = comfy.utils.ProgressBar(1000), int(1000 / number_of_steps)
+    progress_step   = progress_bar.total / number_of_steps
     for step in range(number_of_steps):
-        progress_bar = (pbar,step*pstep,pstep)
+        progress_range_min = step * progress_step
+        progress_range_max = progress_range_min + progress_step
 
-        # a lambda function that creates a refined tile from the latent image
+        # lambda function that creates a refined tile from the latent image
         #     latent       : the latent image where the tile will be extracted from
         #     x, y         : the coordinates of the tile
         #     width, height: the size of the tile
@@ -98,12 +101,15 @@ def tiny_upscale(image             : torch.Tensor,
             apply_tiles_tlbr(upscaled_latent,
                              create_tile_func = create_refined_tile,
                              tile_size        = int(tile_size//8),
-                             progress_bar     = progress_bar)
+                             progress_bar     = ProgressBar( 100, parent=(progress_bar,progress_range_min,progress_range_max) )
+                             )
         else:
             apply_tiles_brtl(upscaled_latent,
                              create_tile_func = create_refined_tile,
                              tile_size        = int(tile_size//8),
-                             progress_bar     = progress_bar)
+                             progress_bar     = ProgressBar( 100, parent=(progress_bar,progress_range_min,progress_range_max) )
+                             )
+
 
     upscaled_image = tiny_decode(upscaled_latent,
                                  vae          = vae,
