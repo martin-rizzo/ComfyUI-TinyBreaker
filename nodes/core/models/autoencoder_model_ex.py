@@ -276,6 +276,9 @@ class AutoencoderModelEx(AutoencoderModel):
         Returns:
            A dictionary containing the model's configuration.
         """
+        SIGNATURE_ENCODER_TENSORS = _NativeFormat.SIGNATURE_ENCODER_TENSORS
+        SIGNATURE_DECODER_TENSORS = _NativeFormat.SIGNATURE_DECODER_TENSORS
+
         # currently, only models with double encoder channels are supported.
         # automatically detecting the correct relationship between encoder and decoder latent channel
         # counts can be difficult, as some of them (the encoder or decoder) may not be present.
@@ -292,8 +295,8 @@ class AutoencoderModelEx(AutoencoderModel):
         decoder_res_blocks_per_layer = 0
 
         # count the number of keys in each module to detect which one is present
-        encoder_keys_count = sum(1 for name in state_dict.keys() if name.startswith("encoder."))
-        decoder_keys_count = sum(1 for name in state_dict.keys() if name.startswith("decoder."))
+        encoder_keys_count = sum(1 for name in SIGNATURE_ENCODER_TENSORS if name in state_dict)
+        decoder_keys_count = sum(1 for name in SIGNATURE_DECODER_TENSORS if name in state_dict)
 
         # encoder auto-detection
         if encoder_keys_count > 0:
@@ -313,16 +316,6 @@ class AutoencoderModelEx(AutoencoderModel):
             decoder_channel_multipliers  = [1, 2, 4, 4]
             decoder_res_blocks_per_layer = _get_max_tensor_number(state_dict, "decoder.up.0.block.", default=2)
 
-        # print()
-        # print("##>> encoder_keys_count:"          , encoder_keys_count)
-        # print("##>> decoder_keys_count:"          , decoder_keys_count)
-        # print("##>> encoder_hidden_channels:"     , encoder_hidden_channels)
-        # print("##>> encoder_channel_multipliers:" , encoder_channel_multipliers)
-        # print("##>> encoder_res_blocks_per_layer:", encoder_res_blocks_per_layer)
-        # print("##>> decoder_hidden_channels:"     , decoder_hidden_channels)
-        # print("##>> decoder_channel_multipliers:" , decoder_channel_multipliers)
-        # print("##>> decoder_res_blocks_per_layer:", decoder_res_blocks_per_layer)
-        # print()
 
         config = {
             "image_channels"              :   image_channels,

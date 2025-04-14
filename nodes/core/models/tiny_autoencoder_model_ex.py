@@ -372,16 +372,24 @@ class TinyAutoencoderModelEx(TinyAutoencoderModel):
         Returns:
            A dictionary containing the model's configuration.
         """
+        encoder_hidden_channels = 0
+        decoder_hidden_channels = 0
+
+        if "encoder.0.bias" in state_dict:
+            encoder_hidden_channels = state_dict["encoder.0.bias"].shape[0]
+        if "decoder.1.bias" in state_dict:
+            decoder_hidden_channels = state_dict["decoder.1.bias"].shape[0]
+
         config = {
-            "image_channels"               :     3    ,
-            "latent_channels"              :     4    ,
-            "encoder_hidden_channels"      :    64    ,
-            "encoder_convolutional_layers" :     3    ,
-            "encoder_res_blocks_per_layer" :     3    ,
-            "decoder_hidden_channels"      :    64    ,
-            "decoder_convolutional_layers" :     3    ,
-            "decoder_res_blocks_per_layer" :     3    ,
-            "encoder_latent_format"        : "unknown",
-            "decoder_latent_format"        : "unknown",
+            "image_channels"               :            3            ,
+            "latent_channels"              :            4            ,
+            "encoder_hidden_channels"      : encoder_hidden_channels ,
+            "encoder_convolutional_layers" :            3            ,
+            "encoder_res_blocks_per_layer" :            3            ,
+            "decoder_hidden_channels"      : decoder_hidden_channels ,
+            "decoder_convolutional_layers" :            3            ,
+            "decoder_res_blocks_per_layer" :            3            ,
+            "encoder_latent_format"        :        "unknown"        ,
+            "decoder_latent_format"        :        "unknown"        ,
         }
         return config
