@@ -1,67 +1,9 @@
 {
   "id": "619aa26b-b241-47e6-bb95-1656ea9d8d36",
   "revision": 0,
-  "last_node_id": 47,
+  "last_node_id": 48,
   "last_link_id": 91,
   "nodes": [
-    {
-      "id": 36,
-      "type": "PreviewImage",
-      "pos": [
-        1010,
-        110
-      ],
-      "size": [
-        430,
-        590
-      ],
-      "flags": {},
-      "order": 16,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "images",
-          "type": "IMAGE",
-          "link": 67
-        }
-      ],
-      "outputs": [],
-      "properties": {
-        "Node name for S&R": "PreviewImage"
-      },
-      "widgets_values": [
-        ""
-      ]
-    },
-    {
-      "id": 39,
-      "type": "PreviewImage",
-      "pos": [
-        1000,
-        770
-      ],
-      "size": [
-        430,
-        590
-      ],
-      "flags": {},
-      "order": 15,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "images",
-          "type": "IMAGE",
-          "link": 85
-        }
-      ],
-      "outputs": [],
-      "properties": {
-        "Node name for S&R": "PreviewImage"
-      },
-      "widgets_values": [
-        ""
-      ]
-    },
     {
       "id": 37,
       "type": "VAEEncode",
@@ -74,7 +16,7 @@
         60
       ],
       "flags": {},
-      "order": 6,
+      "order": 7,
       "mode": 0,
       "inputs": [
         {
@@ -99,7 +41,8 @@
       ],
       "properties": {
         "Node name for S&R": "VAEEncode"
-      }
+      },
+      "widgets_values": []
     },
     {
       "id": 38,
@@ -113,7 +56,7 @@
         60
       ],
       "flags": {},
-      "order": 11,
+      "order": 12,
       "mode": 0,
       "inputs": [
         {
@@ -139,7 +82,8 @@
       ],
       "properties": {
         "Node name for S&R": "TranscodeLatent //TinyBreaker"
-      }
+      },
+      "widgets_values": []
     },
     {
       "id": 3,
@@ -153,7 +97,7 @@
         50
       ],
       "flags": {},
-      "order": 14,
+      "order": 15,
       "mode": 0,
       "inputs": [
         {
@@ -181,46 +125,6 @@
         "Node name for S&R": "VAEDecode"
       },
       "widgets_values": []
-    },
-    {
-      "id": 1,
-      "type": "LoadImage",
-      "pos": [
-        -240,
-        100
-      ],
-      "size": [
-        310,
-        500
-      ],
-      "flags": {},
-      "order": 0,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "IMAGE",
-          "type": "IMAGE",
-          "slot_index": 0,
-          "links": [
-            52,
-            71
-          ]
-        },
-        {
-          "name": "MASK",
-          "type": "MASK",
-          "links": null
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "LoadImage"
-      },
-      "widgets_values": [
-        "TB_0013_.png",
-        "image",
-        ""
-      ]
     },
     {
       "id": 45,
@@ -270,7 +174,7 @@
         26
       ],
       "flags": {},
-      "order": 7,
+      "order": 8,
       "mode": 0,
       "inputs": [
         {
@@ -329,18 +233,287 @@
       }
     },
     {
+      "id": 40,
+      "type": "VAEDecode",
+      "pos": [
+        700,
+        770
+      ],
+      "size": [
+        210,
+        46
+      ],
+      "flags": {},
+      "order": 13,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 75
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 77
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            85
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 41,
+      "type": "Reroute",
+      "pos": [
+        360,
+        860
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 79
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "VAE",
+          "links": [
+            76,
+            78,
+            82
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 31,
+      "type": "Reroute",
+      "pos": [
+        320,
+        770
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 52
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "IMAGE",
+          "slot_index": 0,
+          "links": [
+            60,
+            80
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 43,
+      "type": "TinyEncode //TinyBreaker",
+      "pos": [
+        490,
+        660
+      ],
+      "size": [
+        180,
+        50
+      ],
+      "flags": {},
+      "order": 11,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 80
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 82
+        }
+      ],
+      "outputs": [
+        {
+          "name": "latent",
+          "type": "LATENT",
+          "links": [
+            81
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "TinyEncode //TinyBreaker"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 42,
+      "type": "Reroute",
+      "pos": [
+        570,
+        860
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 78
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "VAE",
+          "links": [
+            77,
+            83
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 28,
+      "type": "VAEEncode",
+      "pos": [
+        490,
+        770
+      ],
+      "size": [
+        180,
+        50
+      ],
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "pixels",
+          "type": "IMAGE",
+          "link": 60
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 76
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "slot_index": 0,
+          "links": [
+            75
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEEncode"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 44,
+      "type": "TinyDecode //TinyBreaker",
+      "pos": [
+        710,
+        660
+      ],
+      "size": [
+        200,
+        50
+      ],
+      "flags": {},
+      "order": 14,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "latent",
+          "type": "LATENT",
+          "link": 81
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 83
+        }
+      ],
+      "outputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "links": []
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "TinyDecode //TinyBreaker"
+      },
+      "widgets_values": []
+    },
+    {
       "id": 35,
       "type": "LoadTinyBreakerCheckpointV2 //TinyBreaker",
       "pos": [
-        -310,
-        670
+        -300,
+        650
       ],
       "size": [
-        428.4000244140625,
-        246
+        430,
+        250
       ],
       "flags": {},
-      "order": 1,
+      "order": 0,
       "mode": 0,
       "inputs": [],
       "outputs": [
@@ -396,275 +569,126 @@
       },
       "widgets_values": [
         "tinybreaker_prototype1.safetensors",
-        "fast",
-        "fast"
+        "high_quality",
+        "high_quality"
       ]
     },
     {
-      "id": 40,
-      "type": "VAEDecode",
+      "id": 1,
+      "type": "LoadImage",
       "pos": [
-        700,
-        770
+        -180,
+        100
       ],
       "size": [
-        210,
-        46
+        310,
+        500
       ],
       "flags": {},
-      "order": 12,
+      "order": 1,
       "mode": 0,
-      "inputs": [
-        {
-          "name": "samples",
-          "type": "LATENT",
-          "link": 75
-        },
-        {
-          "name": "vae",
-          "type": "VAE",
-          "link": 77
-        }
-      ],
+      "inputs": [],
       "outputs": [
         {
           "name": "IMAGE",
           "type": "IMAGE",
-          "links": [
-            85
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "VAEDecode"
-      }
-    },
-    {
-      "id": 41,
-      "type": "Reroute",
-      "pos": [
-        360,
-        860
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {},
-      "order": 5,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 79
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "VAE",
-          "links": [
-            76,
-            78,
-            82
-          ]
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
-    },
-    {
-      "id": 31,
-      "type": "Reroute",
-      "pos": [
-        320,
-        770
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {},
-      "order": 2,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 52
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "IMAGE",
           "slot_index": 0,
           "links": [
-            60,
-            80
+            52,
+            71
           ]
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
-    },
-    {
-      "id": 43,
-      "type": "TinyEncode //TinyBreaker",
-      "pos": [
-        490,
-        660
-      ],
-      "size": [
-        180,
-        50
-      ],
-      "flags": {},
-      "order": 10,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "image",
-          "type": "IMAGE",
-          "link": 80
         },
         {
-          "name": "vae",
-          "type": "VAE",
-          "link": 82
-        }
-      ],
-      "outputs": [
-        {
-          "name": "latent",
-          "type": "LATENT",
-          "links": [
-            81
-          ]
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
         }
       ],
       "properties": {
-        "Node name for S&R": "TinyEncode //TinyBreaker"
-      }
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": [
+        "TB_0013_.png",
+        "image",
+        ""
+      ]
     },
     {
-      "id": 42,
-      "type": "Reroute",
+      "id": 36,
+      "type": "PreviewImage",
       "pos": [
-        570,
-        860
+        1000,
+        100
       ],
       "size": [
-        75,
-        26
+        430,
+        590
       ],
       "flags": {},
-      "order": 9,
+      "order": 17,
       "mode": 0,
       "inputs": [
         {
-          "name": "",
-          "type": "*",
-          "link": 78
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "VAE",
-          "links": [
-            77,
-            83
-          ]
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
-    },
-    {
-      "id": 28,
-      "type": "VAEEncode",
-      "pos": [
-        490,
-        770
-      ],
-      "size": [
-        180,
-        50
-      ],
-      "flags": {},
-      "order": 8,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "pixels",
+          "name": "images",
           "type": "IMAGE",
-          "link": 60
-        },
-        {
-          "name": "vae",
-          "type": "VAE",
-          "link": 76
+          "link": 67
         }
       ],
-      "outputs": [
-        {
-          "name": "LATENT",
-          "type": "LATENT",
-          "slot_index": 0,
-          "links": [
-            75
-          ]
-        }
-      ],
+      "outputs": [],
       "properties": {
-        "Node name for S&R": "VAEEncode"
+        "Node name for S&R": "PreviewImage"
       },
       "widgets_values": []
     },
     {
-      "id": 44,
-      "type": "TinyDecode //TinyBreaker",
+      "id": 39,
+      "type": "PreviewImage",
       "pos": [
-        710,
-        660
+        1000,
+        770
       ],
       "size": [
-        200,
-        50
+        430,
+        590
       ],
       "flags": {},
-      "order": 13,
+      "order": 16,
       "mode": 0,
       "inputs": [
         {
-          "name": "latent",
-          "type": "LATENT",
-          "link": 81
-        },
-        {
-          "name": "vae",
-          "type": "VAE",
-          "link": 83
-        }
-      ],
-      "outputs": [
-        {
-          "name": "image",
+          "name": "images",
           "type": "IMAGE",
-          "links": []
+          "link": 85
         }
       ],
+      "outputs": [],
       "properties": {
-        "Node name for S&R": "TinyDecode //TinyBreaker"
-      }
+        "Node name for S&R": "PreviewImage"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 48,
+      "type": "MarkdownNote",
+      "pos": [
+        -690,
+        110
+      ],
+      "size": [
+        490,
+        490
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {},
+      "widgets_values": [
+        "# TinyBreaker Component Testing Workflow\n\n## General Description\n\nThis workflow has been designed to verify the proper functionality of the internal elements of the TinyBreaker image generative model. It specifically focuses on validating the VAEs and Transcoder components of the model.\n\n## Purpose of the Test\n\nThe primary objective of this workflow is to confirm that image encoding and decoding using the VAEs and the Transcoder are performed accurately. By passing an input image through the encoding (encoder) and then decoding (decoder) process, the expectation is to obtain an output image that is visually indistinguishable or very similar to the original image. Any significant deviation may indicate an issue with the code or with the packaging of these components within the safetensors files.\n\n## Additional Notes\n\nThis workflow is a diagnostic tool and is not designed for image generation. Its purpose is to validate the integrity of the internal components of the TinyBreaker model.\n\n---\n\nhttps://civitai.com/models/1213728/tinybreaker\n\nhttps://github.com/martin-rizzo/ComfyUI-TinyBreaker\n"
+      ],
+      "color": "#222",
+      "bgcolor": "#000"
     }
   ],
   "links": [
@@ -849,10 +873,10 @@
   "config": {},
   "extra": {
     "ds": {
-      "scale": 0.6934334949441634,
+      "scale": 0.6934334949441638,
       "offset": [
-        545.931614748106,
-        -50.94602741117554
+        746.3943388600275,
+        -17.813398616757
       ]
     }
   },
