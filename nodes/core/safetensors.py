@@ -41,26 +41,116 @@ def normalize_prefix(prefix: str) -> str:
     return prefix
 
 
-def filter_state_dict(state_dict: dict, prefix: str) -> dict:
+
+def filter_state_dict(state_dict: dict, prefix: str, subprefixes: list[str] = None) -> dict:
     """
-    Extracts a specific section from a state dictionary based on a given prefix.
+    Filters a state dictionary to include only tensors whose keys match a given prefix.
+
     Args:
-        state_dict (dict): A dictionary containing tensors representing the model's state.
-        prefix      (str): The prefix string used to identify the desired section within the state dictionary.
-    Returns:
-        A new dictionary containing only the tensors with names starting with the specified prefix.
-        The keys in the returned dictionary are the original keys with the prefix removed.
+        state_dict       (dict): The state dictionary to filter.
+        prefix            (str): The prefix that keys must start with to be included.
+        subprefixes (list[str]): An optional list of subprefixes.
+                                 If provided, keys must start with the main prefix followed by
+                                 one of these subprefixes. Defaults to None.
+   Returns:
+        A new state dictionary containing only the filtered tensors.
+        The `prefix` is removed from the keys in the returned dictionary,
+        but `subprefixes` are *not*.
+
+    Example:
+        If state_dict is `{'layer1.weight': tensor1, 'layer1.bias': tensor2, 'layer2.weight': tensor3}`
+        and `prefix` is 'layer1', the returned dictionary will be
+            `{'weight': tensor1, 'bias': tensor2}`.
+
+        If `prefix` is 'layer1' and `subprefixes` is ['.bias'], the returned dictionary will be
+            `{'bias': tensor2}`.
+
+    Example:
+        >>> state_dict = {'layer1.weight': tensor1, 'layer1.bias': tensor2, 'layer2.weight': tensor3}
+        >>> filter_state_dict(state_dict, 'layer1')
+        {'weight': tensor1, 'bias': tensor2}
+
+        >>> state_dict = {'layer1.weight': tensor1, 'layer1.bias': tensor2, 'layer2.weight': tensor3}
+        >>> filter_state_dict(state_dict, 'layer1', ['.bias'])
+        {'bias': tensor2}
     """
     prefix = normalize_prefix(prefix)
-    return { name.removeprefix(prefix): tensor for name, tensor in state_dict.items() if name.startswith(prefix) }
+    if subprefixes:
+        prefixes = [prefix + normalize_prefix(subprefix) for subprefix in subprefixes]
+        is_matching_prefix = lambda name: any(name.startswith(prefix) for prefix in prefixes)
+    else:
+        is_matching_prefix = lambda name: name.startswith(prefix)
+
+    return {name.removeprefix(prefix): tensor for name, tensor in state_dict.items() if is_matching_prefix(name)}
+
+
+
+def prune_state_dict(state_dict: dict, prefix: str, subprefixes: list[str] = None) -> None:
+    """
+    Prunes a state dictionary by removing tensors whose keys match a given prefix.
+
+    Args:
+        state_dict       (dict): The state dictionary to prune.
+        prefix            (str): The prefix that keys must start with to be removed.
+        subprefixes (list[str]): An optional list of subprefixes.
+                                 If provided, keys must start with the main prefix followed by
+                                 one of these subprefixes to be removed. Defaults to None.
+    Returns:
+        None. The function modifies the `state_dict` in place.
+
+    Example:
+        >>> state_dict = {'layer1.weight': tensor1, 'layer1.bias': tensor2, 'layer2.weight': tensor3}
+        >>> prune_state_dict(state_dict, 'layer1')
+        >>> state_dict
+        {'layer2.weight': tensor3}
+
+        >>> state_dict = {'layer1.weight': tensor1, 'layer1.bias': tensor2, 'layer2.weight': tensor3}
+        >>> prune_state_dict(state_dict, 'layer1', ['.bias'])
+        >>> state_dict
+        {'layer1.weight': tensor1, 'layer2.weight': tensor3}
+    """
+    prefix = normalize_prefix(prefix)
+    if subprefixes:
+        prefixes = [prefix + normalize_prefix(subprefix) for subprefix in subprefixes]
+        is_matching_prefix = lambda name: any(name.startswith(prefix) for prefix in prefixes)
+    else:
+        is_matching_prefix = lambda name: name.startswith(prefix)
+
+    # remove all matching keys from the original dict
+    keys_to_remove = [key for key in state_dict if is_matching_prefix(key)]
+    for key in keys_to_remove:
+        del state_dict[key]
+
+
+
+def update_state_dict(state_dict: dict, prefix: str, new_tensors: dict) -> None:
+    """
+    Updates a state dictionary with new tensors, adding a given prefix to the keys.
+
+    Args:
+        state_dict  (dict): The state dictionary to update.
+                            This dictionary should map string keys to tensor values.
+        prefix       (str): The prefix to add to the keys of the new tensors.
+        new_tensors (dict): A dictionary of new tensors to add to the state dictionary.
+                            This dictionary should map string keys to tensor values.
+    Returns:
+        None. The function modifies the `state_dict` in place.
+    """
+    prefix = normalize_prefix(prefix)
+    for name, tensor in new_tensors.items():
+        state_dict[prefix + name] = tensor
+    return state_dict
+
 
 
 def load_safetensors_header(file_path: str, size_limit: int = 67108864) -> dict:
     """
     Load the header of a SafeTensors file.
+
     Args:
         file_path  (str): Path to the .safetensors file.
         size_limit (int): Maximum allowed size for the header.
+
     Returns:
         Dictionary containing the header data.
     """
@@ -85,20 +175,22 @@ def load_safetensors_header(file_path: str, size_limit: int = 67108864) -> dict:
         raise IOError(f"Error opening or reading the file `{filename}`.")
 
 
+
 def estimate_model_params(file_path     : str,
                           tensors_prefix: str = ""
                           ) -> int:
     """
     Estimates the number of parameters of a model from a SafeTensors file.
-    La funcion no carga ningun tensor, realiza el calculo con la informacion del header.
+    This function does not load any tensors; it calculates the parameter count using information from the header.
+
     Args:
         file_path      (str): Path to the .safetensors file containing the model weights.
         tensors_prefix (str): Prefix to filter tensors that contribute to the parameter count;
                               defaults to an empty string.
-    Returns:
-        int: Estimated number of parameters of the model.
-    """
 
+    Returns:
+        Estimated number of parameters of the model.
+    """
     # the prefix should end with a '.' to match the full tensor name correctly
     if tensors_prefix and not tensors_prefix.endswith('.'):
         tensors_prefix += '.'
@@ -115,11 +207,6 @@ def estimate_model_params(file_path     : str,
                 number_of_params += tensor_params
     return number_of_params
 
-    # total_params = 0
-    # for tensor in tensors.values():
-    #     total_params += tensor.numel()
-    #
-    # return total_params
 
 
 def detect_format_and_prefix(safetensors: Union[str, dict],
