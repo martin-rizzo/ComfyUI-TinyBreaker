@@ -42,6 +42,8 @@ def tiny_upscale(image             : torch.Tensor,
                  keep_original_size: bool = False,
                  discard_last_sigma: bool = True,
                  ):
+    vae_tile_size       = 256
+    vae_overlap_percent = 100
 
     image = normalize_images(image)
     _, image_height, image_width, _ = image.shape
@@ -58,8 +60,8 @@ def tiny_upscale(image             : torch.Tensor,
     # encode the image into latent space
     upscaled_latent = tiny_encode(upscaled_image,
                                   vae          = vae,
-                                  tile_size    = tile_size,
-                                  tile_padding = (tile_size*overlap_percent//400),
+                                  tile_size    = vae_tile_size,
+                                  tile_padding = (vae_tile_size*vae_overlap_percent//400),
                                   )
 
     # add extra noise to the latent image if requested
@@ -103,7 +105,11 @@ def tiny_upscale(image             : torch.Tensor,
                              tile_size        = int(tile_size//8),
                              progress_bar     = progress_bar)
 
-    upscaled_image = tiny_decode(upscaled_latent, vae=vae)
+    upscaled_image = tiny_decode(upscaled_latent,
+                                 vae          = vae,
+                                 tile_size    = vae_tile_size,
+                                 tile_padding = (vae_tile_size*vae_overlap_percent//400),
+                                 )
 
     # if requested, downscale the result to match the original image size
     # otherwise, return the upscaled result as is
