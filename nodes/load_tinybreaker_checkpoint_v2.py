@@ -37,10 +37,10 @@ class LoadTinyBreakerCheckpointV2:
         return {
         "required": {
             "ckpt_name"        : (cls.ckpt_names(), {"tooltip": "The TinyBreaker checkpoint to load."}),
-            "vae_type"         : (_VAE_TYPES      , {"tooltip": "The VAE quality to use.",
+            "vae_type"         : (_VAE_TYPES      , {"tooltip": "The VAE type used during generation. The `high_quality` VAE produces better results but takes longer and uses more VRAM.",
                                                      "default": _AUTOMATIC
                                                     }),
-            "upscaler_vae_type": (_VAE_TYPES      , {"tooltip": "The VAE quality to use.",
+            "upscaler_vae_type": (_VAE_TYPES      , {"tooltip": "The VAE type used during upscaling. A `high_quality` VAE is available but due to its high VRAM consumption, `auto` and `fast` are recommended.",
                                                      "default": _AUTOMATIC
                                                     }),
             }
@@ -61,19 +61,22 @@ class LoadTinyBreakerCheckpointV2:
                        )
 
     def load_checkpoint(self, ckpt_name, vae_type, upscaler_vae_type):
-        # resolve the automatic settings
-        if  vae_type == _AUTOMATIC:
-            vae_type =  _VAE_TYPE_FAST
 
+        # load checkpoint and metadata
         ckpt_full_path = TINYBREAKER_CHECKPOINTS_DIR.get_full_path_or_raise(ckpt_name)
         state_dict     = TINYBREAKER_CHECKPOINTS_DIR.load_state_dict_or_raise(ckpt_name)
         metadata       = GenParams.from_safetensors_metadata(ckpt_full_path)
         model_type     = self.get_model_type(state_dict)
         logger.info(f"Loading '{ckpt_name}' ('{model_type}' checkpoint type).")
+
+        # resolve vae-type automatic settings [fast,fast]
+        vae_type          = _VAE_TYPE_FAST if vae_type          == _AUTOMATIC else vae_type
+        upscaler_vae_type = _VAE_TYPE_FAST if upscaler_vae_type == _AUTOMATIC else upscaler_vae_type
         logger.info(f"Configured VAE type: '{vae_type}'.")
         logger.info(f"Configured upscaler VAE type: '{upscaler_vae_type}'.")
 
-        if model_type == "prototype0":
+
+        if model_type == "TinyBreaker.prototype0":
 
             # a small hack to be able to configure the quality of the VAE decoder
             hq_vae_state_dict = filter_state_dict( state_dict, "first_stage_hqmodel" )
@@ -89,7 +92,8 @@ class LoadTinyBreakerCheckpointV2:
             upscaler_vae   =       None
             return (model, None, vae, transcoder, refiner_model, refiner_clip, None, metadata)
 
-        if model_type == "prototype1":
+
+        if model_type == "TinyBreaker.prototype1":
 
             # a small hack to be able to configure the quality of the VAE decoders,
             # assuming that `first_stage_model` is the high-quality VAE while `refiner.first_stage_model` is the fast VAE
@@ -126,8 +130,8 @@ class LoadTinyBreakerCheckpointV2:
         # then it is a model of type "prototype1"
         for key in state_dict.keys():
             if key.startswith("refiner.diffusion_model."):
-                return "prototype1"
+                return "TinyBreaker.prototype1"
 
         # otherwise, it is a model of type "prototype0" (old model)
-        return "prototype0"
+        return "TinyBreaker.prototype0"
 

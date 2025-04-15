@@ -1,5 +1,5 @@
 """
-File    : functions/tiny_upscale.py
+File    : tiny_upscale.py
 Purpose : Functions to perform image upscaling using any model through an experimental method
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
 Date    : Apr 8, 2025
@@ -13,17 +13,14 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import torch
 import torch.nn.functional as F
+import comfy.samplers
 from .tiles                         import get_tile, apply_tiles_tlbr, apply_tiles_brtl
 from .tiny_encode_decode            import tiny_encode, tiny_decode
 from .comfyui_bridge.model          import Model
 from .comfyui_bridge.vae            import VAE
-from .comfyui_bridge.helpers.sigmas import calculate_sigmas
 from .comfyui_bridge.helpers.images import normalize_images, refine_latent_image
 from .comfyui_bridge.progress_bar   import ProgressBar
 
-
-import comfy.samplers
-import comfy.utils
 
 
 def tiny_upscale(image             : torch.Tensor,
