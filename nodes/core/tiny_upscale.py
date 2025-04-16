@@ -23,26 +23,26 @@ from .comfyui_bridge.progress_bar   import ProgressBar
 
 
 
-def tiny_upscale(image             : torch.Tensor,
-                 model             : Model,
-                 vae               : VAE,
-                 positive          : list[ list[torch.Tensor, dict] ],
-                 negative          : list[ list[torch.Tensor, dict] ],
-                 sampler_object    : comfy.samplers.KSAMPLER,
-                 sigmas            : torch.Tensor,
-                 cfg               : float,
-                 noise_seed        : int,
-                 extra_noise       : float,
-                 upscale_by        : float,
-                 tile_size         : int  = 1024,
-                 overlap_percent   : int  = 100,
-                 interpolation_mode: str  = "bilinear", # "nearest"
-                 keep_original_size: bool = False,
-                 discard_last_sigma: bool = True,
-                 progress_bar      : ProgressBar = None,
+def tiny_upscale(image              : torch.Tensor,
+                 model              : Model,
+                 vae                : VAE,
+                 positive           : list[ list[torch.Tensor, dict] ],
+                 negative           : list[ list[torch.Tensor, dict] ],
+                 sampler_object     : comfy.samplers.KSAMPLER,
+                 sigmas             : torch.Tensor,
+                 cfg                : float,
+                 noise_seed         : int,
+                 extra_noise        : float,
+                 upscale_by         : float,
+                 tile_size          : int  =  1024,
+                 overlap_percent    : int  =   100,
+                 interpolation_mode : str  = "bilinear", # "nearest"
+                 keep_original_size : bool = False,
+                 discard_last_sigma : bool =  True,
+                 vae_tile_size      : int  =   512,
+                 vae_overlap_percent: int  =   100,
+                 progress_bar       : ProgressBar = None,
                  ):
-    vae_tile_size       = 256
-    vae_overlap_percent = 100
 
     image = normalize_images(image)
     _, image_height, image_width, _ = image.shape
