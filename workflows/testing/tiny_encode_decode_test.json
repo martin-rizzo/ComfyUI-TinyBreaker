@@ -3,47 +3,6 @@
   "last_link_id": 65,
   "nodes": [
     {
-      "id": 3,
-      "type": "VAEDecode",
-      "pos": [
-        660,
-        200
-      ],
-      "size": [
-        140,
-        50
-      ],
-      "flags": {},
-      "order": 6,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "samples",
-          "type": "LATENT",
-          "link": 20
-        },
-        {
-          "name": "vae",
-          "type": "VAE",
-          "link": 50
-        }
-      ],
-      "outputs": [
-        {
-          "name": "IMAGE",
-          "type": "IMAGE",
-          "links": [
-            39
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "VAEDecode"
-      },
-      "widgets_values": []
-    },
-    {
       "id": 17,
       "type": "TinyEncode //TinyBreaker",
       "pos": [
@@ -52,7 +11,7 @@
       ],
       "size": [
         220,
-        50
+        78
       ],
       "flags": {},
       "order": 4,
@@ -82,7 +41,9 @@
       "properties": {
         "Node name for S&R": "TinyEncode //TinyBreaker"
       },
-      "widgets_values": [],
+      "widgets_values": [
+        "512px"
+      ],
       "color": "#232",
       "bgcolor": "#353",
       "shape": 1
@@ -125,47 +86,6 @@
       }
     },
     {
-      "id": 28,
-      "type": "VAEEncode",
-      "pos": [
-        490,
-        790
-      ],
-      "size": [
-        150,
-        50
-      ],
-      "flags": {},
-      "order": 7,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "pixels",
-          "type": "IMAGE",
-          "link": 60
-        },
-        {
-          "name": "vae",
-          "type": "VAE",
-          "link": 62
-        }
-      ],
-      "outputs": [
-        {
-          "name": "LATENT",
-          "type": "LATENT",
-          "links": [
-            54
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "VAEEncode"
-      },
-      "widgets_values": []
-    },
-    {
       "id": 29,
       "type": "TinyDecode //TinyBreaker",
       "pos": [
@@ -174,7 +94,7 @@
       ],
       "size": [
         226.79998779296875,
-        46
+        78
       ],
       "flags": {},
       "order": 10,
@@ -204,7 +124,9 @@
       "properties": {
         "Node name for S&R": "TinyDecode //TinyBreaker"
       },
-      "widgets_values": [],
+      "widgets_values": [
+        "512px"
+      ],
       "color": "#232",
       "bgcolor": "#353",
       "shape": 1
@@ -286,11 +208,210 @@
       }
     },
     {
+      "id": 30,
+      "type": "Image Comparer (rgthree)",
+      "pos": [
+        1000,
+        770
+      ],
+      "size": [
+        400,
+        600
+      ],
+      "flags": {},
+      "order": 11,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image_a",
+          "type": "IMAGE",
+          "dir": 3,
+          "link": 58
+        },
+        {
+          "name": "image_b",
+          "type": "IMAGE",
+          "dir": 3,
+          "link": 55
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "comparer_mode": "Click"
+      },
+      "widgets_values": [
+        [
+          {
+            "name": "A",
+            "selected": true,
+            "url": "/api/view?filename=rgthree.compare._temp_pzgmv_00001_.png&type=temp&subfolder=&rand=0.16370278387022608"
+          },
+          {
+            "name": "B",
+            "selected": true,
+            "url": "/api/view?filename=rgthree.compare._temp_pzgmv_00002_.png&type=temp&subfolder=&rand=0.5612819414225199"
+          }
+        ]
+      ]
+    },
+    {
+      "id": 16,
+      "type": "LoadAnyVAE //TinyBreaker",
+      "pos": [
+        -100,
+        660
+      ],
+      "size": [
+        390,
+        60
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [
+            49,
+            50,
+            61
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadAnyVAE //TinyBreaker"
+      },
+      "widgets_values": [
+        "tiny_vae_sd.safetensors"
+      ]
+    },
+    {
+      "id": 3,
+      "type": "VAEDecode",
+      "pos": [
+        650,
+        200
+      ],
+      "size": [
+        170,
+        70
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 20
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 50
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            39
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 28,
+      "type": "VAEEncode",
+      "pos": [
+        480,
+        790
+      ],
+      "size": [
+        170,
+        70
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "pixels",
+          "type": "IMAGE",
+          "link": 60
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 62
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            54
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEEncode"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 34,
+      "type": "Reroute",
+      "pos": [
+        570,
+        890
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 64
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "VAE",
+          "links": [
+            65
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
       "id": 33,
       "type": "Reroute",
       "pos": [
         360,
-        870
+        890
       ],
       "size": [
         75,
@@ -313,42 +434,6 @@
           "links": [
             62,
             64
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
-    },
-    {
-      "id": 34,
-      "type": "Reroute",
-      "pos": [
-        570,
-        870
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {},
-      "order": 8,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 64
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "VAE",
-          "links": [
-            65
           ],
           "slot_index": 0
         }
@@ -395,95 +480,14 @@
           {
             "name": "A",
             "selected": true,
-            "url": "/api/view?filename=rgthree.compare._temp_hripb_00003_.png&type=temp&subfolder=&rand=0.7402695511893623"
+            "url": "/api/view?filename=rgthree.compare._temp_suuje_00001_.png&type=temp&subfolder=&rand=0.8586618961722771"
           },
           {
             "name": "B",
             "selected": true,
-            "url": "/api/view?filename=rgthree.compare._temp_hripb_00004_.png&type=temp&subfolder=&rand=0.6548564800832203"
+            "url": "/api/view?filename=rgthree.compare._temp_suuje_00002_.png&type=temp&subfolder=&rand=0.5362443469266015"
           }
         ]
-      ]
-    },
-    {
-      "id": 30,
-      "type": "Image Comparer (rgthree)",
-      "pos": [
-        1000,
-        770
-      ],
-      "size": [
-        400,
-        600
-      ],
-      "flags": {},
-      "order": 11,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "image_a",
-          "type": "IMAGE",
-          "dir": 3,
-          "link": 58
-        },
-        {
-          "name": "image_b",
-          "type": "IMAGE",
-          "dir": 3,
-          "link": 55
-        }
-      ],
-      "outputs": [],
-      "properties": {
-        "comparer_mode": "Click"
-      },
-      "widgets_values": [
-        [
-          {
-            "name": "A",
-            "selected": true,
-            "url": "/api/view?filename=rgthree.compare._temp_ttdza_00003_.png&type=temp&subfolder=&rand=0.13020315554253137"
-          },
-          {
-            "name": "B",
-            "selected": true,
-            "url": "/api/view?filename=rgthree.compare._temp_ttdza_00004_.png&type=temp&subfolder=&rand=0.5682336201568013"
-          }
-        ]
-      ]
-    },
-    {
-      "id": 16,
-      "type": "LoadAnyVAE //TinyBreaker",
-      "pos": [
-        -100,
-        660
-      ],
-      "size": [
-        390,
-        60
-      ],
-      "flags": {},
-      "order": 1,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "VAE",
-          "type": "VAE",
-          "links": [
-            49,
-            50,
-            61
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "LoadAnyVAE //TinyBreaker"
-      },
-      "widgets_values": [
-        "tiny_vae_sd.safetensors"
       ]
     }
   ],
@@ -621,10 +625,10 @@
   "config": {},
   "extra": {
     "ds": {
-      "scale": 0.9229599817706569,
+      "scale": 0.839054528882444,
       "offset": [
-        184.6990803106873,
-        -78.16463677627618
+        213.73640343437933,
+        -65.7438371809907
       ]
     }
   },

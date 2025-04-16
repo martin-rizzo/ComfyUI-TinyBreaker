@@ -15,22 +15,27 @@ import torch
 from .core.comfyui_bridge.vae             import VAE
 from .core.comfyui_bridge.helpers.images  import normalize_images
 from .core.tiny_encode_decode             import tiny_encode
+_TILE_SIZES        = ["128px", "256px", "512px", "768px", "1024px"]
+_DEFAULT_TILE_SIZE = "512px"
 
 
 class TinyEncode:
     TITLE       = "💪TB | Tiny Encode"
     CATEGORY    = "TinyBreaker"
-    DESCRIPTION = "Encode an image into a latent representation using the provided VAE."
+    DESCRIPTION = "Encode an image into a latent representation using the provided VAE. This node optimizes memory usage by dividing the process into smaller tiles."
 
     #__ PARAMETERS ________________________________________
     @classmethod
     def INPUT_TYPES(cls):
         return {
         "required": {
-            "image": ("IMAGE" ,{"tooltip": "The image to be encoded.",
-                               }),
-            "vae"  : ("VAE"   ,{"tooltip": "The VAE model used for encoding.",
-                               }),
+            "image"    :("IMAGE"     ,{"tooltip": "The image to be encoded to a latent representation.",
+                                      }),
+            "vae"      :("VAE"       ,{"tooltip": "The VAE model used for encoding the image.",
+                                      }),
+            "tile_size":(_TILE_SIZES ,{"tooltip": "The size of the tiles used to divide the input image into smaller chunks for processing. The value is expressed in pixels.",
+                                       "default": _DEFAULT_TILE_SIZE
+                                      }),
             },
         }
 
@@ -40,13 +45,23 @@ class TinyEncode:
     RETURN_NAMES    = ("latent",)
     OUTPUT_TOOLTIPS = ("Latent representation of the input image.",)
 
-    def encode(self, image: torch.Tensor, vae: VAE):
-        tile_size    = 512
-        tile_padding = 128
-        image  = normalize_images(image)
-        latent = tiny_encode(image,
+    def encode(self,
+               image          : torch.Tensor,
+               vae            : VAE,
+               tile_size      : str | int = 512,
+               overlap_percent: str | int = 100,
+               ) -> tuple:
+
+        if isinstance(tile_size, str):
+            tile_size = int(tile_size.removesuffix("px"))
+        if isinstance(overlap_percent, str):
+            overlap_percent = int(overlap_percent.removesuffix("%"))
+
+        latent = tiny_encode(normalize_images(image),
                              vae          = vae,
                              tile_size    = tile_size,
-                             tile_padding = tile_padding,
+                             tile_padding = (tile_size*overlap_percent//400),
                              )
+
         return ({"samples": latent}, )
+

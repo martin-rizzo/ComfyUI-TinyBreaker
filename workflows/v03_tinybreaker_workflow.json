@@ -1,8 +1,8 @@
 {
   "id": "dae3a0af-4757-4f10-b825-b39008a932af",
   "revision": 0,
-  "last_node_id": 289,
-  "last_link_id": 721,
+  "last_node_id": 297,
+  "last_link_id": 729,
   "nodes": [
     {
       "id": 189,
@@ -100,7 +100,7 @@
         {
           "name": "images",
           "type": "IMAGE",
-          "link": 710
+          "link": 723
         },
         {
           "name": "genparams",
@@ -292,64 +292,6 @@
       "shape": 1
     },
     {
-      "id": 284,
-      "type": "TinyUpscaler //TinyBreaker",
-      "pos": [
-        430,
-        -750
-      ],
-      "size": [
-        260,
-        162
-      ],
-      "flags": {},
-      "order": 27,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "image",
-          "type": "IMAGE",
-          "link": 705
-        },
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "link": 706
-        },
-        {
-          "name": "model",
-          "type": "MODEL",
-          "link": 707
-        },
-        {
-          "name": "clip",
-          "type": "CLIP",
-          "link": 708
-        },
-        {
-          "name": "vae",
-          "type": "VAE",
-          "link": 709
-        }
-      ],
-      "outputs": [
-        {
-          "name": "image",
-          "type": "IMAGE",
-          "links": [
-            710
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "TinyUpscaler //TinyBreaker"
-      },
-      "widgets_values": [
-        3,
-        "upscaler"
-      ]
-    },
-    {
       "id": 279,
       "type": "Reroute",
       "pos": [
@@ -385,48 +327,6 @@
         "showOutputText": false,
         "horizontal": false
       }
-    },
-    {
-      "id": 239,
-      "type": "VAEDecode",
-      "pos": [
-        250,
-        -750
-      ],
-      "size": [
-        150,
-        50
-      ],
-      "flags": {},
-      "order": 26,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "samples",
-          "type": "LATENT",
-          "link": 600
-        },
-        {
-          "name": "vae",
-          "type": "VAE",
-          "link": 664
-        }
-      ],
-      "outputs": [
-        {
-          "name": "IMAGE",
-          "type": "IMAGE",
-          "slot_index": 0,
-          "links": [
-            696,
-            705
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "VAEDecode"
-      },
-      "widgets_values": []
     },
     {
       "id": 286,
@@ -680,42 +580,6 @@
       }
     },
     {
-      "id": 236,
-      "type": "Reroute",
-      "pos": [
-        130,
-        -360
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {},
-      "order": 11,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 712
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "VAE",
-          "slot_index": 0,
-          "links": [
-            664
-          ]
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
-    },
-    {
       "id": 233,
       "type": "EmptyLatentImage //TinyBreaker",
       "pos": [
@@ -821,72 +685,6 @@
         "showOutputText": false,
         "horizontal": false
       }
-    },
-    {
-      "id": 238,
-      "type": "DoubleStageSampler //TinyBreaker",
-      "pos": [
-        -80,
-        -760
-      ],
-      "size": [
-        290,
-        390
-      ],
-      "flags": {},
-      "order": 25,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "latent_input",
-          "type": "LATENT",
-          "link": 593
-        },
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "link": 594
-        },
-        {
-          "name": "model",
-          "type": "MODEL",
-          "link": 641
-        },
-        {
-          "name": "clip",
-          "type": "CLIP",
-          "link": 596
-        },
-        {
-          "name": "transcoder",
-          "type": "TRANSCODER",
-          "link": 642
-        },
-        {
-          "name": "refiner_model",
-          "type": "MODEL",
-          "link": 643
-        },
-        {
-          "name": "refiner_clip",
-          "type": "CLIP",
-          "link": 645
-        }
-      ],
-      "outputs": [
-        {
-          "name": "latent_output",
-          "type": "LATENT",
-          "slot_index": 0,
-          "links": [
-            600
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "DoubleStageSampler //TinyBreaker"
-      },
-      "widgets_values": []
     },
     {
       "id": 241,
@@ -998,6 +796,41 @@
       }
     },
     {
+      "id": 289,
+      "type": "Reroute",
+      "pos": [
+        -160,
+        -20
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 720
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "GENPARAMS",
+          "links": [
+            721
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
       "id": 260,
       "type": "LoadTinyBreakerCheckpointV2 //TinyBreaker",
       "pos": [
@@ -1077,7 +910,7 @@
       },
       "widgets_values": [
         "tinybreaker_prototype1.safetensors",
-        "auto",
+        "high_quality",
         "auto"
       ],
       "color": "#322",
@@ -1085,32 +918,101 @@
       "shape": 1
     },
     {
-      "id": 289,
+      "id": 238,
+      "type": "DoubleStageSampler //TinyBreaker",
+      "pos": [
+        -80,
+        -760
+      ],
+      "size": [
+        290,
+        390
+      ],
+      "flags": {},
+      "order": 25,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "latent_input",
+          "type": "LATENT",
+          "link": 593
+        },
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 594
+        },
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 641
+        },
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 596
+        },
+        {
+          "name": "transcoder",
+          "type": "TRANSCODER",
+          "link": 642
+        },
+        {
+          "name": "refiner_model",
+          "type": "MODEL",
+          "link": 643
+        },
+        {
+          "name": "refiner_clip",
+          "type": "CLIP",
+          "link": 645
+        }
+      ],
+      "outputs": [
+        {
+          "name": "latent_output",
+          "type": "LATENT",
+          "slot_index": 0,
+          "links": [
+            724,
+            728
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "DoubleStageSampler //TinyBreaker"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 236,
       "type": "Reroute",
       "pos": [
-        -160,
-        -20
+        130,
+        -360
       ],
       "size": [
         75,
         26
       ],
       "flags": {},
-      "order": 10,
+      "order": 11,
       "mode": 0,
       "inputs": [
         {
           "name": "",
           "type": "*",
-          "link": 720
+          "link": 712
         }
       ],
       "outputs": [
         {
           "name": "",
-          "type": "GENPARAMS",
+          "type": "VAE",
+          "slot_index": 0,
           "links": [
-            721
+            725,
+            729
           ]
         }
       ],
@@ -1156,10 +1058,110 @@
         "Node name for S&R": "UnifiedPromptInput //TinyBreaker"
       },
       "widgets_values": [
-        "A bird made of paper sitting in the middle of a flooded street. The bird is constructed from what looks like folded paper or a similar material, giving it a geometric, origami-like appearance. The texture is smooth, with defined edges where the paper is folded to resemble feathers and a beak. The bird's color is a muted gray or off-white. The bird is positioned in the center of a street that is covered in water, suggesting it has been raining. The water reflects the surrounding lights, creating bright streaks of orange and white. The road is dark and glossy from the rain. In the background, there are cars with their headlights on, indicating they are driving on the wet street. The cars are blurred, suggesting movement. The background also includes trees without leaves, and streetlights, all contributing to a somber, urban atmosphere. The sky is overcast. Bokeh\n\n--aspect 3:2 --portrait --seed 1 --upscale off \n"
+        "A serene expanse of water stretches out to meet a gradient sky, the transition between the two almost imperceptible. The sky is a canvas of blues, subtly shifting from a lighter, brighter hue near the horizon to a deeper, richer tone higher up. The water mirrors this gradient, its surface smooth and undisturbed, reflecting the celestial colors above. In the far distance, a stark, black silhouette interrupts the seamless horizon line. This dark form is a long horizontal wooden pier barely discernible against the bright sky. A single, illuminated lamppost casts a tiny, bright spot amidst the darkness, a beacon on the distant structure. Beside the lamppost, a smaller, darker shape suggests a small shed or box, adding detail to the silhouette. The overall color palette is dominated by cool blues and stark blacks, creating a sense of calm and solitude. Bokeh\n\n--aspect 3:2 --portrait --seed 3 --upscale on\n"
       ],
       "color": "#232",
       "bgcolor": "#353"
+    },
+    {
+      "id": 297,
+      "type": "TinyDecode //TinyBreaker",
+      "pos": [
+        240,
+        -760
+      ],
+      "size": [
+        210,
+        80
+      ],
+      "flags": {},
+      "order": 26,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "latent",
+          "type": "LATENT",
+          "link": 728
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 729
+        }
+      ],
+      "outputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "links": [
+            727
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "TinyDecode //TinyBreaker"
+      },
+      "widgets_values": [
+        "512px"
+      ]
+    },
+    {
+      "id": 284,
+      "type": "TinyUpscaler //TinyBreaker",
+      "pos": [
+        480,
+        -760
+      ],
+      "size": [
+        240,
+        162
+      ],
+      "flags": {},
+      "order": 27,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 727
+        },
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 706
+        },
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 707
+        },
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 708
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 709
+        }
+      ],
+      "outputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "links": [
+            723
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "TinyUpscaler //TinyBreaker"
+      },
+      "widgets_values": [
+        3,
+        "upscaler"
+      ]
     }
   ],
   "links": [
@@ -1236,14 +1238,6 @@
       "CLIP"
     ],
     [
-      600,
-      238,
-      0,
-      239,
-      0,
-      "LATENT"
-    ],
-    [
       602,
       193,
       0,
@@ -1284,14 +1278,6 @@
       "CLIP"
     ],
     [
-      664,
-      236,
-      0,
-      239,
-      1,
-      "VAE"
-    ],
-    [
       681,
       278,
       0,
@@ -1324,14 +1310,6 @@
       "*"
     ],
     [
-      705,
-      239,
-      0,
-      284,
-      0,
-      "IMAGE"
-    ],
-    [
       706,
       279,
       0,
@@ -1362,14 +1340,6 @@
       284,
       4,
       "VAE"
-    ],
-    [
-      710,
-      284,
-      0,
-      144,
-      0,
-      "IMAGE"
     ],
     [
       711,
@@ -1450,6 +1420,38 @@
       177,
       0,
       "GENPARAMS"
+    ],
+    [
+      723,
+      284,
+      0,
+      144,
+      0,
+      "IMAGE"
+    ],
+    [
+      727,
+      297,
+      0,
+      284,
+      0,
+      "IMAGE"
+    ],
+    [
+      728,
+      238,
+      0,
+      297,
+      0,
+      "LATENT"
+    ],
+    [
+      729,
+      236,
+      0,
+      297,
+      1,
+      "VAE"
     ]
   ],
   "groups": [
@@ -1474,7 +1476,7 @@
       "bounding": [
         -720,
         -940,
-        1420,
+        1450,
         710
       ],
       "color": "#444",
@@ -1485,10 +1487,10 @@
   "config": {},
   "extra": {
     "ds": {
-      "scale": 0.8390545288824414,
+      "scale": 0.9229599817706885,
       "offset": [
-        218.46291000742582,
-        214.187980487937
+        115.80049515827959,
+        168.53375583054395
       ]
     }
   },
