@@ -75,7 +75,8 @@ class TinyUpscaler:
         upscale = genparams.get_bool("image.enable_upscaler", False)
 
         if not denoising or not upscale:
-            return image # no upscaling
+            # no upscaling
+            return (image, ) 
 
         positive, negative = self._encode(clip, denoising.positive, denoising.negative)
         extra_noise        = 0.6

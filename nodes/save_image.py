@@ -123,7 +123,7 @@ class SaveImage:
         # solve the `filename_prefix`` entered by the user and get the full path
         filename_prefix = \
             self._solve_filename_variables(f"{filename_prefix}{self.extra_prefix}", genparams=genparams)
-        full_output_folder, filename, counter, subfolder, filename_prefix \
+        full_output_folder, name, counter, subfolder, filename_prefix \
             = folder_paths.get_save_image_path(filename_prefix,
                                                self.output_dir,
                                                image_width,
@@ -132,25 +132,22 @@ class SaveImage:
 
         image_locations = []
         for batch_number, image in enumerate(images):
+            batch_name = name.replace("%batch_num%", str(batch_number))
 
             # convert to PIL Image
             image = np.clip( image.numpy(force=True) * 255, 0, 255 ) # <- numpy
             image = Image.fromarray( image.astype(np.uint8) )        # <- PIL
 
             # generate the full file path to save the image
-            # TODO: Fix name accumulation bug on multiple images
-            filename  = filename.replace("%batch_num%", str(batch_number))
-            filename  = f"{filename}_{counter+batch_number:04}_.png"
+            filename  = f"{batch_name}_{counter+batch_number:04}_.png"
             file_path =  os.path.join(full_output_folder, filename)
 
             image.save(file_path,
                        pnginfo        = pnginfo,
-                       compress_level = self.compress_level
-                       )
+                       compress_level = self.compress_level)
             image_locations.append({"filename" : filename,
                                     "subfolder": subfolder,
-                                    "type"     : self.type
-                                    })
+                                    "type"     : self.type})
 
         return { "ui": { "images": image_locations } }
 
