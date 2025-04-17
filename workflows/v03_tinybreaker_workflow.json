@@ -1,6 +1,6 @@
 {
-  "last_node_id": 297,
-  "last_link_id": 729,
+  "last_node_id": 300,
+  "last_link_id": 737,
   "nodes": [
     {
       "id": 189,
@@ -327,257 +327,6 @@
       }
     },
     {
-      "id": 286,
-      "type": "Reroute",
-      "pos": [
-        -70,
-        -330
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {},
-      "order": 7,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 716
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "MODEL",
-          "links": [
-            717
-          ]
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
-    },
-    {
-      "id": 287,
-      "type": "Reroute",
-      "pos": [
-        -70,
-        -300
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {},
-      "order": 8,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 714
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "CLIP",
-          "links": [
-            715
-          ]
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
-    },
-    {
-      "id": 288,
-      "type": "Reroute",
-      "pos": [
-        -70,
-        -270
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {},
-      "order": 9,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 718
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "VAE",
-          "links": [
-            719
-          ]
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
-    },
-    {
-      "id": 285,
-      "type": "Reroute",
-      "pos": [
-        -70,
-        -360
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {},
-      "order": 6,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 711
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "VAE",
-          "links": [
-            712
-          ]
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
-    },
-    {
-      "id": 259,
-      "type": "Reroute",
-      "pos": [
-        130,
-        -330
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {},
-      "order": 12,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 717
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "MODEL",
-          "links": [
-            701,
-            707
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
-    },
-    {
-      "id": 253,
-      "type": "Reroute",
-      "pos": [
-        130,
-        -300
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {},
-      "order": 13,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 715
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "CLIP",
-          "links": [
-            702,
-            708
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
-    },
-    {
-      "id": 261,
-      "type": "Reroute",
-      "pos": [
-        130,
-        -270
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {},
-      "order": 14,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 719
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "VAE",
-          "links": [
-            703,
-            709
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
-    },
-    {
       "id": 233,
       "type": "EmptyLatentImage //TinyBreaker",
       "pos": [
@@ -603,7 +352,7 @@
           "name": "LATENT",
           "type": "LATENT",
           "links": [
-            593
+            730
           ],
           "slot_index": 0
         }
@@ -675,7 +424,7 @@
           "name": "",
           "type": "GENPARAMS",
           "links": [
-            594
+            731
           ]
         }
       ],
@@ -784,7 +533,7 @@
           "name": "",
           "type": "CLIP",
           "links": [
-            596
+            733
           ]
         }
       ],
@@ -829,110 +578,6 @@
       }
     },
     {
-      "id": 238,
-      "type": "DoubleStageSampler //TinyBreaker",
-      "pos": [
-        -80,
-        -760
-      ],
-      "size": [
-        290,
-        390
-      ],
-      "flags": {},
-      "order": 25,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "latent_input",
-          "type": "LATENT",
-          "link": 593
-        },
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "link": 594
-        },
-        {
-          "name": "model",
-          "type": "MODEL",
-          "link": 641
-        },
-        {
-          "name": "clip",
-          "type": "CLIP",
-          "link": 596
-        },
-        {
-          "name": "transcoder",
-          "type": "TRANSCODER",
-          "link": 642
-        },
-        {
-          "name": "refiner_model",
-          "type": "MODEL",
-          "link": 643
-        },
-        {
-          "name": "refiner_clip",
-          "type": "CLIP",
-          "link": 645
-        }
-      ],
-      "outputs": [
-        {
-          "name": "latent_output",
-          "type": "LATENT",
-          "links": [
-            724,
-            728
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "DoubleStageSampler //TinyBreaker"
-      },
-      "widgets_values": []
-    },
-    {
-      "id": 236,
-      "type": "Reroute",
-      "pos": [
-        130,
-        -360
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {},
-      "order": 11,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 712
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "VAE",
-          "links": [
-            725,
-            729
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
-    },
-    {
       "id": 297,
       "type": "TinyDecode //TinyBreaker",
       "pos": [
@@ -950,7 +595,7 @@
         {
           "name": "latent",
           "type": "LATENT",
-          "link": 728
+          "link": 737
         },
         {
           "name": "vae",
@@ -1033,6 +678,449 @@
       ]
     },
     {
+      "id": 260,
+      "type": "LoadTinyBreakerCheckpointV2 //TinyBreaker",
+      "pos": [
+        -710,
+        -720
+      ],
+      "size": [
+        430,
+        260
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            732
+          ]
+        },
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": null
+        },
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [
+            711
+          ]
+        },
+        {
+          "name": "TRANSCODER",
+          "type": "TRANSCODER",
+          "links": [
+            734
+          ]
+        },
+        {
+          "name": "REFINER_MODEL",
+          "type": "MODEL",
+          "links": [
+            716,
+            735
+          ]
+        },
+        {
+          "name": "REFINER_CLIP",
+          "type": "CLIP",
+          "links": [
+            713,
+            714,
+            736
+          ]
+        },
+        {
+          "name": "UPSCALER_VAE",
+          "type": "VAE",
+          "links": [
+            718
+          ],
+          "slot_index": 6
+        },
+        {
+          "name": "METADATA",
+          "type": "GENPARAMS",
+          "links": [
+            720
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadTinyBreakerCheckpointV2 //TinyBreaker"
+      },
+      "widgets_values": [
+        "tinybreaker_prototype1.safetensors",
+        "high_quality",
+        "auto"
+      ],
+      "color": "#322",
+      "bgcolor": "#533",
+      "shape": 1
+    },
+    {
+      "id": 285,
+      "type": "Reroute",
+      "pos": [
+        -70,
+        -340
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 711
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "VAE",
+          "links": [
+            712
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 286,
+      "type": "Reroute",
+      "pos": [
+        -70,
+        -310
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 716
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "MODEL",
+          "links": [
+            717
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 259,
+      "type": "Reroute",
+      "pos": [
+        130,
+        -310
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 12,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 717
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "MODEL",
+          "links": [
+            701,
+            707
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 287,
+      "type": "Reroute",
+      "pos": [
+        -70,
+        -280
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 714
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "CLIP",
+          "links": [
+            715
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 253,
+      "type": "Reroute",
+      "pos": [
+        130,
+        -280
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 13,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 715
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "CLIP",
+          "links": [
+            702,
+            708
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 288,
+      "type": "Reroute",
+      "pos": [
+        -70,
+        -250
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 718
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "VAE",
+          "links": [
+            719
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 261,
+      "type": "Reroute",
+      "pos": [
+        130,
+        -250
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 14,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 719
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "VAE",
+          "links": [
+            703,
+            709
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 236,
+      "type": "Reroute",
+      "pos": [
+        130,
+        -340
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 11,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 712
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "VAE",
+          "links": [
+            725,
+            729
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 300,
+      "type": "TinyDualSampler //TinyBreaker",
+      "pos": [
+        -80,
+        -760
+      ],
+      "size": [
+        290,
+        410
+      ],
+      "flags": {},
+      "order": 25,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "latent_input",
+          "type": "LATENT",
+          "link": 730
+        },
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 731
+        },
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 732
+        },
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 733
+        },
+        {
+          "name": "transcoder",
+          "type": "TRANSCODER",
+          "link": 734
+        },
+        {
+          "name": "refiner_model",
+          "type": "MODEL",
+          "link": 735
+        },
+        {
+          "name": "refiner_clip",
+          "type": "CLIP",
+          "link": 736
+        }
+      ],
+      "outputs": [
+        {
+          "name": "latent_output",
+          "type": "LATENT",
+          "links": [
+            737
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "TinyDualSampler //TinyBreaker"
+      },
+      "widgets_values": [
+        true
+      ]
+    },
+    {
       "id": 198,
       "type": "UnifiedPromptInput //TinyBreaker",
       "pos": [
@@ -1069,97 +1157,10 @@
         "Node name for S&R": "UnifiedPromptInput //TinyBreaker"
       },
       "widgets_values": [
-        "A woman sitting in a chair in a dark room. The woman has fair skin and blonde hair that is partially tied back in a ponytail. She has her eyes closed and is wearing large white headphones with black accents. The wire from the headphones runs down to her chest. She is wearing a white, form-fitting jumpsuit with a zipper down the front. The jumpsuit has long sleeves and fitted pants. She is sitting in a black chair that is partially visible. Behind her is a large, circular structure that appears to be made of metal. Inside the circular structure is a white sphere with lines and markings on it. The background is dark, with some indistinct shapes and textures visible. The lighting is soft and diffused \n\n--aspect 3:2 --portrait --seed 1 --upscale on\n"
+        "An astronaut standing on a stone path covered with moss, in front of a large concrete sphere. The astronaut is wearing a bright orange spacesuit, black boots, and a helmet, and is carrying a backpack with orange accents. The sphere is large and gray, and it features a gigantic, circular eye staring forward. The pupil of the eye is orange. The sphere is situated within a cave-like environment, with the walls adorned with moss and sparse vegetation. In the distant background, a dilapidated building is visible, along with peculiar plants bearing white flowers. The ground is thickly carpeted with moss, interspersed with sizable, vibrant orange mushrooms. Bokeh\n\n--aspect 3:2 --portrait --seed 2 --image-shift 0 --upscale off \n"
       ],
       "color": "#232",
       "bgcolor": "#353"
-    },
-    {
-      "id": 260,
-      "type": "LoadTinyBreakerCheckpointV2 //TinyBreaker",
-      "pos": [
-        -710,
-        -720
-      ],
-      "size": [
-        430,
-        260
-      ],
-      "flags": {},
-      "order": 4,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "MODEL",
-          "type": "MODEL",
-          "links": [
-            641
-          ]
-        },
-        {
-          "name": "CLIP",
-          "type": "CLIP",
-          "links": null
-        },
-        {
-          "name": "VAE",
-          "type": "VAE",
-          "links": [
-            711
-          ]
-        },
-        {
-          "name": "TRANSCODER",
-          "type": "TRANSCODER",
-          "links": [
-            642
-          ]
-        },
-        {
-          "name": "REFINER_MODEL",
-          "type": "MODEL",
-          "links": [
-            643,
-            716
-          ]
-        },
-        {
-          "name": "REFINER_CLIP",
-          "type": "CLIP",
-          "links": [
-            645,
-            713,
-            714
-          ]
-        },
-        {
-          "name": "UPSCALER_VAE",
-          "type": "VAE",
-          "links": [
-            718
-          ],
-          "slot_index": 6
-        },
-        {
-          "name": "METADATA",
-          "type": "GENPARAMS",
-          "links": [
-            720
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "LoadTinyBreakerCheckpointV2 //TinyBreaker"
-      },
-      "widgets_values": [
-        "tinybreaker_prototype1.safetensors",
-        "high_quality",
-        "auto"
-      ],
-      "color": "#322",
-      "bgcolor": "#533",
-      "shape": 1
     }
   ],
   "links": [
@@ -1212,68 +1213,12 @@
       "*"
     ],
     [
-      593,
-      233,
-      0,
-      238,
-      0,
-      "LATENT"
-    ],
-    [
-      594,
-      235,
-      0,
-      238,
-      1,
-      "GENPARAMS"
-    ],
-    [
-      596,
-      234,
-      0,
-      238,
-      3,
-      "CLIP"
-    ],
-    [
       602,
       193,
       0,
       240,
       0,
       "*"
-    ],
-    [
-      641,
-      260,
-      0,
-      238,
-      2,
-      "MODEL"
-    ],
-    [
-      642,
-      260,
-      3,
-      238,
-      4,
-      "TRANSCODER"
-    ],
-    [
-      643,
-      260,
-      4,
-      238,
-      5,
-      "MODEL"
-    ],
-    [
-      645,
-      260,
-      5,
-      238,
-      6,
-      "CLIP"
     ],
     [
       681,
@@ -1436,20 +1381,76 @@
       "IMAGE"
     ],
     [
-      728,
-      238,
-      0,
-      297,
-      0,
-      "LATENT"
-    ],
-    [
       729,
       236,
       0,
       297,
       1,
       "VAE"
+    ],
+    [
+      730,
+      233,
+      0,
+      300,
+      0,
+      "LATENT"
+    ],
+    [
+      731,
+      235,
+      0,
+      300,
+      1,
+      "GENPARAMS"
+    ],
+    [
+      732,
+      260,
+      0,
+      300,
+      2,
+      "MODEL"
+    ],
+    [
+      733,
+      234,
+      0,
+      300,
+      3,
+      "CLIP"
+    ],
+    [
+      734,
+      260,
+      3,
+      300,
+      4,
+      "TRANSCODER"
+    ],
+    [
+      735,
+      260,
+      4,
+      300,
+      5,
+      "MODEL"
+    ],
+    [
+      736,
+      260,
+      5,
+      300,
+      6,
+      "CLIP"
+    ],
+    [
+      737,
+      300,
+      0,
+      297,
+      0,
+      "LATENT"
     ]
   ],
   "groups": [
@@ -1475,7 +1476,7 @@
         -720,
         -940,
         1450,
-        710
+        730
       ],
       "color": "#444",
       "font_size": 24,
@@ -1487,8 +1488,8 @@
     "ds": {
       "scale": 0.9229599817706885,
       "offset": [
-        103.88231862055372,
-        164.19987345318927
+        79.02454826662013,
+        152.03643857183587
       ]
     }
   },

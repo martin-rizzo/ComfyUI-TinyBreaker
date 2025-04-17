@@ -56,6 +56,7 @@ def comfy_import_node(cls):
         return
 
     if _DEPRECATED:
+    #    cls.DEPRECATED = True
         class_display_name = class_display_name.replace("💪TB","")
         class_display_name = class_display_name.replace("| ","")
         class_display_name = f"❌{class_display_name} [Deprecated]"
@@ -129,8 +130,8 @@ comfy_import_node(TranscodeLatentTwoSteps)
 # TinyBreaker
 _CATEGORY = "TinyBreaker"
 
-from .nodes.double_stage_sampler                    import DoubleStageSampler
-comfy_import_node(DoubleStageSampler)
+from .nodes.tiny_dual_sampler                       import TinyDualSampler
+comfy_import_node(TinyDualSampler)
 
 from .nodes.empty_latent_image                      import EmptyLatentImage
 comfy_import_node(EmptyLatentImage)
@@ -172,6 +173,9 @@ comfy_import_node(LoadTinyBreakerCheckpoint)
 
 from .nodes.deprecated_nodes.load_tinybreaker_checkpoint_custom import LoadTinyBreakerCheckpointCustom
 comfy_import_node(LoadTinyBreakerCheckpointCustom)
+
+from .nodes.deprecated_nodes.double_stage_sampler               import DoubleStageSampler
+comfy_import_node(DoubleStageSampler)
 
 from .nodes.deprecated_nodes.set_float                          import SetFloat
 comfy_import_node(SetFloat)
