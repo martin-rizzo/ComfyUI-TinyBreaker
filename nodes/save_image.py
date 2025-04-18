@@ -20,6 +20,7 @@ from PIL                                 import Image
 from PIL.PngImagePlugin                  import PngInfo
 from .core.genparams                     import GenParams
 from .core.comfyui_bridge.helpers.images import normalize_images
+from .core.genparams_from_prompt         import split_prompt_and_args, join_prompt_and_args
 from ._common                            import ireplace
 
 _A1111_SAMPLER_BY_COMFY_NAME = {
@@ -76,21 +77,25 @@ class SaveImage:
     DESCRIPTION = "Saves generated images along with A1111/CivitAI metadata within PNG files. This facilitates easy extraction of prompts and settings through widely available tools."
     OUTPUT_NODE = True
 
+    #__ PARAMETERS ________________________________________
     @classmethod
     def INPUT_TYPES(s):
         return {
-            "required": {
-                "images"         : ("IMAGE" , {"tooltip": "The images to save."}),
-                "filename_prefix": ("STRING", {"tooltip": "The prefix for the file to save. This may include formatting information such as %date:yyyy-MM-dd% or %Empty Latent Image.width% to include values from nodes.",
-                                               "default": "TinyBreaker"
-                                               }),
-            },
-            "optional": {
-                "genparams": ("GENPARAMS", {"tooltip": "An optional input with the generation parameters to embed in the image using the A1111/CivitAI format."}),
-            },
-            "hidden": {
-                "prompt": "PROMPT", "extra_pnginfo": "EXTRA_PNGINFO"
-            },
+        "required": {
+            "images"         : ("IMAGE" , {"tooltip": "The images to save."
+                                          }),
+            "filename_prefix": ("STRING", {"tooltip": "The prefix for the file to save. This may include formatting information such as %date:yyyy-MM-dd% or %Empty Latent Image.width% to include values from nodes.",
+                                           "default": "TinyBreaker"
+                                          }),
+        },
+        "optional": {
+            "genparams": ("GENPARAMS", {"tooltip": "An optional input with the generation parameters to embed in the image using the A1111/CivitAI format."
+                                       }),
+        },
+        "hidden": {
+            "prompt"       : "PROMPT",
+            "extra_pnginfo": "EXTRA_PNGINFO"
+        },
         }
 
     #__ FUNCTION __________________________________________
@@ -107,18 +112,35 @@ class SaveImage:
         images = normalize_images(images)
         image_width  = images[0].shape[1]
         image_height = images[0].shape[0]
-        a1111_params = self._create_a1111_params(genparams, image_width, image_height)
+        noise_seed   = genparams.get_int("denoising.base.noise_seed", None)
+        workflow     = extra_pnginfo.get("workflow") if extra_pnginfo else None
+
+        # update random seed in the unified prompt
+        # (eg: replace "--seed random" by "--seed 234567")
+        prompt    = _update_unified_prompt(prompt,    random_seed=noise_seed)
+        workflow  = _update_unified_prompt(workflow,  random_seed=noise_seed)
+        genparams = _update_unified_prompt(genparams, random_seed=noise_seed)
 
         # create PNG info containing A1111/CivitAI+ComfyUI metadata
         pnginfo = PngInfo()
-        if a1111_params:
-            pnginfo.add_text("parameters", a1111_params)
+
+        if genparams:
+            a1111_parameters = self._create_a1111_params(genparams, image_width, image_height)
+            pnginfo.add_text("parameters", a1111_parameters)
+
         if prompt:
-            pnginfo.add_text("prompt", json.dumps(prompt))
+            prompt_json = json.dumps(prompt)
+            pnginfo.add_text("prompt", prompt_json)
+
+        if workflow:
+            workflow_json = json.dumps(workflow)
+            pnginfo.add_text("workflow", workflow_json)
+
         if extra_pnginfo:
-            for key, content_dict in extra_pnginfo.items():
-                if key != "parameters":
-                    pnginfo.add_text(key, json.dumps(content_dict))
+            for info_name, info_dict in extra_pnginfo.items():
+                if info_name not in ("parameters", "prompt", "workflow"):
+                    pnginfo.add_text(info_name, json.dumps(info_dict))
+
 
         # solve the `filename_prefix`` entered by the user and get the full path
         filename_prefix = \
@@ -317,4 +339,72 @@ class SaveImage:
         return output
 
 
+#========================= UNIFIED PROMPT EDITION ==========================#
+import copy
+
+def _update_unified_prompt(workflow: dict, random_seed: int) -> dict:
+    """
+    Updates the unified prompt within a workflow by replacing random seed values.
+
+    This function searches for and replaces occurrences of "--seed random"
+    with the provided random seed value. It handles different types of workflows,
+    such as `GenParams` and `ComfyUI workflows`, etc.
+
+    Args:
+        workflow   (dict): The workflow to update.
+        random_seed (int): The integer value to replace the "random" seed with.
+
+    Returns:
+        The updated workflow.
+    """
+    NODE_TYPE = "UnifiedPromptInput //TinyBreaker"
+    workflow = copy.deepcopy(workflow)
+
+    # genparams
+    if "user.prompt" in workflow:
+        workflow["user.prompt"] = _replace_random_values(workflow["user.prompt"],
+                                                         random_seed=random_seed)
+    # comfyui-workflow
+    elif "nodes" in workflow:
+        nodes = workflow["nodes"]
+        if isinstance(nodes,list):
+            for node in nodes:
+                if isinstance(node,dict) and node.get('type') == NODE_TYPE:
+                    widgets_values = node.get('widgets_values')
+                    if isinstance(widgets_values, list):
+                        for i in range(len(widgets_values)):
+                            widgets_values[i] = _replace_random_values(widgets_values[i],
+                                                                       random_seed=random_seed)
+    # comfyui-prompt
+    else:
+        for id, node in workflow.items():
+            if isinstance(node,dict) and node.get("class_type") == NODE_TYPE:
+                inputs = node.get("inputs")
+                if isinstance(inputs,dict) and "text" in inputs:
+                    inputs["text"] = _replace_random_values(inputs["text"],
+                                                            random_seed=random_seed)
+    return workflow
+
+
+def _replace_random_values(text: str, /,*, random_seed: int | None) -> str:
+    """
+    Replaces "random" seed values with the provided seed.
+    Returns the updated text with the seed values replaced.
+    """
+    if not isinstance(text, str) or not text:
+        return text
+    if random_seed is None:
+        return text
+
+    # analyze one by one the arguments in the prompt
+    # replacing the "--seed random" with the actual seed value
+    prompt, args = split_prompt_and_args(text)
+    for i in range(len(args)):
+        arg = args[i]
+        if arg.startswith("seed "):
+            args[i] = arg.replace("random", str(random_seed))
+
+    # rejoin the prompt and arguments
+    text = join_prompt_and_args(prompt, args)
+    return text
 

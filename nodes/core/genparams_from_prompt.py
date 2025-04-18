@@ -11,6 +11,7 @@ License : MIT
   (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
+import random
 from .genparams import GenParams
 from .._common import normalize_aspect_ratio, NFACTORS_BY_DETAIL_LEVEL, SCALES_BY_NAME
 
@@ -99,11 +100,13 @@ def genparams_from_prompt_args(args: dict, /,*, template: GenParams = None) -> G
     if value in NFACTORS_BY_DETAIL_LEVEL:
         genparams.set_int(f"{RE__}steps_nfactor", NFACTORS_BY_DETAIL_LEVEL[value] )
 
-    # --s, --seed <int>
+    # --s, --seed <int> | "random"
     # "base.noise_seed"
     value = _pop_int_or_str(args, "s", "seed")
     if isinstance(value, int):
-        genparams.set_int(f"{BASE}noise_seed", value, as_delta=False)
+        genparams.set_int(f"{BASE}noise_seed", value)
+    elif isinstance(value, str) and value.lower() == "random":
+        genparams.set_int(f"{BASE}noise_seed", random.randint(0, 1<<24))
 
     # --a, --aspect <width:height>
     # "image.aspect_ratio"
@@ -146,6 +149,42 @@ def genparams_from_prompt_args(args: dict, /,*, template: GenParams = None) -> G
     return genparams
 
 
+def split_prompt_and_args(text: str) -> tuple[str,list]:
+    """
+    Splits a string into a prompt and a list of arguments.
+
+    The result of this function can be reconstructed
+    using `join_prompt_and_args(prompt, args)`.
+
+    Args:
+        text (str): The input string containing the prompt and arguments.
+
+    Returns:
+        A tuple containing the prompt (string) and a list of arguments (strings).
+    """
+    args   = text.split("--")
+    prompt = args.pop(0) if len(args)>0 else ""
+    return prompt, args
+
+
+def join_prompt_and_args(prompt: str, args: list[str]) -> str:
+    """
+    Joins a prompt and a list of arguments into a single string.
+
+    This function is the inverse of `split_prompt_and_args(text)`.
+    It takes the prompt and the list of arguments and can be used
+    to reconstruct the original text after it has been split.
+
+    Args:
+        prompt (str): The prompt.
+        args  (list): A list of strings containing the arguments.
+
+    Returns:
+        The concatenated string containing the prompt and arguments.
+    """
+    return prompt + "--" + "--".join(args) if args else prompt
+
+
 def apply_style(genparams: GenParams, style_name:str) -> None:
     """
     Applies a predefined style to the GenParams object.
@@ -171,14 +210,11 @@ def apply_style(genparams: GenParams, style_name:str) -> None:
 
 def _parse_args_from_prompt(text: str) -> dict[str, str]:
     """Parse the text input into a dictionary of arguments."""
-    prompt = ""
 
     # split the text into arguments by "--"
-    arg_list = text.split("--")
-
     # the first element is the positive prompt, the rest are arguments
-    if len(arg_list) > 0:
-        prompt = arg_list.pop(0).strip()
+    prompt, arg_list = split_prompt_and_args(text)
+    prompt = prompt.strip()
 
     # parse the arguments into a dictionary
     # each argument is of the form "key value" or just "key" (for boolean values)
