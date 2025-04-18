@@ -1,5 +1,5 @@
 """
-File    : load_tinybreaker_checkpoint_v2.py
+File    : load_tinybreaker_ckpt.py
 Purpose : Node to load TinyBreaker checkpoints.
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
 Date    : Jan 1, 2025
@@ -19,17 +19,17 @@ from .core.comfyui_bridge.transcoder  import Transcoder
 from .core.directories import TINYBREAKER_CHECKPOINTS_DIR
 from .core.safetensors import filter_state_dict, update_state_dict, prune_state_dict
 from .core.system      import logger
-
 _AUTOMATIC        = "auto"
 _VAE_TYPE_FAST    = "fast"
 _VAE_TYPE_QUALITY = "high_quality"
 _VAE_TYPES = [ _AUTOMATIC, _VAE_TYPE_FAST, _VAE_TYPE_QUALITY ]
 
 
-class LoadTinyBreakerCheckpointV2:
+class LoadTinyBreakerCkpt:
     TITLE       = "💪TB | Load TinyBreaker Checkpoint"
     CATEGORY    = "TinyBreaker"
-    DESCRIPTION = "Load TinyBreaker checkpoints."
+    DESCRIPTION = "Load a TinyBreaker checkpoint."
+
 
     #__ PARAMETERS ________________________________________
     @classmethod

@@ -1,6 +1,6 @@
 """
 File    : tiny_upscaler.py
-Purpose : Experimental node to upscale an image using the configuration provided by GenParams
+Purpose : Node to upscale an image using the configuration provided by GenParams
 Author  : Martin Rizzo | <martinrizzo@gmail.com>
 Date    : Apr 10, 2025
 Repo    : https://github.com/martin-rizzo/ComfyUI-TinyBreaker

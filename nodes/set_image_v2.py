@@ -32,20 +32,23 @@ class SetImageV2:
     def INPUT_TYPES(cls):
         return {
         "required": {
-            "genparams"  :("GENPARAMS" , {"tooltip": "The generation parameters to be updated.",
-                                         }),
-            "ratio"      :(cls.ratios(), {"tooltip": "The aspect ratio of the image.",
-                                          "default": DEFAULT_ASPECT_RATIO
-                                         }),
-            "orientation":(ORIENTATIONS, {"tooltip": "The orientation of the image. (landscape or portrait)",
-                                          "default": DEFAULT_ORIENTATION
-                                         }),
-            "size"       :(cls.sizes() , {"tooltip": 'The relative size for the image. ("medium" is the size the model was trained on, but "large" is recommended)',
-                                          "default": DEFAULT_SIZE
-                                         }),
-            "batch_size" :("INT"       , {"tooltip": "The number of images to generate in a single batch.",
-                                          "default": 1, "min": 1, "max": 4096
-                                         }),
+            "genparams"   :("GENPARAMS"  ,{"tooltip": "The generation parameters to be updated.",
+                                          }),
+            "ratio"       :(cls.ratios() ,{"tooltip": "The aspect ratio of the image.",
+                                           "default": DEFAULT_ASPECT_RATIO
+                                          }),
+            "orientation" :(ORIENTATIONS ,{"tooltip": "The orientation of the image. (landscape or portrait)",
+                                           "default": DEFAULT_ORIENTATION
+                                          }),
+            "size"        :(cls.sizes()  ,{"tooltip": 'The relative size for the image. ("medium" is the size the model was trained on, but "large" is recommended)',
+                                           "default": DEFAULT_SIZE
+                                          }),
+            "batch_size"  :("INT"        ,{"tooltip": "The number of images to generate in a single batch.",
+                                           "default": 1, "min": 1, "max": 4096
+                                          }),
+            "upscale"     :("BOOLEAN"    ,{"tooltip": "If true, the image will be upscaled to improve its quality.",
+                                           "default": False,
+                                          }),
             },
         }
 
@@ -60,13 +63,15 @@ class SetImageV2:
                   ratio      : str,
                   orientation: str,
                   size       : str,
-                  batch_size : int
+                  batch_size : int,
+                  upscale    : bool,
                   ):
         genparams = genparams.copy()
-        genparams.set_str  ( "image.aspect_ratio", normalize_aspect_ratio(ratio) )
-        genparams.set_str  ( "image.orientation" , orientation                   )
-        genparams.set_float( "image.scale"       , SCALES_BY_NAME.get(size, 1.0) )
-        genparams.set_int  ( "image.batch_size"  , batch_size                    )
+        genparams.set_str  ( "image.aspect_ratio"   , normalize_aspect_ratio(ratio) )
+        genparams.set_str  ( "image.orientation"    , orientation                   )
+        genparams.set_float( "image.scale"          , SCALES_BY_NAME.get(size, 1.0) )
+        genparams.set_bool ( "image.enable_upscaler", upscale                       )
+        genparams.set_int  ( "image.batch_size"     , batch_size                    )
         return (genparams,)
 
 

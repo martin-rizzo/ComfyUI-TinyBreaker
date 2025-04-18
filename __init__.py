@@ -85,6 +85,9 @@ comfy_import_node(SetImageDetailsV2)
 from .nodes.unified_prompt_input                    import UnifiedPromptInput
 comfy_import_node(UnifiedPromptInput)
 
+from .nodes.unpack_boolean                          import UnpackBoolean
+comfy_import_node(UnpackBoolean)
+
 from .nodes.unpack_sampler_params                   import UpackSamplerParams
 comfy_import_node(UpackSamplerParams)
 
@@ -93,11 +96,11 @@ comfy_import_node(UpackSamplerParams)
 # TinyBreakers/loaders
 _CATEGORY = "TinyBreaker/loaders"
 
-from .nodes.load_tinybreaker_checkpoint_v2          import LoadTinyBreakerCheckpointV2
-comfy_import_node(LoadTinyBreakerCheckpointV2)
+from .nodes.load_tinybreaker_ckpt                   import LoadTinyBreakerCkpt
+comfy_import_node(LoadTinyBreakerCkpt)
 
-from .nodes.load_tinybreaker_checkpoint_custom_v2   import LoadTinyBreakerCheckpointCustomV2
-comfy_import_node(LoadTinyBreakerCheckpointCustomV2)
+from .nodes.load_tinybreaker_ckpt_advanced          import LoadTinyBreakerCkptAdvanced
+comfy_import_node(LoadTinyBreakerCkptAdvanced)
 
 from .nodes.load_t5_encoder_experimental            import LoadT5EncoderExperimental
 comfy_import_node(LoadT5EncoderExperimental)
@@ -108,6 +111,18 @@ comfy_import_node(LoadAnyVAE)
 from .nodes.load_partial_vae                        import LoadPartialVAE
 comfy_import_node(LoadPartialVAE)
 
+
+# TinyBreaker/upscalers
+_CATEGORY = "TinyBreaker/upscalers"
+
+from .nodes.tiny_upscaler                           import TinyUpscaler
+comfy_import_node(TinyUpscaler)
+
+from .nodes.tiny_upscaler_advanced                  import TinyUpscalerAdvanced
+comfy_import_node(TinyUpscalerAdvanced)
+
+from .nodes.tiny_upscaler_experimental              import TinyUpscalerExperimental
+comfy_import_node(TinyUpscalerExperimental)
 
 
 # TinyBreakers/transcoding
@@ -144,12 +159,6 @@ comfy_import_node(TinyEncode)
 
 from .nodes.tiny_decode                             import TinyDecode
 comfy_import_node(TinyDecode)
-
-from .nodes.tiny_upscaler_experimental              import TinyUpscalerExperimental
-comfy_import_node(TinyUpscalerExperimental)
-
-from .nodes.tiny_upscaler                           import TinyUpscaler
-comfy_import_node(TinyUpscaler)
 
 
 
