@@ -56,7 +56,7 @@ def comfy_import_node(cls):
         return
 
     if _DEPRECATED:
-    #    cls.DEPRECATED = True
+        cls.DEPRECATED = True
         class_display_name = class_display_name.replace("💪TB","")
         class_display_name = class_display_name.replace("| ","")
         class_display_name = f"❌{class_display_name} [Deprecated]"
