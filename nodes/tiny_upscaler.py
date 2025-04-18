@@ -12,6 +12,7 @@ License : MIT
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import torch
+from .core.system                      import logger
 from .core.comfyui_bridge.clip         import CLIP
 from .core.comfyui_bridge.vae          import VAE
 from .core.comfyui_bridge.model        import Model
@@ -72,11 +73,23 @@ class TinyUpscaler:
         denoising = DenoisingParams.from_genparams(genparams, "denoising.upscaler",
                                                    model_to_sample        = model,
                                                    return_none_on_missing = True)
-        upscale = genparams.get_bool("image.enable_upscaler", False)
+        enable_upscale = genparams.get_bool("image.enable_upscaler", False)
 
-        if not denoising or not upscale:
-            # no upscaling
-            return (image, ) 
+        # if upscaling is disabled by the user, skip the upscaling
+        if not enable_upscale:
+            return (image, )
+
+        # the denoising parameters may be missing if they
+        # were not correctly configured in the styles or metadata of the model.
+        if not denoising:
+            logger.warning("No denoising parameters found. Upscaling will be skipped.")
+            return (image, )
+
+        # old tinybreaker version cannot handle upscaling because missing VAE;
+        # original pixart-sigma model cannot handle upscaling because missing Refiner model
+        if not model or not vae:
+            logger.warning("No refiner model or VAE available. Upscaling will be skipped.")
+            return (image, )
 
         positive, negative = self._encode(clip, denoising.positive, denoising.negative)
         extra_noise        = 0.6

@@ -129,7 +129,7 @@ class LoadTinyBreakerCheckpointV2:
         # if the model contains a key that starts with `base.diffusion_model`
         # then it is a model of type "prototype1"
         for key in state_dict.keys():
-            if key.startswith("refiner.diffusion_model."):
+            if key.startswith("refiner.first_stage_model."):
                 return "TinyBreaker.prototype1"
 
         # otherwise, it is a model of type "prototype0" (old model)
