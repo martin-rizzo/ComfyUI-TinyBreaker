@@ -334,7 +334,7 @@ class GenParams(dict):
         return self.to_string(indent=4, width=94)
 
 
-    def to_string(self, *, indent: int=4, width: int=-1, filter_prefixes: list[str] = None) -> str:
+    def to_string(self, *, indent: int=4, width: int=-1, group_keys=True, filter_prefixes: list[str] = None) -> str:
         """Return a string representation of the GenParams object."""
 
         # filter the keys based on the filter_prefixes argument (if provided)
@@ -344,34 +344,45 @@ class GenParams(dict):
             filter_prefixes = [normalize_prefix(prefix) for prefix in filter_prefixes]
             genparams = { key: value for key,value in self.items() if any(key.startswith(prefix) for prefix in filter_prefixes)}
 
-        # build the string representation of the GenParams object
-        # spliting the keys into groups based on their prefix
         string = "GenParams({\n"
 
-        keys = self.__pop_group_as_string("file."     , source=genparams, indent=indent, width=width)
-        if keys: string += f"# FILE\n{keys}"
+        if group_keys:
+            # build the string representation of the GenParams object
+            # spliting the keys into groups based on their prefix
 
-        keys = self.__pop_group_as_string("modelspec.", source=genparams, indent=indent, width=width)
-        if keys: string += f"# MODEL\n{keys}"
+            keys = self.__pop_group_as_string("file."     , source=genparams, indent=indent, width=width)
+            if keys: string += f"# FILE\n{keys}"
 
-        keys = self.__pop_group_as_string("image."    , source=genparams, indent=indent, width=width)
-        if keys: string += f"# IMAGE\n{keys}"
+            keys = self.__pop_group_as_string("modelspec.", source=genparams, indent=indent, width=width)
+            if keys: string += f"# MODEL\n{keys}"
 
-        refkeys = self.__pop_group_as_string("denoising.refiner" , source=genparams, indent=indent, width=width)
-        upskeys = self.__pop_group_as_string("denoising.upscaler", source=genparams, indent=indent, width=width)
-        keys    = self.__pop_group_as_string("denoising"         , source=genparams, indent=indent, width=width)
-        if keys   : string += f"# DENOISING\n{keys}"
-        if refkeys: string += f"# DENOISING (refiner)\n{refkeys}"
-        if upskeys: string += f"# DENOISING (upscaler)\n{upskeys}"
+            keys = self.__pop_group_as_string("image."    , source=genparams, indent=indent, width=width)
+            if keys: string += f"# IMAGE\n{keys}"
 
-        keys = self.__pop_group_as_string("user."     , source=genparams, indent=indent, width=width)
-        if keys: string += f"# USER\n{keys}"
+            refkeys = self.__pop_group_as_string("denoising.refiner" , source=genparams, indent=indent, width=width)
+            upskeys = self.__pop_group_as_string("denoising.upscaler", source=genparams, indent=indent, width=width)
+            keys    = self.__pop_group_as_string("denoising"         , source=genparams, indent=indent, width=width)
+            if keys   : string += f"# DENOISING\n{keys}"
+            if refkeys: string += f"# DENOISING (refiner)\n{refkeys}"
+            if upskeys: string += f"# DENOISING (upscaler)\n{upskeys}"
 
-        keys = self.__pop_all_styles_as_string(         source=genparams, indent=indent             )
-        if keys: string += f"# STYLES\n{keys}"
+            keys = self.__pop_group_as_string("user."     , source=genparams, indent=indent, width=width)
+            if keys: string += f"# USER\n{keys}"
 
-        keys = self.__pop_group_as_string(""          , source=genparams, indent=indent, width=width)
-        if keys: string += f"# OTHERS\n{keys}"
+            keys = self.__pop_all_styles_as_string(         source=genparams, indent=indent             )
+            if keys: string += f"# STYLES\n{keys}"
+
+            keys = self.__pop_group_as_string(""          , source=genparams, indent=indent, width=width)
+            if keys: string += f"# OTHERS\n{keys}"
+
+        else:
+            # build the string representation of the GenParams object
+            # without grouping the keys
+
+            indent     = 4
+            indent_str = ' ' * indent
+            for key,value in genparams.items():
+                string += f"{indent_str}{key:27}: {value},\n"
 
         string += "})"
         return string
