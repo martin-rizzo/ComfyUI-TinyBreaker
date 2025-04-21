@@ -112,20 +112,22 @@ from .nodes.load_partial_vae                        import LoadPartialVAE
 comfy_import_node(LoadPartialVAE)
 
 
-# TinyBreaker/upscalers
-_CATEGORY = "TinyBreaker/upscalers"
 
-from .nodes.tiny_upscaler                           import TinyUpscaler
-comfy_import_node(TinyUpscaler)
+# TinyBreaker/latent
+_CATEGORY = "TinyBreaker/latent"
 
-from .nodes.tiny_upscaler_advanced                  import TinyUpscalerAdvanced
-comfy_import_node(TinyUpscalerAdvanced)
+from .nodes.empty_latent_image                      import EmptyLatentImage
+comfy_import_node(EmptyLatentImage)
 
-from .nodes.tiny_upscaler_experimental              import TinyUpscalerExperimental
-comfy_import_node(TinyUpscalerExperimental)
+from .nodes.tiny_encode                             import TinyEncode
+comfy_import_node(TinyEncode)
+
+from .nodes.tiny_decode                             import TinyDecode
+comfy_import_node(TinyDecode)
 
 
-# TinyBreakers/transcoding
+
+# TinyBreaker/transcoding
 _CATEGORY = "TinyBreaker/transcoding"
 
 from .nodes.load_transcoder                         import LoadTranscoder
@@ -142,23 +144,31 @@ comfy_import_node(TranscodeLatentTwoSteps)
 
 
 
+# TinyBreaker/upscaler
+_CATEGORY = "TinyBreaker/upscaler"
+
+from .nodes.tiny_upscaler                           import TinyUpscaler
+comfy_import_node(TinyUpscaler)
+
+from .nodes.tiny_upscaler_advanced                  import TinyUpscalerAdvanced
+comfy_import_node(TinyUpscalerAdvanced)
+
+from .nodes.tiny_upscaler_experimental              import TinyUpscalerExperimental
+comfy_import_node(TinyUpscalerExperimental)
+
+
+
 # TinyBreaker
 _CATEGORY = "TinyBreaker"
 
 from .nodes.tiny_dual_sampler                       import TinyDualSampler
 comfy_import_node(TinyDualSampler)
 
-from .nodes.empty_latent_image                      import EmptyLatentImage
-comfy_import_node(EmptyLatentImage)
-
 from .nodes.save_image                              import SaveImage
 comfy_import_node(SaveImage)
 
-from .nodes.tiny_encode                             import TinyEncode
-comfy_import_node(TinyEncode)
-
-from .nodes.tiny_decode                             import TinyDecode
-comfy_import_node(TinyDecode)
+from .nodes.multiline_text                          import MutilineText
+comfy_import_node(MutilineText)
 
 
 

@@ -42,7 +42,10 @@ class SelectStyle:
             },
         "optional": {
             "custom_definitions":("STRING", {"tooltip": "A string containing a list of custom styles that override the pre-defined styles.",
-                                             "default": "", "multiline": True, "forceInput": True
+                                             "multiline"     :  True,
+                                             "dynamicPrompts": False,
+                                             "forceInput"    :  True,
+                                             "default"       :    "",
                                              }),
             },
         }
