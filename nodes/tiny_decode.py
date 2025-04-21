@@ -14,8 +14,10 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 from .core.comfyui_bridge.vae             import VAE
 from .core.comfyui_bridge.helpers.images  import normalize_images
 from .core.tiny_encode_decode             import tiny_decode
-_TILE_SIZES        = ["128px", "256px", "512px", "768px", "1024px"]
+_TILE_SIZES        = ["128px", "256px", "384px", "512px", "640px", "768px", "1024px"]
 _DEFAULT_TILE_SIZE = "512px"
+_OVERLAPS          = ["0%", "10%", "20%", "30%", "40%", "50%", "60%", "70%", "80%", "90%", "100%"]
+_DEFAULT_OVERLAP   = "100%"
 
 
 class TinyDecode:
@@ -32,8 +34,11 @@ class TinyDecode:
                                       }),
             "vae"      :("VAE"       ,{"tooltip": "The VAE model used for decoding the latent representation.",
                                       }),
-            "tile_size":(_TILE_SIZES ,{"tooltip": "The size of the tiles used to divide the input latent into smaller chunks for processing. The value is expressed in pixels of the output image.",
+            "tile_size":(_TILE_SIZES ,{"tooltip": "The size of the tiles used to divide the input latent into smaller regions for processing, expressed in pixels of the output image. A lower tile size reduces memory usage but may result in lower image quality.",
                                        "default": _DEFAULT_TILE_SIZE
+                                      }),
+            "overlap"  :(_OVERLAPS,   {"tooltip": "The percentage of overlap between adjacent tiles.",
+                                       "default": _DEFAULT_OVERLAP,
                                       }),
             },
         }
@@ -45,21 +50,21 @@ class TinyDecode:
     OUTPUT_TOOLTIPS = ("The decoded image.",)
 
     def decode(self,
-               latent         : dict,
-               vae            : VAE,
-               tile_size      : str | int = 512,
-               overlap_percent: str | int = 100,
+               latent   : dict,
+               vae      : VAE,
+               tile_size: str | int = 512,
+               overlap  : str | int = 100,
                ) -> tuple:
 
         if isinstance(tile_size, str):
             tile_size = int(tile_size.removesuffix("px"))
-        if isinstance(overlap_percent, str):
-            overlap_percent = int(overlap_percent.removesuffix("%"))
+        if isinstance(overlap, str):
+            overlap = int(overlap.removesuffix("%"))
 
         image = tiny_decode(latent["samples"],
                             vae          = vae,
                             tile_size    = tile_size,
-                            tile_padding = (tile_size*overlap_percent//400),
+                            tile_padding = (tile_size*overlap//400),
                             )
 
         return (normalize_images(image), )
