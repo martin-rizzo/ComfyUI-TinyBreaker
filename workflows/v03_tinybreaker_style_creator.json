@@ -1093,50 +1093,6 @@
       "widgets_values": []
     },
     {
-      "id": 198,
-      "type": "UnifiedPromptInput //TinyBreaker",
-      "pos": [
-        370,
-        -20
-      ],
-      "size": [
-        540,
-        700
-      ],
-      "flags": {
-        "pinned": true
-      },
-      "order": 15,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "link": 528
-        }
-      ],
-      "outputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "links": [
-            514,
-            515
-          ]
-        }
-      ],
-      "properties": {
-        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
-        "ver": "c60e8905dd0e4810be034d07337ae31fdee7ae66",
-        "Node name for S&R": "UnifiedPromptInput //TinyBreaker"
-      },
-      "widgets_values": [
-        "A blue squirrel sitting in a black chair in front of a computer. The squirrel has white fur on its chest and belly, and its tail is long and bushy. The squirrel is typing on the keyboard with its front paws. The computer screen is displaying a complex graph with red and blue lines. The background is blurry, but it appears to be a spaceship interior with orange lights. The lighting is soft and diffused. The squirrel is the main focus of the image, and it is sharply in focus. The background is out of focus\n\n--aspect 3:2 --portrait --seed 2 --upscale on \n"
-      ],
-      "color": "#232",
-      "bgcolor": "#353"
-    },
-    {
       "id": 289,
       "type": "Reroute",
       "pos": [
@@ -1205,39 +1161,6 @@
         "showOutputText": false,
         "horizontal": false
       }
-    },
-    {
-      "id": 307,
-      "type": "MutilineText //TinyBreaker",
-      "pos": [
-        -890,
-        0
-      ],
-      "size": [
-        910,
-        680
-      ],
-      "flags": {},
-      "order": 3,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "STRING",
-          "type": "STRING",
-          "links": [
-            750
-          ]
-        }
-      ],
-      "properties": {
-        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
-        "ver": "c60e8905dd0e4810be034d07337ae31fdee7ae66",
-        "Node name for S&R": "MutilineText //TinyBreaker"
-      },
-      "widgets_values": [
-        "\n[CUSTOM1]\n# dynamic illustrations in comic book art style\nbase.prompt      = \"Detailed comic cover. {$@}. (european erotic draw:1.1). Poster in white, red, blue and black with solid colors. Bokeh\"\nbase.negative    = \"blurry, photography, bokeh{, $@}\"\nbase.sampler     = \"deis\"\nbase.scheduler   = \"simple\"\nbase.steps       = 14\nbase.steps_start = 3\nbase.cfg         = 4.5\nrefiner.prompt      = \"Poster, erotic comics{, $@}\"\nrefiner.sampler     = \"lms\"\nrefiner.scheduler   = \"normal\"\nrefiner.steps       = 13\nrefiner.steps_start = 10\nrefiner.cfg         = 4.0\n\n\n[CUSTOM2]\n# realistic images with exceptional detail and clarity\nbase.prompt      = \"An iPhone photo{. $@}. (JPEG artifacts:1.1)\"\nbase.negative    = \"macrophoto, bokeh, out of focus, anime, comic, nintendo, toy, videogame, pixar{, $@}\"\nbase.sampler     = \"dpmpp_2m_sde\"\nbase.scheduler   = \"beta\"\nbase.steps       = 16\nbase.steps_start = 3\nrefiner.prompt      = \"(argentine social woman:1.2){, $@}\"\nrefiner.negative    = \"(worst quality, low quality, manga:1.8){, $@}\"\nrefiner.sampler     = \"dpmpp_2m\"\nrefiner.scheduler   = \"normal\"\nrefiner.steps       = 22\nrefiner.steps_start = 12\nrefiner.cfg         = 2.0\n\n\n[CUSTOM3]\n\n\n[CUSTOM4]"
-      ]
     },
     {
       "id": 193,
@@ -1319,6 +1242,83 @@
         "512px",
         "100%"
       ]
+    },
+    {
+      "id": 307,
+      "type": "MutilineText //TinyBreaker",
+      "pos": [
+        -890,
+        0
+      ],
+      "size": [
+        910,
+        680
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": [
+            750
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "c60e8905dd0e4810be034d07337ae31fdee7ae66",
+        "Node name for S&R": "MutilineText //TinyBreaker"
+      },
+      "widgets_values": [
+        "\n[CUSTOM1]\n# dynamic illustrations in comic book art style\nbase.prompt      = \"Detailed comic cover. {$@}. (european erotic draw:1.1). Poster in white, red, blue and black with solid colors. Bokeh\"\nbase.negative    = \"blurry, photography, bokeh{, $@}\"\nbase.sampler     = \"deis\"\nbase.scheduler   = \"simple\"\nbase.steps       = 14\nbase.steps_start = 3\nbase.cfg         = 4.5\nrefiner.prompt      = \"Poster, erotic comics{, $@}\"\nrefiner.sampler     = \"lms\"\nrefiner.scheduler   = \"normal\"\nrefiner.steps       = 13\nrefiner.steps_start = 10\nrefiner.cfg         = 4.0\nupscaler.negative      = \"(worst quality, low quality, manga:1.4)\"\nupscaler.steps_start   = 11\nupscaler.steps_end     = 15\n\n\n[CUSTOM2]\n# pixel art images with retro and blocky details\n#base.prompt     = \"(A minimalist pixel-art image of:1.1){ $@.} Low-res, blocky, pixel art style, 8-bit retro videogame\"\nbase.prompt      = \"A pixel art illustration of {$@}, in the style of a classic 16-bit video game, retro game graphics\"\nbase.negative    = \"(bokeh, macrophoto, halo effect, smooth shading:1.1), noisy, highly detailed, photo, realistic, macrophoto{, $@}\"\nbase.steps       = 15\nbase.steps_start = 3\nbase.cfg         = 4.5\nrefiner.prompt      = \"(pixel-art, low-res, blocky:1.2){, $@}\"\nrefiner.negative    = \"soft{, $@}\"\nrefiner.cfg         = 8.0\nrefiner.steps       = 16\nrefiner.steps_start = 13\nupscaler.prompt        = \"(pixel-art, low-res, blocky:1.2)\"\nupscaler.negative      = \"(worst quality, low quality, manga:1.2)\"\nupscaler.steps_start   = 11\nupscaler.steps_end     = 16\n\n\n[CUSTOM3]\n\n\n[CUSTOM4]"
+      ]
+    },
+    {
+      "id": 198,
+      "type": "UnifiedPromptInput //TinyBreaker",
+      "pos": [
+        370,
+        -20
+      ],
+      "size": [
+        540,
+        700
+      ],
+      "flags": {
+        "pinned": true
+      },
+      "order": 15,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 528
+        }
+      ],
+      "outputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "links": [
+            514,
+            515
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "c60e8905dd0e4810be034d07337ae31fdee7ae66",
+        "Node name for S&R": "UnifiedPromptInput //TinyBreaker"
+      },
+      "widgets_values": [
+        "An evil female Darth Vader wearing her helmet, tight corset, and thigh-high black boots. She holds a red lightsaber in a dark spaceship hallway \n\n--aspect 3:2 --portrait --seed 3 --upscale off \n"
+      ],
+      "color": "#232",
+      "bgcolor": "#353"
     }
   ],
   "links": [
@@ -1705,10 +1705,10 @@
   "config": {},
   "extra": {
     "ds": {
-      "scale": 0.6830134553650707,
+      "scale": 0.8264462809917354,
       "offset": [
-        979.2929493501882,
-        484.6232067578351
+        1562.414046612823,
+        237.06296842574702
       ]
     },
     "frontendVersion": "1.16.8"
