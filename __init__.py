@@ -32,17 +32,34 @@ License : MIT
     SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
+import os
+
+# initialize the TinyBreaker logger
+from comfy.cli_args     import args
+from .nodes.core.system import setup_logger
+if os.getenv('TB_DEBUG'):
+    setup_logger(log_level="DEBUG", use_stdout=args.log_stdout)
+else:
+    setup_logger(log_level=args.verbose, use_stdout=args.log_stdout)
+
+# import the newly initialized TinyBreaker logger
 from .nodes.core.system import logger
+
+# initialize variables used by ComfyUI to import the custom nodes
 WEB_DIRECTORY              = "./web"
 NODE_CLASS_MAPPINGS        = {}
 NODE_DISPLAY_NAME_MAPPINGS = {}
+__all__ = ["NODE_CLASS_MAPPINGS", "NODE_DISPLAY_NAME_MAPPINGS", "WEB_DIRECTORY"]
+
+
+#================= TINYBREAKER CUSTOM NODE IMPORT PROCESS ==================#
 
 _PROJECT_ID    = "//TinyBreaker"
 _PROJECT_EMOJI = "💪"
 _CATEGORY      = "TinyBreaker"
 _DEPRECATED    = False
 
-def comfy_import_node(cls):
+def _comfy_import_node(cls):
     global NODE_CLASS_MAPPINGS
     global NODE_DISPLAY_NAME_MAPPINGS
 
@@ -66,30 +83,43 @@ def comfy_import_node(cls):
     NODE_DISPLAY_NAME_MAPPINGS[comfy_class_name] = class_display_name
 
 
+# TinyBreaker
+_CATEGORY = "TinyBreaker"
+
+from .nodes.tiny_dual_sampler                       import TinyDualSampler
+_comfy_import_node(TinyDualSampler)
+
+from .nodes.save_image                              import SaveImage
+_comfy_import_node(SaveImage)
+
+from .nodes.multiline_text                          import MutilineText
+_comfy_import_node(MutilineText)
+
+
 
 # TinyBreaker/genparams
 _CATEGORY = "TinyBreaker/genparams"
 
 from .nodes.select_style                            import SelectStyle
-comfy_import_node(SelectStyle)
+_comfy_import_node(SelectStyle)
 
 from .nodes.set_base_seed                           import SetBaseSeed
-comfy_import_node(SetBaseSeed)
+_comfy_import_node(SetBaseSeed)
 
 from .nodes.set_image_v2                            import SetImageV2
-comfy_import_node(SetImageV2)
+_comfy_import_node(SetImageV2)
 
 from .nodes.set_image_details_v2                    import SetImageDetailsV2
-comfy_import_node(SetImageDetailsV2)
+_comfy_import_node(SetImageDetailsV2)
 
 from .nodes.unified_prompt_input                    import UnifiedPromptInput
-comfy_import_node(UnifiedPromptInput)
+_comfy_import_node(UnifiedPromptInput)
 
 from .nodes.unpack_boolean                          import UnpackBoolean
-comfy_import_node(UnpackBoolean)
+_comfy_import_node(UnpackBoolean)
 
 from .nodes.unpack_sampler_params                   import UpackSamplerParams
-comfy_import_node(UpackSamplerParams)
+_comfy_import_node(UpackSamplerParams)
 
 
 
@@ -97,19 +127,19 @@ comfy_import_node(UpackSamplerParams)
 _CATEGORY = "TinyBreaker/loaders"
 
 from .nodes.load_tinybreaker_ckpt                   import LoadTinyBreakerCkpt
-comfy_import_node(LoadTinyBreakerCkpt)
+_comfy_import_node(LoadTinyBreakerCkpt)
 
 from .nodes.load_tinybreaker_ckpt_advanced          import LoadTinyBreakerCkptAdvanced
-comfy_import_node(LoadTinyBreakerCkptAdvanced)
+_comfy_import_node(LoadTinyBreakerCkptAdvanced)
 
 from .nodes.load_t5_encoder_experimental            import LoadT5EncoderExperimental
-comfy_import_node(LoadT5EncoderExperimental)
+_comfy_import_node(LoadT5EncoderExperimental)
 
 from .nodes.load_any_vae                            import LoadAnyVAE
-comfy_import_node(LoadAnyVAE)
+_comfy_import_node(LoadAnyVAE)
 
 from .nodes.load_partial_vae                        import LoadPartialVAE
-comfy_import_node(LoadPartialVAE)
+_comfy_import_node(LoadPartialVAE)
 
 
 
@@ -117,13 +147,13 @@ comfy_import_node(LoadPartialVAE)
 _CATEGORY = "TinyBreaker/latent"
 
 from .nodes.empty_latent_image                      import EmptyLatentImage
-comfy_import_node(EmptyLatentImage)
+_comfy_import_node(EmptyLatentImage)
 
 from .nodes.tiny_encode                             import TinyEncode
-comfy_import_node(TinyEncode)
+_comfy_import_node(TinyEncode)
 
 from .nodes.tiny_decode                             import TinyDecode
-comfy_import_node(TinyDecode)
+_comfy_import_node(TinyDecode)
 
 
 
@@ -131,16 +161,16 @@ comfy_import_node(TinyDecode)
 _CATEGORY = "TinyBreaker/transcoding"
 
 from .nodes.load_transcoder                         import LoadTranscoder
-comfy_import_node(LoadTranscoder)
+_comfy_import_node(LoadTranscoder)
 
 from .nodes.build_custom_transcoder                 import BuildCustomTranscoder
-comfy_import_node(BuildCustomTranscoder)
+_comfy_import_node(BuildCustomTranscoder)
 
 from .nodes.transcode_latent                        import TranscodeLatent
-comfy_import_node(TranscodeLatent)
+_comfy_import_node(TranscodeLatent)
 
 from .nodes.transcode_latent_two_steps              import TranscodeLatentTwoSteps
-comfy_import_node(TranscodeLatentTwoSteps)
+_comfy_import_node(TranscodeLatentTwoSteps)
 
 
 
@@ -148,27 +178,13 @@ comfy_import_node(TranscodeLatentTwoSteps)
 _CATEGORY = "TinyBreaker/upscaler"
 
 from .nodes.tiny_upscaler                           import TinyUpscaler
-comfy_import_node(TinyUpscaler)
+_comfy_import_node(TinyUpscaler)
 
 from .nodes.tiny_upscaler_advanced                  import TinyUpscalerAdvanced
-comfy_import_node(TinyUpscalerAdvanced)
+_comfy_import_node(TinyUpscalerAdvanced)
 
 from .nodes.tiny_upscaler_experimental              import TinyUpscalerExperimental
-comfy_import_node(TinyUpscalerExperimental)
-
-
-
-# TinyBreaker
-_CATEGORY = "TinyBreaker"
-
-from .nodes.tiny_dual_sampler                       import TinyDualSampler
-comfy_import_node(TinyDualSampler)
-
-from .nodes.save_image                              import SaveImage
-comfy_import_node(SaveImage)
-
-from .nodes.multiline_text                          import MutilineText
-comfy_import_node(MutilineText)
+_comfy_import_node(TinyUpscalerExperimental)
 
 
 
@@ -176,10 +192,10 @@ comfy_import_node(MutilineText)
 _CATEGORY = "TinyBreaker/__dev"
 
 from .nodes.genparams_debug_logger                  import GenParamsDebugLogger
-comfy_import_node(GenParamsDebugLogger)
+_comfy_import_node(GenParamsDebugLogger)
 
 from .nodes.save_anything                           import SaveAnything
-comfy_import_node(SaveAnything)
+_comfy_import_node(SaveAnything)
 
 
 
@@ -188,24 +204,24 @@ _CATEGORY   = "TinyBreaker/__deprecated"
 _DEPRECATED = True
 
 from .nodes.deprecated_nodes.load_tinybreaker_checkpoint        import LoadTinyBreakerCheckpoint
-comfy_import_node(LoadTinyBreakerCheckpoint)
+_comfy_import_node(LoadTinyBreakerCheckpoint)
 
 from .nodes.deprecated_nodes.load_tinybreaker_checkpoint_custom import LoadTinyBreakerCheckpointCustom
-comfy_import_node(LoadTinyBreakerCheckpointCustom)
+_comfy_import_node(LoadTinyBreakerCheckpointCustom)
 
 from .nodes.deprecated_nodes.double_stage_sampler               import DoubleStageSampler
-comfy_import_node(DoubleStageSampler)
+_comfy_import_node(DoubleStageSampler)
 
 from .nodes.deprecated_nodes.set_float                          import SetFloat
-comfy_import_node(SetFloat)
+_comfy_import_node(SetFloat)
 
 from .nodes.deprecated_nodes.set_image                          import SetImage
-comfy_import_node(SetImage)
+_comfy_import_node(SetImage)
 
 from .nodes.deprecated_nodes.set_image_tweaks                   import SetImageTweaks
-comfy_import_node(SetImageTweaks)
+_comfy_import_node(SetImageTweaks)
 
 
 
 logger.info(f"Imported {len(NODE_CLASS_MAPPINGS)} nodes")
-__all__ = ["NODE_CLASS_MAPPINGS", "NODE_DISPLAY_NAME_MAPPINGS", "WEB_DIRECTORY"]
+

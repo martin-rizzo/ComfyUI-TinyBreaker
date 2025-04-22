@@ -13,34 +13,54 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import sys
 import logging
+# ANSI colors
+_GREEN     = "\033[0;32m"
+_BLUE      = "\033[0;34m"
+_YELLOW    = "\033[0;33m"
+_RED       = "\033[0;31m"
+_LIGHT_RED = "\033[1;31m"
+_RESET     = "\033[0m"   # reset to default color
 
 class _CustomFormatter(logging.Formatter):
     """Custom formatter for the logger."""
-    EMOJI  = "\U0001F4AA" # the emoji show before logger name
-    COLOR  = "\033[0;33m" # yellow for the logger name color
-    RESET  = "\033[0m"    # reset to default color
-    COLORS = {
-        logging.INFO    : "\033[0;32m",  # GREEN
-        logging.DEBUG   : "\033[0;34m",  # BLUE
-        logging.WARNING : "\033[0;33m",  # YELLOW
-        logging.ERROR   : "\033[0;31m",  # RED
-        logging.CRITICAL: "\033[1;31m",  # BOLD RED
+    EMOJI        = "\U0001F4AA"  # emoji shown before the log message
+    NAME_COLOR   = _YELLOW       # logger name color
+    LEVEL_COLORS = {
+        logging.INFO    : _GREEN,
+        logging.DEBUG   : _BLUE,
+        logging.WARNING : _YELLOW,
+        logging.ERROR   : _RED,
+        logging.CRITICAL: _LIGHT_RED,
     }
 
     def format(self, record):
         """Override the default format method."""
         # set color based on the log level and add an emoji before the logger name
-        color = self.COLORS.get(record.levelno, self.RESET)
-        record.name      = f"{self.EMOJI}{self.COLOR}{record.name}{self.RESET}"
-        record.levelname = f"{color}{record.levelname}{self.RESET}"
+        level_color = self.LEVEL_COLORS.get(record.levelno, _RESET)
+        record.name      = f"{self.EMOJI}{self.NAME_COLOR}{record.name}{_RESET}"
+        record.levelname = f"{level_color}{record.levelname}{_RESET}"
         return super().format(record)
 
 
-# Create a logger instance and set the custom formatter.
-logger = logging.getLogger("TinyBreaker")
-logger.propagate = False
-if not logger.handlers:
-    handler = logging.StreamHandler(sys.stdout)
-    handler.setFormatter(_CustomFormatter("[%(name)s %(levelname)s] %(message)s"))
-    logger.addHandler(handler)
-logger.setLevel(logging.DEBUG)
+#======================= THE MAIN TINYBREAKER LOGGER =======================#
+
+logger: logging.Logger = None
+
+def setup_logger(name      : str  = "TB",
+                 log_level : str  = "INFO",
+                 use_stdout: bool = False
+                 ):
+    global logger
+    if logger is not None:
+        logger.warning("Logger already set up. Skipping setup_logger().")
+
+    logger = logging.getLogger(name)
+    logger.propagate = False
+    if not logger.handlers:
+        handler = logging.StreamHandler(sys.strout if use_stdout else sys.stderr)
+        handler.setFormatter(_CustomFormatter("[%(name)s %(levelname)s] %(message)s"))
+        logger.addHandler(handler)
+    logger.setLevel(log_level)
+    if log_level=="DEBUG" or log_level==logging.DEBUG:
+        logger.debug("Debug logging enabled.")
+
