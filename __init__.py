@@ -183,9 +183,6 @@ _comfy_import_node(TinyUpscaler)
 from .nodes.tiny_upscaler_advanced                  import TinyUpscalerAdvanced
 _comfy_import_node(TinyUpscalerAdvanced)
 
-from .nodes.tiny_upscaler_experimental              import TinyUpscalerExperimental
-_comfy_import_node(TinyUpscalerExperimental)
-
 
 
 # TinyBreaker/__dev
