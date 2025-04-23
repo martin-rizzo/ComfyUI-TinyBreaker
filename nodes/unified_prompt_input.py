@@ -20,20 +20,21 @@ class UnifiedPromptInput:
     TITLE       = "💪TB | Unified Prompt Input"
     CATEGORY    = "TinyBreaker"
     DESCRIPTION = "Allows to write positive/negative prompts and parameters in a single text input."
-    @classmethod
-    def IS_CHANGED(self, *args, **kwargs):
-        return self.get_state_hash(*args, **kwargs)
-
 
     #__ PARAMETERS ________________________________________
+    @classmethod
+    def IS_CHANGED(cls, *args, **kwargs):
+        return cls.get_state_hash(*args, **kwargs)
+
     @classmethod
     def INPUT_TYPES(cls):
         return {
         "required": {
-            "genparams":("GENPARAMS", {"tooltip": "The generation parameters to be updated."
+            "genparams" :("GENPARAMS" ,{"tooltip": "The generation parameters to be updated."
                                        }),
-            "text"     :("STRING"   , {"tooltip": "The text input containing positive/negative prompts and parameters.",
-                                       "multiline": True, "dynamicPrompts": True
+            "prompt"    :("STRING"    ,{"tooltip": "The text input containing positive/negative prompts and parameters.",
+                                        "multiline"     : True,
+                                        "dynamicPrompts": True
                                        }),
             },
         }
@@ -44,24 +45,40 @@ class UnifiedPromptInput:
     RETURN_NAMES    = ("genparams",)
     OUTPUT_TOOLTIPS = ("The generation parameters with the updated values. (you can use this output to chain other genparams nodes)",)
 
-    def parse_prompt(self, text: str, genparams: GenParams) -> GenParams:
-        genparams = genparams_from_prompt(text, template=genparams)
-        genparams.set_str("user.prompt"  , text)
-        genparams.set_str("user.negative", ""  )
+    def parse_prompt(self, prompt: str, genparams: GenParams) -> GenParams:
+        prompt    = self._filter_prompt(prompt, remove_comments=False)
+        genparams = genparams_from_prompt(prompt, template=genparams)
+        genparams.set_str("user.prompt"  , prompt)
+        genparams.set_str("user.negative", ""    )
         return (genparams,)
 
 
     @staticmethod
-    def get_state_hash(text: str, genparams: GenParams) -> str:
+    def get_state_hash(prompt: str, genparams: GenParams) -> str:
         """
         Generates a unique hash representing the current state of the node.
+        This hash is used by ComfyUI to track changes for its caching mechanism.
 
-        This hash is used to identify and track the state of the node. If the
-        input text contains the word "random", a timestamp is appended to the
-        hash to ensure uniqueness and force a recalculation, preventing caching.
+        In this case, if the input prompt contains the word "random", a timestamp
+        is appended to the hash to ensure uniqueness and force a recalculation,
+        preventing caching.
+
         Args:
             The same parameters as `parse_prompt`
         """
-        if "random" in text:
-            return text + str(time.time())
-        return text
+        if "random" in prompt:
+            return prompt + str(time.time())
+        return prompt
+
+
+
+    #__ internal functions ________________________________
+
+    @staticmethod
+    def _filter_prompt(prompt: str, /,*, remove_comments=False) -> str:
+        """Filter the input prompt by removing leading/trailing whitespaces and comments."""
+        lines = prompt.strip().splitlines()
+        lines = [line.strip() for line in lines]
+        if remove_comments:
+            lines = [line for line in lines if not line.startswith("#")]
+        return "\n".join(lines)
