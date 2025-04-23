@@ -207,11 +207,6 @@ class SaveImage:
         if not genparams:
             return ""
 
-
-        def a1111_normalized_string(text: str, /) -> str:
-            return text.strip().replace("\n", " ").replace("\r", " ").replace("\t", " ")
-
-
         def a1111_sampler_name(comfy_sampler: str, comfy_scheduler: str, support_all_samplers: bool = False, /) -> str:
             DEFAULT_SAMPLER = "Euler"
             if not comfy_sampler:
@@ -228,8 +223,8 @@ class SaveImage:
         RE__ = "denoising.refiner."
 
         # extract and clean up parameters from the GenParams dictionary
-        positive            = a1111_normalized_string( genparams.get("user.prompt"  , "") )
-        negative            = a1111_normalized_string( genparams.get("user.negative", "") )
+        positive            = genparams.get("user.prompt"  , "")
+        negative            = genparams.get("user.negative", "")
         sampler             = a1111_sampler_name( genparams.get(f"{BASE}sampler"), genparams.get(f"{BASE}scheduler") )
         refiner_sampler     = a1111_sampler_name( genparams.get(f"{RE__}sampler"), genparams.get(f"{RE__}scheduler"), True )
         base_cfg            = genparams.get_float(f"{BASE}cfg")
@@ -247,32 +242,30 @@ class SaveImage:
         base_steps          = max(0, base_steps_end-base_steps_start)
         refiner_steps       = max(0, refiner_steps_end-refiner_steps_start)
         total_steps         = base_steps + refiner_steps
+        discard_penul_sigma = False
 
-        # build A1111 params string
-        a1111_params = f"{positive}\nNegative prompt: {negative}\nSteps: {total_steps}, "
-        if sampler:
-            a1111_params += f"Sampler: {sampler}, "
-        if base_cfg:
-            a1111_params += f"CFG scale: {base_cfg}, "
-        if seed:
-            a1111_params += f"Seed: {seed}, "
-        if width and height:
-            a1111_params += f"Size: {image_width}x{image_height}, "
-        if base_checkpoint:
-            a1111_params += f"Model: {base_checkpoint}, "
+        # set up the A1111 compatible parameters
+        #   name of standard parameters used by A1111 can be found in:
+        #     - https://github.com/AUTOMATIC1111/stable-diffusion-webui/blob/v1.10.1/modules/processing.py#L770
+        #   name of extra extended parameters can be found
+        #     searching for "extra_generation_params" in the A1111 repository.
+        params = { "Steps": total_steps }
+        if sampler            : params["Sampler"                  ] = sampler
+        if base_cfg           : params["CFG scale"                ] = base_cfg
+        if seed               : params["Seed"                     ] = seed
+        if width and height   : params["Size"                     ] = f"{image_width}x{image_height}"
+        if base_checkpoint    : params["Model"                    ] = base_checkpoint
+        if discard_penul_sigma: params["Discard penultimate sigma"] = "True"
+
         if refiner_checkpoint and refiner_sampler:
-            a1111_params += f"Denoising strength: {refiner_cfg}, "
-            a1111_params += f"Hires checkpoint: {refiner_checkpoint}, "
-            a1111_params += f"Hires upscaler: None, "
-            a1111_params += f"Hires resize: {image_width}x{image_height}, "
-            a1111_params += f"Hires sampler: {refiner_sampler}, "
-            a1111_params += f"Hires steps: {refiner_steps}, "
-        #if discard_penultimate_sigma:
-        #    a1111_params += "Discard penultimate sigma: True, "
+            params["Denoising strength"] = refiner_cfg
+            params["Hires checkpoint"  ] = refiner_checkpoint
+            params["Hires upscaler"    ] = "None"
+            params["Hires resize"      ] = f"{image_width}x{image_height}"
+            params["Hires sampler"     ] = refiner_sampler
+            params["Hires steps"       ] = refiner_steps
 
-        # remove the trailing comma and return it
-        a1111_params = a1111_params.strip().rstrip(",")
-        return a1111_params
+        return _create_infotext(positive, negative, params)
 
 
     def _solve_filename_variables(self,
@@ -337,6 +330,34 @@ class SaveImage:
                 next_token_is_var = True
 
         return output
+
+
+#======================== AUTO1111 INFOTEXT FORMAT =========================#
+
+def _create_infotext(positive  : str,
+                     negative  : str,
+                     parameters: dict
+                     )-> str:
+    """
+    Create a string compatible with the A1111's infotext to be used as metadata for the image.
+    Args:
+        positive  : The main prompt.
+        negative  : The negative prompt.
+        parameters: A dictionary containing the generation parameters in A1111 format.
+    Returns:
+        A string compatible with the A1111's infotext.
+    """
+    negative  = f"\nNegative prompt: {negative}" if negative else ""
+    last_line = ", ".join([f"{k}: {_infotext_quote(v)}" for k, v in parameters.items() if v is not None])
+    return f"{positive}{negative}\n{last_line}".strip()
+
+
+def _infotext_quote(value) -> str:
+    """Quote a string for use as an infotext value."""
+    str_value = str(value)
+    if (',' in str_value) or ('\n' in str_value) or (':' in str_value):
+        str_value = json.dumps(str_value, ensure_ascii=False)
+    return str_value
 
 
 #========================= UNIFIED PROMPT EDITION ==========================#
