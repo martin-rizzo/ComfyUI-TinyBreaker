@@ -123,8 +123,8 @@ When using the Unified Prompt node:
 |:---------------------------------------|-----------------------------------------------------------------------------|
 | **`--seed <number>`**                  | Defines a number for initializing the random generator.                     |
 | **`--aspect <ratio>`**                 | Specifies the aspect ratio of the image (e.g., 16:9, 4:3).                  |
-| **`--portrait`**                       | Forces portrait orientation, (ratio 2:3 by default).                        |
 | **`--landscape`**                      | Forces landscape orientation, (ratio 3:2 by default).                       |
+| **`--portrait`**                       | Forces portrait orientation, (ratio 2:3 by default).                        |
 | **`--medium`**                         | Generates medium-sized images instead of the default large size.            |
 
 
@@ -137,7 +137,7 @@ When using the Unified Prompt node:
 #### Examples
 
 `--no trees, clouds` `--refine cats ears` `--cfg-shift -1` `--image_shift 2`  
-`--seed 42` `--aspect 16:9` `--portrait` `--medium`  
+`--seed 42` `--aspect 16:9` `--portrait` `--medium-size`  
 `--detail-level normal` `--batch-size 4`
 
 

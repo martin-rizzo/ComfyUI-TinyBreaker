@@ -5,15 +5,16 @@ One of the advantages of the **Unified Prompt Input** is that it allows paramete
 - Parameters for Minor Adjustments
   - [`--no`](#--no-elements)
   - [`--refine`](#--refine-description)
-  - [`--image-shift`](#--image-shift-number)
   - [`--cfg-shift`](#--cfg-shift-number)
-  - [`--detail-level`](#--detail-level-level)
+  - [`--image-shift`](#--image-shift-number)
+  - ['--upscale`](#-upscale)]
 - Parameters for Major Changes
   - [`--seed`](#--seed-number)
   - [`--aspect`](#--aspect-ratio)
   - [`--landscape` / `--portrait`](#--landscape----portrait)
-  - [`--small` / `--medium` / `--large`](#--small----medium----large)
-  - [`--style`](#--style-style)
+  - [`--medium`](#--small----medium----large)
+- Extra parameters
+  - [`--detail-level`](#--detail-level-level)
   - [`--batch-size`](#--batch-size-number)
 
 ## Minor Adjustments
@@ -100,9 +101,8 @@ These parameters allow for significant changes in the composition, structure and
 
 *   **Description:** Controls the size of the image that will be generated.
 *   **Usage:**
-    *   `--small`: Create a smaller image, which is faster to generate and uses less memory.
+    *   `--large`: Generates a larger image with more detail. (default)
     *   `--medium`: Create an image of the size the model was trained for.
-    *   `--large`: Generates a larger image with more detail. (recommended)
 *   **Note:** These parameters are mutually exclusive.
 
 ### `--style <style>`

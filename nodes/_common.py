@@ -29,7 +29,7 @@ LANDSCAPE_SIZES_BY_ASPECT_RATIO = {
     # "71:50  (~imax)"     : (1220.2,  859.3),
 }
 SCALES_BY_NAME = {
-    "small"  : 0.82,
+    "small"  : 1.0,
     "medium" : 1.0,
     "large"  : 1.22,
 }
