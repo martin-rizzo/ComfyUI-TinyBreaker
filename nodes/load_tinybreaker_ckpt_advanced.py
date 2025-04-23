@@ -83,11 +83,11 @@ class LoadTinyBreakerCkptAdvanced:
         upscaler_vae_name = upscaler_vae
 
         # resolve the automatic settings
-        vae_name          = _VAE_TYPE_FAST if vae_name          == _AUTOMATIC else vae_name
-        refiner_name      = _EMBEDDED      if refiner_name      == _AUTOMATIC else refiner_name
-        transcoder_name   = _EMBEDDED      if transcoder_name   == _AUTOMATIC else transcoder_name
-        upscaler_vae_name = _VAE_TYPE_FAST if upscaler_vae_name == _AUTOMATIC else upscaler_vae_name
-        resolution        = 1024           if resolution        == _AUTOMATIC else int(resolution)
+        vae_name          = _VAE_TYPE_QUALITY if vae_name          == _AUTOMATIC else vae_name
+        upscaler_vae_name = _VAE_TYPE_FAST    if upscaler_vae_name == _AUTOMATIC else upscaler_vae_name
+        refiner_name      = _EMBEDDED         if refiner_name      == _AUTOMATIC else refiner_name
+        transcoder_name   = _EMBEDDED         if transcoder_name   == _AUTOMATIC else transcoder_name
+        resolution        = 1024              if resolution        == _AUTOMATIC else int(resolution)
         sdxl_refiner      = False  # SDXL refiners are not supported yet
 
         # load the main model checkpoint

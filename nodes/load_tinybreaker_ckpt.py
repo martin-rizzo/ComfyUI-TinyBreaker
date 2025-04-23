@@ -69,11 +69,11 @@ class LoadTinyBreakerCkpt:
         model_type     = self.get_model_type(state_dict)
         logger.info(f"Loading '{ckpt_name}' ('{model_type}' checkpoint type).")
 
-        # resolve vae-type automatic settings [fast,fast]
-        vae_type          = _VAE_TYPE_FAST if vae_type          == _AUTOMATIC else vae_type
-        upscaler_vae_type = _VAE_TYPE_FAST if upscaler_vae_type == _AUTOMATIC else upscaler_vae_type
-        logger.info(f"Configured VAE type: '{vae_type}'.")
-        logger.info(f"Configured upscaler VAE type: '{upscaler_vae_type}'.")
+        # resolve vae-type automatic settings (quality + upscaler fast)
+        vae_type          = _VAE_TYPE_QUALITY if vae_type          == _AUTOMATIC else vae_type
+        upscaler_vae_type = _VAE_TYPE_FAST    if upscaler_vae_type == _AUTOMATIC else upscaler_vae_type
+        logger.debug(f"Configured VAE type: '{vae_type}'.")
+        logger.debug(f"Configured upscaler VAE type: '{upscaler_vae_type}'.")
 
 
         if model_type == "TinyBreaker.prototype0":
