@@ -118,6 +118,9 @@ _comfy_import_node(UnifiedPromptInput)
 from .nodes.unpack_boolean                          import UnpackBoolean
 _comfy_import_node(UnpackBoolean)
 
+from .nodes.unpack_float                            import UnpackFloat
+_comfy_import_node(UnpackFloat)
+
 from .nodes.unpack_sampler_params                   import UpackSamplerParams
 _comfy_import_node(UpackSamplerParams)
 
