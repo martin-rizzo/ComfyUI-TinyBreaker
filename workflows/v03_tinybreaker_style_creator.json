@@ -1,8 +1,8 @@
 {
   "id": "a3347741-680b-4ece-905f-ef64330d42f6",
   "revision": 0,
-  "last_node_id": 313,
-  "last_link_id": 759,
+  "last_node_id": 314,
+  "last_link_id": 765,
   "nodes": [
     {
       "id": 240,
@@ -70,7 +70,7 @@
           "slot_index": 0,
           "links": [
             693,
-            706
+            761
           ]
         }
       ],
@@ -321,7 +321,7 @@
           "slot_index": 0,
           "links": [
             701,
-            707
+            762
           ]
         }
       ],
@@ -393,7 +393,7 @@
           "slot_index": 0,
           "links": [
             702,
-            708
+            763
           ]
         }
       ],
@@ -465,7 +465,7 @@
           "slot_index": 0,
           "links": [
             703,
-            709
+            764
           ]
         }
       ],
@@ -753,7 +753,7 @@
         "Node name for S&R": "SelectStyle //TinyBreaker"
       },
       "widgets_values": [
-        "CUSTOM1",
+        "CUSTOM2",
         "last"
       ],
       "color": "#232",
@@ -826,66 +826,6 @@
       "shape": 1
     },
     {
-      "id": 284,
-      "type": "TinyUpscaler //TinyBreaker",
-      "pos": [
-        300,
-        -800
-      ],
-      "size": [
-        240,
-        162
-      ],
-      "flags": {},
-      "order": 26,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "image",
-          "type": "IMAGE",
-          "link": 757
-        },
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "link": 706
-        },
-        {
-          "name": "model",
-          "type": "MODEL",
-          "link": 707
-        },
-        {
-          "name": "clip",
-          "type": "CLIP",
-          "link": 708
-        },
-        {
-          "name": "vae",
-          "type": "VAE",
-          "link": 709
-        }
-      ],
-      "outputs": [
-        {
-          "name": "image",
-          "type": "IMAGE",
-          "links": [
-            751
-          ]
-        }
-      ],
-      "properties": {
-        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
-        "ver": "c60e8905dd0e4810be034d07337ae31fdee7ae66",
-        "Node name for S&R": "TinyUpscaler //TinyBreaker"
-      },
-      "widgets_values": [
-        3,
-        "upscaler"
-      ]
-    },
-    {
       "id": 310,
       "type": "Reroute",
       "pos": [
@@ -903,7 +843,7 @@
         {
           "name": "",
           "type": "*",
-          "link": 751
+          "link": 765
         }
       ],
       "outputs": [
@@ -1229,7 +1169,7 @@
           "name": "image",
           "type": "IMAGE",
           "links": [
-            757
+            760
           ]
         }
       ],
@@ -1273,7 +1213,7 @@
         "Node name for S&R": "MutilineText //TinyBreaker"
       },
       "widgets_values": [
-        "\n[CUSTOM1]\n# dynamic illustrations in comic book art style\nbase.prompt      = \"Detailed comic cover. {$@}. (european erotic draw:1.1). Poster in white, red, blue and black with solid colors. Bokeh\"\nbase.negative    = \"blurry, photography, bokeh{, $@}\"\nbase.sampler     = \"deis\"\nbase.scheduler   = \"simple\"\nbase.steps       = 14\nbase.steps_start = 3\nbase.cfg         = 4.5\nrefiner.prompt      = \"Poster, erotic comics{, $@}\"\nrefiner.sampler     = \"lms\"\nrefiner.scheduler   = \"normal\"\nrefiner.steps       = 13\nrefiner.steps_start = 10\nrefiner.cfg         = 4.0\nupscaler.negative      = \"(worst quality, low quality, manga:1.4)\"\nupscaler.steps_start   = 11\nupscaler.steps_end     = 15\n\n\n[CUSTOM2]\n# pixel art images with retro and blocky details\n#base.prompt     = \"(A minimalist pixel-art image of:1.1){ $@.} Low-res, blocky, pixel art style, 8-bit retro videogame\"\nbase.prompt      = \"A pixel art illustration of {$@}, in the style of a classic 16-bit video game, retro game graphics\"\nbase.negative    = \"(bokeh, macrophoto, halo effect, smooth shading:1.1), noisy, highly detailed, photo, realistic, macrophoto{, $@}\"\nbase.steps       = 15\nbase.steps_start = 3\nbase.cfg         = 4.5\nrefiner.prompt      = \"(pixel-art, low-res, blocky:1.2){, $@}\"\nrefiner.negative    = \"soft{, $@}\"\nrefiner.cfg         = 8.0\nrefiner.steps       = 16\nrefiner.steps_start = 13\nupscaler.prompt        = \"(pixel-art, low-res, blocky:1.2)\"\nupscaler.negative      = \"(worst quality, low quality, manga:1.2)\"\nupscaler.steps_start   = 11\nupscaler.steps_end     = 16\n\n\n[CUSTOM3]\n\n\n[CUSTOM4]"
+        "\n[CUSTOM1]\n# dynamic illustrations in comic book art style\nbase.prompt      = \"Detailed comic cover. {$@}. (european erotic draw:1.1). Poster in white, red, blue and black with solid colors. Bokeh\"\nbase.negative    = \"blurry, photography, bokeh{, $@}\"\nbase.sampler     = \"deis\"\nbase.scheduler   = \"simple\"\nbase.steps       = 14\nbase.steps_start = 3\nbase.cfg         = 4.5\nrefiner.prompt      = \"Poster, erotic comics{, $@}\"\nrefiner.sampler     = \"lms\"\nrefiner.scheduler   = \"normal\"\nrefiner.steps       = 13\nrefiner.steps_start = 10\nrefiner.cfg         = 4.0\nupscaler.negative    = \"(worst quality, low quality, manga:1.4)\"\nupscaler.steps       = 15\nupscaler.steps_start = 11\nupscaler.steps_end   = -1\n\n\n[CUSTOM2]\n# pixel art images with retro and blocky details\n#base.prompt     = \"(A minimalist pixel-art image of:1.1){ $@.} Low-res, blocky, pixel art style, 8-bit retro videogame\"\nbase.prompt      = \"A pixel art illustration of {$@}, in the style of a classic 16-bit video game, retro game graphics\"\nbase.negative    = \"(bokeh, macrophoto, halo effect, smooth shading:1.1), noisy, highly detailed, photo, realistic, macrophoto{, $@}\"\nbase.steps       = 15\nbase.steps_start = 3\nbase.cfg         = 4.5\nrefiner.prompt      = \"(pixel-art, low-res, blocky:1.2){, $@}\"\nrefiner.negative    = \"soft{, $@}\"\nrefiner.cfg         = 8.0\nrefiner.steps       = 16\nrefiner.steps_start = 13\nupscaler.prompt      = \"(pixel-art, low-res, blocky:1.2)\"\nupscaler.negative    = \"(worst quality, low quality, manga:1.2)\"\nupscaler.steps       = 16\nupscaler.steps_start = 11\nupscaler.steps_end   = -1\n\n\n[CUSTOM3]\n\n\n[CUSTOM4]"
       ]
     },
     {
@@ -1315,10 +1255,70 @@
         "Node name for S&R": "UnifiedPromptInput //TinyBreaker"
       },
       "widgets_values": [
-        "An evil female Darth Vader wearing her helmet, tight corset, and thigh-high black boots. She holds a red lightsaber in a dark spaceship hallway \n\n--aspect 3:2 --portrait --seed 3 --upscale off \n"
+        "An evil female Darth Vader wearing her helmet, tight corset, and thigh-high black boots. She holds a red lightsaber in a dark spaceship hallway \n\n--aspect 3:2 --portrait --seed 3 --upscale on \n"
       ],
       "color": "#232",
       "bgcolor": "#353"
+    },
+    {
+      "id": 314,
+      "type": "TinyUpscaler //TinyBreaker",
+      "pos": [
+        300,
+        -800
+      ],
+      "size": [
+        240,
+        162
+      ],
+      "flags": {},
+      "order": 26,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 760
+        },
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 761
+        },
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 762
+        },
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 763
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 764
+        }
+      ],
+      "outputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "links": [
+            765
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "1cf103e03b3a0e81329cb43afc3bef44480228ff",
+        "Node name for S&R": "TinyUpscaler //TinyBreaker"
+      },
+      "widgets_values": [
+        "upscaler",
+        3
+      ]
     }
   ],
   "links": [
@@ -1409,38 +1409,6 @@
       235,
       0,
       "*"
-    ],
-    [
-      706,
-      279,
-      0,
-      284,
-      1,
-      "GENPARAMS"
-    ],
-    [
-      707,
-      259,
-      0,
-      284,
-      2,
-      "MODEL"
-    ],
-    [
-      708,
-      253,
-      0,
-      284,
-      3,
-      "CLIP"
-    ],
-    [
-      709,
-      261,
-      0,
-      284,
-      4,
-      "VAE"
     ],
     [
       712,
@@ -1587,14 +1555,6 @@
       "STRING"
     ],
     [
-      751,
-      284,
-      0,
-      310,
-      0,
-      "*"
-    ],
-    [
       752,
       310,
       0,
@@ -1635,14 +1595,6 @@
       "IMAGE"
     ],
     [
-      757,
-      313,
-      0,
-      284,
-      0,
-      "IMAGE"
-    ],
-    [
       758,
       300,
       0,
@@ -1657,6 +1609,54 @@
       313,
       1,
       "VAE"
+    ],
+    [
+      760,
+      313,
+      0,
+      314,
+      0,
+      "IMAGE"
+    ],
+    [
+      761,
+      279,
+      0,
+      314,
+      1,
+      "GENPARAMS"
+    ],
+    [
+      762,
+      259,
+      0,
+      314,
+      2,
+      "MODEL"
+    ],
+    [
+      763,
+      253,
+      0,
+      314,
+      3,
+      "CLIP"
+    ],
+    [
+      764,
+      261,
+      0,
+      314,
+      4,
+      "VAE"
+    ],
+    [
+      765,
+      314,
+      0,
+      310,
+      0,
+      "*"
     ]
   ],
   "groups": [
@@ -1705,10 +1705,10 @@
   "config": {},
   "extra": {
     "ds": {
-      "scale": 0.8264462809917354,
+      "scale": 0.9090909090909091,
       "offset": [
-        1562.414046612823,
-        237.06296842574702
+        134.84055771738974,
+        161.31602607255388
       ]
     },
     "frontendVersion": "1.16.8"

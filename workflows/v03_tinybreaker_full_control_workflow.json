@@ -1,8 +1,8 @@
 {
   "id": "02234b55-efbe-422c-83b2-41120125b651",
   "revision": 0,
-  "last_node_id": 219,
-  "last_link_id": 582,
+  "last_node_id": 225,
+  "last_link_id": 607,
   "nodes": [
     {
       "id": 36,
@@ -16,7 +16,7 @@
         26
       ],
       "flags": {},
-      "order": 43,
+      "order": 44,
       "mode": 0,
       "inputs": [
         {
@@ -50,7 +50,7 @@
         26
       ],
       "flags": {},
-      "order": 42,
+      "order": 43,
       "mode": 0,
       "inputs": [
         {
@@ -86,7 +86,7 @@
         26
       ],
       "flags": {},
-      "order": 41,
+      "order": 42,
       "mode": 0,
       "inputs": [
         {
@@ -697,7 +697,7 @@
         26
       ],
       "flags": {},
-      "order": 45,
+      "order": 46,
       "mode": 0,
       "inputs": [
         {
@@ -1382,7 +1382,7 @@
         460
       ],
       "flags": {},
-      "order": 40,
+      "order": 41,
       "mode": 0,
       "inputs": [
         {
@@ -1531,136 +1531,6 @@
       }
     },
     {
-      "id": 188,
-      "type": "UpackSamplerParams //TinyBreaker",
-      "pos": [
-        -50,
-        -900
-      ],
-      "size": [
-        263.65203857421875,
-        178
-      ],
-      "flags": {},
-      "order": 38,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "link": 503
-        },
-        {
-          "name": "model",
-          "type": "MODEL",
-          "link": 541
-        },
-        {
-          "name": "clip",
-          "type": "CLIP",
-          "link": 542
-        }
-      ],
-      "outputs": [
-        {
-          "name": "model",
-          "type": "MODEL",
-          "links": [
-            566
-          ]
-        },
-        {
-          "name": "positive",
-          "type": "CONDITIONING",
-          "links": [
-            567
-          ]
-        },
-        {
-          "name": "negative",
-          "type": "CONDITIONING",
-          "links": [
-            568
-          ]
-        },
-        {
-          "name": "sampler",
-          "type": "SAMPLER",
-          "links": [
-            569
-          ]
-        },
-        {
-          "name": "sigmas",
-          "type": "SIGMAS",
-          "links": [
-            570
-          ]
-        },
-        {
-          "name": "cfg",
-          "type": "FLOAT",
-          "links": [
-            572
-          ]
-        },
-        {
-          "name": "noise_seed",
-          "type": "INT",
-          "links": [
-            573
-          ]
-        }
-      ],
-      "properties": {
-        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
-        "ver": "4b4619553544f3d5902239a8498954b8346d310b",
-        "Node name for S&R": "UpackSamplerParams //TinyBreaker"
-      },
-      "widgets_values": [
-        "upscaler"
-      ]
-    },
-    {
-      "id": 211,
-      "type": "UnpackBoolean //TinyBreaker",
-      "pos": [
-        -100,
-        -680
-      ],
-      "size": [
-        360,
-        60
-      ],
-      "flags": {},
-      "order": 39,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "link": 576
-        }
-      ],
-      "outputs": [
-        {
-          "name": "BOOLEAN",
-          "type": "BOOLEAN",
-          "links": [
-            575
-          ]
-        }
-      ],
-      "properties": {
-        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
-        "ver": "4b4619553544f3d5902239a8498954b8346d310b",
-        "Node name for S&R": "UnpackBoolean //TinyBreaker"
-      },
-      "widgets_values": [
-        "image.enable_upscaler"
-      ]
-    },
-    {
       "id": 207,
       "type": "Reroute",
       "pos": [
@@ -1672,7 +1542,7 @@
         26
       ],
       "flags": {},
-      "order": 46,
+      "order": 47,
       "mode": 0,
       "inputs": [
         {
@@ -1686,7 +1556,7 @@
           "name": "",
           "type": "IMAGE",
           "links": [
-            565
+            596
           ]
         }
       ],
@@ -1694,243 +1564,6 @@
         "showOutputText": false,
         "horizontal": false
       }
-    },
-    {
-      "id": 185,
-      "type": "Reroute",
-      "pos": [
-        610,
-        -990
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {},
-      "order": 37,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 492
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "GENPARAMS",
-          "links": null
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
-    },
-    {
-      "id": 184,
-      "type": "Reroute",
-      "pos": [
-        -160,
-        -990
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {},
-      "order": 35,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 505
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "GENPARAMS",
-          "links": [
-            492,
-            503,
-            576
-          ]
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
-    },
-    {
-      "id": 179,
-      "type": "Reroute",
-      "pos": [
-        -160,
-        -600
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {},
-      "order": 18,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 520
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "VAE",
-          "links": [
-            491
-          ]
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
-    },
-    {
-      "id": 183,
-      "type": "Reroute",
-      "pos": [
-        180,
-        -600
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {},
-      "order": 20,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 491
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "VAE",
-          "links": [
-            571
-          ]
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
-    },
-    {
-      "id": 214,
-      "type": "TinyUpscalerAdvanced //TinyBreaker",
-      "pos": [
-        300,
-        -920
-      ],
-      "size": [
-        390.5999755859375,
-        274
-      ],
-      "flags": {},
-      "order": 47,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "image",
-          "type": "IMAGE",
-          "link": 565
-        },
-        {
-          "name": "model",
-          "type": "MODEL",
-          "link": 566
-        },
-        {
-          "name": "positive",
-          "type": "CONDITIONING",
-          "link": 567
-        },
-        {
-          "name": "negative",
-          "type": "CONDITIONING",
-          "link": 568
-        },
-        {
-          "name": "sampler",
-          "type": "SAMPLER",
-          "link": 569
-        },
-        {
-          "name": "sigmas",
-          "type": "SIGMAS",
-          "link": 570
-        },
-        {
-          "name": "vae",
-          "type": "VAE",
-          "link": 571
-        },
-        {
-          "name": "cfg",
-          "type": "FLOAT",
-          "widget": {
-            "name": "cfg"
-          },
-          "link": 572
-        },
-        {
-          "name": "seed",
-          "type": "INT",
-          "widget": {
-            "name": "seed"
-          },
-          "link": 573
-        },
-        {
-          "name": "enabled",
-          "type": "BOOLEAN",
-          "widget": {
-            "name": "enabled"
-          },
-          "link": 575
-        }
-      ],
-      "outputs": [
-        {
-          "name": "image",
-          "type": "IMAGE",
-          "links": [
-            577
-          ]
-        }
-      ],
-      "properties": {
-        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
-        "ver": "4b4619553544f3d5902239a8498954b8346d310b",
-        "Node name for S&R": "TinyUpscalerAdvanced //TinyBreaker"
-      },
-      "widgets_values": [
-        4,
-        0,
-        "fixed",
-        3,
-        true
-      ]
     },
     {
       "id": 27,
@@ -1944,7 +1577,7 @@
         50
       ],
       "flags": {},
-      "order": 44,
+      "order": 45,
       "mode": 0,
       "inputs": [
         {
@@ -2089,7 +1722,7 @@
         "portrait",
         "large",
         1,
-        false
+        true
       ],
       "color": "#2a363b",
       "bgcolor": "#3f5159"
@@ -2198,13 +1831,13 @@
       "flags": {
         "pinned": true
       },
-      "order": 48,
+      "order": 49,
       "mode": 0,
       "inputs": [
         {
           "name": "images",
           "type": "IMAGE",
-          "link": 577
+          "link": 607
         },
         {
           "name": "genparams",
@@ -2224,6 +1857,424 @@
       ],
       "color": "#323",
       "bgcolor": "#535"
+    },
+    {
+      "id": 184,
+      "type": "Reroute",
+      "pos": [
+        -160,
+        -990
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 35,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 505
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "GENPARAMS",
+          "links": [
+            492,
+            503,
+            576,
+            595
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 179,
+      "type": "Reroute",
+      "pos": [
+        -140,
+        -480
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 18,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 520
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "VAE",
+          "links": [
+            491
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 188,
+      "type": "UpackSamplerParams //TinyBreaker",
+      "pos": [
+        -50,
+        -900
+      ],
+      "size": [
+        263.65203857421875,
+        178
+      ],
+      "flags": {},
+      "order": 38,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 503
+        },
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 541
+        },
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 542
+        }
+      ],
+      "outputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "links": [
+            597
+          ]
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "links": [
+            598
+          ]
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "links": [
+            599
+          ]
+        },
+        {
+          "name": "sampler",
+          "type": "SAMPLER",
+          "links": [
+            600
+          ]
+        },
+        {
+          "name": "sigmas",
+          "type": "SIGMAS",
+          "links": [
+            601
+          ]
+        },
+        {
+          "name": "cfg",
+          "type": "FLOAT",
+          "links": [
+            603
+          ]
+        },
+        {
+          "name": "noise_seed",
+          "type": "INT",
+          "links": [
+            604
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "4b4619553544f3d5902239a8498954b8346d310b",
+        "Node name for S&R": "UpackSamplerParams //TinyBreaker"
+      },
+      "widgets_values": [
+        "upscaler"
+      ]
+    },
+    {
+      "id": 183,
+      "type": "Reroute",
+      "pos": [
+        180,
+        -480
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 20,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 491
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "VAE",
+          "links": [
+            602
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 222,
+      "type": "UnpackFloat //TinyBreaker",
+      "pos": [
+        -110,
+        -580
+      ],
+      "size": [
+        360,
+        90
+      ],
+      "flags": {},
+      "order": 40,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 595
+        }
+      ],
+      "outputs": [
+        {
+          "name": "FLOAT",
+          "type": "FLOAT",
+          "links": [
+            606
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "1cf103e03b3a0e81329cb43afc3bef44480228ff",
+        "Node name for S&R": "UnpackFloat //TinyBreaker"
+      },
+      "widgets_values": [
+        "denoising.upscaler.extra_noise",
+        0
+      ]
+    },
+    {
+      "id": 211,
+      "type": "UnpackBoolean //TinyBreaker",
+      "pos": [
+        -110,
+        -680
+      ],
+      "size": [
+        360,
+        60
+      ],
+      "flags": {},
+      "order": 39,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 576
+        }
+      ],
+      "outputs": [
+        {
+          "name": "BOOLEAN",
+          "type": "BOOLEAN",
+          "links": [
+            605
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "4b4619553544f3d5902239a8498954b8346d310b",
+        "Node name for S&R": "UnpackBoolean //TinyBreaker"
+      },
+      "widgets_values": [
+        "image.enable_upscaler"
+      ]
+    },
+    {
+      "id": 224,
+      "type": "TinyUpscalerAdvanced //TinyBreaker",
+      "pos": [
+        310,
+        -920
+      ],
+      "size": [
+        350,
+        322
+      ],
+      "flags": {},
+      "order": 48,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 596
+        },
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 597
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 598
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 599
+        },
+        {
+          "name": "sampler",
+          "type": "SAMPLER",
+          "link": 600
+        },
+        {
+          "name": "sigmas",
+          "type": "SIGMAS",
+          "link": 601
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 602
+        },
+        {
+          "name": "enabled",
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "enabled"
+          },
+          "link": 605
+        },
+        {
+          "name": "extra_noise",
+          "type": "FLOAT",
+          "widget": {
+            "name": "extra_noise"
+          },
+          "link": 606
+        },
+        {
+          "name": "cfg",
+          "type": "FLOAT",
+          "widget": {
+            "name": "cfg"
+          },
+          "link": 603
+        },
+        {
+          "name": "seed",
+          "type": "INT",
+          "widget": {
+            "name": "seed"
+          },
+          "link": 604
+        }
+      ],
+      "outputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "links": [
+            607
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "1cf103e03b3a0e81329cb43afc3bef44480228ff",
+        "Node name for S&R": "TinyUpscalerAdvanced //TinyBreaker"
+      },
+      "widgets_values": [
+        true,
+        0.6,
+        4,
+        1,
+        "fixed",
+        "upscaler",
+        3
+      ]
+    },
+    {
+      "id": 185,
+      "type": "Reroute",
+      "pos": [
+        580,
+        -990
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 37,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 492
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "GENPARAMS",
+          "links": null
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
     }
   ],
   "links": [
@@ -2748,100 +2799,12 @@
       "GENPARAMS"
     ],
     [
-      565,
-      207,
-      0,
-      214,
-      0,
-      "IMAGE"
-    ],
-    [
-      566,
-      188,
-      0,
-      214,
-      1,
-      "MODEL"
-    ],
-    [
-      567,
-      188,
-      1,
-      214,
-      2,
-      "CONDITIONING"
-    ],
-    [
-      568,
-      188,
-      2,
-      214,
-      3,
-      "CONDITIONING"
-    ],
-    [
-      569,
-      188,
-      3,
-      214,
-      4,
-      "SAMPLER"
-    ],
-    [
-      570,
-      188,
-      4,
-      214,
-      5,
-      "SIGMAS"
-    ],
-    [
-      571,
-      183,
-      0,
-      214,
-      6,
-      "VAE"
-    ],
-    [
-      572,
-      188,
-      5,
-      214,
-      7,
-      "FLOAT"
-    ],
-    [
-      573,
-      188,
-      6,
-      214,
-      8,
-      "INT"
-    ],
-    [
-      575,
-      211,
-      0,
-      214,
-      9,
-      "BOOLEAN"
-    ],
-    [
       576,
       184,
       0,
       211,
       0,
       "GENPARAMS"
-    ],
-    [
-      577,
-      214,
-      0,
-      144,
-      0,
-      "IMAGE"
     ],
     [
       579,
@@ -2858,6 +2821,110 @@
       176,
       0,
       "GENPARAMS"
+    ],
+    [
+      595,
+      184,
+      0,
+      222,
+      0,
+      "GENPARAMS"
+    ],
+    [
+      596,
+      207,
+      0,
+      224,
+      0,
+      "IMAGE"
+    ],
+    [
+      597,
+      188,
+      0,
+      224,
+      1,
+      "MODEL"
+    ],
+    [
+      598,
+      188,
+      1,
+      224,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      599,
+      188,
+      2,
+      224,
+      3,
+      "CONDITIONING"
+    ],
+    [
+      600,
+      188,
+      3,
+      224,
+      4,
+      "SAMPLER"
+    ],
+    [
+      601,
+      188,
+      4,
+      224,
+      5,
+      "SIGMAS"
+    ],
+    [
+      602,
+      183,
+      0,
+      224,
+      6,
+      "VAE"
+    ],
+    [
+      603,
+      188,
+      5,
+      224,
+      9,
+      "FLOAT"
+    ],
+    [
+      604,
+      188,
+      6,
+      224,
+      10,
+      "INT"
+    ],
+    [
+      605,
+      211,
+      0,
+      224,
+      7,
+      "BOOLEAN"
+    ],
+    [
+      606,
+      222,
+      0,
+      224,
+      8,
+      "FLOAT"
+    ],
+    [
+      607,
+      224,
+      0,
+      144,
+      0,
+      "IMAGE"
     ]
   ],
   "groups": [
@@ -2893,8 +2960,8 @@
       "bounding": [
         -150,
         -1040,
-        860,
-        480
+        820,
+        600
       ],
       "color": "#3f789e",
       "font_size": 24,
@@ -2919,8 +2986,8 @@
     "ds": {
       "scale": 1,
       "offset": [
-        37.1625296530209,
-        270.8890516842777
+        20.995901762861976,
+        296.47016273216366
       ]
     },
     "frontendVersion": "1.16.8"

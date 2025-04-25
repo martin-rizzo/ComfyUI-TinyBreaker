@@ -1,8 +1,8 @@
 {
   "id": "7f976472-1306-4996-b4d8-f3dbbcbb604c",
   "revision": 0,
-  "last_node_id": 306,
-  "last_link_id": 749,
+  "last_node_id": 308,
+  "last_link_id": 755,
   "nodes": [
     {
       "id": 189,
@@ -146,7 +146,7 @@
           "slot_index": 0,
           "links": [
             693,
-            706
+            751
           ]
         }
       ],
@@ -312,7 +312,7 @@
         26
       ],
       "flags": {},
-      "order": 6,
+      "order": 11,
       "mode": 0,
       "inputs": [
         {
@@ -344,7 +344,7 @@
       ],
       "size": [
         210,
-        80
+        102
       ],
       "flags": {},
       "order": 27,
@@ -366,7 +366,7 @@
           "name": "image",
           "type": "IMAGE",
           "links": [
-            727
+            750
           ]
         }
       ],
@@ -376,67 +376,8 @@
         "Node name for S&R": "TinyDecode //TinyBreaker"
       },
       "widgets_values": [
-        "512px"
-      ]
-    },
-    {
-      "id": 284,
-      "type": "TinyUpscaler //TinyBreaker",
-      "pos": [
-        480,
-        -760
-      ],
-      "size": [
-        240,
-        162
-      ],
-      "flags": {},
-      "order": 28,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "image",
-          "type": "IMAGE",
-          "link": 727
-        },
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "link": 706
-        },
-        {
-          "name": "model",
-          "type": "MODEL",
-          "link": 707
-        },
-        {
-          "name": "clip",
-          "type": "CLIP",
-          "link": 708
-        },
-        {
-          "name": "vae",
-          "type": "VAE",
-          "link": 709
-        }
-      ],
-      "outputs": [
-        {
-          "name": "image",
-          "type": "IMAGE",
-          "links": [
-            723
-          ]
-        }
-      ],
-      "properties": {
-        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
-        "ver": "c60e8905dd0e4810be034d07337ae31fdee7ae66",
-        "Node name for S&R": "TinyUpscaler //TinyBreaker"
-      },
-      "widgets_values": [
-        3,
-        "upscaler"
+        "512px",
+        "100%"
       ]
     },
     {
@@ -451,7 +392,7 @@
         26
       ],
       "flags": {},
-      "order": 7,
+      "order": 6,
       "mode": 0,
       "inputs": [
         {
@@ -486,7 +427,7 @@
         26
       ],
       "flags": {},
-      "order": 8,
+      "order": 7,
       "mode": 0,
       "inputs": [
         {
@@ -537,7 +478,7 @@
           "slot_index": 0,
           "links": [
             701,
-            707
+            752
           ]
         }
       ],
@@ -558,7 +499,7 @@
         26
       ],
       "flags": {},
-      "order": 9,
+      "order": 8,
       "mode": 0,
       "inputs": [
         {
@@ -609,7 +550,7 @@
           "slot_index": 0,
           "links": [
             702,
-            708
+            753
           ]
         }
       ],
@@ -630,7 +571,7 @@
         26
       ],
       "flags": {},
-      "order": 10,
+      "order": 9,
       "mode": 0,
       "inputs": [
         {
@@ -681,7 +622,7 @@
           "slot_index": 0,
           "links": [
             703,
-            709
+            754
           ]
         }
       ],
@@ -798,133 +739,6 @@
       ]
     },
     {
-      "id": 241,
-      "type": "LoadT5EncoderExperimental //TinyBreaker",
-      "pos": [
-        -710,
-        -410
-      ],
-      "size": [
-        430,
-        140
-      ],
-      "flags": {},
-      "order": 0,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "CLIP",
-          "type": "CLIP",
-          "slot_index": 0,
-          "links": [
-            589
-          ]
-        }
-      ],
-      "properties": {
-        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
-        "ver": "c60e8905dd0e4810be034d07337ae31fdee7ae66",
-        "Node name for S&R": "LoadT5EncoderExperimental //TinyBreaker"
-      },
-      "widgets_values": [
-        "t5xxl_fp8_e4m3fn.safetensors",
-        "auto",
-        "auto",
-        "auto"
-      ],
-      "color": "#322",
-      "bgcolor": "#533",
-      "shape": 1
-    },
-    {
-      "id": 301,
-      "type": "LoadTinyBreakerCkpt //TinyBreaker",
-      "pos": [
-        -710,
-        -710
-      ],
-      "size": [
-        430,
-        260
-      ],
-      "flags": {},
-      "order": 1,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "MODEL",
-          "type": "MODEL",
-          "links": [
-            738
-          ]
-        },
-        {
-          "name": "CLIP",
-          "type": "CLIP",
-          "links": null
-        },
-        {
-          "name": "VAE",
-          "type": "VAE",
-          "links": [
-            739
-          ]
-        },
-        {
-          "name": "TRANSCODER",
-          "type": "TRANSCODER",
-          "links": [
-            740
-          ]
-        },
-        {
-          "name": "REFINER_MODEL",
-          "type": "MODEL",
-          "links": [
-            741,
-            742
-          ]
-        },
-        {
-          "name": "REFINER_CLIP",
-          "type": "CLIP",
-          "links": [
-            743,
-            744
-          ]
-        },
-        {
-          "name": "UPSCALER_VAE",
-          "type": "VAE",
-          "links": [
-            745
-          ]
-        },
-        {
-          "name": "METADATA",
-          "type": "GENPARAMS",
-          "links": [
-            746
-          ]
-        }
-      ],
-      "properties": {
-        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
-        "ver": "c60e8905dd0e4810be034d07337ae31fdee7ae66",
-        "Node name for S&R": "LoadTinyBreakerCkpt //TinyBreaker"
-      },
-      "widgets_values": [
-        "tinybreaker_prototype1.safetensors",
-        "high_quality",
-        "auto"
-      ],
-      "color": "#322",
-      "bgcolor": "#533",
-      "shape": 1
-    },
-    {
       "id": 177,
       "type": "SelectStyle //TinyBreaker",
       "pos": [
@@ -995,7 +809,7 @@
         {
           "name": "images",
           "type": "IMAGE",
-          "link": 723
+          "link": 755
         },
         {
           "name": "genparams",
@@ -1015,6 +829,277 @@
       ],
       "color": "#323",
       "bgcolor": "#535"
+    },
+    {
+      "id": 203,
+      "type": "Note",
+      "pos": [
+        -70,
+        130
+      ],
+      "size": [
+        430,
+        220
+      ],
+      "flags": {
+        "pinned": true
+      },
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "title": "NOTE: SUPPORTED PARAMETERS",
+      "properties": {},
+      "widgets_values": [
+        "  --no <text>\n  --refine <text>\n  --seed <number> | random\n  --cfg-shift <number>\n  --image-shift <number>\n  --upscale [on|off]\n\n  --portrait\n  --landscape\n  --aspect <ratio:ratio>\n  --batch-size <number>\n  --detail-level <none|low|normal|high>\n"
+      ],
+      "color": "#222",
+      "bgcolor": "#000",
+      "shape": 1
+    },
+    {
+      "id": 204,
+      "type": "Note",
+      "pos": [
+        -70,
+        380
+      ],
+      "size": [
+        430,
+        300
+      ],
+      "flags": {
+        "pinned": true
+      },
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "title": "NOTE: KEYS",
+      "properties": {},
+      "widgets_values": [
+        " PARAMETER AUTO-COMPLETION:\n   - Start typing a parameter.\n   - Press CTRL+RIGHT to auto-complete.\n     example: type \"--as\" + CTRL+RIGHT -> result: \"--aspect\"\n\n NAVIGATE BETWEEN PARAMETERS:\n   - Type \"--\".\n   - Use CTRL+RIGHT/LEFT to cycle through parameters.\n\n MODIFY PARAMETER VALUES:\n   - Position cursor on a parameter value (e.g., \"--seed 6\").\n   - Press CTRL+UP to increase value.\n   - Press CTRL+DOWN to decrease value.\n     example: \"--seed 6\" + CTRL+UP -> result: \"--seed 7\"\n\nTRIGGER IMAGE GENERATION:\n   - Press CTRL+ENTER to generate the image.\n"
+      ],
+      "color": "#222",
+      "bgcolor": "#000",
+      "shape": 1
+    },
+    {
+      "id": 306,
+      "type": "Note",
+      "pos": [
+        -740,
+        130
+      ],
+      "size": [
+        660,
+        290
+      ],
+      "flags": {
+        "pinned": true
+      },
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "title": "NOTE: TIPS",
+      "properties": {},
+      "widgets_values": [
+        "TinyBreaker combines PixArt for base generation with Photon for refinement. Complex details or actions that haven't been sufficiently trained in the base model may not always generate perfectly.\nThe following can be used to improve these generation issues:\n\n--cfg-shift [integer]: Fine-tune the CFG scale. Small positive or negative values (e.g., +/-1 to +/-4) adjust the prompt's influence, generating variation without drastically changing the scene.\n\n--image-shift [integer]: Different values modify the refiner's seed, altering fine details while preserving the overall composition.\n\n--refine [text]: Focus the refiner's attention on a specific object or action to guide the refinement process. While not always reliable, it can be helpful for improving specific areas.\nExample: \"--refine intricate clockwork, flowing water\"\n\nUtilize ComfyUI's built-in functionality to emphasize specific prompt terms.\nExample: \"A vehicle (with square wheels:1.2)\"\n"
+      ],
+      "color": "#222",
+      "bgcolor": "#000"
+    },
+    {
+      "id": 205,
+      "type": "Note",
+      "pos": [
+        -820,
+        460
+      ],
+      "size": [
+        740,
+        220
+      ],
+      "flags": {
+        "pinned": true
+      },
+      "order": 3,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "title": "NOTE: INSTALLATION",
+      "properties": {},
+      "widgets_values": [
+        "\n\n The TinyBreaker model can be downloaded from:\n   https://civitai.com/models/1213728\n\n The T5 Text Encoder is available at:\n   https://huggingface.co/Comfy-Org/stable-diffusion-3.5-fp8/blob/main/text_encoders/t5xxl_fp8_e4m3fn.safetensors\n\n The custom nodes used in this workflow are implemented in:\n   https://github.com/martin-rizzo/ComfyUI-TinyBreaker\n"
+      ],
+      "color": "#222",
+      "bgcolor": "#000",
+      "shape": 1
+    },
+    {
+      "id": 289,
+      "type": "Reroute",
+      "pos": [
+        -160,
+        -20
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {
+        "pinned": true
+      },
+      "order": 10,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 746
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "GENPARAMS",
+          "links": [
+            721
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 301,
+      "type": "LoadTinyBreakerCkpt //TinyBreaker",
+      "pos": [
+        -710,
+        -710
+      ],
+      "size": [
+        430,
+        260
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            738
+          ]
+        },
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": null
+        },
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [
+            739
+          ]
+        },
+        {
+          "name": "TRANSCODER",
+          "type": "TRANSCODER",
+          "links": [
+            740
+          ]
+        },
+        {
+          "name": "REFINER_MODEL",
+          "type": "MODEL",
+          "links": [
+            741,
+            742
+          ]
+        },
+        {
+          "name": "REFINER_CLIP",
+          "type": "CLIP",
+          "links": [
+            743,
+            744
+          ]
+        },
+        {
+          "name": "UPSCALER_VAE",
+          "type": "VAE",
+          "links": [
+            745
+          ]
+        },
+        {
+          "name": "METADATA",
+          "type": "GENPARAMS",
+          "links": [
+            746
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "c60e8905dd0e4810be034d07337ae31fdee7ae66",
+        "Node name for S&R": "LoadTinyBreakerCkpt //TinyBreaker"
+      },
+      "widgets_values": [
+        "tinybreaker_prototype1.safetensors",
+        "auto",
+        "auto"
+      ],
+      "color": "#322",
+      "bgcolor": "#533",
+      "shape": 1
+    },
+    {
+      "id": 241,
+      "type": "LoadT5EncoderExperimental //TinyBreaker",
+      "pos": [
+        -710,
+        -410
+      ],
+      "size": [
+        430,
+        140
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "slot_index": 0,
+          "links": [
+            589
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "c60e8905dd0e4810be034d07337ae31fdee7ae66",
+        "Node name for S&R": "LoadT5EncoderExperimental //TinyBreaker"
+      },
+      "widgets_values": [
+        "t5xxl_fp8_e4m3fn.safetensors",
+        "auto",
+        "auto",
+        "auto"
+      ],
+      "color": "#322",
+      "bgcolor": "#533",
+      "shape": 1
     },
     {
       "id": 198,
@@ -1055,154 +1140,70 @@
         "Node name for S&R": "UnifiedPromptInput //TinyBreaker"
       },
       "widgets_values": [
-        "A blue squirrel sitting in a black chair in front of a computer. The squirrel has white fur on its chest and belly, and its tail is long and bushy. The squirrel is typing on the keyboard with its front paws. The computer screen is displaying a complex graph with red and blue lines. The background is blurry, but it appears to be a spaceship interior with orange lights. The lighting is soft and diffused. The squirrel is the main focus of the image, and it is sharply in focus. The background is out of focus\n\n--aspect 3:2 --portrait --seed 2 --upscale on \n"
+        "A woman with vibrant pink and teal dyed, spiky hair and pale skin stands confidently on a bustling city street in Barcelona. She wears a heavily detailed, almost steampunk-inspired corset garment made of dark brown leather, featuring intricate golden buckles and stitching. The corset is worn over a black, low-rise brief and a black, flowing cape that drapes dramatically behind her. Her arms are covered by matching black leather gloves, and she is wearing dark, aviator-style goggles perched on her forehead. The pavement is uneven and worn, typical of an older European city street. Behind her, towering Gothic spires of Barcelona's cathedral rise against a hazy, golden-hour sky. A diverse crowd of pedestrians fills the street, partially blurred to emphasize the woman’s presence. Colorful advertisements and storefront signs line the buildings, adding a sense of urban chaos and energy\n\n--aspect 3:2 --portrait --seed 2 --upscale on \n"
       ],
       "color": "#232",
       "bgcolor": "#353"
     },
     {
-      "id": 203,
-      "type": "Note",
+      "id": 308,
+      "type": "TinyUpscaler //TinyBreaker",
       "pos": [
-        -70,
-        130
+        480,
+        -760
       ],
       "size": [
-        430,
-        220
+        240,
+        170
       ],
-      "flags": {
-        "pinned": true
-      },
-      "order": 2,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [],
-      "title": "NOTE: SUPPORTED PARAMETERS",
-      "properties": {},
-      "widgets_values": [
-        "  --no <text>\n  --refine <text>\n  --seed <number> | random\n  --cfg-shift <number>\n  --image-shift <number>\n  --upscale [on|off]\n\n  --portrait\n  --landscape\n  --aspect <ratio:ratio>\n  --batch-size <number>\n  --detail-level <none|low|normal|high>\n"
-      ],
-      "color": "#222",
-      "bgcolor": "#000",
-      "shape": 1
-    },
-    {
-      "id": 204,
-      "type": "Note",
-      "pos": [
-        -70,
-        380
-      ],
-      "size": [
-        430,
-        300
-      ],
-      "flags": {
-        "pinned": true
-      },
-      "order": 3,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [],
-      "title": "NOTE: KEYS",
-      "properties": {},
-      "widgets_values": [
-        " PARAMETER AUTO-COMPLETION:\n   - Start typing a parameter.\n   - Press CTRL+RIGHT to auto-complete.\n     example: type \"--as\" + CTRL+RIGHT -> result: \"--aspect\"\n\n NAVIGATE BETWEEN PARAMETERS:\n   - Type \"--\".\n   - Use CTRL+RIGHT/LEFT to cycle through parameters.\n\n MODIFY PARAMETER VALUES:\n   - Position cursor on a parameter value (e.g., \"--seed 6\").\n   - Press CTRL+UP to increase value.\n   - Press CTRL+DOWN to decrease value.\n     example: \"--seed 6\" + CTRL+UP -> result: \"--seed 7\"\n\nTRIGGER IMAGE GENERATION:\n   - Press CTRL+ENTER to generate the image.\n"
-      ],
-      "color": "#222",
-      "bgcolor": "#000",
-      "shape": 1
-    },
-    {
-      "id": 306,
-      "type": "Note",
-      "pos": [
-        -740,
-        130
-      ],
-      "size": [
-        660,
-        290
-      ],
-      "flags": {
-        "pinned": true
-      },
-      "order": 4,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [],
-      "title": "NOTE: TIPS",
-      "properties": {},
-      "widgets_values": [
-        "TinyBreaker combines PixArt for base generation with Photon for refinement. Complex details or actions that haven't been sufficiently trained in the base model may not always generate perfectly.\nThe following can be used to improve these generation issues:\n\n--cfg-shift [integer]: Fine-tune the CFG scale. Small positive or negative values (e.g., +/-1 to +/-4) adjust the prompt's influence, generating variation without drastically changing the scene.\n\n--image-shift [integer]: Different values modify the refiner's seed, altering fine details while preserving the overall composition.\n\n--refine [text]: Focus the refiner's attention on a specific object or action to guide the refinement process. While not always reliable, it can be helpful for improving specific areas.\nExample: \"--refine intricate clockwork, flowing water\"\n\nUtilize ComfyUI's built-in functionality to emphasize specific prompt terms.\nExample: \"A vehicle (with square wheels:1.2)\"\n"
-      ],
-      "color": "#222",
-      "bgcolor": "#000"
-    },
-    {
-      "id": 205,
-      "type": "Note",
-      "pos": [
-        -820,
-        460
-      ],
-      "size": [
-        740,
-        220
-      ],
-      "flags": {
-        "pinned": true
-      },
-      "order": 5,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [],
-      "title": "NOTE: INSTALLATION",
-      "properties": {},
-      "widgets_values": [
-        "\n\n The TinyBreaker model can be downloaded from:\n   https://civitai.com/models/1213728\n\n The T5 Text Encoder is available at:\n   https://huggingface.co/Comfy-Org/stable-diffusion-3.5-fp8/blob/main/text_encoders/t5xxl_fp8_e4m3fn.safetensors\n\n The custom nodes used in this workflow are implemented in:\n   https://github.com/martin-rizzo/ComfyUI-TinyBreaker\n"
-      ],
-      "color": "#222",
-      "bgcolor": "#000",
-      "shape": 1
-    },
-    {
-      "id": 289,
-      "type": "Reroute",
-      "pos": [
-        -160,
-        -20
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {
-        "pinned": true
-      },
-      "order": 11,
+      "flags": {},
+      "order": 28,
       "mode": 0,
       "inputs": [
         {
-          "name": "",
-          "type": "*",
-          "link": 746
+          "name": "image",
+          "type": "IMAGE",
+          "link": 750
+        },
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 751
+        },
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 752
+        },
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 753
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 754
         }
       ],
       "outputs": [
         {
-          "name": "",
-          "type": "GENPARAMS",
+          "name": "image",
+          "type": "IMAGE",
           "links": [
-            721
+            755
           ]
         }
       ],
       "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "1cf103e03b3a0e81329cb43afc3bef44480228ff",
+        "Node name for S&R": "TinyUpscaler //TinyBreaker"
+      },
+      "widgets_values": [
+        "upscaler",
+        3
+      ]
     }
   ],
   "links": [
@@ -1295,38 +1296,6 @@
       "*"
     ],
     [
-      706,
-      279,
-      0,
-      284,
-      1,
-      "GENPARAMS"
-    ],
-    [
-      707,
-      259,
-      0,
-      284,
-      2,
-      "MODEL"
-    ],
-    [
-      708,
-      253,
-      0,
-      284,
-      3,
-      "CLIP"
-    ],
-    [
-      709,
-      261,
-      0,
-      284,
-      4,
-      "VAE"
-    ],
-    [
       712,
       285,
       0,
@@ -1365,22 +1334,6 @@
       177,
       0,
       "GENPARAMS"
-    ],
-    [
-      723,
-      284,
-      0,
-      144,
-      0,
-      "IMAGE"
-    ],
-    [
-      727,
-      297,
-      0,
-      284,
-      0,
-      "IMAGE"
     ],
     [
       729,
@@ -1493,6 +1446,54 @@
       289,
       0,
       "*"
+    ],
+    [
+      750,
+      297,
+      0,
+      308,
+      0,
+      "IMAGE"
+    ],
+    [
+      751,
+      279,
+      0,
+      308,
+      1,
+      "GENPARAMS"
+    ],
+    [
+      752,
+      259,
+      0,
+      308,
+      2,
+      "MODEL"
+    ],
+    [
+      753,
+      253,
+      0,
+      308,
+      3,
+      "CLIP"
+    ],
+    [
+      754,
+      261,
+      0,
+      308,
+      4,
+      "VAE"
+    ],
+    [
+      755,
+      308,
+      0,
+      144,
+      0,
+      "IMAGE"
     ]
   ],
   "groups": [
@@ -1528,10 +1529,10 @@
   "config": {},
   "extra": {
     "ds": {
-      "scale": 0.9090909090909094,
+      "scale": 0.9090909090909091,
       "offset": [
-        93.25821556261438,
-        181.9316718540124
+        101.92786647521397,
+        143.5905598546406
       ]
     },
     "frontendVersion": "1.16.8"
