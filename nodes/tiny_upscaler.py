@@ -46,10 +46,10 @@ class TinyUpscaler:
                                       }),
             "vae"      :("VAE"       ,{"tooltip": "The VAE used to encode the image for the model.",
                                       }),
+            "mode"     :(cls.modes() ,{"tooltip": "The upscaling mode (experimental).",
+                                      }),
             "scale_by" :("FLOAT"     ,{"tooltip": "The factor by which to scale the image.",
                                        "default": 3, "min": 1.5, "max": 6.0, "step": 0.5
-                                      }),
-            "mode"     :(cls.modes() ,{"tooltip": "The upscaling mode (experimental).",
                                       }),
             }
         }
@@ -73,6 +73,7 @@ class TinyUpscaler:
         denoising = DenoisingParams.from_genparams(genparams, "denoising.upscaler",
                                                    model_to_sample        = model,
                                                    return_none_on_missing = True)
+        extra_noise    = genparams.get_float("denoising.upscaler.extra_noise", 0.0)
         enable_upscale = genparams.get_bool("image.enable_upscaler", False)
 
         # if upscaling is disabled by the user, skip the upscaling
@@ -92,7 +93,6 @@ class TinyUpscaler:
             return (image, )
 
         positive, negative = self._encode(clip, denoising.positive, denoising.negative)
-        extra_noise        = 0.6
         tile_size          = 1024
         overlap_percent    = 100
         interpolation_mode = "bilinear"
