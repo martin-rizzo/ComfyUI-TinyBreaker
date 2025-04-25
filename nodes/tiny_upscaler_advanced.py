@@ -52,7 +52,7 @@ class TinyUpscalerAdvanced:
                                           "default": 4.0, "min": 0.0, "max": 15.0, "step":0.5, "round": 0.01,
                                          }),
             "seed"     :("INT"          ,{"tooltip": "The random seed used for creating the noise.",
-                                          "default": 0, "min": 0, "max": 0xffffffffffffffff,
+                                          "default": 1, "min": 1, "max": 0xffffffffffffffff,
                                           "control_after_generate": True,
                                          }),
             "scale_by" :("FLOAT"        ,{"tooltip": "The factor by which to scale the image.",
@@ -119,7 +119,7 @@ class TinyUpscalerAdvanced:
                                       overlap_percent    = overlap_percent,
                                       interpolation_mode = interpolation_mode,
                                       keep_original_size = keep_original_size,
-                                      discard_last_sigma = True,
+                                      discard_last_sigma = False,
                                       progress_bar       = ProgressBar.from_comfyui(steps=100),
                                       )
         return (upscaled_image, )

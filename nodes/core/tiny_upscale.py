@@ -38,7 +38,7 @@ def tiny_upscale(image              : torch.Tensor,
                  overlap_percent    : int  =   100,
                  interpolation_mode : str  = "bilinear", # "nearest"
                  keep_original_size : bool = False,
-                 discard_last_sigma : bool =  True,
+                 discard_last_sigma : bool = False,
                  vae_tile_size      : int  =   512,
                  vae_overlap_percent: int  =   100,
                  progress_bar       : ProgressBar = None,

@@ -98,7 +98,6 @@ class TinyUpscaler:
         interpolation_mode = "bilinear"
         keep_original_size = (mode == _MODE_ENHANCER)
 
-        progress_bar = ProgressBar.from_comfyui(100)
 
         # upscale the image
         upscaled_image = tiny_upscale(image,
@@ -116,8 +115,8 @@ class TinyUpscaler:
                                       overlap_percent    = overlap_percent,
                                       interpolation_mode = interpolation_mode,
                                       keep_original_size = keep_original_size,
-                                      discard_last_sigma = True,
-                                      progress_bar       = progress_bar,
+                                      discard_last_sigma = False,
+                                      progress_bar       = ProgressBar.from_comfyui(100),
                                       )
         return (upscaled_image, )
 

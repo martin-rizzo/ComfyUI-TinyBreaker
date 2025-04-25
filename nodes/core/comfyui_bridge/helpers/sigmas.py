@@ -29,14 +29,15 @@ def calculate_sigmas(model_sampling           : object,
                      discard_penultimate_sigma: bool | None = None,
                      ) -> torch.Tensor:
     """
-    Calculates the sigma values for a given model, sampler and scheduler.
+    Calculates sigma values for a given model, sampler and scheduler across a specified range of steps.
     Args:
         model_sampling   (object): The sampling object for the model.
         sampler            (str) : The name of the sampler to use (e.g., "euler", "heun")
         scheduler          (str) : The name of the scheduler to use (e.g., "karras")
-        steps              (int) : The number of steps to calculate sigma values for.
-        steps_start    (optional): The starting step for sigma calculation.
-        steps_end      (optional): The ending step for sigma calculation.
+        steps              (int) : The total number of steps for which to calculate sigma values.
+        steps_start    (optional): The starting step within the calculated range. Defaults to 0.
+        steps_end      (optional): The ending step within the calculated range.
+                                   Negative values are counted from the total number of steps (e.g.: -2 means `steps-2`)
         steps_nfactor  (optional): A custom value to adjust the number of denoising steps;
                                    positive values will increase the number of denoising steps,
                                    negative values will decrease it.
@@ -45,9 +46,15 @@ def calculate_sigmas(model_sampling           : object,
     Returns:
         A tensor containing the sigma values for each step.
     """
-    assert isinstance(sampler, str), f"sampler must be a string. Got {type(sampler)}"
-    steps       = min(steps, steps_end)
-    steps_start = max(0, steps_start)
+    assert isinstance(sampler      , str), f"sampler must be a string. Got {type(sampler)}"
+    assert isinstance(steps        , int), f"steps must be an integer. Got {type(steps)}"
+    assert isinstance(steps_start  , int), f"steps_start must be an integer. Got {type(steps_start)}"
+    assert isinstance(steps_end    , int), f"steps_end must be an integer. Got {type(steps_end)}"
+    assert isinstance(steps_nfactor, int), f"steps_nfactor must be an integer. Got {type(steps_nfactor)}"
+    if steps_end < 0:
+        steps_end = steps + steps_end   # fixes negative values to count from end of total number of steps
+    steps_start = max(0,   steps_start) # `steps_start` cannot be less than zero
+    steps_end   = min(steps_end, steps) # `steps_end`   cannot be greater than steps
 
     # if discard_penultimate_sigma is not explicitly provided,
     # infer it from the sampler name
@@ -58,21 +65,20 @@ def calculate_sigmas(model_sampling           : object,
     # a proportional increase, while a negative value indicates a proportional
     # decrease in the total steps.
     # Note: The specific effect is context-dependent and may require careful adjustment.
-    if steps_nfactor > 0:
-        nstart = min( steps_nfactor, steps_start )
-        nend   = steps_nfactor - nstart
-    elif steps_nfactor < 0:
-        nstart = steps_nfactor
-        nend   = 0
-    else:
-        nstart, nend = 0, 0
-    steps_start -= nstart
-    steps_end   += nend
-    steps       += nend
+    if steps_nfactor:
+        if steps_nfactor > 0:
+            expand_start = min( steps_nfactor, steps_start )
+            expand_end   = steps_nfactor - expand_start
+        elif steps_nfactor < 0:
+            expand_start = steps_nfactor
+            expand_end   = 0
+        steps_start = max(0, steps_start - expand_start)
+        steps_end   = max(0, steps_end   + expand_end  )
+        steps       = max(0, steps       + expand_end  )
 
-    # if no steps are specified, return an empty tensor
-    # this is useful when no sampling should be performed
-    if steps <= 0 or steps_start >= steps:
+    # if no steps to execute, just return an empty tensor
+    # (this is useful when no sampling should be performed)
+    if steps == 0 or steps_start >= steps_end:
         return torch.FloatTensor([])
 
     # if discard was requested,
@@ -87,11 +93,8 @@ def calculate_sigmas(model_sampling           : object,
     # no idea if it's necessary, but I'll leave it just in case
     sigmas = sigmas[-( steps+1 ):]
 
-    # discard all sigmas before the specified start step
-    steps_start = min(steps_start, len(sigmas))
-    if steps_start > 0:
-        sigmas = sigmas[steps_start:]
-
+    # discard all sigmas outside of the specified range
+    sigmas = sigmas[steps_start:steps_end+1]
     return sigmas
 
 
