@@ -194,9 +194,6 @@ _CATEGORY = "TinyBreaker/__dev"
 from .nodes.genparams_debug_logger                  import GenParamsDebugLogger
 _comfy_import_node(GenParamsDebugLogger)
 
-from .nodes.save_anything                           import SaveAnything
-_comfy_import_node(SaveAnything)
-
 
 
 # TinyBreaker/__deprecated
