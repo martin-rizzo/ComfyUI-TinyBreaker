@@ -1,34 +1,9 @@
 {
-  "last_node_id": 32,
-  "last_link_id": 52,
+  "id": "2f119320-9948-4ed4-8b89-14ad7da760fa",
+  "revision": 0,
+  "last_node_id": 34,
+  "last_link_id": 55,
   "nodes": [
-    {
-      "id": 4,
-      "type": "PreviewImage",
-      "pos": [
-        1350,
-        190
-      ],
-      "size": [
-        210,
-        246
-      ],
-      "flags": {},
-      "order": 23,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "images",
-          "type": "IMAGE",
-          "link": 28
-        }
-      ],
-      "outputs": [],
-      "properties": {
-        "Node name for S&R": "PreviewImage"
-      },
-      "widgets_values": []
-    },
     {
       "id": 22,
       "type": "Reroute",
@@ -41,7 +16,7 @@
         26
       ],
       "flags": {},
-      "order": 13,
+      "order": 12,
       "mode": 0,
       "inputs": [
         {
@@ -54,10 +29,10 @@
         {
           "name": "",
           "type": "VAE",
+          "slot_index": 0,
           "links": [
             26
-          ],
-          "slot_index": 0
+          ]
         }
       ],
       "properties": {
@@ -77,7 +52,7 @@
         26
       ],
       "flags": {},
-      "order": 7,
+      "order": 4,
       "mode": 0,
       "inputs": [
         {
@@ -90,104 +65,16 @@
         {
           "name": "",
           "type": "VAE",
+          "slot_index": 0,
           "links": [
             23
-          ],
-          "slot_index": 0
+          ]
         }
       ],
       "properties": {
         "showOutputText": false,
         "horizontal": false
       }
-    },
-    {
-      "id": 26,
-      "type": "BuildCustomTranscoder //TinyBreaker",
-      "pos": [
-        510,
-        550
-      ],
-      "size": [
-        378,
-        102
-      ],
-      "flags": {},
-      "order": 15,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "source_vae",
-          "type": "VAE",
-          "link": 49
-        },
-        {
-          "name": "target_vae",
-          "type": "VAE",
-          "link": 52
-        }
-      ],
-      "outputs": [
-        {
-          "name": "TRANSCODER",
-          "type": "TRANSCODER",
-          "links": [
-            41
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "BuildCustomTranscoder //TinyBreaker"
-      },
-      "widgets_values": [
-        "None",
-        0.5
-      ]
-    },
-    {
-      "id": 25,
-      "type": "BuildCustomTranscoder //TinyBreaker",
-      "pos": [
-        510,
-        400
-      ],
-      "size": [
-        378,
-        102
-      ],
-      "flags": {},
-      "order": 14,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "source_vae",
-          "type": "VAE",
-          "link": 51
-        },
-        {
-          "name": "target_vae",
-          "type": "VAE",
-          "link": 48
-        }
-      ],
-      "outputs": [
-        {
-          "name": "TRANSCODER",
-          "type": "TRANSCODER",
-          "links": [
-            37
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "BuildCustomTranscoder //TinyBreaker"
-      },
-      "widgets_values": [
-        "None",
-        0.5
-      ]
     },
     {
       "id": 27,
@@ -201,7 +88,7 @@
         50
       ],
       "flags": {},
-      "order": 19,
+      "order": 18,
       "mode": 0,
       "inputs": [
         {
@@ -211,9 +98,9 @@
         },
         {
           "name": "transcoder",
+          "shape": 7,
           "type": "TRANSCODER",
-          "link": 37,
-          "shape": 7
+          "link": 37
         }
       ],
       "outputs": [
@@ -226,6 +113,8 @@
         }
       ],
       "properties": {
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "853171d5673df2b54e86a0cf197861c72e0e8217",
         "Node name for S&R": "TranscodeLatent //TinyBreaker"
       },
       "widgets_values": []
@@ -242,7 +131,7 @@
         50
       ],
       "flags": {},
-      "order": 21,
+      "order": 20,
       "mode": 0,
       "inputs": [
         {
@@ -260,14 +149,16 @@
         {
           "name": "IMAGE",
           "type": "IMAGE",
+          "slot_index": 0,
           "links": [
             28
-          ],
-          "slot_index": 0
+          ]
         }
       ],
       "title": "VAE Decode SDXL",
       "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.29",
         "Node name for S&R": "VAEDecode"
       },
       "widgets_values": []
@@ -284,7 +175,7 @@
         26
       ],
       "flags": {},
-      "order": 12,
+      "order": 13,
       "mode": 0,
       "inputs": [
         {
@@ -297,10 +188,10 @@
         {
           "name": "",
           "type": "VAE",
+          "slot_index": 0,
           "links": [
             14
-          ],
-          "slot_index": 0
+          ]
         }
       ],
       "properties": {
@@ -320,7 +211,7 @@
         26
       ],
       "flags": {},
-      "order": 8,
+      "order": 5,
       "mode": 0,
       "inputs": [
         {
@@ -333,10 +224,10 @@
         {
           "name": "",
           "type": "VAE",
+          "slot_index": 0,
           "links": [
             25
-          ],
-          "slot_index": 0
+          ]
         }
       ],
       "properties": {
@@ -356,7 +247,7 @@
         26
       ],
       "flags": {},
-      "order": 5,
+      "order": 8,
       "mode": 0,
       "inputs": [
         {
@@ -369,46 +260,10 @@
         {
           "name": "",
           "type": "VAE",
+          "slot_index": 0,
           "links": [
             30
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
-    },
-    {
-      "id": 29,
-      "type": "Reroute",
-      "pos": [
-        400,
-        740
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {},
-      "order": 10,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 43
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "IMAGE",
-          "links": [
-            44
-          ],
-          "slot_index": 0
+          ]
         }
       ],
       "properties": {
@@ -428,7 +283,7 @@
         26
       ],
       "flags": {},
-      "order": 4,
+      "order": 7,
       "mode": 0,
       "inputs": [
         {
@@ -463,7 +318,7 @@
         50
       ],
       "flags": {},
-      "order": 17,
+      "order": 16,
       "mode": 0,
       "inputs": [
         {
@@ -488,6 +343,8 @@
       ],
       "title": "VAE Encode SD",
       "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.29",
         "Node name for S&R": "VAEEncode"
       },
       "widgets_values": []
@@ -504,7 +361,7 @@
         26
       ],
       "flags": {},
-      "order": 11,
+      "order": 10,
       "mode": 0,
       "inputs": [
         {
@@ -517,43 +374,16 @@
         {
           "name": "",
           "type": "IMAGE",
+          "slot_index": 0,
           "links": [
             46
-          ],
-          "slot_index": 0
+          ]
         }
       ],
       "properties": {
         "showOutputText": false,
         "horizontal": false
       }
-    },
-    {
-      "id": 10,
-      "type": "PreviewImage",
-      "pos": [
-        1350,
-        780
-      ],
-      "size": [
-        210,
-        246
-      ],
-      "flags": {},
-      "order": 22,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "images",
-          "type": "IMAGE",
-          "link": 10
-        }
-      ],
-      "outputs": [],
-      "properties": {
-        "Node name for S&R": "PreviewImage"
-      },
-      "widgets_values": []
     },
     {
       "id": 9,
@@ -567,7 +397,7 @@
         50
       ],
       "flags": {},
-      "order": 20,
+      "order": 23,
       "mode": 0,
       "inputs": [
         {
@@ -585,14 +415,16 @@
         {
           "name": "IMAGE",
           "type": "IMAGE",
+          "slot_index": 0,
           "links": [
             10
-          ],
-          "slot_index": 0
+          ]
         }
       ],
       "title": "VAE Decode SD",
       "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.29",
         "Node name for S&R": "VAEDecode"
       },
       "widgets_values": []
@@ -609,7 +441,7 @@
         50
       ],
       "flags": {},
-      "order": 18,
+      "order": 21,
       "mode": 0,
       "inputs": [
         {
@@ -619,9 +451,9 @@
         },
         {
           "name": "transcoder",
+          "shape": 7,
           "type": "TRANSCODER",
-          "link": 41,
-          "shape": 7
+          "link": 41
         }
       ],
       "outputs": [
@@ -634,6 +466,8 @@
         }
       ],
       "properties": {
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "853171d5673df2b54e86a0cf197861c72e0e8217",
         "Node name for S&R": "TranscodeLatent //TinyBreaker"
       },
       "widgets_values": []
@@ -650,7 +484,7 @@
         50
       ],
       "flags": {},
-      "order": 16,
+      "order": 19,
       "mode": 0,
       "inputs": [
         {
@@ -668,52 +502,19 @@
         {
           "name": "LATENT",
           "type": "LATENT",
+          "slot_index": 0,
           "links": [
             40
-          ],
-          "slot_index": 0
+          ]
         }
       ],
       "title": "VAE Encode SDXL",
       "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.29",
         "Node name for S&R": "VAEEncode"
       },
       "widgets_values": []
-    },
-    {
-      "id": 11,
-      "type": "VAELoader",
-      "pos": [
-        -30,
-        570
-      ],
-      "size": [
-        320,
-        58
-      ],
-      "flags": {},
-      "order": 0,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "VAE",
-          "type": "VAE",
-          "links": [
-            12,
-            29,
-            47
-          ],
-          "slot_index": 0
-        }
-      ],
-      "title": "Load SDXL VAE",
-      "properties": {
-        "Node name for S&R": "VAELoader"
-      },
-      "widgets_values": [
-        "SDXL-FP16-FIX-sdxl.vae.safetensors"
-      ]
     },
     {
       "id": 31,
@@ -727,7 +528,7 @@
         26
       ],
       "flags": {},
-      "order": 6,
+      "order": 9,
       "mode": 0,
       "inputs": [
         {
@@ -740,52 +541,17 @@
         {
           "name": "",
           "type": "VAE",
+          "slot_index": 0,
           "links": [
             48,
             49
-          ],
-          "slot_index": 0
+          ]
         }
       ],
       "properties": {
         "showOutputText": false,
         "horizontal": false
       }
-    },
-    {
-      "id": 19,
-      "type": "VAELoader",
-      "pos": [
-        -30,
-        460
-      ],
-      "size": [
-        320,
-        58
-      ],
-      "flags": {},
-      "order": 1,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "VAE",
-          "type": "VAE",
-          "links": [
-            22,
-            24,
-            50
-          ],
-          "slot_index": 0
-        }
-      ],
-      "title": "Load SD VAE",
-      "properties": {
-        "Node name for S&R": "VAELoader"
-      },
-      "widgets_values": [
-        "vae-ft-mse-840000-ema-pruned.safetensors"
-      ]
     },
     {
       "id": 32,
@@ -799,7 +565,7 @@
         26
       ],
       "flags": {},
-      "order": 9,
+      "order": 6,
       "mode": 0,
       "inputs": [
         {
@@ -812,11 +578,11 @@
         {
           "name": "",
           "type": "VAE",
+          "slot_index": 0,
           "links": [
             51,
             52
-          ],
-          "slot_index": 0
+          ]
         }
       ],
       "properties": {
@@ -825,15 +591,310 @@
       }
     },
     {
-      "id": 7,
-      "type": "LoadImage",
+      "id": 26,
+      "type": "BuildCustomTranscoder //TinyBreaker",
       "pos": [
-        -30,
-        710
+        480,
+        550
       ],
       "size": [
-        320,
-        330
+        378,
+        102
+      ],
+      "flags": {},
+      "order": 15,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "source_vae",
+          "type": "VAE",
+          "link": 49
+        },
+        {
+          "name": "target_vae",
+          "type": "VAE",
+          "link": 52
+        }
+      ],
+      "outputs": [
+        {
+          "name": "TRANSCODER",
+          "type": "TRANSCODER",
+          "slot_index": 0,
+          "links": [
+            41
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "853171d5673df2b54e86a0cf197861c72e0e8217",
+        "Node name for S&R": "BuildCustomTranscoder //TinyBreaker"
+      },
+      "widgets_values": [
+        "None",
+        0.5
+      ]
+    },
+    {
+      "id": 25,
+      "type": "BuildCustomTranscoder //TinyBreaker",
+      "pos": [
+        480,
+        400
+      ],
+      "size": [
+        378,
+        102
+      ],
+      "flags": {},
+      "order": 14,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "source_vae",
+          "type": "VAE",
+          "link": 51
+        },
+        {
+          "name": "target_vae",
+          "type": "VAE",
+          "link": 48
+        }
+      ],
+      "outputs": [
+        {
+          "name": "TRANSCODER",
+          "type": "TRANSCODER",
+          "slot_index": 0,
+          "links": [
+            37
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "853171d5673df2b54e86a0cf197861c72e0e8217",
+        "Node name for S&R": "BuildCustomTranscoder //TinyBreaker"
+      },
+      "widgets_values": [
+        "None",
+        0.5
+      ]
+    },
+    {
+      "id": 10,
+      "type": "PreviewImage",
+      "pos": [
+        1350,
+        780
+      ],
+      "size": [
+        350,
+        380
+      ],
+      "flags": {},
+      "order": 24,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 10
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.29",
+        "Node name for S&R": "PreviewImage"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 4,
+      "type": "PreviewImage",
+      "pos": [
+        1360,
+        190
+      ],
+      "size": [
+        340,
+        380
+      ],
+      "flags": {},
+      "order": 22,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 28
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.29",
+        "Node name for S&R": "PreviewImage"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 29,
+      "type": "Reroute",
+      "pos": [
+        400,
+        960
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 17,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 54
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "IMAGE",
+          "slot_index": 0,
+          "links": [
+            44
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 34,
+      "type": "Reroute",
+      "pos": [
+        -60,
+        960
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 11,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 55
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "IMAGE",
+          "links": [
+            54
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 19,
+      "type": "VAELoader",
+      "pos": [
+        -60,
+        460
+      ],
+      "size": [
+        360,
+        60
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "slot_index": 0,
+          "links": [
+            22,
+            24,
+            50
+          ]
+        }
+      ],
+      "title": "Load SD VAE",
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.29",
+        "Node name for S&R": "VAELoader"
+      },
+      "widgets_values": [
+        "vae-ft-mse-840000-ema-pruned.safetensors"
+      ]
+    },
+    {
+      "id": 11,
+      "type": "VAELoader",
+      "pos": [
+        -60,
+        570
+      ],
+      "size": [
+        360,
+        60
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "slot_index": 0,
+          "links": [
+            12,
+            29,
+            47
+          ]
+        }
+      ],
+      "title": "Load SDXL VAE",
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.29",
+        "Node name for S&R": "VAELoader"
+      },
+      "widgets_values": [
+        "SDXL-FP16-FIX-sdxl.vae.safetensors"
+      ]
+    },
+    {
+      "id": 1,
+      "type": "LoadImage",
+      "pos": [
+        -520,
+        150
+      ],
+      "size": [
+        390,
+        480
       ],
       "flags": {},
       "order": 2,
@@ -843,10 +904,11 @@
         {
           "name": "IMAGE",
           "type": "IMAGE",
+          "slot_index": 0,
           "links": [
-            43
-          ],
-          "slot_index": 0
+            45,
+            55
+          ]
         },
         {
           "name": "MASK",
@@ -855,6 +917,8 @@
         }
       ],
       "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.29",
         "Node name for S&R": "LoadImage"
       },
       "widgets_values": [
@@ -863,42 +927,28 @@
       ]
     },
     {
-      "id": 1,
-      "type": "LoadImage",
+      "id": 33,
+      "type": "MarkdownNote",
       "pos": [
-        -30,
-        60
+        920,
+        340
       ],
       "size": [
-        320,
-        320
+        350,
+        340
       ],
       "flags": {},
       "order": 3,
       "mode": 0,
       "inputs": [],
-      "outputs": [
-        {
-          "name": "IMAGE",
-          "type": "IMAGE",
-          "links": [
-            45
-          ],
-          "slot_index": 0
-        },
-        {
-          "name": "MASK",
-          "type": "MASK",
-          "links": null
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "LoadImage"
-      },
+      "outputs": [],
+      "title": "NOTE",
+      "properties": {},
       "widgets_values": [
-        "example.png",
-        "image"
-      ]
+        "# Custom Transcoder Test\n\n**Description:** The \"Build Custom Transcoder\" node works by linking a decoder and an encoder, with an enhancement stage in between where the image is in RGB pixel space.\n\n**Status:** This node is deprecated. I'm keeping it around just for testing.\n\n**Test:** First, you'll need to load two VAEs that are of different types. If everything goes well, the final image should look visually identical to the original input image.\n\n"
+      ],
+      "color": "#222",
+      "bgcolor": "#000"
     }
   ],
   "links": [
@@ -1047,14 +1097,6 @@
       "LATENT"
     ],
     [
-      43,
-      7,
-      0,
-      29,
-      0,
-      "*"
-    ],
-    [
       44,
       29,
       0,
@@ -1125,16 +1167,32 @@
       26,
       1,
       "VAE"
+    ],
+    [
+      54,
+      34,
+      0,
+      29,
+      0,
+      "*"
+    ],
+    [
+      55,
+      1,
+      0,
+      34,
+      0,
+      "*"
     ]
   ],
   "groups": [
     {
       "id": 1,
-      "title": "Build Custom Transcoder Test (SD <-> SDXL)",
+      "title": "Custom Transcoder Test (SD <-> SDXL)",
       "bounding": [
         400,
         310,
-        570,
+        500,
         370
       ],
       "color": "#b58b2a",
@@ -1145,12 +1203,13 @@
   "config": {},
   "extra": {
     "ds": {
-      "scale": 0.7958936520861529,
+      "scale": 0.6830134553650705,
       "offset": [
-        79.1259165114672,
-        -11.41503744215526
+        584.5151228402899,
+        -6.467263690655403
       ]
-    }
+    },
+    "frontendVersion": "1.16.8"
   },
   "version": 0.4
 }

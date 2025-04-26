@@ -1,4 +1,6 @@
 {
+  "id": "e53b2247-85e9-499b-83e8-7ab8671c545d",
+  "revision": 0,
   "last_node_id": 35,
   "last_link_id": 55,
   "nodes": [
@@ -25,6 +27,8 @@
       ],
       "outputs": [],
       "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.29",
         "Node name for S&R": "PreviewImage"
       },
       "widgets_values": []
@@ -54,10 +58,10 @@
         {
           "name": "",
           "type": "VAE",
+          "slot_index": 0,
           "links": [
             26
-          ],
-          "slot_index": 0
+          ]
         }
       ],
       "properties": {
@@ -90,10 +94,10 @@
         {
           "name": "",
           "type": "VAE",
+          "slot_index": 0,
           "links": [
             23
-          ],
-          "slot_index": 0
+          ]
         }
       ],
       "properties": {
@@ -123,9 +127,9 @@
         },
         {
           "name": "transcoder",
+          "shape": 7,
           "type": "TRANSCODER",
-          "link": 54,
-          "shape": 7
+          "link": 54
         }
       ],
       "outputs": [
@@ -138,6 +142,8 @@
         }
       ],
       "properties": {
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "6dc1d172bdb9fb16b869e601057b977d8c6f3ada",
         "Node name for S&R": "TranscodeLatent //TinyBreaker"
       },
       "widgets_values": []
@@ -172,14 +178,16 @@
         {
           "name": "IMAGE",
           "type": "IMAGE",
+          "slot_index": 0,
           "links": [
             28
-          ],
-          "slot_index": 0
+          ]
         }
       ],
       "title": "VAE Decode SDXL",
       "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.29",
         "Node name for S&R": "VAEDecode"
       },
       "widgets_values": []
@@ -209,10 +217,10 @@
         {
           "name": "",
           "type": "VAE",
+          "slot_index": 0,
           "links": [
             14
-          ],
-          "slot_index": 0
+          ]
         }
       ],
       "properties": {
@@ -245,10 +253,10 @@
         {
           "name": "",
           "type": "VAE",
+          "slot_index": 0,
           "links": [
             25
-          ],
-          "slot_index": 0
+          ]
         }
       ],
       "properties": {
@@ -281,10 +289,10 @@
         {
           "name": "",
           "type": "VAE",
+          "slot_index": 0,
           "links": [
             30
-          ],
-          "slot_index": 0
+          ]
         }
       ],
       "properties": {
@@ -317,10 +325,10 @@
         {
           "name": "",
           "type": "IMAGE",
+          "slot_index": 0,
           "links": [
             44
-          ],
-          "slot_index": 0
+          ]
         }
       ],
       "properties": {
@@ -400,6 +408,8 @@
       ],
       "title": "VAE Encode SD",
       "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.29",
         "Node name for S&R": "VAEEncode"
       },
       "widgets_values": []
@@ -429,10 +439,10 @@
         {
           "name": "",
           "type": "IMAGE",
+          "slot_index": 0,
           "links": [
             46
-          ],
-          "slot_index": 0
+          ]
         }
       ],
       "properties": {
@@ -463,6 +473,8 @@
       ],
       "outputs": [],
       "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.29",
         "Node name for S&R": "PreviewImage"
       },
       "widgets_values": []
@@ -497,14 +509,16 @@
         {
           "name": "IMAGE",
           "type": "IMAGE",
+          "slot_index": 0,
           "links": [
             10
-          ],
-          "slot_index": 0
+          ]
         }
       ],
       "title": "VAE Decode SD",
       "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.29",
         "Node name for S&R": "VAEDecode"
       },
       "widgets_values": []
@@ -531,9 +545,9 @@
         },
         {
           "name": "transcoder",
+          "shape": 7,
           "type": "TRANSCODER",
-          "link": 55,
-          "shape": 7
+          "link": 55
         }
       ],
       "outputs": [
@@ -546,6 +560,8 @@
         }
       ],
       "properties": {
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "6dc1d172bdb9fb16b869e601057b977d8c6f3ada",
         "Node name for S&R": "TranscodeLatent //TinyBreaker"
       },
       "widgets_values": []
@@ -580,14 +596,16 @@
         {
           "name": "LATENT",
           "type": "LATENT",
+          "slot_index": 0,
           "links": [
             40
-          ],
-          "slot_index": 0
+          ]
         }
       ],
       "title": "VAE Encode SDXL",
       "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.29",
         "Node name for S&R": "VAEEncode"
       },
       "widgets_values": []
@@ -611,15 +629,17 @@
         {
           "name": "VAE",
           "type": "VAE",
+          "slot_index": 0,
           "links": [
             12,
             29
-          ],
-          "slot_index": 0
+          ]
         }
       ],
       "title": "Load SDXL VAE",
       "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.29",
         "Node name for S&R": "VAELoader"
       },
       "widgets_values": [
@@ -645,15 +665,17 @@
         {
           "name": "VAE",
           "type": "VAE",
+          "slot_index": 0,
           "links": [
             22,
             24
-          ],
-          "slot_index": 0
+          ]
         }
       ],
       "title": "Load SD VAE",
       "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.29",
         "Node name for S&R": "VAELoader"
       },
       "widgets_values": [
@@ -679,10 +701,10 @@
         {
           "name": "IMAGE",
           "type": "IMAGE",
+          "slot_index": 0,
           "links": [
             43
-          ],
-          "slot_index": 0
+          ]
         },
         {
           "name": "MASK",
@@ -691,6 +713,8 @@
         }
       ],
       "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.29",
         "Node name for S&R": "LoadImage"
       },
       "widgets_values": [
@@ -717,10 +741,10 @@
         {
           "name": "IMAGE",
           "type": "IMAGE",
+          "slot_index": 0,
           "links": [
             45
-          ],
-          "slot_index": 0
+          ]
         },
         {
           "name": "MASK",
@@ -729,6 +753,8 @@
         }
       ],
       "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.29",
         "Node name for S&R": "LoadImage"
       },
       "widgets_values": [
@@ -761,6 +787,8 @@
         }
       ],
       "properties": {
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "6dc1d172bdb9fb16b869e601057b977d8c6f3ada",
         "Node name for S&R": "LoadTranscoder //TinyBreaker"
       },
       "widgets_values": [
@@ -792,6 +820,8 @@
         }
       ],
       "properties": {
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "6dc1d172bdb9fb16b869e601057b977d8c6f3ada",
         "Node name for S&R": "LoadTranscoder //TinyBreaker"
       },
       "widgets_values": [
@@ -995,12 +1025,13 @@
   "config": {},
   "extra": {
     "ds": {
-      "scale": 0.7958936520861529,
+      "scale": 0.6830134553650705,
       "offset": [
-        79.1259165114672,
-        -11.41503744215526
+        467.38712284029003,
+        82.84283630934507
       ]
-    }
+    },
+    "frontendVersion": "1.16.8"
   },
   "version": 0.4
 }

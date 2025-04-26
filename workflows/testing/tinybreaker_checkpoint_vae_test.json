@@ -1,403 +1,9 @@
 {
   "id": "619aa26b-b241-47e6-bb95-1656ea9d8d36",
   "revision": 0,
-  "last_node_id": 48,
-  "last_link_id": 91,
+  "last_node_id": 57,
+  "last_link_id": 112,
   "nodes": [
-    {
-      "id": 37,
-      "type": "VAEEncode",
-      "pos": [
-        330,
-        100
-      ],
-      "size": [
-        210,
-        60
-      ],
-      "flags": {},
-      "order": 7,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "pixels",
-          "type": "IMAGE",
-          "link": 71
-        },
-        {
-          "name": "vae",
-          "type": "VAE",
-          "link": 86
-        }
-      ],
-      "outputs": [
-        {
-          "name": "LATENT",
-          "type": "LATENT",
-          "links": [
-            72
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "VAEEncode"
-      },
-      "widgets_values": []
-    },
-    {
-      "id": 38,
-      "type": "TranscodeLatent //TinyBreaker",
-      "pos": [
-        560,
-        100
-      ],
-      "size": [
-        210,
-        60
-      ],
-      "flags": {},
-      "order": 12,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "samples",
-          "type": "LATENT",
-          "link": 72
-        },
-        {
-          "name": "transcoder",
-          "shape": 7,
-          "type": "TRANSCODER",
-          "link": 90
-        }
-      ],
-      "outputs": [
-        {
-          "name": "LATENT",
-          "type": "LATENT",
-          "links": [
-            73
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "TranscodeLatent //TinyBreaker"
-      },
-      "widgets_values": []
-    },
-    {
-      "id": 3,
-      "type": "VAEDecode",
-      "pos": [
-        790,
-        100
-      ],
-      "size": [
-        180,
-        50
-      ],
-      "flags": {},
-      "order": 15,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "samples",
-          "type": "LATENT",
-          "link": 73
-        },
-        {
-          "name": "vae",
-          "type": "VAE",
-          "link": 89
-        }
-      ],
-      "outputs": [
-        {
-          "name": "IMAGE",
-          "type": "IMAGE",
-          "slot_index": 0,
-          "links": [
-            67
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "VAEDecode"
-      },
-      "widgets_values": []
-    },
-    {
-      "id": 45,
-      "type": "Reroute",
-      "pos": [
-        240,
-        190
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {},
-      "order": 3,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 87
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "VAE",
-          "links": [
-            86,
-            88
-          ]
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
-    },
-    {
-      "id": 46,
-      "type": "Reroute",
-      "pos": [
-        700,
-        190
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {},
-      "order": 8,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 88
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "VAE",
-          "links": [
-            89
-          ]
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
-    },
-    {
-      "id": 47,
-      "type": "Reroute",
-      "pos": [
-        450,
-        230
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {},
-      "order": 4,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 91
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "TRANSCODER",
-          "links": [
-            90
-          ]
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
-    },
-    {
-      "id": 35,
-      "type": "LoadTinyBreakerCheckpointV2 //TinyBreaker",
-      "pos": [
-        -300,
-        650
-      ],
-      "size": [
-        430,
-        250
-      ],
-      "flags": {},
-      "order": 0,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "MODEL",
-          "type": "MODEL",
-          "links": null
-        },
-        {
-          "name": "CLIP",
-          "type": "CLIP",
-          "links": null
-        },
-        {
-          "name": "VAE",
-          "type": "VAE",
-          "links": [
-            87
-          ]
-        },
-        {
-          "name": "TRANSCODER",
-          "type": "TRANSCODER",
-          "links": [
-            91
-          ]
-        },
-        {
-          "name": "REFINER_MODEL",
-          "type": "MODEL",
-          "links": null
-        },
-        {
-          "name": "REFINER_CLIP",
-          "type": "CLIP",
-          "links": null
-        },
-        {
-          "name": "UPSCALER_VAE",
-          "type": "VAE",
-          "links": [
-            79
-          ]
-        },
-        {
-          "name": "METADATA",
-          "type": "GENPARAMS",
-          "links": null
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "LoadTinyBreakerCheckpointV2 //TinyBreaker"
-      },
-      "widgets_values": [
-        "tinybreaker_prototype1.safetensors",
-        "high_quality",
-        "high_quality"
-      ]
-    },
-    {
-      "id": 1,
-      "type": "LoadImage",
-      "pos": [
-        -180,
-        100
-      ],
-      "size": [
-        310,
-        500
-      ],
-      "flags": {},
-      "order": 1,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "IMAGE",
-          "type": "IMAGE",
-          "slot_index": 0,
-          "links": [
-            52,
-            71
-          ]
-        },
-        {
-          "name": "MASK",
-          "type": "MASK",
-          "links": null
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "LoadImage"
-      },
-      "widgets_values": [
-        "TB_0013_.png",
-        "image",
-        ""
-      ]
-    },
-    {
-      "id": 36,
-      "type": "PreviewImage",
-      "pos": [
-        1000,
-        100
-      ],
-      "size": [
-        430,
-        590
-      ],
-      "flags": {},
-      "order": 17,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "images",
-          "type": "IMAGE",
-          "link": 67
-        }
-      ],
-      "outputs": [],
-      "properties": {
-        "Node name for S&R": "PreviewImage"
-      },
-      "widgets_values": []
-    },
-    {
-      "id": 39,
-      "type": "PreviewImage",
-      "pos": [
-        1000,
-        770
-      ],
-      "size": [
-        430,
-        590
-      ],
-      "flags": {},
-      "order": 16,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "images",
-          "type": "IMAGE",
-          "link": 85
-        }
-      ],
-      "outputs": [],
-      "properties": {
-        "Node name for S&R": "PreviewImage"
-      },
-      "widgets_values": []
-    },
     {
       "id": 42,
       "type": "Reroute",
@@ -471,47 +77,9 @@
         }
       ],
       "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.29",
         "Node name for S&R": "VAEEncode"
-      },
-      "widgets_values": []
-    },
-    {
-      "id": 40,
-      "type": "VAEDecode",
-      "pos": [
-        710,
-        770
-      ],
-      "size": [
-        210,
-        50
-      ],
-      "flags": {},
-      "order": 13,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "samples",
-          "type": "LATENT",
-          "link": 75
-        },
-        {
-          "name": "vae",
-          "type": "VAE",
-          "link": 77
-        }
-      ],
-      "outputs": [
-        {
-          "name": "IMAGE",
-          "type": "IMAGE",
-          "links": [
-            85
-          ]
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "VAEDecode"
       },
       "widgets_values": []
     },
@@ -533,7 +101,7 @@
         {
           "name": "",
           "type": "*",
-          "link": 79
+          "link": 94
         }
       ],
       "outputs": [
@@ -551,6 +119,151 @@
         "showOutputText": false,
         "horizontal": false
       }
+    },
+    {
+      "id": 43,
+      "type": "TinyEncode //TinyBreaker",
+      "pos": [
+        470,
+        600
+      ],
+      "size": [
+        210,
+        102
+      ],
+      "flags": {},
+      "order": 11,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 80
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 82
+        }
+      ],
+      "outputs": [
+        {
+          "name": "latent",
+          "type": "LATENT",
+          "links": [
+            81
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "853171d5673df2b54e86a0cf197861c72e0e8217",
+        "Node name for S&R": "TinyEncode //TinyBreaker"
+      },
+      "widgets_values": [
+        "512px",
+        "100%"
+      ]
+    },
+    {
+      "id": 49,
+      "type": "LoadTinyBreakerCkpt //TinyBreaker",
+      "pos": [
+        -370,
+        740
+      ],
+      "size": [
+        428.4000244140625,
+        246
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": null
+        },
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": null
+        },
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [
+            92
+          ]
+        },
+        {
+          "name": "TRANSCODER",
+          "type": "TRANSCODER",
+          "links": [
+            93
+          ]
+        },
+        {
+          "name": "REFINER_MODEL",
+          "type": "MODEL",
+          "links": null
+        },
+        {
+          "name": "REFINER_CLIP",
+          "type": "CLIP",
+          "links": null
+        },
+        {
+          "name": "UPSCALER_VAE",
+          "type": "VAE",
+          "links": [
+            94
+          ]
+        },
+        {
+          "name": "METADATA",
+          "type": "GENPARAMS",
+          "links": null
+        }
+      ],
+      "properties": {
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "853171d5673df2b54e86a0cf197861c72e0e8217",
+        "Node name for S&R": "LoadTinyBreakerCkpt //TinyBreaker"
+      },
+      "widgets_values": [
+        "tinybreaker_prototype1.safetensors",
+        "auto",
+        "auto"
+      ],
+      "color": "#232",
+      "bgcolor": "#353",
+      "shape": 1
+    },
+    {
+      "id": 48,
+      "type": "MarkdownNote",
+      "pos": [
+        -690,
+        270
+      ],
+      "size": [
+        480,
+        430
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {},
+      "widgets_values": [
+        "# TinyBreaker Component Testing Workflow\n\n## General Description\n\nThis workflow has been designed to verify the proper functionality of the internal elements of the TinyBreaker prototype1 model. It specifically focuses on validating the VAEs and Transcoder components.\n\n## Purpose of the Test\n\nThe primary objective of this workflow is to confirm that image encoding and decoding using the VAEs and the Transcoder are performed accurately. By passing an input image through the encoding (encoder) and then decoding (decoder) process, the expectation is to obtain an output image that is visually indistinguishable or very similar to the original image. Any significant deviation may indicate an issue with the code or with the packaging of these components within the safetensors files.\n\n## Additional Notes\n\nThis workflow is a diagnostic tool and is not designed for image generation. Its purpose is to validate the integrity of the internal components of TinyBreaker prototype1.\n\n---\n\nhttps://civitai.com/models/1213728/tinybreaker\n\nhttps://github.com/martin-rizzo/ComfyUI-TinyBreaker\n"
+      ],
+      "color": "#222",
+      "bgcolor": "#000"
     },
     {
       "id": 31,
@@ -590,29 +303,345 @@
       }
     },
     {
-      "id": 43,
-      "type": "TinyEncode //TinyBreaker",
+      "id": 1,
+      "type": "LoadImage",
       "pos": [
-        470,
-        600
+        -200,
+        270
+      ],
+      "size": [
+        260,
+        430
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "slot_index": 0,
+          "links": [
+            52,
+            95
+          ]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.29",
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": [
+        "TB_0048_.png",
+        "image"
+      ]
+    },
+    {
+      "id": 50,
+      "type": "Reroute",
+      "pos": [
+        90,
+        130
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 95
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "IMAGE",
+          "links": [
+            96,
+            99
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 37,
+      "type": "VAEEncode",
+      "pos": [
+        260,
+        130
       ],
       "size": [
         210,
-        78
+        70
       ],
       "flags": {},
-      "order": 11,
+      "order": 12,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "pixels",
+          "type": "IMAGE",
+          "link": 96
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 86
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            72
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.29",
+        "Node name for S&R": "VAEEncode"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 46,
+      "type": "Reroute",
+      "pos": [
+        620,
+        220
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 88
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "VAE",
+          "links": [
+            89,
+            101
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 47,
+      "type": "Reroute",
+      "pos": [
+        380,
+        250
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 93
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "TRANSCODER",
+          "links": [
+            90,
+            102
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 53,
+      "type": "TinyDecode //TinyBreaker",
+      "pos": [
+        720,
+        -30
+      ],
+      "size": [
+        210,
+        102
+      ],
+      "flags": {},
+      "order": 21,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "latent",
+          "type": "LATENT",
+          "link": 98
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 101
+        }
+      ],
+      "outputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "links": [
+            103
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "853171d5673df2b54e86a0cf197861c72e0e8217",
+        "Node name for S&R": "TinyDecode //TinyBreaker"
+      },
+      "widgets_values": [
+        "512px",
+        "100%"
+      ]
+    },
+    {
+      "id": 3,
+      "type": "VAEDecode",
+      "pos": [
+        720,
+        130
+      ],
+      "size": [
+        210,
+        70
+      ],
+      "flags": {},
+      "order": 20,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 73
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 89
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "slot_index": 0,
+          "links": [
+            104
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.29",
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 45,
+      "type": "Reroute",
+      "pos": [
+        170,
+        220
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 92
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "VAE",
+          "links": [
+            86,
+            88,
+            100
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 51,
+      "type": "TinyEncode //TinyBreaker",
+      "pos": [
+        260,
+        -30
+      ],
+      "size": [
+        210,
+        102
+      ],
+      "flags": {},
+      "order": 13,
       "mode": 0,
       "inputs": [
         {
           "name": "image",
           "type": "IMAGE",
-          "link": 80
+          "link": 99
         },
         {
           "name": "vae",
           "type": "VAE",
-          "link": 82
+          "link": 100
         }
       ],
       "outputs": [
@@ -620,16 +649,105 @@
           "name": "latent",
           "type": "LATENT",
           "links": [
-            81
+            97
           ]
         }
       ],
       "properties": {
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "853171d5673df2b54e86a0cf197861c72e0e8217",
         "Node name for S&R": "TinyEncode //TinyBreaker"
       },
       "widgets_values": [
-        "512px"
+        "512px",
+        "100%"
       ]
+    },
+    {
+      "id": 52,
+      "type": "TranscodeLatent //TinyBreaker",
+      "pos": [
+        490,
+        -30
+      ],
+      "size": [
+        210,
+        50
+      ],
+      "flags": {},
+      "order": 17,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 97
+        },
+        {
+          "name": "transcoder",
+          "shape": 7,
+          "type": "TRANSCODER",
+          "link": 102
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            98
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "853171d5673df2b54e86a0cf197861c72e0e8217",
+        "Node name for S&R": "TranscodeLatent //TinyBreaker"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 38,
+      "type": "TranscodeLatent //TinyBreaker",
+      "pos": [
+        490,
+        130
+      ],
+      "size": [
+        210,
+        50
+      ],
+      "flags": {},
+      "order": 16,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 72
+        },
+        {
+          "name": "transcoder",
+          "shape": 7,
+          "type": "TRANSCODER",
+          "link": 90
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            73
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "853171d5673df2b54e86a0cf197861c72e0e8217",
+        "Node name for S&R": "TranscodeLatent //TinyBreaker"
+      },
+      "widgets_values": []
     },
     {
       "id": 44,
@@ -640,10 +758,10 @@
       ],
       "size": [
         210,
-        78
+        102
       ],
       "flags": {},
-      "order": 14,
+      "order": 15,
       "mode": 0,
       "inputs": [
         {
@@ -661,38 +779,256 @@
         {
           "name": "image",
           "type": "IMAGE",
+          "links": [
+            106
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "853171d5673df2b54e86a0cf197861c72e0e8217",
+        "Node name for S&R": "TinyDecode //TinyBreaker"
+      },
+      "widgets_values": [
+        "512px",
+        "100%"
+      ]
+    },
+    {
+      "id": 40,
+      "type": "VAEDecode",
+      "pos": [
+        710,
+        770
+      ],
+      "size": [
+        210,
+        50
+      ],
+      "flags": {},
+      "order": 14,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 75
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 77
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            107
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.29",
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 39,
+      "type": "PreviewImage",
+      "pos": [
+        1100,
+        770
+      ],
+      "size": [
+        430,
+        590
+      ],
+      "flags": {},
+      "order": 22,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 112
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.29",
+        "Node name for S&R": "PreviewImage"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 54,
+      "type": "Reroute",
+      "pos": [
+        970,
+        90
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 24,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 103
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "IMAGE",
           "links": []
         }
       ],
       "properties": {
-        "Node name for S&R": "TinyDecode //TinyBreaker"
-      },
-      "widgets_values": [
-        "512px"
-      ]
+        "showOutputText": false,
+        "horizontal": false
+      }
     },
     {
-      "id": 48,
-      "type": "MarkdownNote",
+      "id": 56,
+      "type": "Reroute",
       "pos": [
-        -690,
-        110
+        970,
+        730
       ],
       "size": [
-        490,
-        490
+        75,
+        26
       ],
       "flags": {},
-      "order": 2,
+      "order": 19,
       "mode": 0,
-      "inputs": [],
-      "outputs": [],
-      "properties": {},
-      "widgets_values": [
-        "# TinyBreaker Component Testing Workflow\n\n## General Description\n\nThis workflow has been designed to verify the proper functionality of the internal elements of the TinyBreaker prototype1 model. It specifically focuses on validating the VAEs and Transcoder components.\n\n## Purpose of the Test\n\nThe primary objective of this workflow is to confirm that image encoding and decoding using the VAEs and the Transcoder are performed accurately. By passing an input image through the encoding (encoder) and then decoding (decoder) process, the expectation is to obtain an output image that is visually indistinguishable or very similar to the original image. Any significant deviation may indicate an issue with the code or with the packaging of these components within the safetensors files.\n\n## Additional Notes\n\nThis workflow is a diagnostic tool and is not designed for image generation. Its purpose is to validate the integrity of the internal components of TinyBreaker prototype1.\n\n---\n\nhttps://civitai.com/models/1213728/tinybreaker\n\nhttps://github.com/martin-rizzo/ComfyUI-TinyBreaker\n"
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 106
+        }
       ],
-      "color": "#222",
-      "bgcolor": "#000"
+      "outputs": [
+        {
+          "name": "",
+          "type": "IMAGE",
+          "links": []
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 55,
+      "type": "Reroute",
+      "pos": [
+        970,
+        130
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 23,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 104
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "IMAGE",
+          "links": [
+            111
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 57,
+      "type": "Reroute",
+      "pos": [
+        970,
+        770
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 18,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 107
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "IMAGE",
+          "links": [
+            112
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 36,
+      "type": "PreviewImage",
+      "pos": [
+        1100,
+        130
+      ],
+      "size": [
+        430,
+        590
+      ],
+      "flags": {},
+      "order": 25,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 111
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.29",
+        "Node name for S&R": "PreviewImage"
+      },
+      "widgets_values": []
     }
   ],
   "links": [
@@ -709,22 +1045,6 @@
       31,
       0,
       28,
-      0,
-      "IMAGE"
-    ],
-    [
-      67,
-      3,
-      0,
-      36,
-      0,
-      "IMAGE"
-    ],
-    [
-      71,
-      1,
-      0,
-      37,
       0,
       "IMAGE"
     ],
@@ -777,14 +1097,6 @@
       "*"
     ],
     [
-      79,
-      35,
-      6,
-      41,
-      0,
-      "*"
-    ],
-    [
       80,
       31,
       0,
@@ -817,28 +1129,12 @@
       "VAE"
     ],
     [
-      85,
-      40,
-      0,
-      39,
-      0,
-      "IMAGE"
-    ],
-    [
       86,
       45,
       0,
       37,
       1,
       "VAE"
-    ],
-    [
-      87,
-      35,
-      2,
-      45,
-      0,
-      "*"
     ],
     [
       88,
@@ -865,24 +1161,153 @@
       "TRANSCODER"
     ],
     [
-      91,
-      35,
+      92,
+      49,
+      2,
+      45,
+      0,
+      "*"
+    ],
+    [
+      93,
+      49,
       3,
       47,
       0,
       "*"
+    ],
+    [
+      94,
+      49,
+      6,
+      41,
+      0,
+      "*"
+    ],
+    [
+      95,
+      1,
+      0,
+      50,
+      0,
+      "*"
+    ],
+    [
+      96,
+      50,
+      0,
+      37,
+      0,
+      "IMAGE"
+    ],
+    [
+      97,
+      51,
+      0,
+      52,
+      0,
+      "LATENT"
+    ],
+    [
+      98,
+      52,
+      0,
+      53,
+      0,
+      "LATENT"
+    ],
+    [
+      99,
+      50,
+      0,
+      51,
+      0,
+      "IMAGE"
+    ],
+    [
+      100,
+      45,
+      0,
+      51,
+      1,
+      "VAE"
+    ],
+    [
+      101,
+      46,
+      0,
+      53,
+      1,
+      "VAE"
+    ],
+    [
+      102,
+      47,
+      0,
+      52,
+      1,
+      "TRANSCODER"
+    ],
+    [
+      103,
+      53,
+      0,
+      54,
+      0,
+      "*"
+    ],
+    [
+      104,
+      3,
+      0,
+      55,
+      0,
+      "*"
+    ],
+    [
+      106,
+      44,
+      0,
+      56,
+      0,
+      "*"
+    ],
+    [
+      107,
+      40,
+      0,
+      57,
+      0,
+      "*"
+    ],
+    [
+      111,
+      55,
+      0,
+      36,
+      0,
+      "IMAGE"
+    ],
+    [
+      112,
+      57,
+      0,
+      39,
+      0,
+      "IMAGE"
     ]
   ],
   "groups": [],
   "config": {},
   "extra": {
     "ds": {
-      "scale": 0.6934334949441685,
+      "scale": 0.6830134553650705,
       "offset": [
-        742.566005456933,
-        28.0957750614775
+        729.4610228402908,
+        79.91463630934484
       ]
-    }
+    },
+    "frontendVersion": "1.16.8"
   },
   "version": 0.4
 }

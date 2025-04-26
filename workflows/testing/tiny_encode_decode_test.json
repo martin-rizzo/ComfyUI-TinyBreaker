@@ -1,4 +1,6 @@
 {
+  "id": "b81cb1c3-dcd4-41e4-a23d-9dec3644ea5c",
+  "revision": 0,
   "last_node_id": 34,
   "last_link_id": 65,
   "nodes": [
@@ -11,10 +13,10 @@
       ],
       "size": [
         220,
-        78
+        102
       ],
       "flags": {},
-      "order": 4,
+      "order": 3,
       "mode": 0,
       "inputs": [
         {
@@ -32,17 +34,20 @@
         {
           "name": "latent",
           "type": "LATENT",
+          "slot_index": 0,
           "links": [
             20
-          ],
-          "slot_index": 0
+          ]
         }
       ],
       "properties": {
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "6dc1d172bdb9fb16b869e601057b977d8c6f3ada",
         "Node name for S&R": "TinyEncode //TinyBreaker"
       },
       "widgets_values": [
-        "512px"
+        "512px",
+        "100%"
       ],
       "color": "#232",
       "bgcolor": "#353",
@@ -60,7 +65,7 @@
         26
       ],
       "flags": {},
-      "order": 3,
+      "order": 5,
       "mode": 0,
       "inputs": [
         {
@@ -73,11 +78,11 @@
         {
           "name": "",
           "type": "IMAGE",
+          "slot_index": 0,
           "links": [
             57,
             58
-          ],
-          "slot_index": 0
+          ]
         }
       ],
       "properties": {
@@ -94,7 +99,7 @@
       ],
       "size": [
         226.79998779296875,
-        78
+        102
       ],
       "flags": {},
       "order": 10,
@@ -115,61 +120,24 @@
         {
           "name": "image",
           "type": "IMAGE",
+          "slot_index": 0,
           "links": [
             55
-          ],
-          "slot_index": 0
+          ]
         }
       ],
       "properties": {
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "6dc1d172bdb9fb16b869e601057b977d8c6f3ada",
         "Node name for S&R": "TinyDecode //TinyBreaker"
       },
       "widgets_values": [
-        "512px"
+        "512px",
+        "100%"
       ],
       "color": "#232",
       "bgcolor": "#353",
       "shape": 1
-    },
-    {
-      "id": 1,
-      "type": "LoadImage",
-      "pos": [
-        -40,
-        120
-      ],
-      "size": [
-        310,
-        500
-      ],
-      "flags": {},
-      "order": 0,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "IMAGE",
-          "type": "IMAGE",
-          "links": [
-            19,
-            52,
-            56
-          ],
-          "slot_index": 0
-        },
-        {
-          "name": "MASK",
-          "type": "MASK",
-          "links": null
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "LoadImage"
-      },
-      "widgets_values": [
-        "TB_0001_.png",
-        "image"
-      ]
     },
     {
       "id": 31,
@@ -183,7 +151,7 @@
         26
       ],
       "flags": {},
-      "order": 2,
+      "order": 4,
       "mode": 0,
       "inputs": [
         {
@@ -196,10 +164,10 @@
         {
           "name": "",
           "type": "IMAGE",
+          "slot_index": 0,
           "links": [
             60
-          ],
-          "slot_index": 0
+          ]
         }
       ],
       "properties": {
@@ -223,20 +191,22 @@
       "mode": 0,
       "inputs": [
         {
+          "dir": 3,
           "name": "image_a",
           "type": "IMAGE",
-          "dir": 3,
           "link": 58
         },
         {
+          "dir": 3,
           "name": "image_b",
           "type": "IMAGE",
-          "dir": 3,
           "link": 55
         }
       ],
       "outputs": [],
       "properties": {
+        "cnr_id": "rgthree-comfy",
+        "ver": "1.0.0",
         "comparer_mode": "Click"
       },
       "widgets_values": [
@@ -244,12 +214,12 @@
           {
             "name": "A",
             "selected": true,
-            "url": "/api/view?filename=rgthree.compare._temp_pzgmv_00001_.png&type=temp&subfolder=&rand=0.16370278387022608"
+            "url": "/api/view?filename=rgthree.compare._temp_qgpnd_00001_.png&type=temp&subfolder=&rand=0.7078697034125014"
           },
           {
             "name": "B",
             "selected": true,
-            "url": "/api/view?filename=rgthree.compare._temp_pzgmv_00002_.png&type=temp&subfolder=&rand=0.5612819414225199"
+            "url": "/api/view?filename=rgthree.compare._temp_qgpnd_00002_.png&type=temp&subfolder=&rand=0.5055194299363848"
           }
         ]
       ]
@@ -266,22 +236,24 @@
         60
       ],
       "flags": {},
-      "order": 1,
+      "order": 0,
       "mode": 0,
       "inputs": [],
       "outputs": [
         {
           "name": "VAE",
           "type": "VAE",
+          "slot_index": 0,
           "links": [
             49,
             50,
             61
-          ],
-          "slot_index": 0
+          ]
         }
       ],
       "properties": {
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "6dc1d172bdb9fb16b869e601057b977d8c6f3ada",
         "Node name for S&R": "LoadAnyVAE //TinyBreaker"
       },
       "widgets_values": [
@@ -300,7 +272,7 @@
         70
       ],
       "flags": {},
-      "order": 6,
+      "order": 7,
       "mode": 0,
       "inputs": [
         {
@@ -318,13 +290,15 @@
         {
           "name": "IMAGE",
           "type": "IMAGE",
+          "slot_index": 0,
           "links": [
             39
-          ],
-          "slot_index": 0
+          ]
         }
       ],
       "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.29",
         "Node name for S&R": "VAEDecode"
       },
       "widgets_values": []
@@ -341,7 +315,7 @@
         70
       ],
       "flags": {},
-      "order": 7,
+      "order": 8,
       "mode": 0,
       "inputs": [
         {
@@ -359,13 +333,15 @@
         {
           "name": "LATENT",
           "type": "LATENT",
+          "slot_index": 0,
           "links": [
             54
-          ],
-          "slot_index": 0
+          ]
         }
       ],
       "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.29",
         "Node name for S&R": "VAEEncode"
       },
       "widgets_values": []
@@ -382,7 +358,7 @@
         26
       ],
       "flags": {},
-      "order": 8,
+      "order": 6,
       "mode": 0,
       "inputs": [
         {
@@ -395,10 +371,10 @@
         {
           "name": "",
           "type": "VAE",
+          "slot_index": 0,
           "links": [
             65
-          ],
-          "slot_index": 0
+          ]
         }
       ],
       "properties": {
@@ -418,7 +394,7 @@
         26
       ],
       "flags": {},
-      "order": 5,
+      "order": 2,
       "mode": 0,
       "inputs": [
         {
@@ -431,11 +407,11 @@
         {
           "name": "",
           "type": "VAE",
+          "slot_index": 0,
           "links": [
             62,
             64
-          ],
-          "slot_index": 0
+          ]
         }
       ],
       "properties": {
@@ -459,20 +435,22 @@
       "mode": 0,
       "inputs": [
         {
+          "dir": 3,
           "name": "image_a",
           "type": "IMAGE",
-          "dir": 3,
           "link": 57
         },
         {
+          "dir": 3,
           "name": "image_b",
           "type": "IMAGE",
-          "dir": 3,
           "link": 39
         }
       ],
       "outputs": [],
       "properties": {
+        "cnr_id": "rgthree-comfy",
+        "ver": "1.0.0",
         "comparer_mode": "Click"
       },
       "widgets_values": [
@@ -480,14 +458,56 @@
           {
             "name": "A",
             "selected": true,
-            "url": "/api/view?filename=rgthree.compare._temp_suuje_00001_.png&type=temp&subfolder=&rand=0.8586618961722771"
+            "url": "/api/view?filename=rgthree.compare._temp_xbjlb_00001_.png&type=temp&subfolder=&rand=0.05667724966262866"
           },
           {
             "name": "B",
             "selected": true,
-            "url": "/api/view?filename=rgthree.compare._temp_suuje_00002_.png&type=temp&subfolder=&rand=0.5362443469266015"
+            "url": "/api/view?filename=rgthree.compare._temp_xbjlb_00002_.png&type=temp&subfolder=&rand=0.46898710350081363"
           }
         ]
+      ]
+    },
+    {
+      "id": 1,
+      "type": "LoadImage",
+      "pos": [
+        -40,
+        120
+      ],
+      "size": [
+        310,
+        500
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "slot_index": 0,
+          "links": [
+            19,
+            52,
+            56
+          ]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.29",
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": [
+        "TB_0001_.png",
+        "image"
       ]
     }
   ],
@@ -625,12 +645,13 @@
   "config": {},
   "extra": {
     "ds": {
-      "scale": 0.839054528882444,
+      "scale": 0.6830134553650705,
       "offset": [
-        213.73640343437933,
-        -65.7438371809907
+        492.2768228402899,
+        -34.28516369065509
       ]
-    }
+    },
+    "frontendVersion": "1.16.8"
   },
   "version": 0.4
 }

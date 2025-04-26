@@ -1,0 +1,696 @@
+{
+  "id": "28accc62-6cdf-4f48-bf87-d6ff3006c2f5",
+  "revision": 0,
+  "last_node_id": 17,
+  "last_link_id": 40,
+  "nodes": [
+    {
+      "id": 13,
+      "type": "Reroute",
+      "pos": [
+        590,
+        -150
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 23
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "GENPARAMS",
+          "slot_index": 0,
+          "links": [
+            34
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 15,
+      "type": "Reroute",
+      "pos": [
+        590,
+        -130
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 31
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "MODEL",
+          "links": [
+            35
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 12,
+      "type": "Reroute",
+      "pos": [
+        590,
+        -110
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 21
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "CLIP",
+          "slot_index": 0,
+          "links": [
+            36
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 5,
+      "type": "EmptyLatentImage //TinyBreaker",
+      "pos": [
+        590,
+        -270
+      ],
+      "size": [
+        230,
+        26
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 19
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "slot_index": 0,
+          "links": [
+            33
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "853171d5673df2b54e86a0cf197861c72e0e8217",
+        "Node name for S&R": "EmptyLatentImage //TinyBreaker"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 11,
+      "type": "Reroute",
+      "pos": [
+        490,
+        -210
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 30
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "GENPARAMS",
+          "slot_index": 0,
+          "links": [
+            19,
+            23
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 4,
+      "type": "CLIPLoader",
+      "pos": [
+        0,
+        140
+      ],
+      "size": [
+        430,
+        106
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "slot_index": 0,
+          "links": [
+            21
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.29",
+        "Node name for S&R": "CLIPLoader"
+      },
+      "widgets_values": [
+        "t5xxl_fp8_e4m3fn.safetensors",
+        "sd3",
+        "default"
+      ]
+    },
+    {
+      "id": 16,
+      "type": "TinyDualSampler //TinyBreaker",
+      "pos": [
+        840,
+        -170
+      ],
+      "size": [
+        360,
+        490
+      ],
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "latent_input",
+          "type": "LATENT",
+          "link": 33
+        },
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 34
+        },
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 35
+        },
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 36
+        },
+        {
+          "name": "transcoder",
+          "type": "TRANSCODER",
+          "link": 37
+        },
+        {
+          "name": "refiner_model",
+          "type": "MODEL",
+          "link": 38
+        },
+        {
+          "name": "refiner_clip",
+          "type": "CLIP",
+          "link": 39
+        }
+      ],
+      "outputs": [
+        {
+          "name": "latent_output",
+          "type": "LATENT",
+          "links": [
+            40
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "853171d5673df2b54e86a0cf197861c72e0e8217",
+        "Node name for S&R": "TinyDualSampler //TinyBreaker"
+      },
+      "widgets_values": [
+        true
+      ]
+    },
+    {
+      "id": 10,
+      "type": "Reroute",
+      "pos": [
+        580,
+        330
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 26
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "VAE",
+          "slot_index": 0,
+          "links": [
+            15
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 9,
+      "type": "Reroute",
+      "pos": [
+        1110,
+        330
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 15
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "VAE",
+          "slot_index": 0,
+          "links": [
+            16
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 7,
+      "type": "PreviewImage",
+      "pos": [
+        1560,
+        -170
+      ],
+      "size": [
+        460,
+        450
+      ],
+      "flags": {},
+      "order": 12,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 11
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.29",
+        "Node name for S&R": "PreviewImage"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 17,
+      "type": "MarkdownNote",
+      "pos": [
+        1240,
+        -80
+      ],
+      "size": [
+        280,
+        250
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {},
+      "widgets_values": [
+        "# Example Zero (Test)\n\n**Description:** This test demonstrates the ability to extract default generation parameters embedded within the model's `.safetensors` metadata. This workflow doesn't include any user input, it relies entirely on the parameters defined in the model's metadata to generate an image.\n\n**Test:** The workflow attempts to extract default generation parameters from the model's file. If these parameters are successfully extracted, the resulting image should be visually coherent.\n"
+      ],
+      "color": "#222",
+      "bgcolor": "#000"
+    },
+    {
+      "id": 6,
+      "type": "VAEDecode",
+      "pos": [
+        1240,
+        -170
+      ],
+      "size": [
+        280,
+        50
+      ],
+      "flags": {},
+      "order": 11,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 40
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 16
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "slot_index": 0,
+          "links": [
+            11
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.29",
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 14,
+      "type": "LoadTinyBreakerCkpt //TinyBreaker",
+      "pos": [
+        0,
+        -150
+      ],
+      "size": [
+        430,
+        250
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            31
+          ]
+        },
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": null
+        },
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [
+            26
+          ]
+        },
+        {
+          "name": "TRANSCODER",
+          "type": "TRANSCODER",
+          "links": [
+            37
+          ]
+        },
+        {
+          "name": "REFINER_MODEL",
+          "type": "MODEL",
+          "links": [
+            38
+          ]
+        },
+        {
+          "name": "REFINER_CLIP",
+          "type": "CLIP",
+          "links": [
+            39
+          ]
+        },
+        {
+          "name": "UPSCALER_VAE",
+          "type": "VAE",
+          "links": null
+        },
+        {
+          "name": "METADATA",
+          "type": "GENPARAMS",
+          "links": [
+            30
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "853171d5673df2b54e86a0cf197861c72e0e8217",
+        "Node name for S&R": "LoadTinyBreakerCkpt //TinyBreaker"
+      },
+      "widgets_values": [
+        "tinybreaker_prototype1.safetensors",
+        "auto",
+        "auto"
+      ],
+      "color": "#232",
+      "bgcolor": "#353",
+      "shape": 1
+    }
+  ],
+  "links": [
+    [
+      11,
+      6,
+      0,
+      7,
+      0,
+      "IMAGE"
+    ],
+    [
+      15,
+      10,
+      0,
+      9,
+      0,
+      "*"
+    ],
+    [
+      16,
+      9,
+      0,
+      6,
+      1,
+      "VAE"
+    ],
+    [
+      19,
+      11,
+      0,
+      5,
+      0,
+      "GENPARAMS"
+    ],
+    [
+      21,
+      4,
+      0,
+      12,
+      0,
+      "*"
+    ],
+    [
+      23,
+      11,
+      0,
+      13,
+      0,
+      "*"
+    ],
+    [
+      26,
+      14,
+      2,
+      10,
+      0,
+      "*"
+    ],
+    [
+      30,
+      14,
+      7,
+      11,
+      0,
+      "*"
+    ],
+    [
+      31,
+      14,
+      0,
+      15,
+      0,
+      "*"
+    ],
+    [
+      33,
+      5,
+      0,
+      16,
+      0,
+      "LATENT"
+    ],
+    [
+      34,
+      13,
+      0,
+      16,
+      1,
+      "GENPARAMS"
+    ],
+    [
+      35,
+      15,
+      0,
+      16,
+      2,
+      "MODEL"
+    ],
+    [
+      36,
+      12,
+      0,
+      16,
+      3,
+      "CLIP"
+    ],
+    [
+      37,
+      14,
+      3,
+      16,
+      4,
+      "TRANSCODER"
+    ],
+    [
+      38,
+      14,
+      4,
+      16,
+      5,
+      "MODEL"
+    ],
+    [
+      39,
+      14,
+      5,
+      16,
+      6,
+      "CLIP"
+    ],
+    [
+      40,
+      16,
+      0,
+      6,
+      0,
+      "LATENT"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.7513148009015777,
+      "offset": [
+        78.33582284028968,
+        411.20053630934484
+      ]
+    },
+    "frontendVersion": "1.16.8"
+  },
+  "version": 0.4
+}

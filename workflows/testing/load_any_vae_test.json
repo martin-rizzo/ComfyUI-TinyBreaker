@@ -1,4 +1,6 @@
 {
+  "id": "34b60235-fe99-43bd-990a-a31e6fd07e43",
+  "revision": 0,
   "last_node_id": 19,
   "last_link_id": 26,
   "nodes": [
@@ -32,13 +34,15 @@
         {
           "name": "IMAGE",
           "type": "IMAGE",
+          "slot_index": 0,
           "links": [
             1
-          ],
-          "slot_index": 0
+          ]
         }
       ],
       "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.29",
         "Node name for S&R": "VAEDecode"
       },
       "widgets_values": []
@@ -68,6 +72,8 @@
         }
       ],
       "properties": {
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "853171d5673df2b54e86a0cf197861c72e0e8217",
         "Node name for S&R": "LoadAnyVAE //TinyBreaker"
       },
       "widgets_values": [
@@ -102,11 +108,11 @@
         {
           "name": "",
           "type": "VAE",
+          "slot_index": 0,
           "links": [
             22,
             23
-          ],
-          "slot_index": 0
+          ]
         }
       ],
       "properties": {
@@ -140,6 +146,8 @@
         }
       ],
       "properties": {
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "853171d5673df2b54e86a0cf197861c72e0e8217",
         "Node name for S&R": "LoadAnyVAE //TinyBreaker"
       },
       "widgets_values": [
@@ -185,6 +193,8 @@
         }
       ],
       "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.29",
         "Node name for S&R": "VAEEncode"
       },
       "widgets_values": []
@@ -212,6 +222,8 @@
       ],
       "outputs": [],
       "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.29",
         "Node name for S&R": "PreviewImage"
       },
       "widgets_values": []
@@ -235,11 +247,11 @@
         {
           "name": "IMAGE",
           "type": "IMAGE",
+          "slot_index": 0,
           "links": [
             5,
             25
-          ],
-          "slot_index": 0
+          ]
         },
         {
           "name": "MASK",
@@ -248,6 +260,8 @@
         }
       ],
       "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.29",
         "Node name for S&R": "LoadImage"
       },
       "widgets_values": [
@@ -315,10 +329,10 @@
         {
           "name": "",
           "type": "VAE",
+          "slot_index": 0,
           "links": [
             14
-          ],
-          "slot_index": 0
+          ]
         }
       ],
       "properties": {
@@ -356,13 +370,15 @@
         {
           "name": "IMAGE",
           "type": "IMAGE",
+          "slot_index": 0,
           "links": [
             10
-          ],
-          "slot_index": 0
+          ]
         }
       ],
       "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.29",
         "Node name for S&R": "VAEDecode"
       },
       "widgets_values": []
@@ -397,13 +413,15 @@
         {
           "name": "LATENT",
           "type": "LATENT",
+          "slot_index": 0,
           "links": [
             8
-          ],
-          "slot_index": 0
+          ]
         }
       ],
       "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.29",
         "Node name for S&R": "VAEEncode"
       },
       "widgets_values": []
@@ -433,10 +451,10 @@
         {
           "name": "",
           "type": "IMAGE",
+          "slot_index": 0,
           "links": [
             26
-          ],
-          "slot_index": 0
+          ]
         }
       ],
       "properties": {
@@ -469,10 +487,10 @@
         {
           "name": "",
           "type": "VAE",
+          "slot_index": 0,
           "links": [
             16
-          ],
-          "slot_index": 0
+          ]
         }
       ],
       "properties": {
@@ -503,6 +521,8 @@
       ],
       "outputs": [],
       "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.29",
         "Node name for S&R": "PreviewImage"
       },
       "widgets_values": []
@@ -634,12 +654,13 @@
   "config": {},
   "extra": {
     "ds": {
-      "scale": 0.630394086312858,
+      "scale": 0.620921323059155,
       "offset": [
-        394.77708273587905,
-        30.240247766036816
+        439.8620428402896,
+        34.088306309345064
       ]
-    }
+    },
+    "frontendVersion": "1.16.8"
   },
   "version": 0.4
 }

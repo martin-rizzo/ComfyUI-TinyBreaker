@@ -1,12 +1,146 @@
 {
-  "last_node_id": 21,
-  "last_link_id": 17,
+  "id": "8b94588c-f657-4782-86e0-c263eec45013",
+  "revision": 0,
+  "last_node_id": 24,
+  "last_link_id": 23,
   "nodes": [
+    {
+      "id": 22,
+      "type": "SetImageV2 //TinyBreaker",
+      "pos": [
+        880,
+        160
+      ],
+      "size": [
+        270,
+        154
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 23
+        }
+      ],
+      "outputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "links": [
+            20
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "853171d5673df2b54e86a0cf197861c72e0e8217",
+        "Node name for S&R": "SetImageV2 //TinyBreaker"
+      },
+      "widgets_values": [
+        "16:10  (wide)",
+        "landscape",
+        "large",
+        1,
+        false
+      ],
+      "color": "#2a363b",
+      "bgcolor": "#3f5159",
+      "shape": 1
+    },
+    {
+      "id": 23,
+      "type": "SetImageDetailsV2 //TinyBreaker",
+      "pos": [
+        1170,
+        160
+      ],
+      "size": [
+        270,
+        150
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 20
+        }
+      ],
+      "outputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "links": [
+            21
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "853171d5673df2b54e86a0cf197861c72e0e8217",
+        "Node name for S&R": "SetImageDetailsV2 //TinyBreaker"
+      },
+      "widgets_values": [
+        0,
+        0,
+        "normal"
+      ],
+      "color": "#2a363b",
+      "bgcolor": "#3f5159",
+      "shape": 1
+    },
+    {
+      "id": 20,
+      "type": "GenParamsDebugLogger //TinyBreaker",
+      "pos": [
+        1910,
+        160
+      ],
+      "size": [
+        290,
+        106
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "genparams",
+          "shape": 7,
+          "type": "GENPARAMS",
+          "link": 16
+        }
+      ],
+      "outputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "links": null
+        }
+      ],
+      "properties": {
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "853171d5673df2b54e86a0cf197861c72e0e8217",
+        "Node name for S&R": "GenParamsDebugLogger //TinyBreaker"
+      },
+      "widgets_values": [
+        "short text values",
+        "unified prompt",
+        ""
+      ]
+    },
     {
       "id": 21,
       "type": "GenParamsDebugLogger //TinyBreaker",
       "pos": [
-        320,
+        10,
         160
       ],
       "size": [
@@ -19,22 +153,24 @@
       "inputs": [
         {
           "name": "genparams",
+          "shape": 7,
           "type": "GENPARAMS",
-          "link": null,
-          "shape": 7
+          "link": null
         }
       ],
       "outputs": [
         {
           "name": "genparams",
           "type": "GENPARAMS",
+          "slot_index": 0,
           "links": [
             17
-          ],
-          "slot_index": 0
+          ]
         }
       ],
       "properties": {
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "853171d5673df2b54e86a0cf197861c72e0e8217",
         "Node name for S&R": "GenParamsDebugLogger //TinyBreaker"
       },
       "widgets_values": [
@@ -44,48 +180,96 @@
       ]
     },
     {
-      "id": 20,
-      "type": "GenParamsDebugLogger //TinyBreaker",
+      "id": 4,
+      "type": "UnifiedPromptInput //TinyBreaker",
       "pos": [
-        1740,
+        1460,
         160
       ],
       "size": [
-        290,
-        106
+        430,
+        440
       ],
       "flags": {},
-      "order": 4,
+      "order": 5,
       "mode": 0,
       "inputs": [
         {
           "name": "genparams",
           "type": "GENPARAMS",
-          "link": 16,
-          "shape": 7
+          "link": 21
         }
       ],
       "outputs": [
         {
           "name": "genparams",
           "type": "GENPARAMS",
-          "links": null
+          "slot_index": 0,
+          "links": [
+            16
+          ]
         }
       ],
       "properties": {
-        "Node name for S&R": "GenParamsDebugLogger //TinyBreaker"
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "853171d5673df2b54e86a0cf197861c72e0e8217",
+        "Node name for S&R": "UnifiedPromptInput //TinyBreaker"
       },
       "widgets_values": [
-        "short text values",
-        "unified prompt",
-        ""
-      ]
+        "An astronaut enjoying fries in a diner, with a cinematic touch.\n"
+      ],
+      "color": "#232",
+      "bgcolor": "#353",
+      "shape": 1
+    },
+    {
+      "id": 24,
+      "type": "SetBaseSeed //TinyBreaker",
+      "pos": [
+        570,
+        160
+      ],
+      "size": [
+        290,
+        110
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 22
+        }
+      ],
+      "outputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "links": [
+            23
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "853171d5673df2b54e86a0cf197861c72e0e8217",
+        "Node name for S&R": "SetBaseSeed //TinyBreaker"
+      },
+      "widgets_values": [
+        1,
+        "fixed"
+      ],
+      "color": "#432",
+      "bgcolor": "#653",
+      "shape": 1
     },
     {
       "id": 2,
       "type": "SelectStyle //TinyBreaker",
       "pos": [
-        600,
+        290,
         160
       ],
       "size": [
@@ -103,132 +287,36 @@
         },
         {
           "name": "custom_definitions",
+          "shape": 7,
           "type": "STRING",
-          "link": null,
-          "widget": {
-            "name": "custom_definitions"
-          },
-          "shape": 7
+          "link": null
         }
       ],
       "outputs": [
         {
           "name": "genparams",
           "type": "GENPARAMS",
+          "slot_index": 0,
           "links": [
-            1
-          ],
-          "slot_index": 0
+            22
+          ]
         }
       ],
       "properties": {
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "853171d5673df2b54e86a0cf197861c72e0e8217",
         "Node name for S&R": "SelectStyle //TinyBreaker"
       },
       "widgets_values": [
-        "none",
-        "last",
-        "[1GIRL]\nbase.prompt      = \"An iPhone photo{. $@}. (144p photo:1.1) with JPEG artifacts.\"\nbase.negative    = \"macrophoto, bokeh, out of focus{, $@}\"\nbase.sampler     = \"dpmpp_2m_sde\"\nbase.scheduler   = \"beta\"\nbase.steps       = 14\nbase.steps_start = 2\nrefiner.prompt      = \"(argentine social woman:1.1){, $@}\"\nrefiner.negative    = \"(worst quality, low quality:1.8){, $@}\"\nrefiner.sampler     = \"dpmpp_2m\"\nrefiner.scheduler   = \"normal\"\nrefiner.steps       = 24\nrefiner.steps_start = 12\nrefiner.cfg         = 2.0\n\n[2GIRL]\nbase.prompt      = \"An iPhone photo{. $@}. (144p photo:1.1) with JPEG artifacts.\"\nbase.negative    = \"macrophoto, bokeh, out of focus{, $@}\"\nbase.sampler     = \"dpmpp_2m_sde\"\nbase.scheduler   = \"karras\"\nbase.steps       = 14\nbase.steps_start = 2\nrefiner.prompt      = \"(argentine social woman:1.1){, $@}\"\nrefiner.negative    = \"(worst quality, low quality:1.8){, $@}\"\nrefiner.sampler     = \"dpmpp_2m\"\nrefiner.scheduler   = \"normal\"\nrefiner.steps       = 25\nrefiner.steps_start = 14\nrefiner.cfg         = 2.0\n"
-      ]
-    },
-    {
-      "id": 3,
-      "type": "SetImage //TinyBreaker",
-      "pos": [
-        880,
-        160
+        "PHOTO",
+        "last"
       ],
-      "size": [
-        280,
-        180
-      ],
-      "flags": {},
-      "order": 2,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "link": 1
-        }
-      ],
-      "outputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "links": [
-            2
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "SetImage //TinyBreaker"
-      },
-      "widgets_values": [
-        1,
-        "fixed",
-        "16:10  (wide)",
-        "landscape",
-        "large",
-        1
-      ]
-    },
-    {
-      "id": 4,
-      "type": "UnifiedPromptInput //TinyBreaker",
-      "pos": [
-        1180,
-        160
-      ],
-      "size": [
-        540,
-        270
-      ],
-      "flags": {},
-      "order": 3,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "link": 2
-        }
-      ],
-      "outputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "links": [
-            16
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "UnifiedPromptInput //TinyBreaker"
-      },
-      "widgets_values": [
-        "An astronaut enjoying fries in a diner, with a cinematic touch.\n"
-      ]
+      "color": "#232",
+      "bgcolor": "#353",
+      "shape": 1
     }
   ],
   "links": [
-    [
-      1,
-      2,
-      0,
-      3,
-      0,
-      "GENPARAMS"
-    ],
-    [
-      2,
-      3,
-      0,
-      4,
-      0,
-      "GENPARAMS"
-    ],
     [
       16,
       4,
@@ -244,18 +332,51 @@
       2,
       0,
       "GENPARAMS"
+    ],
+    [
+      20,
+      22,
+      0,
+      23,
+      0,
+      "GENPARAMS"
+    ],
+    [
+      21,
+      23,
+      0,
+      4,
+      0,
+      "GENPARAMS"
+    ],
+    [
+      22,
+      2,
+      0,
+      24,
+      0,
+      "GENPARAMS"
+    ],
+    [
+      23,
+      24,
+      0,
+      22,
+      0,
+      "GENPARAMS"
     ]
   ],
   "groups": [],
   "config": {},
   "extra": {
     "ds": {
-      "scale": 0.8264462809917354,
+      "scale": 0.6830134553650707,
       "offset": [
-        -205.2086551906337,
-        48.59273029940159
+        88.55657184028951,
+        71.12205030934467
       ]
     },
+    "frontendVersion": "1.16.8",
     "node_versions": {
       "ComfyUI-TinyBreaker": "2b18eb3b6ab9cdc5afb04c07ec18227cbdf2d472"
     }
