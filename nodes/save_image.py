@@ -23,6 +23,35 @@ from .core.comfyui_bridge.helpers.images import normalize_images
 from .core.genparams_from_prompt         import split_prompt_and_args, join_prompt_and_args
 from ._common                            import ireplace
 
+_A1111_SAMPLER_BY_COMFY_SAMPLER_SCHEDULER = {
+    "euler_ancestral normal"   : "Euler a",
+    "euler normal"             : "Euler",
+    "lms normal"               : "LMS",
+    "heun normal"              : "Heun",
+    "dpmpp_2 normal"           : "DPM2",
+    "dpmpp_2_ancestral normal" : "DPM2 a",
+    "dpmpp_2s_ancestral normal": "DPM++ 2S a",
+    "dpmpp_2m normal"          : "DPM++ 2M",
+    "dpmpp_2m_sde normal"      : "DPM++ 2M SDE",
+    "dpmpp_sde normal"         : "DPM++ SDE",
+    "dpm_fast normal"          : "DPM fast",
+    "dpm_adaptive normal"      : "DPM adaptive",
+    "lms karras"               : "LMS Karras",
+    "dpm_2 karras"             : "DPM2 Karras",
+    "dpm_2_ancestral karras"   : "DPM2 a Karras",
+    "dpmpp_2s_ancestral karras": "DPM++ 2S a Karras",
+    "dpmpp_2m karras"          : "DPM++ 2M Karras",
+    "dpmpp_2m_sde karras"      : "DPM++ 2M SDE Karras",
+    "dpmpp_sde karras"         : "DPM++ SDE Karras",
+    "dpmpp_3m_sde normal"      : "DPM++ 3M SDE",
+    "dpmpp_3m_sde karras"      : "DPM++ 3M SDE Karras",
+    "dpmpp_3m_sde exponential" : "DPM++ 3M SDE Exponential",
+    "ddim normal"              : "DDIM",
+    "plms normal"              : "PLMS",
+    "uni_pc normal"            : "UniPC",
+    "lcm normal"               : "LCM",
+}
+
 _A1111_SAMPLER_BY_COMFY_NAME = {
     "euler"                    : "Euler",
     "euler_cfg_pp"             : "Euler",
@@ -49,25 +78,32 @@ _A1111_SAMPLER_BY_COMFY_NAME = {
     "ddim"                     : "DDIM",
     "uni_pc"                   : "UniPC",
     "uni_pc_bh2"               : "UniPC",
-# unsupported samplers
-    "ddpm"                     : "!DDPM",
-    "ipndm"                    : "!iPNDM",
-    "ipndm_v"                  : "!iPNDM_v",
-    "deis"                     : "!DEIS",
-    "res_multistep"            : "!RES Multistep",
-    "res_multistep_cfg_pp"     : "!RES Multistep",
+    # unsupported samplers
+    "ddpm"                          : "!DDPM",
+    "ipndm"                         : "!iPNDM",
+    "ipndm_v"                       : "!iPNDM_v",
+    "deis"                          : "!DEIS",
+    "res_multistep"                 : "!RES Multistep",
+    "res_multistep_cfg_pp"          : "!RES Multistep",
+    "res_multistep_ancestral"       : "!RES Multistep a",
+    "res_multistep_ancestral_cfg_pp": "!RES Multistep a",
+    "gradient_estimation"           : "!Gradient Estimation",
+    "er_sde"                        : "!ER SDE",
+    "seeds_2"                       : "!Seeds 2",
+    "seeds_3"                       : "!Seeds 3",
 }
 
 _A1111_SCHEDULER_BY_COMFY_NAME = {
-    "normal"          : "",
-    "karras"          : " Karras",
-    "exponential"     : " Exponential",
-#    "sgm_uniform"     : "",
-#    "simple"          : "",
-#    "ddim_uniform"    : "",
-#    "beta"            : "",
-#    "linear_quadratic": "",
-#    "kl_optimal"      : "",
+    "normal"      : "Normal",
+    "karras"      : "Karras",
+    "exponential" : "Exponential",
+    "sgm_uniform" : "SGM Uniform",
+    "simple"      : "Simple",
+    "ddim_uniform": "Uniform",
+    "beta"        : "Beta",
+    "kl_optimal"  : "KL Optimal",
+    # unsupported schedulers
+    "linear_quadratic": "!Linear Quadratic",
 }
 
 
@@ -207,42 +243,40 @@ class SaveImage:
         if not genparams:
             return ""
 
-        def a1111_sampler_name(comfy_sampler: str, comfy_scheduler: str, support_all_samplers: bool = False, /) -> str:
-            DEFAULT_SAMPLER = "Euler"
-            if not comfy_sampler:
-                return ""
-            a1111_sampler = _A1111_SAMPLER_BY_COMFY_NAME.get(comfy_sampler, DEFAULT_SAMPLER)
-            if not support_all_samplers and a1111_sampler.startswith("!"):
-                a1111_sampler = DEFAULT_SAMPLER
-            a1111_sampler = a1111_sampler.lstrip('!') + _A1111_SCHEDULER_BY_COMFY_NAME.get(comfy_scheduler or "normal", "")
-            return a1111_sampler
-
-
         # base/refiner prefixes
         BASE = "denoising.base."
         RE__ = "denoising.refiner."
 
         # extract and clean up parameters from the GenParams dictionary
-        positive            = genparams.get("user.prompt"  , "")
-        negative            = genparams.get("user.negative", "")
-        sampler             = a1111_sampler_name( genparams.get(f"{BASE}sampler"), genparams.get(f"{BASE}scheduler") )
-        refiner_sampler     = a1111_sampler_name( genparams.get(f"{RE__}sampler"), genparams.get(f"{RE__}scheduler"), True )
-        base_cfg            = genparams.get_float(f"{BASE}cfg")
-        refiner_cfg         = genparams.get_float(f"{RE__}cfg", 0)
-        base_steps_start    = genparams.get_int(f"{BASE}steps_start",0)
-        refiner_steps_start = genparams.get_int(f"{RE__}steps_start",0)
-        base_steps_end      = min( genparams.get_int(f"{BASE}steps",0), genparams.get_int(f"{BASE}steps_end",10000) )
-        refiner_steps_end   = min( genparams.get_int(f"{RE__}steps",0), genparams.get_int(f"{RE__}steps_end",10000) )
-        seed                = genparams.get_int(f"{BASE}noise_seed")
-        width               = image_width
-        height              = image_height
-        base_checkpoint     = genparams.get("file.name", "TinyBreaker.safetensors")
-        base_checkpoint     = os.path.splitext(base_checkpoint)[0]
-        refiner_checkpoint  = None #f"{base_checkpoint}.refiner"
-        base_steps          = max(0, base_steps_end-base_steps_start)
-        refiner_steps       = max(0, refiner_steps_end-refiner_steps_start)
-        total_steps         = base_steps + refiner_steps
-        discard_penul_sigma = False
+        positive             = genparams.get_str("user.prompt")
+        negative             = genparams.get_str("user.negative")
+        style                = genparams.get_str("user.style")
+        comfy_base_sampler   = genparams.get_str(f"{BASE}sampler")
+        comfy_base_scheduler = genparams.get_str(f"{BASE}scheduler")
+        comfy_re_sampler     = genparams.get_str(f"{RE__}sampler")
+        comfy_re_scheduler   = genparams.get_str(f"{RE__}scheduler")
+        sampler              = _a1111_sampler_name(comfy_base_sampler, comfy_base_scheduler, include_unsupported=True)
+        refiner_sampler      = _a1111_sampler_name(comfy_re_sampler  , comfy_re_scheduler  , include_unsupported=True)
+        schedule_type        = None
+        base_cfg             = genparams.get_float(f"{BASE}cfg")
+        refiner_cfg          = genparams.get_float(f"{RE__}cfg", 0)
+        base_steps           = genparams.get_int(f"{BASE}steps",0)
+        refiner_steps        = genparams.get_int(f"{RE__}steps",0)
+        base_steps_start     = genparams.get_int(f"{BASE}steps_start",0)
+        refiner_steps_start  = genparams.get_int(f"{RE__}steps_start",0)
+        base_steps_end       = min( genparams.get_int(f"{BASE}steps",0), genparams.get_int(f"{BASE}steps_end",10000) )
+        refiner_steps_end    = min( genparams.get_int(f"{RE__}steps",0), genparams.get_int(f"{RE__}steps_end",10000) )
+        base_seed            = genparams.get_int(f"{BASE}noise_seed")
+        refiner_seed         = genparams.get_int(f"{RE__}noise_seed")
+        width                = image_width
+        height               = image_height
+        base_checkpoint      = genparams.get("file.name", "TinyBreaker.safetensors")
+        base_checkpoint      = os.path.splitext(base_checkpoint)[0]
+        refiner_checkpoint   = None #f"{base_checkpoint}.refiner"
+        total_steps          = max(0, base_steps_end-base_steps_start) + max(0, refiner_steps_end-refiner_steps_start)
+        discard_penul_sigma  = False
+        tb_base_params       = _a1111_compact_params(comfy_base_sampler, comfy_base_scheduler, base_steps   , base_steps_start   , base_steps_end   , base_cfg   , base_seed   )
+        tb_refiner_params    = _a1111_compact_params(comfy_re_sampler  , comfy_re_scheduler  , refiner_steps, refiner_steps_start, refiner_steps_end, refiner_cfg, refiner_seed)
 
         # set up the A1111 compatible parameters
         #   name of standard parameters used by A1111 can be found in:
@@ -250,12 +284,16 @@ class SaveImage:
         #   name of extra extended parameters can be found
         #     searching for "extra_generation_params" in the A1111 repository.
         params = { "Steps": total_steps }
-        if sampler            : params["Sampler"                  ] = sampler
-        if base_cfg           : params["CFG scale"                ] = base_cfg
-        if seed               : params["Seed"                     ] = seed
-        if width and height   : params["Size"                     ] = f"{image_width}x{image_height}"
-        if base_checkpoint    : params["Model"                    ] = base_checkpoint
-        if discard_penul_sigma: params["Discard penultimate sigma"] = "True"
+        if sampler             : params["Sampler"                  ] = sampler
+        if schedule_type       : params["Schedule type"            ] = schedule_type
+        if base_cfg            : params["CFG scale"                ] = base_cfg
+        if base_seed           : params["Seed"                     ] = base_seed
+        if width and height    : params["Size"                     ] = f"{image_width}x{image_height}"
+        if base_checkpoint     : params["Model"                    ] = base_checkpoint
+        if discard_penul_sigma : params["Discard penultimate sigma"] = "True"
+        if style               : params["TB style"                 ] = style
+        if tb_base_params      : params["TB base parameters"       ] = tb_base_params
+        if tb_refiner_params   : params["TB refiner parameters"    ] = tb_refiner_params
 
         if refiner_checkpoint and refiner_sampler:
             params["Denoising strength"] = refiner_cfg
@@ -263,7 +301,7 @@ class SaveImage:
             params["Hires upscaler"    ] = "None"
             params["Hires resize"      ] = f"{image_width}x{image_height}"
             params["Hires sampler"     ] = refiner_sampler
-            params["Hires steps"       ] = refiner_steps
+            params["Hires steps"       ] = max(0, refiner_steps_end-refiner_steps_start)
 
         return _create_infotext(positive, negative, params)
 
@@ -334,8 +372,8 @@ class SaveImage:
 
 #======================== AUTO1111 INFOTEXT FORMAT =========================#
 
-def _create_infotext(positive  : str,
-                     negative  : str,
+def _create_infotext(positive  : str | None,
+                     negative  : str | None,
                      parameters: dict
                      )-> str:
     """
@@ -347,6 +385,7 @@ def _create_infotext(positive  : str,
     Returns:
         A string compatible with the A1111's infotext.
     """
+    positive  = str(positive)                    if positive else ""
     negative  = f"\nNegative prompt: {negative}" if negative else ""
     last_line = ", ".join([f"{k}: {_infotext_quote(v)}" for k, v in parameters.items() if v is not None])
     return f"{positive}{negative}\n{last_line}".strip()
@@ -358,6 +397,63 @@ def _infotext_quote(value) -> str:
     if (',' in str_value) or ('\n' in str_value) or (':' in str_value):
         str_value = json.dumps(str_value, ensure_ascii=False)
     return str_value
+
+
+def _a1111_sampler_name(comfy_sampler: str | None, comfy_scheduler: str | None, /,*, include_unsupported: bool = False) -> str:
+    """Returns the sampler name in A1111 format to be used in the infotext."""
+    DEFAULT_SAMPLER   = "Euler"
+    DEFAULT_SCHEDULER = "Normal"
+
+    comfy_sampler   = str(comfy_sampler).strip()   if comfy_sampler   is not None else ""
+    comfy_scheduler = str(comfy_scheduler).strip() if comfy_scheduler is not None else ""
+    if not comfy_sampler:
+        return None
+    if not comfy_scheduler:
+        comfy_scheduler = "normal"
+
+    # try to find the sampler name by the combinations
+    # of sampler+scheduler from the old predefined samplers of A1111
+    if comfy_sampler and comfy_scheduler:
+        sampler_scheduler = f"{comfy_sampler} {comfy_scheduler}"
+        a1111_sampler     = _A1111_SAMPLER_BY_COMFY_SAMPLER_SCHEDULER.get(sampler_scheduler)
+        if a1111_sampler:
+            return a1111_sampler
+
+    # get compatible A1111 names from ComfyUI's sampler and scheduler
+    a1111_sampler   = _A1111_SAMPLER_BY_COMFY_NAME.get(comfy_sampler, DEFAULT_SAMPLER)
+    a1111_scheduler = _A1111_SCHEDULER_BY_COMFY_NAME.get(comfy_scheduler, "")
+
+    # names that start with '!' are not supported by A1111
+    if a1111_sampler.startswith("!"):
+        a1111_sampler = a1111_sampler.removeprefix("!")
+        if not include_unsupported:
+            a1111_sampler = DEFAULT_SAMPLER
+    if a1111_scheduler.startswith("!"):
+        a1111_scheduler = a1111_scheduler.removeprefix("!")
+        if not include_unsupported:
+            a1111_scheduler = DEFAULT_SCHEDULER
+
+    # return the combined sampler name and scheduler
+    return f"{a1111_sampler} {a1111_scheduler}".strip()
+
+
+def _a1111_compact_params(sampler    : str | None,
+                          scheduler  : str | None,
+                          steps      : int,
+                          steps_start: int,
+                          steps_end  : int,
+                          cfg_scale  : float,
+                          seed       : int
+                          ) -> str:
+    """Returns a line of text containing the provided parameters separated by commas."""
+    if (sampler is None) or (scheduler is None) or (steps is None) or (cfg_scale is None) or (seed is None):
+        return None
+    try:
+        compact_params = f"sampler_name:{str(sampler).strip()}, scheduler:{str(scheduler).strip()}, steps:{int(steps)}, start_at_step:{int(steps_start or 0)}, end_at_step:{int(steps_end or steps)}, cfg:{round(float(cfg_scale),2)}, noise_seed:{int(seed)}"
+    except ValueError:
+        return None
+    return compact_params
+
 
 
 #========================= UNIFIED PROMPT EDITION ==========================#
