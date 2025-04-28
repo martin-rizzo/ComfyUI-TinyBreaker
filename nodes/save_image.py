@@ -21,7 +21,7 @@ from PIL.PngImagePlugin                  import PngInfo
 from .core.genparams                     import GenParams
 from .core.comfyui_bridge.helpers.images import normalize_images
 from .core.genparams_from_prompt         import split_prompt_and_args, join_prompt_and_args
-from ._common                            import ireplace
+from ._common                            import ireplace, get_image_size_from_genparams
 
 _A1111_SAMPLER_BY_COMFY_SAMPLER_SCHEDULER = {
     "euler_ancestral normal"   : "Euler a",
@@ -161,7 +161,7 @@ class SaveImage:
         pnginfo = PngInfo()
 
         if genparams:
-            a1111_parameters = self._create_a1111_params(genparams, image_width, image_height)
+            a1111_parameters = self._create_a1111_params(genparams, output_image_size=(image_width, image_height))
             pnginfo.add_text("parameters", a1111_parameters)
 
         if prompt:
@@ -230,8 +230,7 @@ class SaveImage:
 
     @staticmethod
     def _create_a1111_params(genparams   : GenParams | None,
-                             image_width : int,
-                             image_height: int
+                             output_image_size: tuple[int, int],
                              ) -> str:
         """
         Return a string containing generation parameters in A1111 format.
@@ -248,6 +247,7 @@ class SaveImage:
         RE__ = "denoising.refiner."
 
         # extract and clean up parameters from the GenParams dictionary
+        width, height        = get_image_size_from_genparams(genparams)
         positive             = genparams.get_str("user.prompt")
         negative             = genparams.get_str("user.negative")
         style                = genparams.get_str("user.style")
@@ -268,8 +268,6 @@ class SaveImage:
         refiner_steps_end    = min( genparams.get_int(f"{RE__}steps",0), genparams.get_int(f"{RE__}steps_end",10000) )
         base_seed            = genparams.get_int(f"{BASE}noise_seed")
         refiner_seed         = genparams.get_int(f"{RE__}noise_seed")
-        width                = image_width
-        height               = image_height
         base_checkpoint      = genparams.get("file.name", "TinyBreaker.safetensors")
         base_checkpoint      = os.path.splitext(base_checkpoint)[0]
         refiner_checkpoint   = None #f"{base_checkpoint}.refiner"
@@ -288,7 +286,7 @@ class SaveImage:
         if schedule_type       : params["Schedule type"            ] = schedule_type
         if base_cfg            : params["CFG scale"                ] = base_cfg
         if base_seed           : params["Seed"                     ] = base_seed
-        if width and height    : params["Size"                     ] = f"{image_width}x{image_height}"
+        if width and height    : params["Size"                     ] = f"{width}x{height}"
         if base_checkpoint     : params["Model"                    ] = base_checkpoint
         if discard_penul_sigma : params["Discard penultimate sigma"] = "True"
         if style               : params["TB style"                 ] = style
@@ -299,7 +297,7 @@ class SaveImage:
             params["Denoising strength"] = refiner_cfg
             params["Hires checkpoint"  ] = refiner_checkpoint
             params["Hires upscaler"    ] = "None"
-            params["Hires resize"      ] = f"{image_width}x{image_height}"
+            params["Hires resize"      ] = f"{width}x{height}"
             params["Hires sampler"     ] = refiner_sampler
             params["Hires steps"       ] = max(0, refiner_steps_end-refiner_steps_start)
 
