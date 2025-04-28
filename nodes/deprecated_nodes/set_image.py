@@ -16,7 +16,7 @@ from .._common import LANDSCAPE_SIZES_BY_ASPECT_RATIO, \
                       SCALES_BY_NAME,                  \
                       ORIENTATIONS,                    \
                       DEFAULT_ASPECT_RATIO,            \
-                      DEFAULT_SIZE,                    \
+                      DEFAULT_SCALE,                   \
                       DEFAULT_ORIENTATION,             \
                       normalize_aspect_ratio
 
@@ -43,7 +43,7 @@ class SetImage:
                                           "default": DEFAULT_ORIENTATION
                                           }),
             "size"       :(cls.sizes() , {"tooltip": 'The relative size for the image. ("medium" is the size the model was trained on, but "large" is recommended)',
-                                          "default": DEFAULT_SIZE
+                                          "default": DEFAULT_SCALE
                                           }),
             "batch_size" :("INT"       , {"tooltip": "The number of images to generate in a single batch.",
                                           "default": 1, "min": 1, "max": 4096

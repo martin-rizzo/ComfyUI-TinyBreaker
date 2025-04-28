@@ -11,6 +11,9 @@ License : MIT
   (TinyBreaker is a hybrid model that combines the strengths of PixArt and SD)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
+import math
+from .core.system    import logger
+from .core.genparams import GenParams
 
 #----------------------- IMAGE SCALE/RATIO CONSTANTS -----------------------#
 
@@ -47,15 +50,22 @@ NFACTORS_BY_DETAIL_LEVEL = {
     "maximum"  : +3,
 }
 
-DEFAULT_ASPECT_RATIO = "1:1  (square)"
-DEFAULT_SIZE         = "large"
-DEFAULT_ORIENTATION  = "landscape"
-DEFAULT_DETAIL_LEVEL = "normal"
+DEFAULT_ASPECT_RATIO   = "1:1  (square)"
+DEFAULT_SCALE          = "large"
+DEFAULT_ORIENTATION    = "landscape"
+DEFAULT_DETAIL_LEVEL   = "normal"
+DEFAULT_VAE_PATCH_SIZE = 8
+DEFAULT_RESOLUTION     = 1024
+
+_MIN_IMAGE_AREA = 256  * 256
+_MAX_IMAGE_AREA = 8192 * 8192
 
 
 #------------------------------ ASPECT RATIO -------------------------------#
 
-def normalize_aspect_ratio(aspect_ratio: str, *, force_orientation: str = None) -> str:
+def normalize_aspect_ratio(aspect_ratio: str | tuple,
+                           /,*,
+                           force_orientation: str | None = None) -> str:
     """
     Normalize aspect ratio to a string of the form 'width:height'.
     Args:
@@ -85,12 +95,141 @@ def normalize_aspect_ratio(aspect_ratio: str, *, force_orientation: str = None) 
     height = min(height, 6 * width )
 
     # if orientation is forced, make sure it is respected
-    if force_orientation:
-        orientation = force_orientation.lower()
-        if (orientation == "landscape" and width < height) or (orientation == "portrait" and width > height):
-            width, height = height, width
+    orientation = force_orientation.lower() if isinstance(force_orientation, str) else ""
+    if (orientation == "portrait" and width > height) or (orientation == "landscape" and width < height):
+        width, height = height, width
 
     return f"{width}:{height}"
+
+
+#------------------------------- IMAGE SIZE --------------------------------#
+
+
+def get_image_size_from_genparams(genparams: GenParams) -> tuple:
+    """Calculates the image size based on a set of generation parameters."""
+
+    resolution   = genparams.get    ( "modelspec.resolution", 1024                 )
+    scale        = genparams.get    ( "image.scale"         , DEFAULT_SCALE        )
+    aspect_ratio = genparams.get_str( "image.aspect_ratio"  , DEFAULT_ASPECT_RATIO )
+    orientation  = genparams.get_str( "image.orientation"   , None                 )
+
+    image_width, image_height = calculate_image_size(
+                                    resolution,
+                                    aspect_ratio = aspect_ratio,
+                                    scale        = scale,
+                                    orientation  = orientation,
+                                    block_size   = DEFAULT_VAE_PATCH_SIZE,
+                                    )
+    return image_width, image_height
+
+
+
+def calculate_image_size(resolution  : str | float | int,
+                         aspect_ratio: str | tuple | None = None,
+                         scale       : str | float | None = None,
+                         orientation : str | None         = None,
+                         block_size  : int                = 1,
+                         ) -> tuple:
+    """Calculates the image size based on a resolution, aspect ratio and scale."""
+
+    # parse the aspect ratio and scale factors
+    aspect_ratio = normalize_aspect_ratio(aspect_ratio or "1:1", force_orientation=orientation)
+    ratio_numerator, ratio_denominator = _parse_ratio(aspect_ratio)
+    scale                              = _parse_scale(scale or 1.0)
+
+    # calculate the image dimensions based on the resolution and aspect ratio
+    desired_area   = _parse_image_area(resolution)
+    desired_area   = min(max(_MIN_IMAGE_AREA, desired_area), _MAX_IMAGE_AREA)
+    desired_width  = math.sqrt(desired_area * ratio_numerator / ratio_denominator)
+    desired_height = desired_width * ratio_denominator / ratio_numerator
+
+    # round to nearest block size
+    width  = int( desired_width  * scale // block_size ) * block_size
+    height = int( desired_height * scale // block_size ) * block_size
+    return width, height
+
+
+def _parse_image_area(resolution: str | float | int) -> int:
+    """Calculates the area of an image based on a resolution attribute.
+    Args:
+        resolution: The resolution attribute, this can be provided as:
+            - An integer or float: Interpreted as a side length (e.g., 1024).
+                                   The area is calculated as side * side.
+            - A string: Can be an integer string ("1024"), interpreted as a side length,
+                        or a "widthxheight" string ("1024x768").
+    """
+    if isinstance(resolution, (float,int)):
+        return int(resolution) * int(resolution)
+
+    if isinstance(resolution, str):
+        resolution = resolution.lower().removesuffix("px")
+
+        if 'x' in resolution:
+            width, _, height = resolution.partition('x')
+            try:
+                width  = int(width.strip())
+                height = int(height.strip())
+                return width * height
+            except ValueError:
+                pass
+        else:
+            try:
+                size = int(resolution)
+                return size * size
+            except ValueError:
+                pass
+
+    # if none of the above conditions are met, use the default resolution
+    logger.debug(f"Invalid resolution: '{resolution}'. Using default value.")
+    return DEFAULT_RESOLUTION * DEFAULT_RESOLUTION
+
+
+def _parse_ratio(ratio: str | float) -> tuple:
+    """Returns a tuple of two integers (numerator, denominator) from a ratio."""
+
+    # asume the string is a fraction with the format "numerator:denominator"
+    if isinstance(ratio, str) and ':' in ratio:
+        numerator, denominator = ratio.split(':',1)
+        try:
+            return int(numerator), int(denominator)
+        except ValueError as e:
+            pass
+
+    # asume the string is a decimal number representing the width/height ratio
+    elif isinstance(ratio, str) and '.' in ratio:
+        try:
+            return float(ratio), 1
+        except ValueError as e:
+            pass
+
+    # asume the ratio is a float number representing the width/height ratio
+    elif isinstance(ratio, float):
+        return ratio, 1
+
+    # if none of the above conditions are met, use the default value
+    logger.debug(f"Invalid aspect ratio: '{ratio}'. Using default value.")
+    return 1, 1
+
+
+def _parse_scale(scale: str | float) -> float:
+    """Returns the scale factor from a string or number."""
+
+    if isinstance(scale, float):
+        return scale
+
+    elif scale in SCALES_BY_NAME:
+        return SCALES_BY_NAME[scale]
+
+    elif isinstance(scale, str):
+        try:
+            return float(scale)
+        except ValueError:
+            pass
+
+    # if none of the above conditions are met, use the default value
+    logger.debug(f"Invalid scale factor: '{scale}'. Using default value.")
+    return 1.0
+
 
 
 #--------------------------- STRING MANIPULATION ---------------------------#
