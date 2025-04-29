@@ -161,72 +161,119 @@ function insertText(textarea, text, start, end) {
 
 /**
  * Adjusts the value of an integer argument.
- * @param {String} name   : The name of the argument to be adjusted.
- * @param {String} value  : The current value of the argument.
- * @param {Number} offset : The value to be added (positive) or subtracted (negative).
- * @param {Number} [defaultValue] : The default value of the argument when `value` is invalid.
- * @param {Number} [minValue]     : The minimum value that the argument can have.
- * @param {Number} [maxValue]     : The maximum value that the argument can have.
- * @returns
- *   The full argument string (including the argument's name) with the adjusted value.
+ * @param {string}   name          - The name of the argument to be adjusted.
+ * @param {string}   value         - The current value of the argument (string representation).
+ * @param {number}   offset        - Value to add to the argument's current value.
+ * @param {number}   defaultValue  - Default value to use if the input is empty or invalid.
+ * @param {Object}   options                - Optional configuration parameters.
+ * @param {number}   [options.min]          - Minimum allowed value for the adjusted number.
+ * @param {number}   [options.max]          - Maximum allowed value for the adjusted number.
+ * @param {string}   [options.positiveChar] - Character to prepend to positive numbers (e.g., '+').
+ * @param {string[]} [options.textValues]   - Array of text values to use for non-numerical inputs.
+ * @returns {string}
+ *   A string representing the adjusted argument, in the format: "name [adjustedValue]"
+ *   - The adjusted value is clamped to `min`/`max` (if provided) and formatted with optional `positiveChar`
+ *   - A trailing space is included after the value (e.g., "argname -4 ").
  */
-function adjustInt(name, value, offset, defaultValue, minValue, maxValue) {
-    let number = parseInt(value);
-    if( isNaN(number) ) {
-        number = 0
-        if( defaultValue !== undefined ) { number = defaultValue; }
+function adjustInt(name, value, offset, defaultValue, { min, max, positiveChar, textValues }) {
+    value = value.trim();
+    let   number    = 0;
+    const oldNumber = parseInt(value);
+
+    if( value === "" ) {
+        // empty value is replaced with default value
+        number = defaultValue ?? 0;
+    } else if( isNaN(oldNumber) ) {
+        // non-numerical value can be replaced with multiple text values if provided
+        number = defaultValue ?? 0;
+        if( textValues !== undefined ) { return adjustMultipleChoice(name, value, offset, defaultValue, {choices:textValues}); }
+    } else {
+        // finally, numerical values are adjusted by offset
+        number = oldNumber + offset;
+        if( min !== undefined && number < min ) { number = min; }
+        if( max !== undefined && number > max ) { number = max; }
     }
-    let new_number = number + offset;
-    if( minValue !== undefined && new_number < minValue ) { new_number = minValue; }
-    if( maxValue !== undefined && new_number > maxValue ) { new_number = maxValue; }
-    return `${name} ${new_number} `;
+    // convert number to string, and add positive char if necessary
+    const intNumber = Math.trunc(number);
+    let   strNumber = intNumber.toString();
+    if (positiveChar && intNumber > 0) {
+        strNumber = `${positiveChar}${strNumber}`;
+    }
+    // return the full argument string (the name and the adjusted number)
+    return `${name} ${strNumber} `;
 }
 
 /**
  * Adjusts the value of a float argument.
- * @param {String} name   : The name of the argument to be adjusted.
- * @param {String} value  : The current value of the argument.
- * @param {Number} offset : The value to be added (positive) or subtracted (negative).
- * @param {Number} [defaultValue] : The default value of the argument when `value` is invalid.
- * @param {Number} [minValue]     : The minimum value that the argument can have.
- * @param {Number} [maxValue]     : The maximum value that the argument can have.
- * @returns
- *   The full argument string (including the argument's name) with the adjusted value.
+ * @param {string}   name          - The name of the argument to be adjusted.
+ * @param {string}   value         - The current value of the argument (string representation).
+ * @param {number}   offset        - Value to add to the argument's current value.
+ * @param {number}   defaultValue  - Default value to use if the input is empty or invalid.
+ * @param {Object}   options                - Optional configuration parameters.
+ * @param {number}   [options.min]          - Minimum allowed value for the adjusted number.
+ * @param {number}   [options.max]          - Maximum allowed value for the adjusted number.
+ * @param {string}   [options.positiveChar] - Character to prepend to positive numbers (e.g., '+').
+ * @param {string[]} [options.textValues]   - Array of text values to use for non-numerical inputs.
+ * @returns {string}
+ *   A string representing the adjusted argument, in the format: "name [adjustedValue]"
+ *   - The adjusted value is clamped to `min`/`max` (if provided) and formatted with optional `positiveChar`
+ *   - A trailing space is included after the value (e.g., "argname +3.2 ").
  */
-function adjustFloat(name, value, offset, defaultValue, min, max) {
-    const number     = parseFloat(value);
-    let   new_number = 0.0;
-    if( !isNaN(number) ) {
-        new_number = number + offset;
-        if( min !== undefined && new_number < min ) { new_number = min; }
-        if( max !== undefined && new_number > max ) { new_number = max; }
+function adjustFloat(name, value, offset, defaultValue, { min, max, positiveChar, textValues }) {
+    value = value.trim();
+    let   number    = 0.0;
+    const oldNumber = parseFloat(value);
+
+    if( value === "" ) {
+        // empty value is replaced with default value
+        number = defaultValue ?? 0.0;
+    } else if( isNaN(oldNumber) ) {
+        // non-numerical value can be replaced with multiple text values if provided
+        number = defaultValue ?? 0.0;
+        if( textValues !== undefined ) { return adjustMultipleChoice(name, value, offset, defaultValue, {choices:textValues}); }
+    } else {
+        // finally, numerical values are adjusted by offset
+        number = oldNumber + offset;
+        if( min !== undefined && number < min ) { number = min; }
+        if( max !== undefined && number > max ) { number = max; }
     }
-    else if( defaultValue !== undefined ) {
-        new_number = defaultValue;
+    // convert number to string, and add positive char if necessary
+    let strNumber = number.toFixed(1);
+    if (positiveChar && number >= 0.001) {
+        strNumber = `${positiveChar}${strNumber}`;
     }
-    return `${name} ${new_number.toFixed(1)} `;
+    // return the full argument string (the name and the adjusted number)
+    return `${name} ${strNumber} `;
 }
 
 /**
  * Adjusts the value of a multiple choice argument.
- * @param {String} name  : The name of the argument to be adjusted.
- * @param {String} value : The current value of the argument. e.g "a" or "b".
- * @param {Number} offset: The amount by which the argument's value will be adjusted. e.g. +1 or -1.
- * @param {Array<String>} choices  : An array with all possible choices for this multiple choice argument. e.g ["a", "b"].
- * @param {String} [defaultChoice] : The default choice of the argument when `value` is not a valid choice.
+ * @param {string}   name         - The name of the argument to be adjusted.
+ * @param {string}   value        - The current value of the argument (string representation).
+ * @param {number}   offset       - Offset indicating the direction (positive = next value, negative = previous value).
+ * @param {string}   defaultValue - Default value to use if the input is empty or invalid.
+ * @param {Object}   options              - Optional configuration parameters.
+ * @param {string[]} [options.choices]    - Array of valid choices for the multiple choice argument.
+ * @param {boolean}  [options.isCircular] - Flag indicating if the selection should wrap around (circular mode). Defaults to false.
+ * @returns {string}
+ *     The formatted argument string with the adjusted multiple choice value.
  */
-function adjustMultipleChoice(name, value, offset, choices, defaultChoise) {
-    const index     = choices.indexOf( value.trim() );
-    let   new_index = 0
-    if( index>=0 ) {
-        if     ( offset>0 ) { new_index = index + 1; }
-        else if( offset<0 ) { new_index = index + choices.length - 1; }
+function adjustMultipleChoice(name, value, offset, defaultValue, { choices, isCircular }) {
+    value   = value.trim()
+    choices = choices ?? ["True", "False"];
+    let   index     = 0;
+    const oldIndex  = choices.indexOf( value );
+    if( oldIndex>=0 ) {
+        if     ( offset>0 ) { index = oldIndex + 1; }
+        else if( offset<0 ) { index = oldIndex - 1; }
     }
-    else if( defaultChoise ) {
-        new_index = Math.max( 0, choices.indexOf(defaultChoise) )
+    else if( defaultValue ) {
+        index = Math.max( 0, choices.indexOf(defaultValue) )
     }
-    const new_value = choices[new_index % choices.length];
-    return name ? `${name} ${new_value} ` : `${new_value} `;
+    // adjusts index within limits or wrap-around if circular mode
+    if( isCircular ) { index = (index + choices.length) % choices.length;          }
+    else             { index = Math.min( Math.max( 0, index ), choices.length -1); }
+    return name ? `${name} ${choices[index]} ` : `${choices[index]} `;
 }
 
 /**
@@ -240,25 +287,25 @@ function adjustMultipleChoice(name, value, offset, choices, defaultChoise) {
 function adjustArgument(name, value, offset) {
     switch(name) {
         case '--seed':
-            return adjustInt(name, value, offset, 1, 1);
+            return adjustInt(name, value, offset, 1, {min:1});
         case '--cfg-shift':
-            return adjustInt(name, value, offset, 0, -20, 20);
+            return adjustInt(name, value, offset, 0, {min:-20, max:20, positiveChar:'+'});
         case '--image-shift':
-            return adjustInt(name, value, offset, 0, 0);
+            return adjustInt(name, value, offset, 0, {min:0});
         case '--upscale':
-            return adjustMultipleChoice(name, value, offset, UPSCALE_VALUES, DEFAULT_UPSCALE_VALUE);
+            return adjustMultipleChoice(name, value, offset, DEFAULT_UPSCALE_VALUE, {choices:UPSCALE_VALUES, isCircular:true});
         case '--aspect':
-            return adjustMultipleChoice(name, value, offset, ASPECT_RATIOS, DEFAULT_ASPECT_RATIO);
+            return adjustMultipleChoice(name, value, offset, DEFAULT_ASPECT_RATIO, {choices:ASPECT_RATIOS, isCircular:true});
         case '--detail-level':
-            return adjustMultipleChoice(name, value, offset, DETAIL_LEVELS, DEFAULT_DETAIL_LEVEL);
+            return adjustMultipleChoice(name, value, offset, DEFAULT_DETAIL_LEVEL, {choices:DETAIL_LEVELS});
         case '--batch-size':
-            return adjustInt(name, value, offset, 1, 1);
+            return adjustInt(name, value, offset, 1, {min:1});
     }
     if( IMAGE_ORIENTATIONS.includes(name) ) {
-        return adjustMultipleChoice("", name, offset, IMAGE_ORIENTATIONS);
+        return adjustMultipleChoice("", name, offset, "", {choices:IMAGE_ORIENTATIONS, isCircular:true});
     }
     if( IMAGE_SIZES.includes(name) ) {
-        return adjustMultipleChoice("", name, offset, IMAGE_SIZES);
+        return adjustMultipleChoice("", name, offset, "", {choices:IMAGE_SIZES});
     }
     return null;
 }
