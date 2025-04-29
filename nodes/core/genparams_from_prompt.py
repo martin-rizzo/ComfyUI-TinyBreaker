@@ -13,7 +13,10 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import random
 from .genparams import GenParams
-from .._common import normalize_aspect_ratio, NFACTORS_BY_DETAIL_LEVEL, SCALES_BY_NAME
+from .._common  import normalize_aspect_ratio,   \
+                       NFACTORS_BY_DETAIL_LEVEL, \
+                       SCALES_BY_NAME,           \
+                       UPSCALE_NOISE_BY_LEVEL
 
 
 def genparams_from_prompt(prompt: str, /,*, template: GenParams = None) -> GenParams:
@@ -45,6 +48,7 @@ def genparams_from_prompt_args(args: dict, /,*, template: GenParams = None) -> G
     # base/refiner prefixes constants
     BASE = "denoising.base."
     RE__ = "denoising.refiner."
+    UP__ = "denoising.upscaler."
 
     # start with genparams being a copy of template
     genparams = GenParams(template) if template else GenParams()
@@ -89,10 +93,18 @@ def genparams_from_prompt_args(args: dict, /,*, template: GenParams = None) -> G
         genparams.set_int(f"{RE__}noise_seed", value, as_delta=True) # as_delta=False?
 
     # --u, --upscale <bool>
-    # "image.upscale_factor"
-    value = _pop_bool_or_str(args, "u", "upscale", "upscaler")
+    # "image.enable_upscaler"
+    value = _pop_bool_or_str(args, "u", "upscale")
     if isinstance(value, bool):
         genparams.set_bool("image.enable_upscaler", value)
+
+    # --upscale-noise <float>
+    # "upscaler.extra_noise"
+    value = _pop_float_or_str(args, "upscale-noise")
+    if isinstance(value, float):
+        genparams.set_float(f"{UP__}extra_noise", value, as_delta=True)
+    elif value in UPSCALE_NOISE_BY_LEVEL:
+        genparams.set_float(f"{UP__}extra_noise", UPSCALE_NOISE_BY_LEVEL[value], as_delta=True)
 
     # --d, --detail-level <level>
     # "refiner.steps_nfactor"

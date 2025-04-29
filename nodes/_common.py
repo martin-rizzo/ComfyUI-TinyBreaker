@@ -49,6 +49,15 @@ NFACTORS_BY_DETAIL_LEVEL = {
     "veryhigh" : +2,
     "maximum"  : +3,
 }
+UPSCALE_NOISE_BY_LEVEL = {
+    "none"    : -10000,
+    "minimal" : -0.4,
+    "low"     : -0.2,
+    "normal"  : 0,
+    "high"    : +0.2,
+    "veryhigh": +0.4,
+    "maximum" : +0.6,
+}
 
 DEFAULT_ASPECT_RATIO   = "1:1  (square)"
 DEFAULT_SCALE          = "large"

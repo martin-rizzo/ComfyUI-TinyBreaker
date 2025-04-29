@@ -41,6 +41,10 @@ const UPSCALE_VALUES = [
     "on", "off" ];
 const DEFAULT_UPSCALE_VALUE = "off";
 
+
+const UPSCALE_NOISE_LEVELS = [
+    "none", "minimal", "low", "normal", "high", "veryhigh", "maximum" ];
+
 /**
  * List of detail levels that can be used as value for `--detail-level` parameter.
  */
@@ -67,8 +71,9 @@ const IMAGE_ORIENTATIONS = [
  */
 const NAVIGABLE_OPTIONS = [
     "--no", "--refine", "--seed",
-    "--cfg-shift", "--image-shift", "--upscale",
+    "--cfg-shift", "--image-shift",
     "--portrait", "--landscape", "--aspect",
+    "--upscale", "--upscale-noise",
     "--medium", "--level-detail", "--batch-size"
 ];
 
@@ -77,7 +82,7 @@ const NAVIGABLE_OPTIONS = [
  */
 const AUTOCOMPLETE_LIST = [
     "--no", "--refine",
-    "--cfg-shift", "--image-shift", "--upscale",
+    "--cfg-shift", "--image-shift", "--upscale", "--upscale-noise",
     "--seed", "--aspect",
     "--portrait", "--landscape", "--medium",
     "--level-detail", "--batch-size"
@@ -294,6 +299,8 @@ function adjustArgument(name, value, offset) {
             return adjustInt(name, value, offset, 0, {min:0});
         case '--upscale':
             return adjustMultipleChoice(name, value, offset, DEFAULT_UPSCALE_VALUE, {choices:UPSCALE_VALUES, isCircular:true});
+        case '--upscale-noise':
+            return adjustFloat(name, value, offset*0.2, 0.0, {min:-2.0, max:2.0, positiveChar:'+', textValues: UPSCALE_NOISE_LEVELS});
         case '--aspect':
             return adjustMultipleChoice(name, value, offset, DEFAULT_ASPECT_RATIO, {choices:ASPECT_RATIOS, isCircular:true});
         case '--detail-level':
@@ -321,7 +328,9 @@ function Autocomplete(partialString, listOfAvailableStrings) {
     if( !partialString ) { return null; }
     const partialLowercase = partialString.toLowerCase();
     for( const available of listOfAvailableStrings ) {
-        if( available.startsWith(partialLowercase) ) { return available }
+        if( available.startsWith(partialLowercase) && available !== partialLowercase ) {
+            return available
+        }
     }
     return null;
 }

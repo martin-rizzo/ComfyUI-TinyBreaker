@@ -20,9 +20,10 @@ After entering your initial prompt, you can add any of the following parameters:
 
 - `--no <text>`: Exclude specific elements (negative prompt)
 - `--refine <text>`: Refine certain aspects of the image.
-- `--cfg-shift <number>`: Adjust CFG scale (the value es relative, 0.0 means default CFG)
+- `--cfg-shift <number>`: Adjust CFG scale (the value is relative, 0.0 means default CFG)
 - `--image-shift <number>`: Choose a variant number for minor changes.
-- `--upscale`: Enable the upscaling process.
+- `--upscale [on|off]`: Enable/disable the upscaling process.
+- `--upscale-noise <number>`: Adjust the level of extra noise added during upscaling (the value is relative, 0 means default noise, negative values will result in less noise)
 - `--seed <number>`: Specify a seed number.
 - `--aspect <ratio>`: Define aspect ratio of the image (e.g., 16:9)
 - `--portrait`: Choose portrait orientation.
