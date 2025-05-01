@@ -9,7 +9,7 @@
 [![Last](https://img.shields.io/github/last-commit/martin-rizzo/ComfyUI-TinyBreaker?label=last%20commit%3A)](#)  
 
 <!-- Main Image -->
-![TinyBreaker](./docs/img/tinybreaker_grid.jpg)
+![TinyBreaker](./docs/img/tinybreaker_grid_v03.jpg)
 
 </div>
 
