@@ -1,25 +1,23 @@
 <div align="center">
 
 # ComfyUI-TinyBreaker
-
-<!-- Main Image -->
-![TinyBreaker](./docs/img/tinybreaker_grid.jpg)
-
-<!-- Badges -->
+[<img src="https://img.shields.io/badge/CivitAI%3A-TinyBreaker-EEE?labelColor=1971C2&logo=c%2B%2B&logoColor=white" height="22">](https://civitai.com/models/1213728) |
+[<img src="https://img.shields.io/badge/Hugging%20Face%3A-TinyBreaker-EEE?labelColor=FFD21E&logo=huggingface&logoColor=000" height="22">](https://huggingface.co/martin-rizzo/TinyBreaker.prototype1)  
 [![Platform](https://img.shields.io/badge/platform%3A-ComfyUI-007BFF)](#)
 [![License](https://img.shields.io/github/license/martin-rizzo/ComfyUI-TinyBreaker?label=license%3A&color=28A745)](#)
 [![Version](https://img.shields.io/github/v/tag/martin-rizzo/ComfyUI-TinyBreaker?label=version%3A&color=D07250)](#)
 [![Last](https://img.shields.io/github/last-commit/martin-rizzo/ComfyUI-TinyBreaker?label=last%20commit%3A)](#)  
-[![CivitAI](https://img.shields.io/badge/CivitAI%3A-TinyBreaker-EEE?labelColor=1971C2&logo=c%2B%2B&logoColor=white)](https://civitai.com/models/1213728) |
-[![Hugging Face](https://img.shields.io/badge/Hugging%20Face%3A-TinyBreaker-EEE?labelColor=FFD21E&logo=huggingface&logoColor=000)](https://huggingface.co/martin-rizzo/TinyBreaker.prototype0)
+
+<!-- Main Image -->
+![TinyBreaker](./docs/img/tinybreaker_grid.jpg)
 
 </div>
 
 **ComfyUI-TinyBreaker** is a collection of custom nodes specifically designed to generate images using the TinyBreaker model. It's actively developed with ongoing improvements. Although still in progress, these nodes are functional and allow you to explore the potential of the model.
 
+<!--
 **TinyBreaker model**  
 While still in the prototype stage, the TinyBreaker model stands out for its unique features. To learn more about its strengths and discover upcoming improvements, check out ["What is TinyBreaker?"](docs/tinybreaker.md)
-
 
 ## Table of Contents
 
@@ -35,6 +33,7 @@ While still in the prototype stage, the TinyBreaker model stands out for its uni
    - [CivitAI/A1111 Image Compatibility](#features--civitaia1111-image-compatibility)
 5. [Acknowledgments](#acknowledgments)
 6. [License](#license)
+-->
 
 
 ## Required Files
