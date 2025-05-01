@@ -13,7 +13,7 @@
 
 </div>
 
-**ComfyUI-TinyBreaker** is a collection of custom nodes specifically designed to generate images using the TinyBreaker model. It's actively developed with ongoing improvements. Although still in progress, these nodes are functional and allow you to explore the potential of the model.
+**ComfyUI-TinyBreaker** is a collection of custom nodes specifically designed to generate images using the TinyBreaker model. It's actively developed with ongoing improvements. Although still in progress, these nodes are functional and let you experiment with the model and squeeze out all its potential.  
 
 <!--
 **TinyBreaker model**  
@@ -35,16 +35,18 @@ While still in the prototype stage, the TinyBreaker model stands out for its uni
 6. [License](#license)
 -->
 
-
 ## Required Files
 
 You need to have these two models copied into your ComfyUI application:
 
-- **[tinybreaker_prototype0.safetensors](https://civitai.com/models/1213728) (3.0 GB)**:
+- **[tinybreaker_prototype1.safetensors](https://civitai.com/models/1213728) (3.0 GB)**:
     - place the file in the `'ComfyUI/models/checkpoints'` folder.
 - **[t5xxl_fp8_e4m3fn.safetensors](https://huggingface.co/Comfy-Org/stable-diffusion-3.5-fp8/blob/main/text_encoders/t5xxl_fp8_e4m3fn.safetensors) (4.9 GB)**:
     - place the file in the `'ComfyUI/models/clip'` folder (or `'ComfyUI/models/text_encoders'`).
     - this model is a versatile text encoder used by FLUX and SD3.5 as well.
+
+
+_To utilize all features of version v0.3, including the tiny upscaler, you need the **'prototype1'** version of TinyBreaker._
 
 
 ## Node Installation
