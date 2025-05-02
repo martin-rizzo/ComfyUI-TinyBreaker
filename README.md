@@ -64,7 +64,9 @@ The easiest way to install the nodes is through ComfyUI Manager:
 
 ### Manual Installation
 
-To manually install the nodes:
+<details>
+<summary>🛠️ Manual installation instructions. (expand for details)</summary>
+.
 
 1. Open your preferred terminal application.
 2. Navigate to your ComfyUI directory:
@@ -76,10 +78,13 @@ To manually install the nodes:
    cd custom_nodes
    git clone https://github.com/martin-rizzo/ComfyUI-TinyBreaker
    ```
+</details>
 
-#### Windows Portable
+### Windows Portable Installation
 
-For those using the standalone ComfyUI release on Windows:
+<details>
+<summary>🛠️ Windows portable installation instructions. (expand for details)</summary>
+.
 
 1. Go to where you unpacked **ComfyUI_windows_portable**,  
    you'll find your `run_nvidia_gpu.bat` file here, confirming the correct location.
@@ -88,6 +93,7 @@ For those using the standalone ComfyUI release on Windows:
    ```
    git clone https://github.com/martin-rizzo/ComfyUI-TinyBreaker .\ComfyUI\custom_nodes\ComfyUI-TinyBreaker
    ```
+</details>
 
 ## Workflow Example
 
