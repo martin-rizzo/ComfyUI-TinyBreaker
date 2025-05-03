@@ -622,93 +622,6 @@
       "shape": 1
     },
     {
-      "id": 301,
-      "type": "LoadTinyBreakerCkpt //TinyBreaker",
-      "pos": [
-        -890,
-        -750
-      ],
-      "size": [
-        430,
-        260
-      ],
-      "flags": {},
-      "order": 1,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "MODEL",
-          "type": "MODEL",
-          "links": [
-            738
-          ]
-        },
-        {
-          "name": "CLIP",
-          "type": "CLIP",
-          "links": null
-        },
-        {
-          "name": "VAE",
-          "type": "VAE",
-          "links": [
-            739
-          ]
-        },
-        {
-          "name": "TRANSCODER",
-          "type": "TRANSCODER",
-          "links": [
-            740
-          ]
-        },
-        {
-          "name": "REFINER_MODEL",
-          "type": "MODEL",
-          "links": [
-            741,
-            742
-          ]
-        },
-        {
-          "name": "REFINER_CLIP",
-          "type": "CLIP",
-          "links": [
-            743,
-            744
-          ]
-        },
-        {
-          "name": "UPSCALER_VAE",
-          "type": "VAE",
-          "links": [
-            745
-          ]
-        },
-        {
-          "name": "METADATA",
-          "type": "GENPARAMS",
-          "links": [
-            746
-          ]
-        }
-      ],
-      "properties": {
-        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
-        "ver": "c60e8905dd0e4810be034d07337ae31fdee7ae66",
-        "Node name for S&R": "LoadTinyBreakerCkpt //TinyBreaker"
-      },
-      "widgets_values": [
-        "tinybreaker_prototype1.safetensors",
-        "high_quality",
-        "auto"
-      ],
-      "color": "#322",
-      "bgcolor": "#533",
-      "shape": 1
-    },
-    {
       "id": 177,
       "type": "SelectStyle //TinyBreaker",
       "pos": [
@@ -753,11 +666,11 @@
         "Node name for S&R": "SelectStyle //TinyBreaker"
       },
       "widgets_values": [
-        "CUSTOM2",
+        "CUSTOM1",
         "last"
       ],
-      "color": "#232",
-      "bgcolor": "#353"
+      "color": "#432",
+      "bgcolor": "#653"
     },
     {
       "id": 144,
@@ -797,33 +710,8 @@
       "widgets_values": [
         "TinyBreaker/%date:yyyy_MM_dd%/TB"
       ],
-      "color": "#323",
-      "bgcolor": "#535"
-    },
-    {
-      "id": 203,
-      "type": "Note",
-      "pos": [
-        40,
-        130
-      ],
-      "size": [
-        320,
-        540
-      ],
-      "flags": {},
-      "order": 2,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [],
-      "title": "NOTE: SUPPORTED PARAMETERS",
-      "properties": {},
-      "widgets_values": [
-        "  --no <text>\n  --refine <text>\n  --seed <number> | random\n  --cfg-shift <number>\n  --image-shift <number>\n  --upscale [on|off]\n\n  --portrait\n  --landscape\n  --aspect <ratio:ratio>\n  --batch-size <number>\n  --detail-level <none|low|normal|high>\n"
-      ],
-      "color": "#222",
-      "bgcolor": "#000",
-      "shape": 1
+      "color": "#233",
+      "bgcolor": "#355"
     },
     {
       "id": 310,
@@ -865,8 +753,8 @@
       "id": 191,
       "type": "Reroute",
       "pos": [
-        -1870,
-        810
+        -1880,
+        1390
       ],
       "size": [
         75,
@@ -898,47 +786,11 @@
       }
     },
     {
-      "id": 189,
-      "type": "Reroute",
-      "pos": [
-        860,
-        810
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {},
-      "order": 16,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 514
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "GENPARAMS",
-          "slot_index": 0,
-          "links": [
-            496
-          ]
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
-    },
-    {
       "id": 309,
       "type": "Reroute",
       "pos": [
-        860,
-        840
+        850,
+        1420
       ],
       "size": [
         75,
@@ -972,8 +824,8 @@
       "id": 311,
       "type": "Reroute",
       "pos": [
-        -1760,
-        840
+        -1770,
+        1420
       ],
       "size": [
         75,
@@ -1002,35 +854,6 @@
         "showOutputText": false,
         "horizontal": false
       }
-    },
-    {
-      "id": 308,
-      "type": "PreviewImage",
-      "pos": [
-        -1550,
-        0
-      ],
-      "size": [
-        650,
-        670
-      ],
-      "flags": {},
-      "order": 32,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "images",
-          "type": "IMAGE",
-          "link": 756
-        }
-      ],
-      "outputs": [],
-      "properties": {
-        "cnr_id": "comfy-core",
-        "ver": "0.3.29",
-        "Node name for S&R": "PreviewImage"
-      },
-      "widgets_values": []
     },
     {
       "id": 289,
@@ -1184,83 +1007,6 @@
       ]
     },
     {
-      "id": 307,
-      "type": "MutilineText //TinyBreaker",
-      "pos": [
-        -890,
-        0
-      ],
-      "size": [
-        910,
-        680
-      ],
-      "flags": {},
-      "order": 3,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "STRING",
-          "type": "STRING",
-          "links": [
-            750
-          ]
-        }
-      ],
-      "properties": {
-        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
-        "ver": "c60e8905dd0e4810be034d07337ae31fdee7ae66",
-        "Node name for S&R": "MutilineText //TinyBreaker"
-      },
-      "widgets_values": [
-        "\n[CUSTOM1]\n# dynamic illustrations in comic book art style\nbase.prompt      = \"Detailed comic cover. {$@}. (european erotic draw:1.1). Poster in white, red, blue and black with solid colors. Bokeh\"\nbase.negative    = \"blurry, photography, bokeh{, $@}\"\nbase.sampler     = \"deis\"\nbase.scheduler   = \"simple\"\nbase.steps       = 14\nbase.steps_start = 3\nbase.cfg         = 4.5\nrefiner.prompt      = \"Poster, erotic comics{, $@}\"\nrefiner.sampler     = \"lms\"\nrefiner.scheduler   = \"normal\"\nrefiner.steps       = 13\nrefiner.steps_start = 10\nrefiner.cfg         = 4.0\nupscaler.negative    = \"(worst quality, low quality, manga:1.4)\"\nupscaler.steps       = 15\nupscaler.steps_start = 11\nupscaler.steps_end   = -1\n\n\n[CUSTOM2]\n# pixel art images with retro and blocky details\n#base.prompt     = \"(A minimalist pixel-art image of:1.1){ $@.} Low-res, blocky, pixel art style, 8-bit retro videogame\"\nbase.prompt      = \"A pixel art illustration of {$@}, in the style of a classic 16-bit video game, retro game graphics\"\nbase.negative    = \"(bokeh, macrophoto, halo effect, smooth shading:1.1), noisy, highly detailed, photo, realistic, macrophoto{, $@}\"\nbase.steps       = 15\nbase.steps_start = 3\nbase.cfg         = 4.5\nrefiner.prompt      = \"(pixel-art, low-res, blocky:1.2){, $@}\"\nrefiner.negative    = \"soft{, $@}\"\nrefiner.cfg         = 8.0\nrefiner.steps       = 16\nrefiner.steps_start = 13\nupscaler.prompt      = \"(pixel-art, low-res, blocky:1.2)\"\nupscaler.negative    = \"(worst quality, low quality, manga:1.2)\"\nupscaler.steps       = 16\nupscaler.steps_start = 11\nupscaler.steps_end   = -1\n\n\n[CUSTOM3]\n\n\n[CUSTOM4]"
-      ]
-    },
-    {
-      "id": 198,
-      "type": "UnifiedPromptInput //TinyBreaker",
-      "pos": [
-        370,
-        -20
-      ],
-      "size": [
-        540,
-        700
-      ],
-      "flags": {
-        "pinned": true
-      },
-      "order": 15,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "link": 528
-        }
-      ],
-      "outputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "links": [
-            514,
-            515
-          ]
-        }
-      ],
-      "properties": {
-        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
-        "ver": "c60e8905dd0e4810be034d07337ae31fdee7ae66",
-        "Node name for S&R": "UnifiedPromptInput //TinyBreaker"
-      },
-      "widgets_values": [
-        "An evil female Darth Vader wearing her helmet, tight corset, and thigh-high black boots. She holds a red lightsaber in a dark spaceship hallway \n\n--aspect 3:2 --portrait --seed 3 --upscale on \n"
-      ],
-      "color": "#232",
-      "bgcolor": "#353"
-    },
-    {
       "id": 314,
       "type": "TinyUpscaler //TinyBreaker",
       "pos": [
@@ -1319,6 +1065,264 @@
         "upscaler",
         3
       ]
+    },
+    {
+      "id": 308,
+      "type": "PreviewImage",
+      "pos": [
+        -1550,
+        0
+      ],
+      "size": [
+        650,
+        670
+      ],
+      "flags": {},
+      "order": 32,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 756
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.29",
+        "Node name for S&R": "PreviewImage"
+      },
+      "widgets_values": [],
+      "color": "#233",
+      "bgcolor": "#355"
+    },
+    {
+      "id": 301,
+      "type": "LoadTinyBreakerCkpt //TinyBreaker",
+      "pos": [
+        -890,
+        -750
+      ],
+      "size": [
+        430,
+        260
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            738
+          ]
+        },
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": null
+        },
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [
+            739
+          ]
+        },
+        {
+          "name": "TRANSCODER",
+          "type": "TRANSCODER",
+          "links": [
+            740
+          ]
+        },
+        {
+          "name": "REFINER_MODEL",
+          "type": "MODEL",
+          "links": [
+            741,
+            742
+          ]
+        },
+        {
+          "name": "REFINER_CLIP",
+          "type": "CLIP",
+          "links": [
+            743,
+            744
+          ]
+        },
+        {
+          "name": "UPSCALER_VAE",
+          "type": "VAE",
+          "links": [
+            745
+          ]
+        },
+        {
+          "name": "METADATA",
+          "type": "GENPARAMS",
+          "links": [
+            746
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "c60e8905dd0e4810be034d07337ae31fdee7ae66",
+        "Node name for S&R": "LoadTinyBreakerCkpt //TinyBreaker"
+      },
+      "widgets_values": [
+        "tinybreaker_prototype1.safetensors",
+        "auto",
+        "auto"
+      ],
+      "color": "#322",
+      "bgcolor": "#533",
+      "shape": 1
+    },
+    {
+      "id": 189,
+      "type": "Reroute",
+      "pos": [
+        850,
+        1390
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 16,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 514
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "GENPARAMS",
+          "slot_index": 0,
+          "links": [
+            496
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 198,
+      "type": "UnifiedPromptInput //TinyBreaker",
+      "pos": [
+        370,
+        -20
+      ],
+      "size": [
+        540,
+        700
+      ],
+      "flags": {
+        "pinned": true
+      },
+      "order": 15,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 528
+        }
+      ],
+      "outputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "links": [
+            514,
+            515
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "c60e8905dd0e4810be034d07337ae31fdee7ae66",
+        "Node name for S&R": "UnifiedPromptInput //TinyBreaker"
+      },
+      "widgets_values": [
+        "A white robot with black joints and blue glowing eyes is under a yellow circle. The robot holds a brush\n\n--aspect 3:2 --portrait --seed 3 --upscale off \n"
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 203,
+      "type": "Note",
+      "pos": [
+        40,
+        130
+      ],
+      "size": [
+        320,
+        540
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "title": "NOTE: SUPPORTED PARAMETERS",
+      "properties": {},
+      "widgets_values": [
+        "\n  --no <text>\n  --refine <text>\n  --cfg-shift <number>\n  --image-shift <number>\n  --upscale [on|off]\n\n  --seed <number> | random\n  --aspect <ratio:ratio>\n  --landscape\n  --portrait\n  --medium\n\n  --batch-size <number>\n  --detail-level <number> | <level>\n  --upscale-noise <number> | <level>\n\n <level> can be:\n    none\n    minimal\n    low\n    normal\n    high\n    veryhigh\n    maximum\n\n"
+      ],
+      "color": "#222",
+      "bgcolor": "#000",
+      "shape": 1
+    },
+    {
+      "id": 307,
+      "type": "MutilineText //TinyBreaker",
+      "pos": [
+        -890,
+        0
+      ],
+      "size": [
+        900,
+        1010
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": [
+            750
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "c60e8905dd0e4810be034d07337ae31fdee7ae66",
+        "Node name for S&R": "MutilineText //TinyBreaker"
+      },
+      "widgets_values": [
+        "# EXAMPLE OF CUSTOM STYLE CONFIGURATION\n# THE STYLE NAME IS BETWEEN [BRACKETS] AND CAN BE ANY OF THE AVAILABLE OPTIONS\n# PARAMETERS WITHOUT A VALUE ARE SET TO THE DEFAULT VALUE\n\n\n[CUSTOM1]\n#\n#  A COMIC BOOK ILLUSTRATION (experimental)\n#  THE DRAWING STYLE VARIES FROM PROMPT TO PROMPT\n#\nbase.prompt      = \"Detailed comic cover. {$@}. european erotic comic book with bold lines. Comic in white, red, blue and black\"\nbase.negative    = \"minimalist, painting{, $@}\"\nbase.sampler     = \"dpmpp_2m\"\nbase.scheduler   = \"karras\"\nbase.steps       = 17\nbase.steps_start = 2\nbase.steps_end   =\nbase.cfg         = 3.5\nrefiner.prompt      = \"Poster, erotic comics{, $@}\"\nrefiner.negative    = \"(worst quality, low quality, manga:1.8){, $@}\"\nrefiner.sampler     = \"lms\"\nrefiner.scheduler   = \"normal\"\nrefiner.steps       = 14\nrefiner.steps_start = 10\nrefiner.steps_end   =\nrefiner.cfg         = 4.0\nupscaler.negative      = \"(worst quality, low quality, manga:1.4)\"\nupscaler.steps         = 15\nupscaler.steps_start   = 11\nupscaler.steps_end     = -1\n\n\n[CUSTOM2]\n#\n#  A PHOTO OF A PAINTING ON A STREET WALL (experimental)\n#  TO MAKE THE PROMPT WORK IT MUST BE SIMPLE AND DIRECT, SPECIFYING THE CHARACTER/OBJECT OF THE GRAFFITI\n#\nbase.prompt      = \"A wall with a graffiti of {$@}. The graffiti is a mural with bright colors. Below, you can see the street and the curb.\"\nbase.negative    = \"{, $@}\"\nbase.sampler     =\nbase.scheduler   =\nbase.steps       = 14\nbase.steps_start = 2\nbase.steps_end   =\nbase.cfg         = 5.0\nrefiner.prompt      = \"Graffiti, wall, street, vibrant colors{, $@}\"\nrefiner.negative    = \"(worst quality, low quality, manga:1.8){, $@}\"\nrefiner.sampler     = \"dpmpp_2m\"\nrefiner.scheduler   = \"normal\"\nrefiner.steps       = 15\nrefiner.steps_start = 12\nrefiner.steps_end   =\nrefiner.cfg         = 3.5\nupscaler.prompt        = \nupscaler.negative      = \"(worst quality, low quality, manga:1.4)\"\nupscaler.steps         = 15\nupscaler.steps_start   = 11\nupscaler.steps_end     = -1\n"
+      ],
+      "color": "#232",
+      "bgcolor": "#353"
     }
   ],
   "links": [
@@ -1662,14 +1666,14 @@
   "groups": [
     {
       "id": 3,
-      "title": "Control Panel | TinyBreaker Style Creator v0.3",
+      "title": "TinyBreaker Style Creator v0.3",
       "bounding": [
         50,
         -110,
         1540,
         810
       ],
-      "color": "#8A8",
+      "color": "#a1309b",
       "font_size": 24,
       "flags": {
         "pinned": true
@@ -1695,9 +1699,9 @@
         -1620,
         -110,
         1650,
-        810
+        1140
       ],
-      "color": "#3f789e",
+      "color": "#b58b2a",
       "font_size": 24,
       "flags": {}
     }
@@ -1705,10 +1709,10 @@
   "config": {},
   "extra": {
     "ds": {
-      "scale": 0.9090909090909091,
+      "scale": 0.6830134553650709,
       "offset": [
-        134.84055771738974,
-        161.31602607255388
+        1489.2099406435186,
+        123.44324446038443
       ]
     },
     "frontendVersion": "1.16.8"

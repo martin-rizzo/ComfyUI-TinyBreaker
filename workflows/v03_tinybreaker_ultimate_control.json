@@ -1,8 +1,8 @@
 {
   "id": "02234b55-efbe-422c-83b2-41120125b651",
   "revision": 0,
-  "last_node_id": 225,
-  "last_link_id": 607,
+  "last_node_id": 226,
+  "last_link_id": 611,
   "nodes": [
     {
       "id": 36,
@@ -16,7 +16,7 @@
         26
       ],
       "flags": {},
-      "order": 44,
+      "order": 43,
       "mode": 0,
       "inputs": [
         {
@@ -50,7 +50,7 @@
         26
       ],
       "flags": {},
-      "order": 43,
+      "order": 42,
       "mode": 0,
       "inputs": [
         {
@@ -86,7 +86,7 @@
         26
       ],
       "flags": {},
-      "order": 42,
+      "order": 41,
       "mode": 0,
       "inputs": [
         {
@@ -122,7 +122,7 @@
         180
       ],
       "flags": {},
-      "order": 33,
+      "order": 32,
       "mode": 0,
       "inputs": [
         {
@@ -213,7 +213,7 @@
         50
       ],
       "flags": {},
-      "order": 36,
+      "order": 35,
       "mode": 0,
       "inputs": [
         {
@@ -257,7 +257,7 @@
         180
       ],
       "flags": {},
-      "order": 31,
+      "order": 30,
       "mode": 0,
       "inputs": [
         {
@@ -373,102 +373,17 @@
       }
     },
     {
-      "id": 170,
-      "type": "SetBaseSeed //TinyBreaker",
-      "pos": [
-        100,
-        40
-      ],
-      "size": [
-        280,
-        90
-      ],
-      "flags": {
-        "pinned": true
-      },
-      "order": 21,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "link": 477
-        }
-      ],
-      "outputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "slot_index": 0,
-          "links": [
-            579
-          ]
-        }
-      ],
-      "properties": {
-        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
-        "ver": "4b4619553544f3d5902239a8498954b8346d310b",
-        "Node name for S&R": "SetBaseSeed //TinyBreaker"
-      },
-      "widgets_values": [
-        1,
-        "fixed"
-      ],
-      "color": "#432",
-      "bgcolor": "#653"
-    },
-    {
-      "id": 161,
-      "type": "Reroute",
-      "pos": [
-        -40,
-        -210
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {
-        "pinned": true
-      },
-      "order": 15,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 454
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "GENPARAMS",
-          "slot_index": 0,
-          "links": [
-            523
-          ]
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
-    },
-    {
       "id": 160,
       "type": "SelectStyle //TinyBreaker",
       "pos": [
-        100,
-        -110
+        10,
+        -200
       ],
       "size": [
         280,
         110
       ],
-      "flags": {
-        "pinned": true
-      },
+      "flags": {},
       "order": 19,
       "mode": 0,
       "inputs": [
@@ -554,7 +469,7 @@
         30
       ],
       "flags": {},
-      "order": 30,
+      "order": 29,
       "mode": 0,
       "inputs": [
         {
@@ -578,41 +493,6 @@
         "Node name for S&R": "EmptyLatentImage //TinyBreaker"
       },
       "widgets_values": []
-    },
-    {
-      "id": 187,
-      "type": "Reroute",
-      "pos": [
-        2057.7529296875,
-        -91.19458770751953
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {},
-      "order": 25,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 498
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "GENPARAMS",
-          "links": [
-            499
-          ]
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
     },
     {
       "id": 56,
@@ -654,8 +534,8 @@
       "id": 206,
       "type": "Reroute",
       "pos": [
-        -160,
-        -860
+        -170,
+        -770
       ],
       "size": [
         75,
@@ -689,15 +569,15 @@
       "id": 178,
       "type": "Reroute",
       "pos": [
-        -160,
-        -960
+        -170,
+        -870
       ],
       "size": [
         75,
         26
       ],
       "flags": {},
-      "order": 46,
+      "order": 45,
       "mode": 0,
       "inputs": [
         {
@@ -724,8 +604,8 @@
       "id": 205,
       "type": "Reroute",
       "pos": [
-        -160,
-        -880
+        -170,
+        -790
       ],
       "size": [
         75,
@@ -747,78 +627,6 @@
           "type": "MODEL",
           "links": [
             541
-          ]
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
-    },
-    {
-      "id": 175,
-      "type": "Reroute",
-      "pos": [
-        -2640,
-        -1320
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {},
-      "order": 27,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 484
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "GENPARAMS",
-          "slot_index": 0,
-          "links": [
-            485
-          ]
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
-    },
-    {
-      "id": 174,
-      "type": "Reroute",
-      "pos": [
-        2480,
-        -1320
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {},
-      "order": 26,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 499
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "GENPARAMS",
-          "slot_index": 0,
-          "links": [
-            484
           ]
         }
       ],
@@ -983,7 +791,7 @@
         26
       ],
       "flags": {},
-      "order": 32,
+      "order": 31,
       "mode": 0,
       "inputs": [
         {
@@ -1019,13 +827,13 @@
         26
       ],
       "flags": {},
-      "order": 29,
+      "order": 28,
       "mode": 0,
       "inputs": [
         {
           "name": "",
           "type": "*",
-          "link": 348
+          "link": 611
         }
       ],
       "outputs": [
@@ -1122,8 +930,8 @@
       "id": 167,
       "type": "LoadT5EncoderExperimental //TinyBreaker",
       "pos": [
-        -2610,
-        -630
+        -2520,
+        -640
       ],
       "size": [
         550,
@@ -1162,8 +970,8 @@
       "id": 200,
       "type": "LoadTinyBreakerCkptAdvanced //TinyBreaker",
       "pos": [
-        -2610,
-        -1000
+        -2520,
+        -1010
       ],
       "size": [
         550,
@@ -1294,7 +1102,7 @@
         454
       ],
       "flags": {},
-      "order": 34,
+      "order": 33,
       "mode": 0,
       "inputs": [
         {
@@ -1382,7 +1190,7 @@
         460
       ],
       "flags": {},
-      "order": 41,
+      "order": 40,
       "mode": 0,
       "inputs": [
         {
@@ -1534,15 +1342,15 @@
       "id": 207,
       "type": "Reroute",
       "pos": [
-        140,
-        -960
+        130,
+        -870
       ],
       "size": [
         75,
         26
       ],
       "flags": {},
-      "order": 47,
+      "order": 46,
       "mode": 0,
       "inputs": [
         {
@@ -1566,272 +1374,18 @@
       }
     },
     {
-      "id": 27,
-      "type": "VAEDecode",
-      "pos": [
-        -370,
-        -790
-      ],
-      "size": [
-        180,
-        50
-      ],
-      "flags": {},
-      "order": 45,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "samples",
-          "type": "LATENT",
-          "link": 332
-        },
-        {
-          "name": "vae",
-          "type": "VAE",
-          "link": 519
-        }
-      ],
-      "outputs": [
-        {
-          "name": "IMAGE",
-          "type": "IMAGE",
-          "slot_index": 0,
-          "links": [
-            506
-          ]
-        }
-      ],
-      "properties": {
-        "cnr_id": "comfy-core",
-        "ver": "0.3.29",
-        "Node name for S&R": "VAEDecode"
-      },
-      "widgets_values": []
-    },
-    {
-      "id": 129,
-      "type": "Reroute",
-      "pos": [
-        -2520,
-        -1140
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {},
-      "order": 28,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 485
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "GENPARAMS",
-          "slot_index": 0,
-          "links": [
-            348
-          ]
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
-    },
-    {
-      "id": 164,
-      "type": "Reroute",
-      "pos": [
-        -1890,
-        -200
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {},
-      "order": 9,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 530
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "GENPARAMS",
-          "slot_index": 0,
-          "links": [
-            454
-          ]
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
-    },
-    {
-      "id": 216,
-      "type": "SetImageV2 //TinyBreaker",
-      "pos": [
-        100,
-        170
-      ],
-      "size": [
-        280,
-        160
-      ],
-      "flags": {
-        "pinned": true
-      },
-      "order": 22,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "link": 579
-        }
-      ],
-      "outputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "links": [
-            580
-          ]
-        }
-      ],
-      "properties": {
-        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
-        "ver": "4b4619553544f3d5902239a8498954b8346d310b",
-        "Node name for S&R": "SetImageV2 //TinyBreaker"
-      },
-      "widgets_values": [
-        "3:2  (photo)",
-        "portrait",
-        "large",
-        1,
-        true
-      ],
-      "color": "#2a363b",
-      "bgcolor": "#3f5159"
-    },
-    {
-      "id": 176,
-      "type": "SetImageDetailsV2 //TinyBreaker",
-      "pos": [
-        100,
-        370
-      ],
-      "size": [
-        280,
-        110
-      ],
-      "flags": {
-        "pinned": true
-      },
-      "order": 23,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "link": 580
-        }
-      ],
-      "outputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "links": [
-            488
-          ]
-        }
-      ],
-      "properties": {
-        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
-        "ver": "4b4619553544f3d5902239a8498954b8346d310b",
-        "Node name for S&R": "SetImageDetailsV2 //TinyBreaker"
-      },
-      "widgets_values": [
-        0,
-        0,
-        "normal"
-      ],
-      "color": "#2a363b",
-      "bgcolor": "#3f5159"
-    },
-    {
-      "id": 166,
-      "type": "UnifiedPromptInput //TinyBreaker",
-      "pos": [
-        390,
-        -110
-      ],
-      "size": [
-        540,
-        590
-      ],
-      "flags": {
-        "pinned": true
-      },
-      "order": 24,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "link": 488
-        }
-      ],
-      "outputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "slot_index": 0,
-          "links": [
-            460,
-            498
-          ]
-        }
-      ],
-      "properties": {
-        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
-        "ver": "4b4619553544f3d5902239a8498954b8346d310b",
-        "Node name for S&R": "UnifiedPromptInput //TinyBreaker"
-      },
-      "widgets_values": [
-        "Noodle monster with a big evil smile and evil face, composed entirely of noodles. Tomato sauce covers the monster. Flying tomatoes are present. A dark mirror in the background creating an evil atmosphere\n"
-      ],
-      "color": "#232",
-      "bgcolor": "#353"
-    },
-    {
       "id": 144,
       "type": "SaveImage //TinyBreaker",
       "pos": [
-        950,
-        -110
+        860,
+        -200
       ],
       "size": [
         540,
         590
       ],
-      "flags": {
-        "pinned": true
-      },
-      "order": 49,
+      "flags": {},
+      "order": 48,
       "mode": 0,
       "inputs": [
         {
@@ -1862,15 +1416,15 @@
       "id": 184,
       "type": "Reroute",
       "pos": [
-        -160,
-        -990
+        -170,
+        -900
       ],
       "size": [
         75,
         26
       ],
       "flags": {},
-      "order": 35,
+      "order": 34,
       "mode": 0,
       "inputs": [
         {
@@ -1897,53 +1451,18 @@
       }
     },
     {
-      "id": 179,
-      "type": "Reroute",
-      "pos": [
-        -140,
-        -480
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {},
-      "order": 18,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 520
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "VAE",
-          "links": [
-            491
-          ]
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
-    },
-    {
       "id": 188,
       "type": "UpackSamplerParams //TinyBreaker",
       "pos": [
-        -50,
-        -900
+        -60,
+        -810
       ],
       "size": [
         263.65203857421875,
         178
       ],
       "flags": {},
-      "order": 38,
+      "order": 37,
       "mode": 0,
       "inputs": [
         {
@@ -2026,8 +1545,8 @@
       "id": 183,
       "type": "Reroute",
       "pos": [
-        180,
-        -480
+        170,
+        -390
       ],
       "size": [
         75,
@@ -2061,15 +1580,15 @@
       "id": 222,
       "type": "UnpackFloat //TinyBreaker",
       "pos": [
-        -110,
-        -580
+        -120,
+        -490
       ],
       "size": [
         360,
         90
       ],
       "flags": {},
-      "order": 40,
+      "order": 39,
       "mode": 0,
       "inputs": [
         {
@@ -2101,15 +1620,15 @@
       "id": 211,
       "type": "UnpackBoolean //TinyBreaker",
       "pos": [
-        -110,
-        -680
+        -120,
+        -590
       ],
       "size": [
         360,
         60
       ],
       "flags": {},
-      "order": 39,
+      "order": 38,
       "mode": 0,
       "inputs": [
         {
@@ -2140,15 +1659,15 @@
       "id": 224,
       "type": "TinyUpscalerAdvanced //TinyBreaker",
       "pos": [
-        310,
-        -920
+        300,
+        -830
       ],
       "size": [
         350,
         322
       ],
       "flags": {},
-      "order": 48,
+      "order": 47,
       "mode": 0,
       "inputs": [
         {
@@ -2247,15 +1766,15 @@
       "id": 185,
       "type": "Reroute",
       "pos": [
-        580,
-        -990
+        570,
+        -900
       ],
       "size": [
         75,
         26
       ],
       "flags": {},
-      "order": 37,
+      "order": 36,
       "mode": 0,
       "inputs": [
         {
@@ -2275,6 +1794,437 @@
         "showOutputText": false,
         "horizontal": false
       }
+    },
+    {
+      "id": 27,
+      "type": "VAEDecode",
+      "pos": [
+        -380,
+        -690
+      ],
+      "size": [
+        180,
+        50
+      ],
+      "flags": {},
+      "order": 44,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 332
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 519
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "slot_index": 0,
+          "links": [
+            506
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.29",
+        "Node name for S&R": "VAEDecode"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 179,
+      "type": "Reroute",
+      "pos": [
+        -170,
+        -390
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 18,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 520
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "VAE",
+          "links": [
+            491
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 161,
+      "type": "Reroute",
+      "pos": [
+        -140,
+        -200
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 15,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 454
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "GENPARAMS",
+          "slot_index": 0,
+          "links": [
+            523
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 164,
+      "type": "Reroute",
+      "pos": [
+        -1840,
+        -200
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 530
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "GENPARAMS",
+          "slot_index": 0,
+          "links": [
+            454
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 226,
+      "type": "Reroute",
+      "pos": [
+        820,
+        -350
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 25,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 609
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "GENPARAMS",
+          "links": [
+            610
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 175,
+      "type": "Reroute",
+      "pos": [
+        -1960,
+        -1400
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 27,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 484
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "GENPARAMS",
+          "slot_index": 0,
+          "links": [
+            611
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 174,
+      "type": "Reroute",
+      "pos": [
+        1060,
+        -1400
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 26,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 610
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "GENPARAMS",
+          "slot_index": 0,
+          "links": [
+            484
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 170,
+      "type": "SetBaseSeed //TinyBreaker",
+      "pos": [
+        10,
+        -50
+      ],
+      "size": [
+        280,
+        90
+      ],
+      "flags": {},
+      "order": 21,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 477
+        }
+      ],
+      "outputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "slot_index": 0,
+          "links": [
+            579
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "4b4619553544f3d5902239a8498954b8346d310b",
+        "Node name for S&R": "SetBaseSeed //TinyBreaker"
+      },
+      "widgets_values": [
+        3,
+        "fixed"
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 176,
+      "type": "SetImageDetailsV2 //TinyBreaker",
+      "pos": [
+        10,
+        280
+      ],
+      "size": [
+        280,
+        110
+      ],
+      "flags": {},
+      "order": 23,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 580
+        }
+      ],
+      "outputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "links": [
+            488
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "4b4619553544f3d5902239a8498954b8346d310b",
+        "Node name for S&R": "SetImageDetailsV2 //TinyBreaker"
+      },
+      "widgets_values": [
+        0,
+        0,
+        "normal"
+      ],
+      "color": "#2a363b",
+      "bgcolor": "#3f5159"
+    },
+    {
+      "id": 166,
+      "type": "UnifiedPromptInput //TinyBreaker",
+      "pos": [
+        300,
+        -200
+      ],
+      "size": [
+        540,
+        590
+      ],
+      "flags": {},
+      "order": 24,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 488
+        }
+      ],
+      "outputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "slot_index": 0,
+          "links": [
+            460,
+            609
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "4b4619553544f3d5902239a8498954b8346d310b",
+        "Node name for S&R": "UnifiedPromptInput //TinyBreaker"
+      },
+      "widgets_values": [
+        "Noodle monster with a big evil smile and evil face, composed entirely of noodles covered in tomato sauce. The noodle monster is sitting at a desk operating security cameras, typing on a keyboard with its noodle fingers. Many monitors surround the desk, displaying various security camera feeds. The environment is dark, illuminated only by the glow of the monitors. A dark mirror is visible in the background, contributing to the evil atmosphere. Bokeh\n"
+      ],
+      "color": "#232",
+      "bgcolor": "#353"
+    },
+    {
+      "id": 216,
+      "type": "SetImageV2 //TinyBreaker",
+      "pos": [
+        10,
+        80
+      ],
+      "size": [
+        280,
+        160
+      ],
+      "flags": {},
+      "order": 22,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 579
+        }
+      ],
+      "outputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "links": [
+            580
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "4b4619553544f3d5902239a8498954b8346d310b",
+        "Node name for S&R": "SetImageV2 //TinyBreaker"
+      },
+      "widgets_values": [
+        "3:2  (photo)",
+        "portrait",
+        "large",
+        1,
+        true
+      ],
+      "color": "#2a363b",
+      "bgcolor": "#3f5159"
     }
   ],
   "links": [
@@ -2349,14 +2299,6 @@
       27,
       0,
       "LATENT"
-    ],
-    [
-      348,
-      129,
-      0,
-      93,
-      0,
-      "*"
     ],
     [
       420,
@@ -2535,14 +2477,6 @@
       "*"
     ],
     [
-      485,
-      175,
-      0,
-      129,
-      0,
-      "*"
-    ],
-    [
       488,
       176,
       0,
@@ -2563,22 +2497,6 @@
       184,
       0,
       185,
-      0,
-      "*"
-    ],
-    [
-      498,
-      166,
-      0,
-      187,
-      0,
-      "*"
-    ],
-    [
-      499,
-      187,
-      0,
-      174,
       0,
       "*"
     ],
@@ -2925,6 +2843,30 @@
       144,
       0,
       "IMAGE"
+    ],
+    [
+      609,
+      166,
+      0,
+      226,
+      0,
+      "*"
+    ],
+    [
+      610,
+      226,
+      0,
+      174,
+      0,
+      "*"
+    ],
+    [
+      611,
+      175,
+      0,
+      93,
+      0,
+      "*"
     ]
   ],
   "groups": [
@@ -2943,10 +2885,10 @@
     },
     {
       "id": 3,
-      "title": "Control Panel - TinyBreaker Fully Customizable v0.3",
+      "title": "TinyBreaker Full Control v0.3",
       "bounding": [
-        80,
-        -200,
+        -10,
+        -290,
         1430,
         700
       ],
@@ -2958,8 +2900,8 @@
       "id": 4,
       "title": "Upscaler",
       "bounding": [
-        -150,
-        -1040,
+        -160,
+        -950,
         820,
         600
       ],
@@ -2971,8 +2913,8 @@
       "id": 5,
       "title": "Loaders",
       "bounding": [
-        -2630,
-        -1080,
+        -2540,
+        -1090,
         590,
         610
       ],
@@ -2986,8 +2928,8 @@
     "ds": {
       "scale": 1,
       "offset": [
-        20.995901762861976,
-        296.47016273216366
+        94.6491605823561,
+        343.4281284603846
       ]
     },
     "frontendVersion": "1.16.8"
