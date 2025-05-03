@@ -95,14 +95,20 @@ The easiest way to install the nodes is through ComfyUI Manager:
    ```
 </details>
 
-## Workflow Example
+## Example Workflow
 
-This image contains a simple workflow for testing the TinyBreaker model. To load this workflow, simply drag and drop the image into ComfyUI.
-
-<img src="workflows/ximg/tinybreaker_example.png" width="100px">
-
-_For further information and additional workflow examples, please consult the [workflows folder](workflows)._
-
+<table>
+  <tr>
+    <td width="190px">
+      <img src="workflows/ximg/tinybreaker_workflow.png" alt="TinyBreaker Workflow" width="171" height="256">
+    </td>
+    <td>
+      The image contains a reference workflow for using and testing the TinyBreaker model.<br/>
+      <i>- to load this workflow, simply drag and drop the image into ComfyUI.</i><br/>
+      <i>- other workflows are available in the <b><a href="workflows">workflows directory</a></b>.</i> 
+    </td>
+  </tr>
+</table>
 
 ## Features : Unified Prompt
 
