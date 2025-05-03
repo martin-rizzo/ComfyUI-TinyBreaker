@@ -108,8 +108,13 @@ class GenParams(dict):
             # if value is 'true' or 'false', convert to boolean
             elif value.lower() in ('true', 'false'):
                 value = value.lower() == 'true'
+            # if none of the above options match and the value is empty, it will be discarded
+            # therefore, to input an empty string you will have to use quotes "" or ''
+            elif value.strip() == '':
+                continue
 
             genparams[key] = value
+
         return genparams
 
 
