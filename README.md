@@ -15,25 +15,22 @@
 
 **ComfyUI-TinyBreaker** is a collection of custom nodes specifically designed to generate images using the TinyBreaker model. It's actively developed with ongoing improvements. Although still in progress, these nodes are functional and let you experiment with the model and squeeze out all its potential.  
 
-<!--
-**TinyBreaker model**  
-While still in the prototype stage, the TinyBreaker model stands out for its unique features. To learn more about its strengths and discover upcoming improvements, check out ["What is TinyBreaker?"](docs/tinybreaker.md)
-
 ## Table of Contents
-
 1. [Required Files](#required-files)
 2. [Node Installation](#node-installation)
    - [Installation via ComfyUI Manager (Recommended)](#installation-via-comfyui-manager-recommended)
    - [Manual Installation](#manual-installation)
-3. [Workflow Example](#workflow-example)
-4. [Features](#features--unified-prompt)
-   - [Unified Prompt](#features--unified-prompt)
-   - [Special Ctrl Keys](#features--special-ctrl-keys)
-   - [Predefined Styles](#features--predefined-styles)
-   - [CivitAI/A1111 Image Compatibility](#features--civitaia1111-image-compatibility)
+   - [Windows Portable Installation](#windows-portable-installation)
+3. [Example Workflow](#example-workflow)
+4. [Features](#features-unified-prompt)
+   - [Unified Prompt](#features-unified-prompt)
+   - [Special CTRL Keys](#features-special-ctrl-keys)
+   - [Predefined Styles](#features-predefined-styles)
+   - [Tiny Upscaler](#features-tiny-upscaler)
+   - [CivitAI/A1111 Image Metadata](#features-civitaia1111-image-metadata)
 5. [Acknowledgments](#acknowledgments)
 6. [License](#license)
--->
+
 
 ## Required Files
 
@@ -174,7 +171,7 @@ The **"Unified Prompt"** node includes specialized control keys to streamline pa
   This key is not part of the Unified Prompt node but serves as ComfyUI’s native shortcut to initiate image generation.
 
 
-## Features: Predefined Style
+## Features: Predefined Styles
 
 The **"Select Style"** node allows you to choose an image style. This node injects text into the prompt and adjusts sampler parameters to influence the image generation, refinement, and upscaling process.
 
