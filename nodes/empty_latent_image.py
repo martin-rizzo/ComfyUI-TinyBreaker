@@ -16,7 +16,7 @@ import comfy
 from   .core.system     import logger
 from   .core.genparams  import GenParams
 from   ._common         import get_image_size_from_genparams, \
-                               DEFAULT_VAE_PATCH_SIZE
+                               DEFAULT_VAE_BLOCK_SIZE
 
 
 class EmptyLatentImage:
@@ -47,11 +47,12 @@ class EmptyLatentImage:
         batch_size                = genparams.get_int("image.batch_size", 1)
 
         # calculate the latent dimensions
-        latent_width    = int( image_width  // DEFAULT_VAE_PATCH_SIZE )
-        latent_height   = int( image_height // DEFAULT_VAE_PATCH_SIZE )
+        latent_width    = int( image_width  // DEFAULT_VAE_BLOCK_SIZE )
+        latent_height   = int( image_height // DEFAULT_VAE_BLOCK_SIZE )
         latent_channels = 4
 
-        # make sure the latent dimensions are even, as required by the model
+        # make sure the latent dimensions are even,
+        # as required by PixArt-sigma (patch_size = 2)
         if latent_width % 2 != 0:
             latent_width += 1
         if latent_height % 2 != 0:

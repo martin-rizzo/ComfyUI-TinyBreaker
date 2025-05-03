@@ -59,12 +59,13 @@ EXTRA_NOISE_BY_NAME = {
     "maximum" : +0.6,
 }
 
-DEFAULT_ASPECT_RATIO   = "1:1  (square)"
-DEFAULT_SCALE          = "large"
-DEFAULT_ORIENTATION    = "landscape"
-DEFAULT_DETAIL_LEVEL   = "normal"
-DEFAULT_VAE_PATCH_SIZE = 8
-DEFAULT_RESOLUTION     = 1024
+DEFAULT_ASPECT_RATIO      = "1:1  (square)"
+DEFAULT_SCALE             = "large"
+DEFAULT_ORIENTATION       = "landscape"
+DEFAULT_DETAIL_LEVEL      = "normal"
+DEFAULT_VAE_BLOCK_SIZE    = 8
+DEFAULT_PIXART_PATCH_SIZE = 2
+DEFAULT_RESOLUTION        = 1024
 
 _MIN_IMAGE_AREA = 256  * 256
 _MAX_IMAGE_AREA = 8192 * 8192
@@ -127,7 +128,7 @@ def get_image_size_from_genparams(genparams: GenParams) -> tuple:
                                     aspect_ratio = aspect_ratio,
                                     scale        = scale,
                                     orientation  = orientation,
-                                    block_size   = DEFAULT_VAE_PATCH_SIZE,
+                                    block_size   = DEFAULT_VAE_BLOCK_SIZE * DEFAULT_PIXART_PATCH_SIZE,
                                     )
     return image_width, image_height
 
@@ -153,8 +154,8 @@ def calculate_image_size(resolution  : str | float | int,
     desired_height = desired_width * ratio_denominator / ratio_numerator
 
     # round to nearest block size
-    width  = int( desired_width  * scale // block_size ) * block_size
-    height = int( desired_height * scale // block_size ) * block_size
+    width  = int( math.ceil(desired_width  * scale / block_size) * block_size )
+    height = int( math.ceil(desired_height * scale / block_size) * block_size )
     return width, height
 
 
