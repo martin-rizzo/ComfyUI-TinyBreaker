@@ -95,6 +95,7 @@ The easiest way to install the nodes is through ComfyUI Manager:
    ```
 </details>
 
+
 ## Example Workflow
 
 <table>
@@ -109,6 +110,7 @@ The easiest way to install the nodes is through ComfyUI Manager:
     </td>
   </tr>
 </table>
+
 
 ## Features: Unified Prompt
 
@@ -157,7 +159,9 @@ When using the Unified Prompt node:
 
 _For more details on these parameters, see ... \[ ! documentation in preparation ! \]_
 
+
 ## Features: Special CTRL Keys  
+
 The **'Unified Prompt'** node includes specialized control keys to streamline parameter editing:
 
 - **CTRL+RIGHT** _[autocomplete]_  
@@ -170,23 +174,28 @@ The **'Unified Prompt'** node includes specialized control keys to streamline pa
   This key is not part of the Unified Prompt node but serves as ComfyUI’s native shortcut to initiate image generation.
 
 
-## Features : Predefined Styles
+## Features: Predefined Style
 
-The __'Select Style'__ node allows you to select an image style. This node injects text into the prompt and modifies sampler parameters to influence the image generation. Please note that these styles are still in development, as I am experimenting with different parameter combinations to refine them over time. Therefore, they might not always function perfectly or reflect exactly what is described here.
+The **"Select Style"** node allows you to choose an image style. This node injects text into the prompt and adjusts sampler parameters to influence the image generation, refinement, and upscaling process.
 
-#### Available Styles
-| Style Name           | Description                                                        |
-|:---------------------|--------------------------------------------------------------------|
-| `PHOTO`              | Fast photorealistic images with beautiful design.                  |
-| `ULTRAPHOTO`         | Realistic images with exceptional detail and clarity.              |
-| `DARKFAN80`          | Dark fantasy images with 80s cinematic style.                      |
-| `LITTLE_TOY`         | Minimalist images in the style of small toys.                      |
-| `COMIC_ART`          | Dynamic illustrations in comic book art style.                     |
-| `PIXEL_ART`          | Pixel art images with retro and blocky details.                    |
-| `COLOR_INK`          | Beautiful drawings in vibrant colorful ink style.                  |
-| `REALISTIC_WAIFU_X`  | Realistic images where a woman is the main subject.                |
-| `REALISTIC_WAIFU_Y`  | Realistic images where a woman is the main subject (alternative1). |
-| `REALISTIC_WAIFU_Z`  | Realistic images where a woman is the main subject (alternative2). |
+These styles are currently in development as I continuously refine them through experimentation with parameter combinations. As a result, they may not always function perfectly or produce results that exactly match the descriptions provided here.
+
+| Style Name             | Description                                                        |
+|:-----------------------|--------------------------------------------------------------------|
+| __PHOTO__              | Fast photorealistic images with beautiful design.                  |
+| __ULTRAPHOTO__         | Realistic images with exceptional detail and clarity.              |
+| __DARKFAN80__          | Dark fantasy images with an 80s cinematic style.                   |
+| __LITTLE_TOY__         | Minimalist images inspired by small toy aesthetics.                |
+| __PAINTING__           | Evocative, textured artworks in the style of classic paintings.    |
+| __COMIC__              | Comic art style emphasizing bold lines and expressive figures.     |
+| __PIXEL_ART__          | Pixel art images with retro, blocky details.                       |
+| __COLOR_INK__          | Vibrant, colorful ink-style drawings.                              |
+| __REALISTIC_WAIFU_X__  | Realistic images where a woman is the main subject.                |
+| __REALISTIC_WAIFU_Y__  | Realistic images where a woman is the main subject (alternative1). |
+| __REALISTIC_WAIFU_Z__  | Realistic images where a woman is the main subject (alternative2). |
+| __CUSTOM1__,...        | Reserved for user-defined style.                                   |
+
+A reference workflow for editing and testing custom styles is available in the [workflows directory](workflows).
 
 
 ## Features : CivitAI/A1111 Image Compatibility
