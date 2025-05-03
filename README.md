@@ -110,43 +110,44 @@ The easiest way to install the nodes is through ComfyUI Manager:
   </tr>
 </table>
 
-## Features : Unified Prompt
+## Features: Unified Prompt
 
-The __'Unified Prompt'__ node allows you to input both your prompt and parameters within a single text area, streamlining your workflow. This eliminates the need for separate input fields.
+The **'Unified Prompt'** node allows you to edit both your prompt and parameters within a single text area, accelerating the process of refining the generated image. This even eliminates the need to lift your hands from the keyboard.
 
-When using the Unified Prompt node:
-
-* Begin by typing your desired prompt text as usual.
-* Then write any necessary parameters, each preceded by a double hyphen (`--`).
-* Utilize the special keys CTRL+UP and CTRL+DOWN to modify the values of each parameter.
-
+When using the Unified Prompt node:  
+- Begin by typing your desired prompt text as usual.  
+- Then, after the prompt, write any necessary parameters, each preceded by a double hyphen (`--`).  
+- Use the **CTRL+RIGHT** key to autocomplete the parameter name if you don’t remember it exactly.  
+- Use the **CTRL+UP** and **CTRL+DOWN** keys to modify the value of any parameter.  
+- Use the standard **CTRL+ENTER** key to launch the image generation.
 
 #### Parameters Supported by the Unified Prompt
 
-| Minor image adjustments                 | Description                                                                 |
-|:----------------------------------------|-----------------------------------------------------------------------------|
-| **`--no <text>`**                       | Specifies elements that should *not* appear in the image. (negative prompt) |
-| **`--refine <text>`**                   | Specifies elements that should be refined.                                  |
-| **`--cfg-shift <number>`**              | Modifies the value of the Classifier-Free Guidance (CFG) scale.             |
-| **`--image-shift <number>`**            | Modifies minor image details without altering the overall composition.      |
-| **`--upscale [on\|off]`**               | Enables the application of the upscaling process to the final image.        |
+| Minor image adjustments                   | Description                                                                 |
+|:------------------------------------------|-----------------------------------------------------------------------------|
+| **`--no <text>`**                         | Specifies elements that should *not* appear in the image. (negative prompt) |
+| **`--refine <text>`**                     | Specifies elements that should be refined.                                  |
+| **`--cfg-shift <number>`**                | Modifies the value of the Classifier-Free Guidance (CFG) scale.             |
+| **`--image-shift <number>`**              | Modifies minor image details without altering the overall composition.      |
+| **`--upscale [on\|off]`**                 | Enables the application of the upscaling process to the final image.        |
 
 
-| Major image changes                     | Description                                                                 |
-|:----------------------------------------|-----------------------------------------------------------------------------|
-| **`--seed <number> \| random`**         | Defines a number for initializing the random generator.                     |
-| **`--aspect <ratio>`**                  | Specifies the aspect ratio of the image (e.g., 16:9, 4:3).                  |
-| **`--landscape`**                       | Forces landscape orientation, (ratio 3:2 by default).                       |
-| **`--portrait`**                        | Forces portrait orientation, (ratio 2:3 by default).                        |
-| **`--medium`**                          | Generates medium-sized images instead of the default large size.            |
+| Major image changes                       | Description                                                                 |
+|:------------------------------------------|-----------------------------------------------------------------------------|
+| **`--seed <number> \| random`**           | Defines a number for initializing the noise generator.                      |
+| **`--aspect <ratio>`**                    | Specifies the aspect ratio of the image (e.g., 16:9, 4:3).                  |
+| **`--landscape`**                         | Forces landscape orientation, (ratio 3:2 by default).                       |
+| **`--portrait`**                          | Forces portrait orientation, (ratio 2:3 by default).                        |
+| **`--medium`**                            | Generates medium-sized images instead of the default large size.            |
 
 
-| Extra parameters                        | Description                                                                 |
-|:----------------------------------------|-----------------------------------------------------------------------------|
-| **`--batch-size <number>`**             | Specifies the number of images to generate in a single batch.               |
-| **`--detail-level <number> \| <lvl>`**  | Controls the level of detail applied during image refinement.               |
-| **`--upscale-noise <number> \| <lvl>`** | Adjusts the extra noise level injected during upscaling.                    |
+| Advanced parameters                       | Description                                                                 |
+|:------------------------------------------|-----------------------------------------------------------------------------|
+| **`--batch-size <number>`**               | Specifies the number of images to generate in a single batch.               |
+| **`--detail-level <number> \| <level>`**  | Controls the level of detail applied during image refinement.               |
+| **`--upscale-noise <number> \| <level>`** | Adjusts the extra noise level injected during upscaling.                    |
 
+**\<level\>** = none, minimal, low, normal, high, veryhigh, maximum
 
 #### Examples
 
@@ -154,9 +155,7 @@ When using the Unified Prompt node:
 `--seed random` `--aspect 16:9` `--portrait` `--medium`  
 `--detail-level normal` `--batch-size 4`
 
-
-_For more details on these parameters, see [docs/prompt_parameters.md](docs/prompt_parameters.md)._
-
+_For more details on these parameters, see ... \[ ! documentation in preparation ! \]_
 
 ## Features : Special Ctrl Keys
 
