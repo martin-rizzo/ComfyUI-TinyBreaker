@@ -157,12 +157,17 @@ When using the Unified Prompt node:
 
 _For more details on these parameters, see ... \[ ! documentation in preparation ! \]_
 
-## Features : Special Ctrl Keys
+## Features: Special CTRL Keys  
+The **'Unified Prompt'** node includes specialized control keys to streamline parameter editing:
 
-The __'Unified Prompt'__ node offers special control keys for simplifying parameter input and modification:
-
-- **CTRL+RIGHT (autocomplete):**  Initiate a parameter name by typing `--` followed by its beginning (e.g., `--d`). Pressing CTRL+RIGHT will automatically complete the full parameter name (e.g., `--detail-level`).
-- **CTRL+UP/DOWN (over parameter value):**  Increment or decrement the value associated with a parameter. For instance, if your cursor is positioned over `--seed 20` and you press CTRL+UP, the text will change to `--seed 21`.
+- **CTRL+RIGHT** _[autocomplete]_  
+  Begin typing a parameter name with '--' followed by its initial characters (e.g. '`--de`'). Pressing CTRL+RIGHT automatically completes the full parameter name (e.g. '`--detail-level`').
+- **CTRL+LEFT/RIGHT** _[parameter cycling]_  
+  If you type '`--`' alone, pressing CTRL+LEFT or CTRL+RIGHT cycles through available parameters, moving backward or forward respectively.
+- **CTRL+UP/DOWN** _[value adjustment]_  
+  Use these keys to increment or decrement the value of a parameter. For example, if your cursor is on '`--seed 20`', pressing CTRL+UP changes it to '`--seed 21`'.
+- **CTRL+ENTER** _[generate]_  
+  This key is not part of the Unified Prompt node but serves as ComfyUI’s native shortcut to initiate image generation.
 
 
 ## Features : Predefined Styles
