@@ -114,7 +114,7 @@ The easiest way to install the nodes is through ComfyUI Manager:
 
 ## Features: Unified Prompt
 
-The **'Unified Prompt'** node allows you to edit both your prompt and parameters within a single text area, accelerating the process of refining the generated image. This even eliminates the need to lift your hands from the keyboard.
+The **"Unified Prompt"** node allows you to edit both your prompt and parameters within a single text area, accelerating the process of refining the generated image. This even eliminates the need to lift your hands from the keyboard.
 
 When using the Unified Prompt node:  
 - Begin by typing your desired prompt text as usual.  
@@ -162,7 +162,7 @@ _For more details on these parameters, see ... \[ ! documentation in preparation
 
 ## Features: Special CTRL Keys  
 
-The **'Unified Prompt'** node includes specialized control keys to streamline parameter editing:
+The **"Unified Prompt"** node includes specialized control keys to streamline parameter editing:
 
 - **CTRL+RIGHT** _[autocomplete]_  
   Begin typing a parameter name with '--' followed by its initial characters (e.g. '`--de`'). Pressing CTRL+RIGHT automatically completes the full parameter name (e.g. '`--detail-level`').
@@ -196,6 +196,17 @@ These styles are currently in development as I continuously refine them through 
 | __CUSTOM1__,...        | Reserved for user-defined style.                                   |
 
 A reference workflow for editing and testing custom styles is available in the [workflows directory](workflows).
+
+
+## Features: Tiny Upscaler
+
+The **"Tiny Upscaler"** node enables upscaling and improving the resolution of images, allowing for the correction of minor imperfections during the process. This node performs upscaling operations quickly while minimizing resource consumption.
+
+Tiny Upscaler utilizes bilinear scaling combined with the embedded refiner in TinyBreaker, a method similar to the "Hires Fix" technique. Additionally, the node incorporates cross-tiling to optimize VRAM usage while almost completely eliminating visible grid artifacts typically generated during the tiling process.
+
+Currently, Tiny Upscaler is experimental and is configured with minimal creativity. It subtly modifies the image to produce a result that looks as though it were originally generated at a higher resolution, while simultaneously attempting to make minimal visual alterations.
+
+The upscaler is available since version v0.3.0 of the nodes and due to the way VEAs are stored, it requires "prototype1" version of TinyBreaker model to function.
 
 
 ## Features: CivitAI/A1111 Image Metadata
