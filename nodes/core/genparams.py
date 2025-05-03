@@ -162,7 +162,7 @@ class GenParams(dict):
         self[key] = str(new_value)
 
 
-    def set_float(self, key: str, new_value: float, /, as_delta: bool = False):
+    def set_float(self, key: str, new_value: float, /, as_delta: bool = False, min: float | None = None, max: float | None = None):
         """
         Stores a floating-point value under the given key.
         The `as_delta` parameter can be used to add the new value to the existing one.
@@ -170,8 +170,12 @@ class GenParams(dict):
         if as_delta:
             old_value = self.get(key)
             if isinstance(old_value, (int,float)):
-                self[key] = float(old_value) + float(new_value)
-                return
+                new_value = float(old_value) + float(new_value)
+
+        if min is not None and new_value < min:
+            new_value = min
+        if max is not None and new_value > max:
+            new_value = max
         self[key] = float(new_value)
 
 
