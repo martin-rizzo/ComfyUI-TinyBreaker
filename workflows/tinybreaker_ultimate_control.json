@@ -1,8 +1,8 @@
 {
   "id": "02234b55-efbe-422c-83b2-41120125b651",
   "revision": 0,
-  "last_node_id": 226,
-  "last_link_id": 611,
+  "last_node_id": 228,
+  "last_link_id": 615,
   "nodes": [
     {
       "id": 36,
@@ -383,7 +383,9 @@
         280,
         110
       ],
-      "flags": {},
+      "flags": {
+        "pinned": true
+      },
       "order": 19,
       "mode": 0,
       "inputs": [
@@ -1374,45 +1376,6 @@
       }
     },
     {
-      "id": 144,
-      "type": "SaveImage //TinyBreaker",
-      "pos": [
-        860,
-        -200
-      ],
-      "size": [
-        540,
-        590
-      ],
-      "flags": {},
-      "order": 48,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "images",
-          "type": "IMAGE",
-          "link": 607
-        },
-        {
-          "name": "genparams",
-          "shape": 7,
-          "type": "GENPARAMS",
-          "link": 460
-        }
-      ],
-      "outputs": [],
-      "properties": {
-        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
-        "ver": "4b4619553544f3d5902239a8498954b8346d310b",
-        "Node name for S&R": "SaveImage //TinyBreaker"
-      },
-      "widgets_values": [
-        "TinyBreaker/%date:yyyy_MM_dd%/TB"
-      ],
-      "color": "#323",
-      "bgcolor": "#535"
-    },
-    {
       "id": 184,
       "type": "Reroute",
       "pos": [
@@ -1884,7 +1847,9 @@
         75,
         26
       ],
-      "flags": {},
+      "flags": {
+        "pinned": true
+      },
       "order": 15,
       "mode": 0,
       "inputs": [
@@ -1956,7 +1921,9 @@
         75,
         26
       ],
-      "flags": {},
+      "flags": {
+        "pinned": true
+      },
       "order": 25,
       "mode": 0,
       "inputs": [
@@ -2063,7 +2030,9 @@
         280,
         90
       ],
-      "flags": {},
+      "flags": {
+        "pinned": true
+      },
       "order": 21,
       "mode": 0,
       "inputs": [
@@ -2079,7 +2048,7 @@
           "type": "GENPARAMS",
           "slot_index": 0,
           "links": [
-            579
+            612
           ]
         }
       ],
@@ -2096,24 +2065,67 @@
       "bgcolor": "#653"
     },
     {
-      "id": 176,
-      "type": "SetImageDetailsV2 //TinyBreaker",
+      "id": 144,
+      "type": "SaveImage //TinyBreaker",
+      "pos": [
+        860,
+        -200
+      ],
+      "size": [
+        540,
+        610
+      ],
+      "flags": {
+        "pinned": true
+      },
+      "order": 48,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 607
+        },
+        {
+          "name": "genparams",
+          "shape": 7,
+          "type": "GENPARAMS",
+          "link": 460
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "4b4619553544f3d5902239a8498954b8346d310b",
+        "Node name for S&R": "SaveImage //TinyBreaker"
+      },
+      "widgets_values": [
+        "TinyBreaker/%date:yyyy_MM_dd%/TB"
+      ],
+      "color": "#323",
+      "bgcolor": "#535"
+    },
+    {
+      "id": 227,
+      "type": "SetImageV2 //TinyBreaker",
       "pos": [
         10,
-        280
+        80
       ],
       "size": [
         280,
-        110
+        140
       ],
-      "flags": {},
-      "order": 23,
+      "flags": {
+        "pinned": true
+      },
+      "order": 22,
       "mode": 0,
       "inputs": [
         {
           "name": "genparams",
           "type": "GENPARAMS",
-          "link": 580
+          "link": 612
         }
       ],
       "outputs": [
@@ -2121,19 +2133,67 @@
           "name": "genparams",
           "type": "GENPARAMS",
           "links": [
-            488
+            613
           ]
         }
       ],
       "properties": {
         "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
-        "ver": "4b4619553544f3d5902239a8498954b8346d310b",
+        "ver": "35841153ec6e2c5ec072b872e1939a043cb546cd",
+        "Node name for S&R": "SetImageV2 //TinyBreaker"
+      },
+      "widgets_values": [
+        "3:2  (photo)",
+        "portrait",
+        "large",
+        1
+      ],
+      "color": "#2a363b",
+      "bgcolor": "#3f5159"
+    },
+    {
+      "id": 228,
+      "type": "SetImageDetailsV2 //TinyBreaker",
+      "pos": [
+        10,
+        260
+      ],
+      "size": [
+        280,
+        154
+      ],
+      "flags": {
+        "pinned": true
+      },
+      "order": 23,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 613
+        }
+      ],
+      "outputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "links": [
+            614
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "35841153ec6e2c5ec072b872e1939a043cb546cd",
         "Node name for S&R": "SetImageDetailsV2 //TinyBreaker"
       },
       "widgets_values": [
         0,
         0,
-        "normal"
+        0,
+        false,
+        0
       ],
       "color": "#2a363b",
       "bgcolor": "#3f5159"
@@ -2147,16 +2207,18 @@
       ],
       "size": [
         540,
-        590
+        610
       ],
-      "flags": {},
+      "flags": {
+        "pinned": true
+      },
       "order": 24,
       "mode": 0,
       "inputs": [
         {
           "name": "genparams",
           "type": "GENPARAMS",
-          "link": 488
+          "link": 614
         }
       ],
       "outputs": [
@@ -2180,51 +2242,6 @@
       ],
       "color": "#232",
       "bgcolor": "#353"
-    },
-    {
-      "id": 216,
-      "type": "SetImageV2 //TinyBreaker",
-      "pos": [
-        10,
-        80
-      ],
-      "size": [
-        280,
-        160
-      ],
-      "flags": {},
-      "order": 22,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "link": 579
-        }
-      ],
-      "outputs": [
-        {
-          "name": "genparams",
-          "type": "GENPARAMS",
-          "links": [
-            580
-          ]
-        }
-      ],
-      "properties": {
-        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
-        "ver": "4b4619553544f3d5902239a8498954b8346d310b",
-        "Node name for S&R": "SetImageV2 //TinyBreaker"
-      },
-      "widgets_values": [
-        "3:2  (photo)",
-        "portrait",
-        "large",
-        1,
-        true
-      ],
-      "color": "#2a363b",
-      "bgcolor": "#3f5159"
     }
   ],
   "links": [
@@ -2477,14 +2494,6 @@
       "*"
     ],
     [
-      488,
-      176,
-      0,
-      166,
-      0,
-      "GENPARAMS"
-    ],
-    [
       491,
       179,
       0,
@@ -2725,22 +2734,6 @@
       "GENPARAMS"
     ],
     [
-      579,
-      170,
-      0,
-      216,
-      0,
-      "GENPARAMS"
-    ],
-    [
-      580,
-      216,
-      0,
-      176,
-      0,
-      "GENPARAMS"
-    ],
-    [
       595,
       184,
       0,
@@ -2867,6 +2860,30 @@
       93,
       0,
       "*"
+    ],
+    [
+      612,
+      170,
+      0,
+      227,
+      0,
+      "GENPARAMS"
+    ],
+    [
+      613,
+      227,
+      0,
+      228,
+      0,
+      "GENPARAMS"
+    ],
+    [
+      614,
+      228,
+      0,
+      166,
+      0,
+      "GENPARAMS"
     ]
   ],
   "groups": [
@@ -2885,16 +2902,18 @@
     },
     {
       "id": 3,
-      "title": "TinyBreaker Full Control v0.3",
+      "title": "TinyBreaker Ultimate Control v0.3",
       "bounding": [
         -10,
         -290,
         1430,
-        700
+        720
       ],
       "color": "#8A8",
       "font_size": 24,
-      "flags": {}
+      "flags": {
+        "pinned": true
+      }
     },
     {
       "id": 4,
@@ -2928,8 +2947,8 @@
     "ds": {
       "scale": 1,
       "offset": [
-        94.6491605823561,
-        343.4281284603846
+        91.25077700715255,
+        331.4843017331117
       ]
     },
     "frontendVersion": "1.16.8"
