@@ -46,9 +46,6 @@ class SetImageV2:
             "batch_size"  :("INT"        ,{"tooltip": "The number of images to generate in a single batch.",
                                            "default": 1, "min": 1, "max": 4096
                                           }),
-            "upscale"     :("BOOLEAN"    ,{"tooltip": "If true, the image will be upscaled to improve its quality.",
-                                           "default": False,
-                                          }),
             },
         }
 
@@ -64,13 +61,11 @@ class SetImageV2:
                   orientation: str,
                   size       : str,
                   batch_size : int,
-                  upscale    : bool,
                   ):
         genparams = genparams.copy()
         genparams.set_str  ( "image.aspect_ratio"   , normalize_aspect_ratio(ratio) )
         genparams.set_str  ( "image.orientation"    , orientation                   )
         genparams.set_float( "image.scale"          , SCALES_BY_NAME.get(size, 1.0) )
-        genparams.set_bool ( "image.enable_upscaler", upscale                       )
         genparams.set_int  ( "image.batch_size"     , batch_size                    )
         return (genparams,)
 
