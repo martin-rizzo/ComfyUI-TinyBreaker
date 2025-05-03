@@ -14,9 +14,9 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 import random
 from .genparams import GenParams
 from .._common  import normalize_aspect_ratio,   \
-                       NFACTORS_BY_DETAIL_LEVEL, \
+                       STEPS_NFACTOR_BY_NAME, \
                        SCALES_BY_NAME,           \
-                       UPSCALE_NOISE_BY_LEVEL
+                       EXTRA_NOISE_BY_NAME
 
 
 def genparams_from_prompt(prompt: str, /,*, template: GenParams = None) -> GenParams:
@@ -98,19 +98,21 @@ def genparams_from_prompt_args(args: dict, /,*, template: GenParams = None) -> G
     if isinstance(value, bool):
         genparams.set_bool("image.enable_upscaler", value)
 
-    # --upscale-noise <float>
+    # --upscale-noise <int> | <level>
     # "upscaler.extra_noise"
-    value = _pop_float_or_str(args, "upscale-noise")
-    if isinstance(value, float):
-        genparams.set_float(f"{UP__}extra_noise", value, as_delta=True)
-    elif value in UPSCALE_NOISE_BY_LEVEL:
-        genparams.set_float(f"{UP__}extra_noise", UPSCALE_NOISE_BY_LEVEL[value], as_delta=True)
+    value = _pop_int_or_str(args, "upscale-noise")
+    if isinstance(value, int):
+        genparams.set_float(f"{UP__}extra_noise", value * 0.2, as_delta=True, min=0.0)
+    elif value in EXTRA_NOISE_BY_NAME:
+        genparams.set_float(f"{UP__}extra_noise", EXTRA_NOISE_BY_NAME[value], as_delta=True, min=0.0)
 
-    # --d, --detail-level <level>
+    # --d, --detail-level <int> | <level>
     # "refiner.steps_nfactor"
-    value = _pop_str(args, "d", "detail-level")
-    if value in NFACTORS_BY_DETAIL_LEVEL:
-        genparams.set_int(f"{RE__}steps_nfactor", NFACTORS_BY_DETAIL_LEVEL[value] )
+    value = _pop_int_or_str(args, "d", "detail-level")
+    if isinstance(value, int):
+        genparams.set_int(f"{RE__}steps_nfactor", value)
+    if value in STEPS_NFACTOR_BY_NAME:
+        genparams.set_int(f"{RE__}steps_nfactor", STEPS_NFACTOR_BY_NAME[value] )
 
     # --s, --seed <int> | "random"
     # "base.noise_seed"
@@ -139,11 +141,11 @@ def genparams_from_prompt_args(args: dict, /,*, template: GenParams = None) -> G
     if isinstance(value, str):
         genparams.set_float(f"image.scale", SCALES_BY_NAME[value])
 
-    # --b, --batch <int>
+    # --b, --batch-size <int>
     # "image.batch_size"
-    value = _pop_int_or_str(args, "b", "batch")
+    value = _pop_int_or_str(args, "b", "batch-size")
     if isinstance(value, int):
-        genparams.set_int("image.batch_size", value, as_delta=False)
+        genparams.set_int("image.batch_size", value)
 
     #-- DEPRECATED ------------------------------------------------#
     # --v, --variant <int>

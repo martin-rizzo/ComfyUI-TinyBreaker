@@ -40,7 +40,7 @@ ORIENTATIONS = [
     "landscape",
     "portrait"
 ]
-NFACTORS_BY_DETAIL_LEVEL = {
+STEPS_NFACTOR_BY_NAME = {
     "none"     : -10000,
     "minimal"  : -2,
     "low"      : -1,
@@ -49,7 +49,7 @@ NFACTORS_BY_DETAIL_LEVEL = {
     "veryhigh" : +2,
     "maximum"  : +3,
 }
-UPSCALE_NOISE_BY_LEVEL = {
+EXTRA_NOISE_BY_NAME = {
     "none"    : -10000,
     "minimal" : -0.4,
     "low"     : -0.2,

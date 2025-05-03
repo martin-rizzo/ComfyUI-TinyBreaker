@@ -12,7 +12,7 @@ License : MIT
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 from .core.genparams import GenParams
-from ._common        import NFACTORS_BY_DETAIL_LEVEL, DEFAULT_DETAIL_LEVEL
+from ._common        import STEPS_NFACTOR_BY_NAME, DEFAULT_DETAIL_LEVEL
 
 
 class SetImageDetailsV2:
@@ -52,9 +52,9 @@ class SetImageDetailsV2:
                           detail_level: str,
                           ):
         genparams = genparams.copy()
-        genparams.set_int  ("denoising.refiner.noise_seed"   , image_shift     , as_delta = True      )
-        genparams.set_float("denoising.base.cfg"             , cfg_shift * 0.2 , as_delta = True      )
-        genparams.set_int  ("denoising.refiner.steps_nfactor", NFACTORS_BY_DETAIL_LEVEL[detail_level] )
+        genparams.set_int  ("denoising.refiner.noise_seed"   , image_shift     , as_delta = True   )
+        genparams.set_float("denoising.base.cfg"             , cfg_shift * 0.2 , as_delta = True   )
+        genparams.set_int  ("denoising.refiner.steps_nfactor", STEPS_NFACTOR_BY_NAME[detail_level] )
         return (genparams,)
 
 
@@ -62,5 +62,5 @@ class SetImageDetailsV2:
 
     @staticmethod
     def levels():
-        return list(NFACTORS_BY_DETAIL_LEVEL.keys())
+        return list(STEPS_NFACTOR_BY_NAME.keys())
 

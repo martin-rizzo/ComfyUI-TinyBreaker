@@ -117,34 +117,35 @@ When using the Unified Prompt node:
 
 #### Parameters Supported by the Unified Prompt
 
-| Minor image adjustments                | Description                                                                 |
-|:---------------------------------------|-----------------------------------------------------------------------------|
-| **`--no <text>`**                      | Specifies elements that should *not* appear in the image. (negative prompt) |
-| **`--refine <text>`**                  | Specifies elements that should be refined.                                  |
-| **`--cfg-shift <number>`**             | Modifies the value of the Classifier-Free Guidance (CFG) scale.             |
-| **`--image-shift <number>`**           | Modifies minor image details without altering the overall composition.      |
-| **`--upscale`**                        | Enables the application of the upscaling process to the final image.        |
+| Minor image adjustments                 | Description                                                                 |
+|:----------------------------------------|-----------------------------------------------------------------------------|
+| **`--no <text>`**                       | Specifies elements that should *not* appear in the image. (negative prompt) |
+| **`--refine <text>`**                   | Specifies elements that should be refined.                                  |
+| **`--cfg-shift <number>`**              | Modifies the value of the Classifier-Free Guidance (CFG) scale.             |
+| **`--image-shift <number>`**            | Modifies minor image details without altering the overall composition.      |
+| **`--upscale [on\|off]`**               | Enables the application of the upscaling process to the final image.        |
 
 
-| Major image changes                    | Description                                                                 |
-|:---------------------------------------|-----------------------------------------------------------------------------|
-| **`--seed <number>`**                  | Defines a number for initializing the random generator.                     |
-| **`--aspect <ratio>`**                 | Specifies the aspect ratio of the image (e.g., 16:9, 4:3).                  |
-| **`--landscape`**                      | Forces landscape orientation, (ratio 3:2 by default).                       |
-| **`--portrait`**                       | Forces portrait orientation, (ratio 2:3 by default).                        |
-| **`--medium`**                         | Generates medium-sized images instead of the default large size.            |
+| Major image changes                     | Description                                                                 |
+|:----------------------------------------|-----------------------------------------------------------------------------|
+| **`--seed <number> \| random`**         | Defines a number for initializing the random generator.                     |
+| **`--aspect <ratio>`**                  | Specifies the aspect ratio of the image (e.g., 16:9, 4:3).                  |
+| **`--landscape`**                       | Forces landscape orientation, (ratio 3:2 by default).                       |
+| **`--portrait`**                        | Forces portrait orientation, (ratio 2:3 by default).                        |
+| **`--medium`**                          | Generates medium-sized images instead of the default large size.            |
 
 
-| Extra parameters                       | Description                                                                 |
-|:---------------------------------------|-----------------------------------------------------------------------------|
-| **`--detail-level <level>`**           | Controls the level of detail applied during image refinement.               |
-| **`--batch-size <number>`**            | Specifies the number of images to generate in a single batch.               |
+| Extra parameters                        | Description                                                                 |
+|:----------------------------------------|-----------------------------------------------------------------------------|
+| **`--batch-size <number>`**             | Specifies the number of images to generate in a single batch.               |
+| **`--detail-level <number> \| <lvl>`**  | Controls the level of detail applied during image refinement.               |
+| **`--upscale-noise <number> \| <lvl>`** | Adjusts the extra noise level injected during upscaling.                    |
 
 
 #### Examples
 
-`--no trees, clouds` `--refine cats ears` `--cfg-shift -1` `--image_shift 2`  
-`--seed 42` `--aspect 16:9` `--portrait` `--medium-size`  
+`--no trees, clouds` `--refine cats ears` `--cfg-shift -1` `--image_shift +2`  
+`--seed random` `--aspect 16:9` `--portrait` `--medium`  
 `--detail-level normal` `--batch-size 4`
 
 

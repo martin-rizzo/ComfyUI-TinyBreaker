@@ -41,7 +41,9 @@ const UPSCALE_VALUES = [
     "on", "off" ];
 const DEFAULT_UPSCALE_VALUE = "off";
 
-
+/**
+ * List of upscale noise levels that can be used as value for `--upscale-noise` parameter.
+ */
 const UPSCALE_NOISE_LEVELS = [
     "none", "minimal", "low", "normal", "high", "veryhigh", "maximum" ];
 
@@ -50,21 +52,18 @@ const UPSCALE_NOISE_LEVELS = [
  */
 const DETAIL_LEVELS = [
     "none", "minimal", "low", "normal", "high", "veryhigh", "maximum" ];
-const DEFAULT_DETAIL_LEVEL = "normal";
 
 /**
  * List of image sizes that can be used as parameters within a prompt.
  */
 const IMAGE_SIZES = [
-    "--medium", "--large",
-];
+    "--medium", "--large" ];
 
 /**
  * List of image orientations that can be used as parameters within a prompt.
  */
 const IMAGE_ORIENTATIONS = [
-    "--portrait", "--landscape"
-];
+    "--portrait", "--landscape" ];
 
 /**
  * List of all options that the user can cycle through by pressing CTRL+LEFT/RIGHT
@@ -72,20 +71,20 @@ const IMAGE_ORIENTATIONS = [
 const NAVIGABLE_OPTIONS = [
     "--no", "--refine", "--seed",
     "--cfg-shift", "--image-shift",
-    "--portrait", "--landscape", "--aspect",
+    "--aspect", "--landscape", "--portrait", "--medium",
     "--upscale", "--upscale-noise",
-    "--medium", "--level-detail", "--batch-size"
+    "--batch-size", "--detail-level"
 ];
 
 /**
  * List of options that can be automatically completed when pressing CTRL+RIGHT
  */
 const AUTOCOMPLETE_LIST = [
-    "--no", "--refine",
-    "--cfg-shift", "--image-shift", "--upscale", "--upscale-noise",
-    "--seed", "--aspect",
-    "--portrait", "--landscape", "--medium",
-    "--level-detail", "--batch-size"
+    "--no", "--refine", "--seed",
+    "--cfg-shift", "--image-shift",
+    "--aspect", "--landscape", "--portrait", "--medium",
+    "--upscale", "--upscale-noise",
+    "--batch-size", "--detail-level"
 ];
 
 /*------------------------------- HELPERS -------------------------------*/
@@ -300,11 +299,11 @@ function adjustArgument(name, value, offset) {
         case '--upscale':
             return adjustMultipleChoice(name, value, offset, DEFAULT_UPSCALE_VALUE, {choices:UPSCALE_VALUES, isCircular:true});
         case '--upscale-noise':
-            return adjustFloat(name, value, offset*0.2, 0.0, {min:-2.0, max:2.0, positiveChar:'+', textValues: UPSCALE_NOISE_LEVELS});
+            return adjustInt(name, value, offset, 0, {min:-5, max:5, positiveChar:'+', textValues: UPSCALE_NOISE_LEVELS});
+        case '--detail-level':
+            return adjustInt(name, value, offset, 0, {min:-9, max:9, positiveChar:'+', textValues: DETAIL_LEVELS});
         case '--aspect':
             return adjustMultipleChoice(name, value, offset, DEFAULT_ASPECT_RATIO, {choices:ASPECT_RATIOS, isCircular:true});
-        case '--detail-level':
-            return adjustMultipleChoice(name, value, offset, DEFAULT_DETAIL_LEVEL, {choices:DETAIL_LEVELS});
         case '--batch-size':
             return adjustInt(name, value, offset, 1, {min:1});
     }
