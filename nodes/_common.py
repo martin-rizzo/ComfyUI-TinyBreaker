@@ -154,8 +154,8 @@ def calculate_image_size(resolution  : str | float | int,
     desired_height = desired_width * ratio_denominator / ratio_numerator
 
     # round to nearest block size
-    width  = int( math.ceil(desired_width  * scale / block_size) * block_size )
-    height = int( math.ceil(desired_height * scale / block_size) * block_size )
+    width  = int( round(desired_width  * scale / block_size) * block_size )
+    height = int( round(desired_height * scale / block_size) * block_size )
     return width, height
 
 
