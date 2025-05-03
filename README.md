@@ -198,13 +198,14 @@ These styles are currently in development as I continuously refine them through 
 A reference workflow for editing and testing custom styles is available in the [workflows directory](workflows).
 
 
-## Features : CivitAI/A1111 Image Compatibility
+## Features: CivitAI/A1111 Image Metadata
 
-The __'Save Image'__ node embeds workflow information into the generated image. Additionally, it embeds prompt and parameter information in a format compatible with CivitAI/A1111, this enables:
+The **"Save Image"** node embeds standard ComfyUI workflow metadata into the generated image. More importantly, it also embeds prompt and parameter data in a format compatible with CivitAI and A1111 platforms.
 
-  * CivitAI can read the prompt used to generate the image when uploaded.
-  * A wide range of applications can access the prompt and parameters used for image generation.
-
+This enables:
+- CivitAI to read the prompt used to generate the image when the image is uploaded.
+- A wide range of applications to access the prompt and parameters used for image generation.
+- The possibility to include additional information compatible with A1111, and the opportunity to implement an extension that could regenerate the image directly from there.
 
 ## Acknowledgments
 
