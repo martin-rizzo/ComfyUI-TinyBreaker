@@ -102,6 +102,7 @@ def get_t5_encoder_custom_class(load_device: str | torch.device,
                     intermediate_output          : int          = None,
                     final_layer_norm_intermediate: bool         = False,
                     dtype                        : torch.dtype  = None,
+                    embeds_info                  : list         = [],
                     ) -> tuple[torch.Tensor]:
 
             dtype            = dtype or torch.float32
