@@ -12,18 +12,16 @@ License : MIT
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import torch
-from .core.system                      import logger
-from .core.comfyui_bridge.clip         import CLIP
-from .core.comfyui_bridge.vae          import VAE
-from .core.comfyui_bridge.model        import Model
-from .core.comfyui_bridge.progress_bar import ProgressBar
-from .core.tiny_upscale                import tiny_upscale
-from .core.genparams                   import GenParams
-from .core.denoising_params            import DenoisingParams
-_MODE_UPSCALER = "upscaler"
-_MODE_ENHANCER = "enhancer"
-_MODES = [_MODE_UPSCALER ] # enhancer mode is not available yet
-
+from .core.system                       import logger
+from .core.comfyui_bridge.clip          import CLIP
+from .core.comfyui_bridge.vae           import VAE
+from .core.comfyui_bridge.model         import Model
+from .core.comfyui_bridge.upscale_model import UpscaleModel
+from .core.comfyui_bridge.progress_bar  import ProgressBar
+from .core.tiny_upscale                 import tiny_upscale
+from .core.genparams                    import GenParams
+from .core.denoising_params             import DenoisingParams
+_MODES = [ "simple", "noisy", "upscaler", "enhancer" ]
 
 
 class TinyUpscalerV2:
@@ -36,26 +34,26 @@ class TinyUpscalerV2:
     def INPUT_TYPES(cls):
         return {
         "required": {
-            "image"    :("IMAGE"     ,{"tooltip": "The image to upscale.",
-                                      }),
-            "genparams":("GENPARAMS" ,{"tooltip": "The generation parameters containing the upscaling configuration.",
-                                      }),
-            "model"    :("MODEL"     ,{"tooltip": "The diffusion model used to improve the upscaling quality.",
-                                      }),
-            "clip"     :("CLIP"      ,{"tooltip": "The CLIP used to encode the prompt for the model.",
-                                      }),
-            "vae"      :("VAE"       ,{"tooltip": "The VAE used to encode the image for the model.",
-                                      }),
-            "mode"     :(cls.modes() ,{"tooltip": "The upscaling mode (experimental).",
-                                      }),
-            "scale_by" :("FLOAT"     ,{"tooltip": "The factor by which to scale the image.",
-                                       "default": 3, "min": 1.5, "max": 6.0, "step": 0.5
-                                      }),
+            "genparams"    :("GENPARAMS" ,{"tooltip": "The generation parameters containing the upscaling configuration.",
+                                          }),
+            "image"        :("IMAGE"     ,{"tooltip": "The image to upscale.",
+                                          }),
+            "refiner_model":("MODEL"     ,{"tooltip": "The diffusion model used to improve the upscaling quality.",
+                                          }),
+            "refiner_clip" :("CLIP"      ,{"tooltip": "The CLIP used to encode the prompt for the refiner model.",
+                                          }),
+            "refiner_vae"  :("VAE"       ,{"tooltip": "The VAE used to encode/decode the image for the refiner model.",
+                                          }),
+            "mode"         :(_MODES      ,{"tooltip": "Determines the upscale process\n  simple: basic upscale with no refinement\n  noisy: basic upscale + noise injection\n  upscaler: refined upscale using diffusion \n  enhancer: same as upscaler but without changing the size",
+                                          }),
+            "scale_by"     :("FLOAT"     ,{"tooltip": "The factor by which to scale the image.",
+                                           "default": 3, "min": 1.5, "max": 6.0, "step": 0.1
+                                          }),
             },
         "optional": {
-            "upscale_model":("UPSCALE_MODEL" ,{"tooltip": "The upscaling model to use before denoising.",
+            "upscale_model":("UPSCALE_MODEL" ,{"tooltip": "Optional upscaling model to use before refining. If not provided, the upscaling is done with a basic upscaling algorithm.",
                                               }),
-            }
+            },
         }
 
     #__ FUNCTION __________________________________________
@@ -65,18 +63,18 @@ class TinyUpscalerV2:
     OUTPUT_TOOLTIPS = ("The upscaled image.",)
 
     def upscale_using_genparams(self,
-                                image    : torch.Tensor,
-                                genparams: GenParams,
-                                model    : Model,
-                                vae      : VAE,
-                                clip     : CLIP,
-                                scale_by : float,
-                                mode     : str,
-                                upscale_model = None
+                                genparams    : GenParams,
+                                image        : torch.Tensor,
+                                refiner_model: Model,
+                                refiner_clip : CLIP,
+                                refiner_vae  : VAE,
+                                scale_by     : float,
+                                mode         : str,
+                                upscale_model: UpscaleModel = None
                                 ):
         # get denoising params from the genparams
         denoising = DenoisingParams.from_genparams(genparams, "denoising.upscaler",
-                                                   model_to_sample        = model,
+                                                   model_to_sample        = refiner_model,
                                                    return_none_on_missing = True)
         extra_noise    = genparams.get_float("denoising.upscaler.extra_noise", 0.0)
         enable_upscale = genparams.get_bool("image.enable_upscaler", False)
@@ -85,29 +83,27 @@ class TinyUpscalerV2:
         if not enable_upscale:
             return (image, )
 
-        # the denoising parameters may be missing if they
+        # the upscaler denoising parameters may be missing if they
         # were not correctly configured in the styles or metadata of the model.
         if not denoising:
-            logger.warning("No denoising parameters found. Upscaling will be skipped.")
+            logger.warning("No upscale denoising parameters found. Upscaling will be skipped.")
             return (image, )
 
         # old tinybreaker version cannot handle upscaling because missing VAE;
         # original pixart-sigma model cannot handle upscaling because missing Refiner model
-        if not model or not vae:
-            logger.warning("No refiner model or VAE available. Upscaling will be skipped.")
+        if not refiner_model or not refiner_vae:
+            logger.warning("No refiner model or refiner VAE available. Upscaling will be skipped.")
             return (image, )
 
-        positive, negative = self._encode(clip, denoising.positive, denoising.negative)
+        positive, negative = self._encode(refiner_clip, denoising.positive, denoising.negative)
         tile_size          = 1024
         overlap_percent    = 100
         interpolation_mode = "bilinear"
-        keep_original_size = (mode == _MODE_ENHANCER)
-
 
         # upscale the image
         upscaled_image = tiny_upscale(image,
-                                      model              = model,
-                                      vae                = vae,
+                                      model              = refiner_model,
+                                      vae                = refiner_vae,
                                       positive           = positive,
                                       negative           = negative,
                                       sampler_object     = denoising.sampler_object,
@@ -119,8 +115,8 @@ class TinyUpscalerV2:
                                       upscale_model      = upscale_model,
                                       tile_size          = tile_size,
                                       overlap_percent    = overlap_percent,
+                                      mode               = mode,
                                       interpolation_mode = interpolation_mode,
-                                      keep_original_size = keep_original_size,
                                       discard_last_sigma = False,
                                       progress_bar       = ProgressBar.from_comfyui(100),
                                       )
@@ -128,11 +124,6 @@ class TinyUpscalerV2:
 
 
     #__ internal functions ________________________________
-
-    @staticmethod
-    def modes():
-        return _MODES
-
 
     @staticmethod
     def _encode(clip: CLIP,

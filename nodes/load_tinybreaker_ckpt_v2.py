@@ -38,7 +38,6 @@ class LoadTinyBreakerCkptV2:
         return {
         "required": {
             "ckpt_name"        : (cls.ckpt_names(), {"tooltip": "The TinyBreaker checkpoint to load."}),
-            "upscaler_name"    : (cls.upscalers() , {"tooltip": "The upscale model to use if none is embedded in the checkpoint."}),
             "vae_type"         : (_VAE_TYPES      , {"tooltip": "The VAE type used during generation. The `high_quality` VAE produces better results but takes longer and uses more VRAM.",
                                                      "default": _AUTOMATIC
                                                     }),
@@ -50,8 +49,8 @@ class LoadTinyBreakerCkptV2:
 
     #__ FUNCTION __________________________________________
     FUNCTION = "load_checkpoint"
-    RETURN_TYPES = ("MODEL", "CLIP", "VAE", "TRANSCODER", "MODEL"        , "CLIP"        , "UPSCALE_MODEL", "VAE"         , "GENPARAMS")
-    RETURN_NAMES = ("MODEL", "CLIP", "VAE", "TRANSCODER", "REFINER_MODEL", "REFINER_CLIP", "UPSCALE_MODEL", "UPSCALER_VAE", "METADATA" )
+    RETURN_TYPES = ("MODEL", "CLIP", "VAE", "TRANSCODER", "MODEL"        , "CLIP"        , "VAE"        , "UPSCALE_MODEL", "GENPARAMS")
+    RETURN_NAMES = ("MODEL", "CLIP", "VAE", "TRANSCODER", "REFINER_MODEL", "REFINER_CLIP", "REFINER_VAE", "UPSCALE_MODEL", "METADATA" )
     OUTPUT_TOOLTIPS = ("The model used for denoising latent images.",
                        "The CLIP model used for embedding text prompts."
                        "The VAE model used for encoding and decoding images to and from latent space.",
@@ -62,7 +61,7 @@ class LoadTinyBreakerCkptV2:
                        "Generation parameters extracted from the metadata of the loaded checkpoint.",
                        )
 
-    def load_checkpoint(self, ckpt_name, upscaler_name, vae_type, upscaler_vae_type):
+    def load_checkpoint(self, ckpt_name, vae_type, upscaler_vae_type):
 
         # load checkpoint and metadata
         ckpt_full_path = TINYBREAKER_CHECKPOINTS_DIR.get_full_path_or_raise(ckpt_name)
@@ -87,13 +86,14 @@ class LoadTinyBreakerCkptV2:
                 update_state_dict( state_dict, "first_stage_model", hq_vae_state_dict)
 
             model         =      Model.from_state_dict( state_dict, prefix="base.diffusion_model"   , resolution=1024   )
+            clip          =       None
+            vae           =        VAE.from_state_dict( state_dict, prefix="first_stage_model"      , filename=ckpt_name)
             transcoder    = Transcoder.from_state_dict( state_dict, prefix="transcoder"             , filename=ckpt_name)
             refiner_model =      Model.from_state_dict( state_dict, prefix="refiner.diffusion_model")
             refiner_clip  =       CLIP.from_state_dict( state_dict, prefix="refiner.conditioner"    , clip_type="stable_diffusion")
-            vae           =        VAE.from_state_dict( state_dict, prefix="first_stage_model"      , filename=ckpt_name)
+            refiner_vae   =       None
             upscale_model =       None
-            upscale_vae   =       None
-            return (model, None, vae, transcoder, refiner_model, refiner_clip, upscale_model, upscale_vae, metadata)
+            return (model, clip, vae, transcoder, refiner_model, refiner_clip, refiner_vae, upscale_model, metadata)
 
 
         if model_type == "TinyBreaker.prototype1":
@@ -111,16 +111,14 @@ class LoadTinyBreakerCkptV2:
                 update_state_dict( state_dict, "refiner.first_stage_model", hq_vae_state_dict)
 
             model          =        Model.from_state_dict( state_dict, prefix="base.diffusion_model"     , resolution=1024   )
+            clip           =         None
+            vae            =          VAE.from_state_dict( state_dict, prefix="first_stage_model"        , filename=ckpt_name)
             transcoder     =   Transcoder.from_state_dict( state_dict, prefix="transcoder"               , filename=ckpt_name)
             refiner_model  =        Model.from_state_dict( state_dict, prefix="refiner.diffusion_model")
             refiner_clip   =         CLIP.from_state_dict( state_dict, prefix="refiner.conditioner"      , clip_type="stable_diffusion")
-            vae            =          VAE.from_state_dict( state_dict, prefix="first_stage_model"        , filename=ckpt_name)
+            refiner_vae    =          VAE.from_state_dict( state_dict, prefix="refiner.first_stage_model", filename=ckpt_name)
             upscale_model  = UpscaleModel.from_state_dict( state_dict, prefix="upscale_model")
-            upscale_vae    =          VAE.from_state_dict( state_dict, prefix="refiner.first_stage_model", filename=ckpt_name)
-            if upscale_model is None:
-                state_dict = UPSCALE_MODELS_DIR.load_state_dict_or_raise(upscaler_name)
-                upscale_model = UpscaleModel.from_state_dict( state_dict )
-            return (model, None, vae, transcoder, refiner_model, refiner_clip, upscale_model, upscale_vae, metadata)
+            return (model, clip, vae, transcoder, refiner_model, refiner_clip, refiner_vae, upscale_model, metadata)
 
 
     #__ internal functions ________________________________

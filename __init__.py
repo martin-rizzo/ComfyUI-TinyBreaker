@@ -152,6 +152,8 @@ _comfy_import_node(LoadAnyVAE)
 from .nodes.load_partial_vae                        import LoadPartialVAE
 _comfy_import_node(LoadPartialVAE)
 
+from .nodes.upscale_model_fallback_loader           import UpscaleModelFallbackLoader
+_comfy_import_node(UpscaleModelFallbackLoader)
 
 
 # TinyBreaker/latent

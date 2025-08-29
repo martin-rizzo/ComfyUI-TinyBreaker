@@ -37,13 +37,15 @@ def tiny_upscale(image              : torch.Tensor,
                  upscale_model             =  None,
                  tile_size          : int  =  1024,
                  overlap_percent    : int  =   100,
-                 interpolation_mode : str  = "bilinear", # "nearest"
-                 keep_original_size : bool = False,
+                 mode               : str  = "upscaler", # "simple", "noisy", "upscaler", "enhancer"
+                 interpolation_mode : str  = "bilinear", # "bilinear", "nearest"
                  discard_last_sigma : bool = False,
                  vae_tile_size      : int  =   512,
                  vae_overlap_percent: int  =   100,
                  progress_bar       : ProgressBar = None,
                  ):
+    assert( mode == "upscaler" or mode == "enhancer" or mode == "preview" )
+    assert( interpolation_mode == "bilinear" or interpolation_mode == "nearest" )
 
     image = normalize_images(image)
     _, image_height, image_width, _ = image.shape
@@ -61,6 +63,12 @@ def tiny_upscale(image              : torch.Tensor,
                                     size = (upscaled_width, upscaled_height),
                                     mode = interpolation_mode).transpose(1,-1)
 
+    # if simple mode is requested then the refinement will be skipped
+    if mode == "simple":
+        return upscaled_image
+
+    #-- refination ------------------------------------------------------------
+
     # encode the image into latent space
     upscaled_latent = tiny_encode(upscaled_image,
                                   vae          = vae,
@@ -73,44 +81,46 @@ def tiny_upscale(image              : torch.Tensor,
         torch.manual_seed(noise_seed+100)
         upscaled_latent += torch.randn_like(upscaled_latent) * extra_noise
 
+    # if the mode is not "noisy" then the image will be denoised
+    if mode != "noisy":
 
-    number_of_steps = len(sigmas)-1
-    progress_step   = progress_bar.total / number_of_steps
-    for step in range(number_of_steps):
-        progress_range_min = step * progress_step
-        progress_range_max = progress_range_min + progress_step
+        number_of_steps = len(sigmas)-1
+        progress_step   = progress_bar.total / number_of_steps
+        for step in range(number_of_steps):
+            progress_range_min = step * progress_step
+            progress_range_max = progress_range_min + progress_step
 
-        # lambda function that creates a refined tile from the latent image
-        #     latent       : the latent image where the tile will be extracted from
-        #     x, y         : the coordinates of the tile
-        #     width, height: the size of the tile
-        create_refined_tile = lambda latent, x, y, width, height: \
-            _create_refined_tile(latent, x, y, width, height,
-                                 model          = model,
-                                 positive       = positive,
-                                 negative       = negative,
-                                 sampler_object = sampler_object,
-                                 sigmas         = torch.Tensor( [sigmas[step], sigmas[step+1]] ),
-                                 cfg            = cfg,
-                                 add_noise      = (step==0),
-                                 noise_seed     = noise_seed,
-                                 )
+            # lambda function that creates a refined tile from the latent image
+            #     latent       : the latent image where the tile will be extracted from
+            #     x, y         : the coordinates of the tile
+            #     width, height: the size of the tile
+            create_refined_tile = lambda latent, x, y, width, height: \
+                _create_refined_tile(latent, x, y, width, height,
+                                    model          = model,
+                                    positive       = positive,
+                                    negative       = negative,
+                                    sampler_object = sampler_object,
+                                    sigmas         = torch.Tensor( [sigmas[step], sigmas[step+1]] ),
+                                    cfg            = cfg,
+                                    add_noise      = (step==0),
+                                    noise_seed     = noise_seed,
+                                    )
 
-        # process the latent image in tiles using the refinement function,
-        # alternating between top-left to bottom-right and
-        # bottom-right to top-left directions
-        if step % 2 == 0:
-            apply_tiles_tlbr(upscaled_latent,
-                             create_tile_func = create_refined_tile,
-                             tile_size        = int(tile_size//8),
-                             progress_bar     = ProgressBar( 100, parent=(progress_bar,progress_range_min,progress_range_max) )
-                             )
-        else:
-            apply_tiles_brtl(upscaled_latent,
-                             create_tile_func = create_refined_tile,
-                             tile_size        = int(tile_size//8),
-                             progress_bar     = ProgressBar( 100, parent=(progress_bar,progress_range_min,progress_range_max) )
-                             )
+            # process the latent image in tiles using the refinement function,
+            # alternating between top-left to bottom-right and
+            # bottom-right to top-left directions
+            if step % 2 == 0:
+                apply_tiles_tlbr(upscaled_latent,
+                                create_tile_func = create_refined_tile,
+                                tile_size        = int(tile_size//8),
+                                progress_bar     = ProgressBar( 100, parent=(progress_bar,progress_range_min,progress_range_max) )
+                                )
+            else:
+                apply_tiles_brtl(upscaled_latent,
+                                create_tile_func = create_refined_tile,
+                                tile_size        = int(tile_size//8),
+                                progress_bar     = ProgressBar( 100, parent=(progress_bar,progress_range_min,progress_range_max) )
+                                )
 
 
     upscaled_image = tiny_decode(upscaled_latent,
@@ -119,14 +129,12 @@ def tiny_upscale(image              : torch.Tensor,
                                  tile_padding = (vae_tile_size*vae_overlap_percent//400),
                                  )
 
-    # if requested, downscale the result to match the original image size
-    # otherwise, return the upscaled result as is
-    if keep_original_size:
-        return F.interpolate(upscaled_image.transpose(1,-1),
-                             size = (image_width, image_height),
-                             mode = "nearest").transpose(1,-1)
-    else:
-        return upscaled_image
+    # the enhancer mode downscales the result to match the original image size
+    if mode == "enhancer":
+        upscaled_image = F.interpolate(upscaled_image.transpose(1,-1),
+                                       size = (image_width, image_height),
+                                       mode = "nearest").transpose(1,-1)
+    return upscaled_image
 
 
 def _create_refined_tile(latent: torch.Tensor,
