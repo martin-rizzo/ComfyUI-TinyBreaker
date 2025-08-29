@@ -12,14 +12,14 @@ License : MIT
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import torch
-from .core.system                      import logger
-from .core.comfyui_bridge.clip         import CLIP
-from .core.comfyui_bridge.vae          import VAE
-from .core.comfyui_bridge.model        import Model
-from .core.comfyui_bridge.progress_bar import ProgressBar
-from .core.tiny_upscale                import tiny_upscale
-from .core.genparams                   import GenParams
-from .core.denoising_params            import DenoisingParams
+from ..core.system                      import logger
+from ..core.comfyui_bridge.clip         import CLIP
+from ..core.comfyui_bridge.vae          import VAE
+from ..core.comfyui_bridge.model        import Model
+from ..core.comfyui_bridge.progress_bar import ProgressBar
+from ..core.tiny_upscale                import tiny_upscale
+from ..core.genparams                   import GenParams
+from ..core.denoising_params            import DenoisingParams
 _MODE_UPSCALER = "upscaler"
 _MODE_ENHANCER = "enhancer"
 _MODES = [_MODE_UPSCALER ] # enhancer mode is not available yet

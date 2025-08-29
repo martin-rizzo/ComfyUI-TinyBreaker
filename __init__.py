@@ -103,6 +103,9 @@ _CATEGORY = "TinyBreaker/genparams"
 from .nodes.select_style                            import SelectStyle
 _comfy_import_node(SelectStyle)
 
+from .nodes.select_custom_style                     import SelectCustomStyle
+_comfy_import_node(SelectCustomStyle)
+
 from .nodes.set_base_seed                           import SetBaseSeed
 _comfy_import_node(SetBaseSeed)
 
@@ -124,6 +127,11 @@ _comfy_import_node(UnpackFloat)
 from .nodes.unpack_sampler_params                   import UpackSamplerParams
 _comfy_import_node(UpackSamplerParams)
 
+from .nodes.custom_style                            import CustomStyle
+_comfy_import_node(CustomStyle)
+
+from .nodes.custom_upscaler_config                  import CustomUpscalerConfig
+_comfy_import_node(CustomUpscalerConfig)
 
 
 # TinyBreakers/loaders
@@ -180,8 +188,8 @@ _comfy_import_node(TranscodeLatentTwoSteps)
 # TinyBreaker/upscaler
 _CATEGORY = "TinyBreaker/upscaler"
 
-from .nodes.tiny_upscaler                           import TinyUpscaler
-_comfy_import_node(TinyUpscaler)
+from .nodes.tiny_upscaler_v2                        import TinyUpscalerV2
+_comfy_import_node(TinyUpscalerV2)
 
 from .nodes.tiny_upscaler_advanced                  import TinyUpscalerAdvanced
 _comfy_import_node(TinyUpscalerAdvanced)
@@ -199,6 +207,9 @@ _comfy_import_node(GenParamsDebugLogger)
 # TinyBreaker/__deprecated
 _CATEGORY   = "TinyBreaker/__deprecated"
 _DEPRECATED = True
+
+from .nodes.deprecated_nodes.tiny_upscaler                      import TinyUpscaler
+_comfy_import_node(TinyUpscaler)
 
 from .nodes.deprecated_nodes.load_tinybreaker_checkpoint        import LoadTinyBreakerCheckpoint
 _comfy_import_node(LoadTinyBreakerCheckpoint)

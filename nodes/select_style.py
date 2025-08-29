@@ -69,13 +69,13 @@ class SelectStyle:
             version = _LAST_VERSION
 
         # load the pre-defined styles in `genparams` using the keys "styles.<style_name>"
-        predefined_styles = _PREDEFINED_STYLES_BY_VERSION[version]
-        genparams.update( predefined_styles.to_genparams(prefix_to_add="styles") )
+        predefined_styles = _PREDEFINED_STYLES_BY_VERSION[version].to_genparams(prefix_to_add="styles")
+        genparams.update( predefined_styles, preserve_values=True )
 
         # try to load the user styles from string (if any)
-        custom_styles = Styles.from_string(custom_definitions) if custom_definitions else None
-        if custom_styles:
-            genparams.update( custom_styles.to_genparams(prefix_to_add="styles") )
+        if custom_definitions:
+            custom_styles = Styles.from_string(custom_definitions).to_genparams(prefix_to_add="styles")
+            genparams.update( custom_styles )
 
         # apply the style (overwritting all denoising values)
         apply_style( genparams, style_name )

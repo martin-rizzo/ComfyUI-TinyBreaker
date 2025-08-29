@@ -18,7 +18,7 @@ from .tiles                         import get_tile, apply_tiles_tlbr, apply_til
 from .tiny_encode_decode            import tiny_encode, tiny_decode
 from .comfyui_bridge.model          import Model
 from .comfyui_bridge.vae            import VAE
-from .comfyui_bridge.helpers.images import normalize_images, refine_latent_image
+from .comfyui_bridge.helpers.images import normalize_images, refine_latent_image, upscale_with_model
 from .comfyui_bridge.progress_bar   import ProgressBar
 
 
@@ -34,6 +34,7 @@ def tiny_upscale(image              : torch.Tensor,
                  noise_seed         : int,
                  extra_noise        : float,
                  upscale_by         : float,
+                 upscale_model             =  None,
                  tile_size          : int  =  1024,
                  overlap_percent    : int  =   100,
                  interpolation_mode : str  = "bilinear", # "nearest"
@@ -48,6 +49,10 @@ def tiny_upscale(image              : torch.Tensor,
     _, image_height, image_width, _ = image.shape
     if discard_last_sigma:
         sigmas = sigmas[:-1]
+
+    # if a model for upscaling was provided then use it as a pre-processing step.
+    if( upscale_model ):
+        image = upscale_with_model(image, upscale_model)
 
     # upscale the image using simple interpolation
     upscaled_width  = int( round(image_width  * upscale_by) )

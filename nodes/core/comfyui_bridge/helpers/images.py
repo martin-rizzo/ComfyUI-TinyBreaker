@@ -13,6 +13,9 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import torch
 import comfy.sample
+import comfy.model_management
+import comfy.utils
+from spandrel import ImageModelDescriptor
 from ..model import Model
 
 
@@ -54,6 +57,54 @@ def normalize_images(images: torch.Tensor,
     return images
 
 
+def upscale_with_model(image        : torch.Tensor,
+                       upscale_model: ImageModelDescriptor
+                       ) -> torch.Tensor:
+        """
+        Upscales an image (or a batch of images) using a specified upscale model
+
+        The scale model should be a valid ImageModelDescriptor object loaded
+        with the "Load Upscale Model" native node.
+
+        Args:
+            image (torch.Tensor): The image or batch of images to be upscaled.
+            upscale_model (ImageModelDescriptor): The upscale model (e.g. ESRGAN)
+        Returns:
+            The upscaled image (or batch of images).
+        """
+        # The following code is based on the code from "ImageUpscaleWithModel" comfyui node
+        # https://github.com/comfyanonymous/ComfyUI/blob/v0.3.52/comfy_extras/nodes_upscale_model.py#L50
+
+        device = comfy.model_management.get_torch_device()
+
+        memory_required = comfy.model_management.module_size(upscale_model.model)
+        memory_required += (512 * 512 * 3) * image.element_size() * max(upscale_model.scale, 1.0) * 384.0 #The 384.0 is an estimate of how much some of these models take, TODO: make it more accurate
+        memory_required += image.nelement() * image.element_size()
+        comfy.model_management.free_memory(memory_required, device)
+
+        upscale_model.to(device)
+        in_img = image.movedim(-1,-3).to(device)
+
+        tile = 512
+        overlap = 32
+
+        oom = True
+        while oom:
+            try:
+                steps = in_img.shape[0] * comfy.utils.get_tiled_scale_steps(in_img.shape[3], in_img.shape[2], tile_x=tile, tile_y=tile, overlap=overlap)
+                pbar = comfy.utils.ProgressBar(steps)
+                s = comfy.utils.tiled_scale(in_img, lambda a: upscale_model(a), tile_x=tile, tile_y=tile, overlap=overlap, upscale_amount=upscale_model.scale, pbar=pbar)
+                oom = False
+            except comfy.model_management.OOM_EXCEPTION as e:
+                tile //= 2
+                if tile < 128:
+                    raise e
+
+        upscale_model.to("cpu")
+        s = torch.clamp(s.movedim(-3,-1), min=0, max=1.0)
+        return s
+
+
 def refine_latent_image(latent: torch.Tensor,
                         /,*,
                         model     : Model,
@@ -83,7 +134,6 @@ def refine_latent_image(latent: torch.Tensor,
                                       callback     = None,
                                       disable_pbar = True,
                                       seed         = noise_seed)
-
 
 
 

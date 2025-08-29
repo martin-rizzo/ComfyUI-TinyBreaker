@@ -215,9 +215,27 @@ def apply_style(genparams: GenParams, style_name:str) -> None:
         None, the GenParams object is modified in place.
     """
     count = genparams.copy_parameters( target="denoising", source=f"styles.{style_name}", valid_subkeys=["base", "refiner", "upscaler"])
-    if count > 0:
-        genparams.set_str("user.style", style_name)
+    if count == 0:
+        return
 
+    # if the style include an upscaler by name,
+    # then copy the complete upscaler definition into "denoising.upscaler"
+    upscaler_name = genparams.get_str("denoising.upscaler.name")
+    if upscaler_name:
+        genparams.copy_parameters( target="denoising.upscaler", source=f"upscalers.{upscaler_name}")
+        genparams.pop("denoising.upscaler.name")
+
+    # since the style was applied successfully,
+    # store its name in the "user.style" key
+    genparams.set_str("user.style", style_name)
+
+
+# una funcion para determinar si genparams incluye el estilo "style_name".
+def has_style(genparams: GenParams, style_name:str) -> bool:
+    """
+    Checks if the GenParams object includes the specified style.
+    """
+    return genparams.has_prefixed_keys(f"styles.{style_name}")
 
 
 #============================ INTERNAL HELPERS =============================#
