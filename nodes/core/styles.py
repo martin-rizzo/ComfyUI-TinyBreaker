@@ -13,8 +13,6 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 import os
 import configparser
-from .genparams import GenParams
-
 
 class Styles:
     """
@@ -89,9 +87,22 @@ class Styles:
         return cls(merged_styles)
 
 
+    @classmethod
+    def from_single_style(cls, style_name: str, style_raw_kv_params: dict) -> "Styles":
+        """
+        Returns a new instance of Styles populated with a single style defined by the given name and parameters.
+        Args:
+            style_name         : The name of the style to be added.
+            style_raw_kv_params: A dictionary containing key-value pairs for the style parameters.
+        """
+        styles = cls()
+        styles.add_style(style_name, style_raw_kv_params)
+        return styles
+
+
     def add_style(self,
                   style_name         : str,
-                  style_raw_kv_params: dict[str,str],
+                  style_raw_kv_params: dict,
                   /,*,
                   template_name: str = None
                   ):
@@ -102,6 +113,7 @@ class Styles:
             style_raw_kv_params     : A dictionary containing key-value pairs for the style parameters.
             template_name (optional): The name of an existing style to use as a template.
         """
+        from .genparams import GenParams
         if style_name in self.styles:
             raise ValueError(f"Style '{style_name}' already exists.")
 
@@ -139,8 +151,8 @@ class Styles:
 
 
     def get_genparams_for_style(self, style_name):
-        """Returns the generation parameters for a given style or an empty `GenParams` if the style is not found."""
-        return self.styles.get(style_name) or GenParams()
+        """Returns the generation parameters for a given style or None if not found."""
+        return self.styles.get(style_name)
 
 
     def names(self):
@@ -153,25 +165,6 @@ class Styles:
         To obtain a static list of style names, use `list( styles.names() )`.
         """
         return self.styles.keys()
-
-
-    def to_genparams(self, *,
-                     prefix_to_add: str = ""
-                     ) -> GenParams:
-        """
-        Converts all styles in this object into a single `GenParams` instance.
-        Args:
-            prefix_to_add (str): A string to be prepended to each style name.
-        Returns:
-            A GenParams instance containing all styles.
-        """
-        if prefix_to_add and not prefix_to_add.endswith('.'):
-            prefix_to_add += '.'
-
-        output = GenParams()
-        for style_name, genparams in self.styles.items():
-            output.update( genparams, prefix_to_add = f"{prefix_to_add}{style_name}")
-        return output
 
 
 #---------------------------------------------------------------------------#

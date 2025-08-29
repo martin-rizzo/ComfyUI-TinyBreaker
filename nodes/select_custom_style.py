@@ -13,7 +13,6 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 from .core.styles                import Styles, load_all_styles_versions
 from .core.genparams             import GenParams
-from .core.genparams_from_prompt import apply_style, has_style
 from .core.directories           import PROJECT_DIR
 
 
@@ -35,8 +34,8 @@ class SelectCustomStyle:
         "required": {
             "genparams"   :("GENPARAMS",{"tooltip": "The generation parameters to be updated."
                                         }),
-            "custom_style":("INT"      ,{"tooltip": "The index of the custom style to be used.",
-                                         "default": 1, "min": 1, "max": 32
+            "custom_style_index":("INT",{"tooltip": "The index of the custom style to be used.",
+                                         "default": 1, "min": 1, "max": 9
                                         }),
             },
         }
@@ -48,23 +47,23 @@ class SelectCustomStyle:
     OUTPUT_TOOLTIPS = ("The generation parameters updated with the selected custom style. (you can use this output to chain other genparams nodes)",)
 
     def select_style(self,
-                     genparams   : GenParams,
-                     custom_style: int,
+                     genparams         : GenParams,
+                     custom_style_index: int,
                      ):
+        style_name = f"CUSTOM{custom_style_index}"
         genparams  = genparams.copy()
-        style_name = f"CUSTOM{custom_style}"
 
         # if the "CUSTOM1" style does not exist, then initialize it with the PREDEFINED style
-        if not has_style( genparams, "CUSTOM1" ):
+        if not genparams.has_style( "CUSTOM1" ):
             # TODO: implement a function to load the pre-defined style in `genparams`
             pass
 
         # if the selected style by the user does not exist, then use "CUSTOM1"
-        if not has_style( genparams, style_name ):
+        if not genparams.has_style( style_name ):
             style_name = "CUSTOM1"
 
         # apply the style (overwritting all denoising values)
-        apply_style( genparams, style_name )
+        genparams.apply_style( style_name )
         return (genparams,)
 
 

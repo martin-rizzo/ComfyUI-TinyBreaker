@@ -14,6 +14,7 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 import os
 import json
 import struct
+from  .styles import Styles
 from datetime import datetime
 _PLACEHOLDER = "$@"
 
@@ -75,6 +76,8 @@ class GenParams(dict):
       - `from_raw_kv_params(cls, raw_kv_params)`: Creates a new GenParams object from the given raw parameters.
       - `from_safetensors_metadata(cls, file_path)`: Creates a new GenParams object from the given safetensors metadata.
     """
+
+    #=========================== FACTORY METHODS ===========================#
 
     @classmethod
     def from_raw_kv_params(cls, raw_kv_params: dict, /) -> "GenParams":
@@ -161,8 +164,11 @@ class GenParams(dict):
         metadata = header.get("__metadata__", {})
         metadata["file.name"] = os.path.basename(file_path)
         metadata["file.date"] = file_date.strftime("%Y-%m-%d")
+        del metadata["modelspec.thumbnail"] # remove thumbnail because it's too large
         return cls(metadata)
 
+
+    #=========================== PARAMETER ACCESS ===========================#
 
     def set_str(self, key: str, new_value: str, /, use_template: bool = False) -> None:
         """
@@ -271,17 +277,70 @@ class GenParams(dict):
             return value.lower() == "true"
         return default
 
+    #================================ STYLES ================================#
 
-    def get_all_prefixed_keys(self, prefix: str) -> list[str]:
+    def add_styles(self, styles: Styles, /,*, styles_prefix="styles") -> "GenParams":
         """
-        Returns a list of all keys with the given prefix in the GenParams object.
-        If no keys are found, an empty list is returned.
-        """
-        if not isinstance(prefix,str):
-            return []
-        prefix = normalize_prefix(prefix)
-        return [key for key in self.keys() if key.startswith(prefix)]
+        Adds all the styles defined in `styles` to this GenParams.
 
+        The object is modified in-place. The new styles are added under the key
+        "styles.<style_name>", and can then be selected with `apply_style(name)`.
+
+        Returns:
+            The object itself for chaining of calls.
+        """
+        if not isinstance(styles, Styles):
+            raise TypeError(f"Expected Styles, got {type(styles)}")
+
+        styles_prefix = normalize_prefix(styles_prefix)
+        for style_name in styles.names():
+            style_params = styles.get_genparams_for_style(style_name)
+            if style_params is not None:
+                self.update( style_params, prefix_to_add = f"{styles_prefix}{style_name}")
+
+        return self
+
+
+    def apply_style(self, style_name:str, /,*, styles_prefix="styles") -> None:
+        """
+        Applies a predefined style to the GenParams.
+
+        The specified style must be defined under the key "styles.<style_name>".
+        This function copies the 'base', 'refiner', and 'upscaler' subkeys from
+        the style definition to the root level of the GenParams under the key
+        "denoising".
+
+        Args:
+            style_name (str): The name of the style to apply.
+
+        Returns:
+            None, the object is modified in place.
+        """
+        styles_prefix = normalize_prefix(styles_prefix)
+        count = self.copy_parameters( target="denoising", source=f"{styles_prefix}{style_name}", valid_subkeys=["base", "refiner", "upscaler"])
+        if count == 0:
+            return
+
+        # if the style include an upscaler by name,
+        # then copy the complete upscaler definition into "denoising.upscaler"
+        upscaler_name = self.get_str("denoising.upscaler.name")
+        if upscaler_name:
+            self.copy_parameters( target="denoising.upscaler", source=f"upscalers.{upscaler_name}")
+            self.pop("denoising.upscaler.name")
+
+        # since the style was applied successfully,
+        # store its name in the "user.style" key
+        self.set_str("user.style", style_name)
+
+
+    def has_style(self, style_name:str) -> bool:
+        """
+        Checks if the GenParams object includes the specified style.
+        """
+        return self.has_prefixed_keys(f"styles.{style_name}")
+
+
+    #============================ KEYS BY PREFIX ============================#
 
     def has_prefixed_keys(self, prefix: str) -> bool:
         """
@@ -294,10 +353,18 @@ class GenParams(dict):
         return any(key.startswith(prefix) for key in self.keys())
 
 
-    def copy(self) -> "GenParams":
-        """Returns a copy of the GenParams object."""
-        return GenParams(self)
+    def get_all_prefixed_keys(self, prefix: str) -> list[str]:
+        """
+        Returns a list of all keys with the given prefix in the GenParams object.
+        If no keys are found, an empty list is returned.
+        """
+        if not isinstance(prefix,str):
+            return []
+        prefix = normalize_prefix(prefix)
+        return [key for key in self.keys() if key.startswith(prefix)]
 
+
+    #======================== PARAMETER MANIPULATION ========================#
 
     def update(self,
                other: "GenParams",
@@ -372,6 +439,13 @@ class GenParams(dict):
         self.update(new_parameters)
         return len(new_parameters)
 
+
+    def copy(self) -> "GenParams":
+        """Returns a copy of the GenParams object."""
+        return GenParams(self)
+
+
+    #============================== DEBUGGING ===============================#
 
     def __str__(self):
         """Return a string representation of the GenParams object."""

@@ -13,7 +13,6 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 """
 from .core.styles                import Styles, load_all_styles_versions
 from .core.genparams             import GenParams
-from .core.genparams_from_prompt import apply_style
 from .core.directories           import PROJECT_DIR
 
 
@@ -69,16 +68,16 @@ class SelectStyle:
             version = _LAST_VERSION
 
         # load the pre-defined styles in `genparams` using the keys "styles.<style_name>"
-        predefined_styles = _PREDEFINED_STYLES_BY_VERSION[version].to_genparams(prefix_to_add="styles")
-        genparams.update( predefined_styles, preserve_values=True )
+        predefined_styles = _PREDEFINED_STYLES_BY_VERSION[version]
+        genparams.add_styles( predefined_styles )
 
         # try to load the user styles from string (if any)
         if custom_definitions:
-            custom_styles = Styles.from_string(custom_definitions).to_genparams(prefix_to_add="styles")
-            genparams.update( custom_styles )
+            custom_styles = Styles.from_string(custom_definitions)
+            genparams.add_styles( custom_styles )
 
         # apply the style (overwritting all denoising values)
-        apply_style( genparams, style_name )
+        genparams.apply_style( style_name )
 
         return (genparams,)
 

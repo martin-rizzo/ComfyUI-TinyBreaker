@@ -57,7 +57,7 @@ def genparams_from_prompt_args(args: dict, /,*, template: GenParams = None) -> G
     # apply the style (overwritting all denoising values)
     style_name = _pop_str(args, "style")
     if style_name:
-        apply_style(genparams, style_name)
+        genparams.apply_style(style_name)
 
     # --prompt <text>
     # "base.prompt", << "refiner.prompt" >>
@@ -197,45 +197,6 @@ def join_prompt_and_args(prompt: str, args: list[str]) -> str:
         The concatenated string containing the prompt and arguments.
     """
     return prompt + "--" + "--".join(args) if args else prompt
-
-
-def apply_style(genparams: GenParams, style_name:str) -> None:
-    """
-    Applies a predefined style to the GenParams object.
-
-    The specified style must be defined within the GenParams under the key "styles.<style_name>".
-    This function copies the 'base', 'refiner', and 'upscaler' subkeys from the style definition
-    to the root level of the GenParams under the key "denoising".
-
-    Args:
-        genparams (GenParams): The GenParams object to modify.
-        style_name      (str): The name of the style to apply.
-
-    Returns:
-        None, the GenParams object is modified in place.
-    """
-    count = genparams.copy_parameters( target="denoising", source=f"styles.{style_name}", valid_subkeys=["base", "refiner", "upscaler"])
-    if count == 0:
-        return
-
-    # if the style include an upscaler by name,
-    # then copy the complete upscaler definition into "denoising.upscaler"
-    upscaler_name = genparams.get_str("denoising.upscaler.name")
-    if upscaler_name:
-        genparams.copy_parameters( target="denoising.upscaler", source=f"upscalers.{upscaler_name}")
-        genparams.pop("denoising.upscaler.name")
-
-    # since the style was applied successfully,
-    # store its name in the "user.style" key
-    genparams.set_str("user.style", style_name)
-
-
-# una funcion para determinar si genparams incluye el estilo "style_name".
-def has_style(genparams: GenParams, style_name:str) -> bool:
-    """
-    Checks if the GenParams object includes the specified style.
-    """
-    return genparams.has_prefixed_keys(f"styles.{style_name}")
 
 
 #============================ INTERNAL HELPERS =============================#

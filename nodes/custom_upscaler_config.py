@@ -92,14 +92,12 @@ class CustomUpscalerConfig:
             "extra_noise" : extra_noise,
         }
 
-        custom_upscaler = Styles()
-        custom_upscaler.add_style(upscaler_name, upscaler_raw_kv_params)
-        # custom_upscaler = Styles(upscaler_name, upscaler_raw_kv_params)
+        # create a style-set with a single style (the upscaler configuration)
+        custom_upscaler = Styles.from_single_style(upscaler_name, upscaler_raw_kv_params)
 
         # update the available upscaler-configs with the new one
         # (the available upscaler-configs are found in genparams under the prefix "upscalers.*")
-        genparams = genparams.copy()
-        genparams.update( custom_upscaler.to_genparams(prefix_to_add="upscalers") )
+        genparams = genparams.copy().add_styles( custom_upscaler, styles_prefix="upscalers" )
         return (genparams,)
 
 
