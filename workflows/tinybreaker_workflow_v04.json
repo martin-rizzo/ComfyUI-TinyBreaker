@@ -1,0 +1,2030 @@
+{
+  "id": "a3347741-680b-4ece-905f-ef64330d42f6",
+  "revision": 0,
+  "last_node_id": 348,
+  "last_link_id": 851,
+  "nodes": [
+    {
+      "id": 240,
+      "type": "Reroute",
+      "pos": [
+        2060,
+        230
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 26,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 849
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "GENPARAMS",
+          "slot_index": 0,
+          "links": [
+            684,
+            685,
+            686
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 285,
+      "type": "Reroute",
+      "pos": [
+        2780,
+        710
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 827
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "VAE",
+          "links": [
+            712
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 286,
+      "type": "Reroute",
+      "pos": [
+        2780,
+        740
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 829
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "MODEL",
+          "links": [
+            717
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 259,
+      "type": "Reroute",
+      "pos": [
+        2980,
+        740
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 11,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 717
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "MODEL",
+          "slot_index": 0,
+          "links": [
+            701,
+            803
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 287,
+      "type": "Reroute",
+      "pos": [
+        2780,
+        770
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 831
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "CLIP",
+          "links": [
+            715
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 253,
+      "type": "Reroute",
+      "pos": [
+        2980,
+        770
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 12,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 715
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "CLIP",
+          "slot_index": 0,
+          "links": [
+            702,
+            804
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 236,
+      "type": "Reroute",
+      "pos": [
+        2980,
+        710
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 712
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "VAE",
+          "slot_index": 0,
+          "links": [
+            725,
+            759
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 300,
+      "type": "TinyDualSampler //TinyBreaker",
+      "pos": [
+        2770,
+        290
+      ],
+      "size": [
+        290,
+        410
+      ],
+      "flags": {},
+      "order": 31,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "latent_input",
+          "type": "LATENT",
+          "link": 730
+        },
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 731
+        },
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 826
+        },
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 846
+        },
+        {
+          "name": "transcoder",
+          "type": "TRANSCODER",
+          "link": 828
+        },
+        {
+          "name": "refiner_model",
+          "type": "MODEL",
+          "link": 830
+        },
+        {
+          "name": "refiner_clip",
+          "type": "CLIP",
+          "link": 832
+        }
+      ],
+      "outputs": [
+        {
+          "name": "latent_output",
+          "type": "LATENT",
+          "slot_index": 0,
+          "links": [
+            758
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "TinyDualSampler //TinyBreaker",
+        "cnr_id": "tinybreaker",
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "c60e8905dd0e4810be034d07337ae31fdee7ae66"
+      },
+      "widgets_values": [
+        true
+      ]
+    },
+    {
+      "id": 203,
+      "type": "Note",
+      "pos": [
+        310.4676513671875,
+        303.5186767578125
+      ],
+      "size": [
+        320,
+        540
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "title": "NOTE: SUPPORTED PARAMETERS",
+      "properties": {},
+      "widgets_values": [
+        "\n  --no <text>\n  --refine <text>\n  --cfg-shift <number>\n  --image-shift <number>\n  --upscale [on|off]\n\n  --seed <number> | random\n  --aspect <ratio:ratio>\n  --landscape\n  --portrait\n  --medium\n\n  --batch-size <number>\n  --detail-level <number> | <level>\n  --upscale-noise <number> | <level>\n\n <level> can be:\n    none\n    minimal\n    low\n    normal\n    high\n    veryhigh\n    maximum\n\n"
+      ],
+      "color": "#222",
+      "bgcolor": "#000",
+      "shape": 1
+    },
+    {
+      "id": 338,
+      "type": "Note",
+      "pos": [
+        -1060,
+        160
+      ],
+      "size": [
+        380,
+        560
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {},
+      "widgets_values": [
+        ""
+      ],
+      "color": "#222",
+      "bgcolor": "#000"
+    },
+    {
+      "id": 337,
+      "type": "CustomStyle //TinyBreaker",
+      "pos": [
+        -220,
+        800
+      ],
+      "size": [
+        400,
+        586
+      ],
+      "flags": {},
+      "order": 20,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 825
+        }
+      ],
+      "outputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "links": [
+            818
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CustomStyle //TinyBreaker",
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "725a28f5aa2c8b20f9168fdcc57e4e5196f8796c"
+      },
+      "widgets_values": [
+        4,
+        "An iPhone photo{. $@}. (JPEG artifacts:1.1)",
+        "macrophoto, bokeh, out of focus, anime, comic, nintendo, toy, videogame, pixar{, $@}",
+        "dpmpp_2m_sde",
+        "karras",
+        20,
+        4,
+        10000,
+        3.4,
+        "(argentine social woman:1.2){, $@}",
+        "(worst quality, low quality, manga:1.8){, $@}",
+        "dpmpp_2m",
+        "ddim_uniform",
+        22,
+        12,
+        10000,
+        2,
+        "DEFAULT"
+      ],
+      "color": "#2a363b",
+      "bgcolor": "#3f5159"
+    },
+    {
+      "id": 332,
+      "type": "CustomUpscalerConfig //TinyBreaker",
+      "pos": [
+        -960,
+        800
+      ],
+      "size": [
+        281.4200134277344,
+        360.6199951171875
+      ],
+      "flags": {},
+      "order": 18,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 812
+        }
+      ],
+      "outputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "links": [
+            824
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CustomUpscalerConfig //TinyBreaker"
+      },
+      "widgets_values": [
+        "DEFAULT",
+        "",
+        "(worst quality, low quality, manga:1.8)",
+        "dpmpp_2m",
+        "karras",
+        16,
+        11,
+        10000,
+        4,
+        0.6
+      ],
+      "color": "#323",
+      "bgcolor": "#535"
+    },
+    {
+      "id": 322,
+      "type": "CustomStyle //TinyBreaker",
+      "pos": [
+        -640,
+        160
+      ],
+      "size": [
+        400,
+        586
+      ],
+      "flags": {},
+      "order": 21,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 818
+        }
+      ],
+      "outputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "links": [
+            822
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CustomStyle //TinyBreaker",
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "725a28f5aa2c8b20f9168fdcc57e4e5196f8796c"
+      },
+      "widgets_values": [
+        1,
+        "An iPhone photo{. $@}. (JPEG artifacts:1.1)",
+        "macrophoto, bokeh, out of focus, anime, comic, nintendo, toy, videogame, pixar{, $@}",
+        "dpmpp_2m_sde",
+        "karras",
+        20,
+        4,
+        10000,
+        3.6,
+        "(argentine social woman:1.2){, $@}",
+        "(worst quality, low quality, manga:1.8){, $@}",
+        "dpmpp_2m",
+        "ddim_uniform",
+        22,
+        12,
+        10000,
+        2,
+        "DEFAULT"
+      ],
+      "color": "#2a363b",
+      "bgcolor": "#3f5159"
+    },
+    {
+      "id": 340,
+      "type": "CustomStyle //TinyBreaker",
+      "pos": [
+        -200,
+        160
+      ],
+      "size": [
+        400,
+        586
+      ],
+      "flags": {},
+      "order": 22,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 822
+        }
+      ],
+      "outputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "links": [
+            823
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CustomStyle //TinyBreaker",
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "725a28f5aa2c8b20f9168fdcc57e4e5196f8796c"
+      },
+      "widgets_values": [
+        2,
+        "An iPhone photo{. $@}. (JPEG artifacts:1.1)",
+        "macrophoto, bokeh, out of focus, anime, comic, nintendo, toy, videogame, pixar, minimalist, futuristic and immersive realistic painting, with a focus on the woman and her surroundings. the background is painted with various colors. abstract scene. centered{, $@}",
+        "dpmpp_2m_sde",
+        "karras",
+        20,
+        4,
+        10000,
+        3.6,
+        "(argentine social woman:1.2){, $@}",
+        "(worst quality, low quality, manga:1.8){, $@}",
+        "dpmpp_2m",
+        "ddim_uniform",
+        22,
+        12,
+        10000,
+        2,
+        "DEFAULT"
+      ],
+      "color": "#2a363b",
+      "bgcolor": "#3f5159"
+    },
+    {
+      "id": 335,
+      "type": "CustomStyle //TinyBreaker",
+      "pos": [
+        -660,
+        800
+      ],
+      "size": [
+        400,
+        586
+      ],
+      "flags": {},
+      "order": 19,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 824
+        }
+      ],
+      "outputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "links": [
+            825
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CustomStyle //TinyBreaker",
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "725a28f5aa2c8b20f9168fdcc57e4e5196f8796c"
+      },
+      "widgets_values": [
+        3,
+        "Black outlined comic of {$@}. (European erotic draw, Milo Manara:1.2). Poster in white, red, blue and black.",
+        "blurry, photography, bokeh, minimalist, black lines{, $@}",
+        "deis",
+        "simple",
+        20,
+        4,
+        10000,
+        5.2,
+        "Poster, erotic comics{, $@}",
+        "(worst quality, low quality:1.8). black lines{. $@}",
+        "lms",
+        "beta",
+        14,
+        10,
+        10000,
+        3,
+        "DEFAULT"
+      ],
+      "color": "#2a363b",
+      "bgcolor": "#3f5159"
+    },
+    {
+      "id": 323,
+      "type": "SelectCustomStyle //TinyBreaker",
+      "pos": [
+        380,
+        160
+      ],
+      "size": [
+        240,
+        80
+      ],
+      "flags": {},
+      "order": 23,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 823
+        }
+      ],
+      "outputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "links": [
+            779
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "SelectCustomStyle //TinyBreaker",
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "725a28f5aa2c8b20f9168fdcc57e4e5196f8796c"
+      },
+      "widgets_values": [
+        3
+      ],
+      "color": "#232",
+      "bgcolor": "#353"
+    },
+    {
+      "id": 241,
+      "type": "LoadT5EncoderExperimental //TinyBreaker",
+      "pos": [
+        2140,
+        640
+      ],
+      "size": [
+        430,
+        140
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "slot_index": 0,
+          "links": [
+            846
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadT5EncoderExperimental //TinyBreaker",
+        "cnr_id": "tinybreaker",
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "c60e8905dd0e4810be034d07337ae31fdee7ae66"
+      },
+      "widgets_values": [
+        "t5xxl_fp8_e4m3fn.safetensors",
+        "pixart",
+        "auto",
+        "auto"
+      ],
+      "color": "#322",
+      "bgcolor": "#533",
+      "shape": 1
+    },
+    {
+      "id": 198,
+      "type": "UnifiedPromptInput //TinyBreaker",
+      "pos": [
+        640.4677734375,
+        148.80284118652344
+      ],
+      "size": [
+        540,
+        700
+      ],
+      "flags": {},
+      "order": 24,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 779
+        }
+      ],
+      "outputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "links": [
+            514,
+            515
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "UnifiedPromptInput //TinyBreaker",
+        "cnr_id": "tinybreaker",
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "c60e8905dd0e4810be034d07337ae31fdee7ae66"
+      },
+      "widgets_values": [
+        "A tiny hedgehog wrapped snugly in a miniature blanket, holding a small cup of hot chocolate with both paws, sitting on a wooden floor. Near a fireplace made of stacked shiny stones\n\n--portrait --aspect 3:2 --seed 1"
+      ],
+      "color": "#232",
+      "bgcolor": "#353"
+    },
+    {
+      "id": 261,
+      "type": "Reroute",
+      "pos": [
+        2980,
+        830
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 14,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 719
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "VAE",
+          "slot_index": 0,
+          "links": [
+            703,
+            836
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 288,
+      "type": "Reroute",
+      "pos": [
+        2780,
+        830
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 835
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "VAE",
+          "links": [
+            719
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 342,
+      "type": "Reroute",
+      "pos": [
+        2780,
+        800
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 837
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "UPSCALE_MODEL",
+          "links": [
+            838
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 279,
+      "type": "Reroute",
+      "pos": [
+        3070,
+        120
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 30,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 681
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "GENPARAMS",
+          "slot_index": 0,
+          "links": [
+            693,
+            802
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 278,
+      "type": "Reroute",
+      "pos": [
+        2280,
+        120
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 27,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 684
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "GENPARAMS",
+          "slot_index": 0,
+          "links": [
+            681
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 233,
+      "type": "EmptyLatentImage //TinyBreaker",
+      "pos": [
+        2340,
+        190
+      ],
+      "size": [
+        230,
+        30
+      ],
+      "flags": {},
+      "order": 28,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 685
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "slot_index": 0,
+          "links": [
+            730
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "EmptyLatentImage //TinyBreaker",
+        "cnr_id": "tinybreaker",
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "c60e8905dd0e4810be034d07337ae31fdee7ae66"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 235,
+      "type": "Reroute",
+      "pos": [
+        2500,
+        230
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 29,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 686
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "GENPARAMS",
+          "links": [
+            731
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 313,
+      "type": "TinyDecode //TinyBreaker",
+      "pos": [
+        3120,
+        290
+      ],
+      "size": [
+        230,
+        110
+      ],
+      "flags": {},
+      "order": 32,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "latent",
+          "type": "LATENT",
+          "link": 758
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 759
+        }
+      ],
+      "outputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "links": [
+            807
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "TinyDecode //TinyBreaker",
+        "cnr_id": "tinybreaker",
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "199d4659511634f590b0c17e8ba6b1dcf3106321"
+      },
+      "widgets_values": [
+        "512px",
+        "100%"
+      ]
+    },
+    {
+      "id": 343,
+      "type": "Reroute",
+      "pos": [
+        2980,
+        800
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 13,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 838
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "UPSCALE_MODEL",
+          "links": [
+            841
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 344,
+      "type": "Reroute",
+      "pos": [
+        2780,
+        860
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 839
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "GENPARAMS",
+          "links": [
+            847
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 329,
+      "type": "TinyUpscalerV2 //TinyBreaker",
+      "pos": [
+        3400,
+        290
+      ],
+      "size": [
+        270,
+        182
+      ],
+      "flags": {},
+      "order": 33,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 807
+        },
+        {
+          "name": "genparams",
+          "type": "GENPARAMS",
+          "link": 802
+        },
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 803
+        },
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 804
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 836
+        },
+        {
+          "name": "upscale_model",
+          "shape": 7,
+          "type": "UPSCALE_MODEL",
+          "link": 841
+        }
+      ],
+      "outputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "links": [
+            810
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "TinyUpscalerV2 //TinyBreaker"
+      },
+      "widgets_values": [
+        "upscaler",
+        3
+      ]
+    },
+    {
+      "id": 341,
+      "type": "LoadTinyBreakerCkptV2 //TinyBreaker",
+      "pos": [
+        2140,
+        310
+      ],
+      "size": [
+        430,
+        290
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            826
+          ]
+        },
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": null
+        },
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [
+            827
+          ]
+        },
+        {
+          "name": "TRANSCODER",
+          "type": "TRANSCODER",
+          "links": [
+            828
+          ]
+        },
+        {
+          "name": "REFINER_MODEL",
+          "type": "MODEL",
+          "links": [
+            829,
+            830
+          ]
+        },
+        {
+          "name": "REFINER_CLIP",
+          "type": "CLIP",
+          "links": [
+            831,
+            832
+          ]
+        },
+        {
+          "name": "UPSCALE_MODEL",
+          "type": "UPSCALE_MODEL",
+          "links": [
+            837
+          ]
+        },
+        {
+          "name": "UPSCALER_VAE",
+          "type": "VAE",
+          "links": [
+            835
+          ]
+        },
+        {
+          "name": "METADATA",
+          "type": "GENPARAMS",
+          "links": [
+            839
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadTinyBreakerCkptV2 //TinyBreaker"
+      },
+      "widgets_values": [
+        "tinybreaker_prototype1.safetensors",
+        "4x_NickelbackFS_72000_G.pth",
+        "auto",
+        "auto"
+      ],
+      "color": "#322",
+      "bgcolor": "#533",
+      "shape": 1
+    },
+    {
+      "id": 345,
+      "type": "Reroute",
+      "pos": [
+        3710,
+        860
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 15,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 847
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "GENPARAMS",
+          "links": [
+            844
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 347,
+      "type": "Reroute",
+      "pos": [
+        3940,
+        2300
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 16,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 844
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "GENPARAMS",
+          "links": [
+            845
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 289,
+      "type": "Reroute",
+      "pos": [
+        -1500,
+        2400
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 17,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 845
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "GENPARAMS",
+          "links": [
+            812
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 331,
+      "type": "Reroute",
+      "pos": [
+        3710,
+        240
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 34,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 810
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "IMAGE",
+          "links": [
+            850
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 348,
+      "type": "Reroute",
+      "pos": [
+        3830,
+        -40
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 35,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 850
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "IMAGE",
+          "links": [
+            851
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 189,
+      "type": "Reroute",
+      "pos": [
+        1790,
+        150
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 25,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 514
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "GENPARAMS",
+          "slot_index": 0,
+          "links": [
+            849
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 144,
+      "type": "SaveImage //TinyBreaker",
+      "pos": [
+        1200,
+        220
+      ],
+      "size": [
+        650,
+        700
+      ],
+      "flags": {},
+      "order": 37,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 786
+        },
+        {
+          "name": "genparams",
+          "shape": 7,
+          "type": "GENPARAMS",
+          "link": 515
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "SaveImage //TinyBreaker",
+        "cnr_id": "tinybreaker",
+        "aux_id": "martin-rizzo/ComfyUI-TinyBreaker",
+        "ver": "c60e8905dd0e4810be034d07337ae31fdee7ae66"
+      },
+      "widgets_values": [
+        "TinyBreaker/%date:yyyy_MM_dd%/TB"
+      ],
+      "color": "#2a363b",
+      "bgcolor": "#3f5159"
+    },
+    {
+      "id": 310,
+      "type": "Reroute",
+      "pos": [
+        1020,
+        -40
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 36,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 851
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "IMAGE",
+          "links": [
+            786
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    }
+  ],
+  "links": [
+    [
+      514,
+      198,
+      0,
+      189,
+      0,
+      "*"
+    ],
+    [
+      515,
+      198,
+      0,
+      144,
+      1,
+      "GENPARAMS"
+    ],
+    [
+      681,
+      278,
+      0,
+      279,
+      0,
+      "*"
+    ],
+    [
+      684,
+      240,
+      0,
+      278,
+      0,
+      "*"
+    ],
+    [
+      685,
+      240,
+      0,
+      233,
+      0,
+      "GENPARAMS"
+    ],
+    [
+      686,
+      240,
+      0,
+      235,
+      0,
+      "*"
+    ],
+    [
+      712,
+      285,
+      0,
+      236,
+      0,
+      "*"
+    ],
+    [
+      715,
+      287,
+      0,
+      253,
+      0,
+      "*"
+    ],
+    [
+      717,
+      286,
+      0,
+      259,
+      0,
+      "*"
+    ],
+    [
+      719,
+      288,
+      0,
+      261,
+      0,
+      "*"
+    ],
+    [
+      730,
+      233,
+      0,
+      300,
+      0,
+      "LATENT"
+    ],
+    [
+      731,
+      235,
+      0,
+      300,
+      1,
+      "GENPARAMS"
+    ],
+    [
+      758,
+      300,
+      0,
+      313,
+      0,
+      "LATENT"
+    ],
+    [
+      759,
+      236,
+      0,
+      313,
+      1,
+      "VAE"
+    ],
+    [
+      779,
+      323,
+      0,
+      198,
+      0,
+      "GENPARAMS"
+    ],
+    [
+      786,
+      310,
+      0,
+      144,
+      0,
+      "IMAGE"
+    ],
+    [
+      802,
+      279,
+      0,
+      329,
+      1,
+      "GENPARAMS"
+    ],
+    [
+      803,
+      259,
+      0,
+      329,
+      2,
+      "MODEL"
+    ],
+    [
+      804,
+      253,
+      0,
+      329,
+      3,
+      "CLIP"
+    ],
+    [
+      807,
+      313,
+      0,
+      329,
+      0,
+      "IMAGE"
+    ],
+    [
+      810,
+      329,
+      0,
+      331,
+      0,
+      "*"
+    ],
+    [
+      812,
+      289,
+      0,
+      332,
+      0,
+      "GENPARAMS"
+    ],
+    [
+      818,
+      337,
+      0,
+      322,
+      0,
+      "GENPARAMS"
+    ],
+    [
+      822,
+      322,
+      0,
+      340,
+      0,
+      "GENPARAMS"
+    ],
+    [
+      823,
+      340,
+      0,
+      323,
+      0,
+      "GENPARAMS"
+    ],
+    [
+      824,
+      332,
+      0,
+      335,
+      0,
+      "GENPARAMS"
+    ],
+    [
+      825,
+      335,
+      0,
+      337,
+      0,
+      "GENPARAMS"
+    ],
+    [
+      826,
+      341,
+      0,
+      300,
+      2,
+      "MODEL"
+    ],
+    [
+      827,
+      341,
+      2,
+      285,
+      0,
+      "*"
+    ],
+    [
+      828,
+      341,
+      3,
+      300,
+      4,
+      "TRANSCODER"
+    ],
+    [
+      829,
+      341,
+      4,
+      286,
+      0,
+      "*"
+    ],
+    [
+      830,
+      341,
+      4,
+      300,
+      5,
+      "MODEL"
+    ],
+    [
+      831,
+      341,
+      5,
+      287,
+      0,
+      "*"
+    ],
+    [
+      832,
+      341,
+      5,
+      300,
+      6,
+      "CLIP"
+    ],
+    [
+      835,
+      341,
+      7,
+      288,
+      0,
+      "*"
+    ],
+    [
+      836,
+      261,
+      0,
+      329,
+      4,
+      "VAE"
+    ],
+    [
+      837,
+      341,
+      6,
+      342,
+      0,
+      "*"
+    ],
+    [
+      838,
+      342,
+      0,
+      343,
+      0,
+      "*"
+    ],
+    [
+      839,
+      341,
+      8,
+      344,
+      0,
+      "*"
+    ],
+    [
+      841,
+      343,
+      0,
+      329,
+      5,
+      "UPSCALE_MODEL"
+    ],
+    [
+      844,
+      345,
+      0,
+      347,
+      0,
+      "*"
+    ],
+    [
+      845,
+      347,
+      0,
+      289,
+      0,
+      "*"
+    ],
+    [
+      846,
+      241,
+      0,
+      300,
+      3,
+      "CLIP"
+    ],
+    [
+      847,
+      344,
+      0,
+      345,
+      0,
+      "*"
+    ],
+    [
+      849,
+      189,
+      0,
+      240,
+      0,
+      "*"
+    ],
+    [
+      850,
+      331,
+      0,
+      348,
+      0,
+      "*"
+    ],
+    [
+      851,
+      348,
+      0,
+      310,
+      0,
+      "*"
+    ]
+  ],
+  "groups": [
+    {
+      "id": 3,
+      "title": "TinyBreaker Workflow v0.4",
+      "bounding": [
+        320,
+        60,
+        1540,
+        810
+      ],
+      "color": "#b58b2a",
+      "font_size": 24,
+      "flags": {}
+    },
+    {
+      "id": 5,
+      "title": "Diffusion & Upscaling Process",
+      "bounding": [
+        2060,
+        70,
+        1720,
+        830
+      ],
+      "color": "#444",
+      "font_size": 24,
+      "flags": {}
+    },
+    {
+      "id": 6,
+      "title": "Style Creator",
+      "bounding": [
+        -1080,
+        60,
+        1280,
+        1360
+      ],
+      "color": "#b06634",
+      "font_size": 24,
+      "flags": {}
+    }
+  ],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.40532736656554985,
+      "offset": [
+        733.4902741840838,
+        451.06345207843157
+      ]
+    },
+    "frontendVersion": "1.25.10"
+  },
+  "version": 0.4
+}

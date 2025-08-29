@@ -137,8 +137,8 @@ _comfy_import_node(CustomUpscalerConfig)
 # TinyBreakers/loaders
 _CATEGORY = "TinyBreaker/loaders"
 
-from .nodes.load_tinybreaker_ckpt                   import LoadTinyBreakerCkpt
-_comfy_import_node(LoadTinyBreakerCkpt)
+from .nodes.load_tinybreaker_ckpt_v2                import LoadTinyBreakerCkptV2
+_comfy_import_node(LoadTinyBreakerCkptV2)
 
 from .nodes.load_tinybreaker_ckpt_advanced          import LoadTinyBreakerCkptAdvanced
 _comfy_import_node(LoadTinyBreakerCkptAdvanced)
@@ -207,6 +207,9 @@ _comfy_import_node(GenParamsDebugLogger)
 # TinyBreaker/__deprecated
 _CATEGORY   = "TinyBreaker/__deprecated"
 _DEPRECATED = True
+
+from .nodes.deprecated_nodes.load_tinybreaker_ckpt              import LoadTinyBreakerCkpt
+_comfy_import_node(LoadTinyBreakerCkpt)
 
 from .nodes.deprecated_nodes.tiny_upscaler                      import TinyUpscaler
 _comfy_import_node(TinyUpscaler)

@@ -188,6 +188,7 @@ STYLES_DIR                  = _ProjectDirectory("styles")
 CHECKPOINTS_DIR             = _ComfyModelDirectory("checkpoints")
 VAE_DIR                     = _ComfyModelDirectory("vae")
 TEXT_ENCODERS_DIR           = _ComfyModelDirectory("text_encoders")
+UPSCALE_MODELS_DIR          = _ComfyModelDirectory("upscale_models")
 EMBEDDINGS_DIR              = _ProjectDirectory("embeddings")
 TRANSCODERS_DIR             = VAE_DIR
 TINYBREAKER_CHECKPOINTS_DIR = CHECKPOINTS_DIR
