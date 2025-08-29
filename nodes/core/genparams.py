@@ -77,43 +77,58 @@ class GenParams(dict):
     """
 
     @classmethod
-    def from_raw_kv_params(cls, raw_kv_params: dict[str, str], /) -> "GenParams":
+    def from_raw_kv_params(cls, raw_kv_params: dict, /) -> "GenParams":
         """
         Creates a new GenParams object from the given raw key/value parameters.
 
         This method is used while parsing parameters from configuration files.
-        Raw parameters are key-value pairs where both the key and value are strings.
-        This method will convert these strings into their appropriate data types,
-        but if the value is quoted it will remain as a string.
+        It supports both string values and numeric values (int/float), converting
+        strings to their appropriate data types when possible. Quoted strings
+        will remain as strings, while unquoted numeric strings will be converted
+        to int/float. Boolean values ('true'/'false') are also supported.
 
         Args:
-            raw_kv_params: A dictionary with key-value pairs representing raw parameters.
+            raw_kv_params:
+                A dictionary with key-value pairs representing raw parameters.
+                Values can be strings or numeric types (int/float). String values
+                will be convertedto their appropriate data types if possible.
+
+        Returns:
+            A new `GenParams` instance with the parsed/converted parameters.
         """
+        # if the raw parameters is a dictionary of items,
+        # convert it into an iterable of items
+        if isinstance(raw_kv_params, dict):
+            raw_kv_params = raw_kv_params.items()
+
         genparams = cls()
         for key, value in raw_kv_params:
-            if not isinstance(key,str) or not isinstance(value,str):
+            if not isinstance(key,str):
                 continue
 
-            # quotes force the value to remain as a string
-            if value.startswith("'") and value.endswith("'"):
-                value = value[1:-1]
-            elif value.startswith('"') and value.endswith('"'):
-                value = value[1:-1]
-            # if value is numeric, convert to int
-            elif value.isdigit():
-                value = int(value)
-            # if value has a decimal point, convert to float
-            elif '.' in value and value.replace('.', '', 1).isdigit():
-                value = float(value)
-            # if value is 'true' or 'false', convert to boolean
-            elif value.lower() in ('true', 'false'):
-                value = value.lower() == 'true'
-            # if none of the above options match and the value is empty, it will be discarded
-            # therefore, to input an empty string you will have to use quotes "" or ''
-            elif value.strip() == '':
-                continue
+            if isinstance(value,int) or isinstance(value,float):
+                genparams[key] = value
 
-            genparams[key] = value
+            elif isinstance(value,str):
+                # quotes force the value to remain as a string
+                if value.startswith("'") and value.endswith("'"):
+                    value = value[1:-1]
+                elif value.startswith('"') and value.endswith('"'):
+                    value = value[1:-1]
+                # if value is numeric, convert to int
+                elif value.isdigit():
+                    value = int(value)
+                # if value has a decimal point, convert to float
+                elif '.' in value and value.replace('.', '', 1).isdigit():
+                    value = float(value)
+                # if value is 'true' or 'false', convert to boolean
+                elif value.lower() in ('true', 'false'):
+                    value = value.lower() == 'true'
+                # if none of the above options match and the value is empty, it will be discarded
+                # therefore, to input an empty string you will have to use quotes "" or ''
+                elif value.strip() == '':
+                    continue
+                genparams[key] = value
 
         return genparams
 
@@ -268,6 +283,17 @@ class GenParams(dict):
         return [key for key in self.keys() if key.startswith(prefix)]
 
 
+    def has_prefixed_keys(self, prefix: str) -> bool:
+        """
+        Returns True if there are any keys with the given prefix in the GenParams object.
+        If no keys are found, returns False.
+        """
+        if not isinstance(prefix,str):
+            return False
+        prefix = normalize_prefix(prefix)
+        return any(key.startswith(prefix) for key in self.keys())
+
+
     def copy(self) -> "GenParams":
         """Returns a copy of the GenParams object."""
         return GenParams(self)
@@ -275,19 +301,28 @@ class GenParams(dict):
 
     def update(self,
                other: "GenParams",
-               *,# keyword-only arguments #
-               prefix_to_add: str = None
+               *,
+               # optional keyword-only parameters #
+               preserve_values: bool = False,
+               prefix_to_add  : str  = None
                ) -> None:
         """
         Updates the GenParams object with values from another GenParams object or dictionary.
-        If a key is present in both objects, the value from the `other` object will overwrite it.
-        The optional `prefix_to_add` parameter can be used to add a prefix to all keys before updating.
+
+        By default all keys will be overwritten. If you want to keep the existing values,
+        set `preserve_values = True`.
+
+        Args:
+            other (GenParams or dict): The source of new values
+            preserve_values    (bool): If True, existing keys in self will be preserved (not overwritten).
+                                       Default is False.
+            prefix_to_add       (str): A prefix to add to all keys before updating. If provided, all keys
+                                       from `other` will be prefixed with this string before updating.
         """
         prefix_to_add = normalize_prefix(prefix_to_add)
-        if not prefix_to_add:
-            super().update(other)
-            return
         for key, value in other.items():
+            if preserve_values and key in self:
+                continue
             self[prefix_to_add+key] = value
 
 
